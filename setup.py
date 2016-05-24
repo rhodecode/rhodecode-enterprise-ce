@@ -73,6 +73,7 @@ requirements = [
     'colander',
     'decorator',
     'docutils',
+    'gunicorn',
     'infrae.cache',
     'ipython',
     'iso8601',
@@ -114,6 +115,7 @@ test_requirements = [
     'lxml',
     'mock',
     'pytest',
+    'pytest-cov',
     'pytest-runner',
 ]
 
