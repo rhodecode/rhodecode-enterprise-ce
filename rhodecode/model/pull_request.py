@@ -1054,8 +1054,10 @@ class PullRequestModel(BaseModel):
                 ref_key = '%s:%s:%s' % (group_key, ref_name, ref_id)
                 group_refs.append((ref_key, ref_name))
 
-                if not selected and match in (ref_id, ref_name):
-                    selected = ref_key
+                if not selected:
+                    if set([commit_id, match]) & set([ref_id, ref_name]):
+                        selected = ref_key
+
             if group_refs:
                 groups.append((group_refs, group_name))
 
