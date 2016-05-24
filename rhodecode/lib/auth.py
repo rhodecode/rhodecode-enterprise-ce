@@ -865,6 +865,10 @@ class AuthUser(object):
         return auth_tokens
 
     @property
+    def is_default(self):
+        return self.username == User.DEFAULT_USER
+
+    @property
     def is_admin(self):
         return self.admin
 
