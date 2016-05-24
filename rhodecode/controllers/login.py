@@ -52,39 +52,40 @@ from rhodecode.model.user import UserModel
 log = logging.getLogger(__name__)
 
 
+def _store_user_in_session(username, remember=False):
+    user = User.get_by_username(username, case_insensitive=True)
+    auth_user = AuthUser(user.user_id)
+    auth_user.set_authenticated()
+    cs = auth_user.get_cookie_store()
+    session['rhodecode_user'] = cs
+    user.update_lastlogin()
+    Session().commit()
+
+    # If they want to be remembered, update the cookie
+    if remember:
+        _year = (datetime.datetime.now() +
+                 datetime.timedelta(seconds=60 * 60 * 24 * 365))
+        session._set_cookie_expires(_year)
+
+    session.save()
+
+    log.info('user %s is now authenticated and stored in '
+             'session, session attrs %s', username, cs)
+
+    # dumps session attrs back to cookie
+    session._update_cookie_out()
+    # we set new cookie
+    headers = None
+    if session.request['set_cookie']:
+        # send set-cookie headers back to response to update cookie
+        headers = [('Set-Cookie', session.request['cookie_out'])]
+    return headers
+
+
 class LoginController(BaseController):
 
     def __before__(self):
         super(LoginController, self).__before__()
-
-    def _store_user_in_session(self, username, remember=False):
-        user = User.get_by_username(username, case_insensitive=True)
-        auth_user = AuthUser(user.user_id)
-        auth_user.set_authenticated()
-        cs = auth_user.get_cookie_store()
-        session['rhodecode_user'] = cs
-        user.update_lastlogin()
-        Session().commit()
-
-        # If they want to be remembered, update the cookie
-        if remember:
-            _year = (datetime.datetime.now() +
-                     datetime.timedelta(seconds=60 * 60 * 24 * 365))
-            session._set_cookie_expires(_year)
-
-        session.save()
-
-        log.info('user %s is now authenticated and stored in '
-                 'session, session attrs %s', username, cs)
-
-        # dumps session attrs back to cookie
-        session._update_cookie_out()
-        # we set new cookie
-        headers = None
-        if session.request['set_cookie']:
-            # send set-cookie headers back to response to update cookie
-            headers = [('Set-Cookie', session.request['cookie_out'])]
-        return headers
 
     def _validate_came_from(self, came_from):
         if not came_from:
@@ -134,7 +135,7 @@ class LoginController(BaseController):
                 session.invalidate()
                 c.form_result = login_form.to_python(dict(request.POST))
                 # form checks for username/password, now we're authenticated
-                headers = self._store_user_in_session(
+                headers = _store_user_in_session(
                     username=c.form_result['username'],
                     remember=c.form_result['remember'])
                 raise self._redirect_to_origin(
@@ -170,7 +171,7 @@ class LoginController(BaseController):
             return render('/login.html')
 
         if auth_info:
-            headers = self._store_user_in_session(auth_info.get('username'))
+            headers = _store_user_in_session(auth_info.get('username'))
             raise self._redirect_to_origin(
                 location=c.came_from, headers=headers)
         return render('/login.html')
