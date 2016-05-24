@@ -1,6 +1,5 @@
 ## -*- coding: utf-8 -*-
 <%inherit file="base/root.html"/>
-<%namespace file="base/social_buttons.html" import="render_social_buttons"/>
 
 <%def name="title()">
     ${_('Sign In')}
@@ -57,15 +56,6 @@
                     })
                 </script>
             </div>
-
-            % if c.social_plugins:
-            <p>${_('Sign In using one of external services')}:</p>
-
-            <p>
-                ${render_social_buttons(c.social_plugins, 'login')}
-            </p>
-            % endif
-
             <!-- end login -->
         </div>
     </div>

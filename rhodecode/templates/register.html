@@ -1,6 +1,5 @@
 ## -*- coding: utf-8 -*-
 <%inherit file="base/root.html"/>
-<%namespace file="base/social_buttons.html" import="render_social_buttons"/>
 
 <%def name="title()">
     ${_('Create an Account')}
@@ -72,15 +71,6 @@
 
                 ${h.end_form()}
             </div>
-
-        % if c.social_plugins:
-        <p>${_('Register using one of external services')}:</p>
-
-        <p>
-            ${render_social_buttons(c.social_plugins, 'register')}
-        </p>
-        % endif
-
         </div>
     </div>
 </div>
