@@ -1,0 +1,70 @@
+
+<div id="codeblock" class="codeblock">
+    <div class="codeblock-header">
+      <div class="stats">
+            <span> <strong>${c.file}</strong></span>
+            <span> | ${c.file.lines()[0]} ${ungettext('line', 'lines', c.file.lines()[0])}</span>
+            <span> | ${h.format_byte_size_binary(c.file.size)}</span>
+            <span class="item last"> | ${c.file.mimetype}</span>
+      </div>
+      <div class="buttons">
+        <a id="file_history_overview" href="#">
+            ${_('History')}
+        </a>
+        <a id="file_history_overview_full" style="display: none" href="${h.url('changelog_file_home',repo_name=c.repo_name, revision=c.commit.raw_id, f_path=c.f_path)}">
+           ${_('Show Full History')}
+        </a> |
+        %if c.annotate:
+          ${h.link_to(_('Source'), h.url('files_home', repo_name=c.repo_name,revision=c.commit.raw_id,f_path=c.f_path))}
+        %else:
+          ${h.link_to(_('Annotation'), h.url('files_annotate_home',repo_name=c.repo_name,revision=c.commit.raw_id,f_path=c.f_path))}
+        %endif
+         | ${h.link_to(_('Raw'), h.url('files_raw_home',repo_name=c.repo_name,revision=c.commit.raw_id,f_path=c.f_path))}
+         | <a href="${h.url('files_rawfile_home',repo_name=c.repo_name,revision=c.commit.raw_id,f_path=c.f_path)}">
+          ${_('Download')}
+        </a>
+
+        %if h.HasRepoPermissionAny('repository.write','repository.admin')(c.repo_name):
+           |
+         %if c.on_branch_head and c.branch_or_raw_id and not c.file.is_binary:
+            <a href="${h.url('files_edit_home',repo_name=c.repo_name,revision=c.branch_or_raw_id,f_path=c.f_path, anchor='edit')}">
+              ${_('Edit on Branch:%s') % c.branch_or_raw_id}
+            </a>
+            | <a class="btn-danger btn-link" href="${h.url('files_delete_home',repo_name=c.repo_name,revision=c.branch_or_raw_id,f_path=c.f_path, anchor='edit')}">${_('Delete')}
+            </a>
+         %elif c.on_branch_head and c.branch_or_raw_id and c.file.is_binary:
+          ${h.link_to(_('Edit'), '#', class_="btn btn-link disabled tooltip", title=_('Editing binary files not allowed'))}
+           | ${h.link_to(_('Delete'), h.url('files_delete_home',repo_name=c.repo_name,revision=c.branch_or_raw_id,f_path=c.f_path, anchor='edit'),class_="btn-danger btn-link")}
+         %else:
+          ${h.link_to(_('Edit'), '#', class_="btn btn-link disabled tooltip", title=_('Editing files allowed only when on branch head commit'))}
+           | ${h.link_to(_('Delete'), '#', class_="btn btn-danger btn-link disabled tooltip", title=_('Deleting files allowed only when on branch head commit'))}
+         %endif
+        %endif
+      </div>
+    </div>
+    <div id="file_history_container"></div>
+    <div class="code-body">
+       %if c.file.is_binary:
+           <div>
+           ${_('Binary file (%s)') % c.file.mimetype}
+           </div>
+       %else:
+        % if c.file.size < c.cut_off_limit:
+            %if c.annotate:
+              ${h.pygmentize_annotation(c.repo_name,c.file,linenos=True,anchorlinenos=True,lineanchors='L',cssclass="code-highlight")}
+            %elif c.renderer:
+                ${h.render(c.file.content, renderer=c.renderer)}
+            %else:
+              ${h.pygmentize(c.file,linenos=True,anchorlinenos=True,lineanchors='L',cssclass="code-highlight")}
+            %endif
+        %else:
+            ${_('File is too big to display')} ${h.link_to(_('Show as raw'),
+            h.url('files_raw_home',repo_name=c.repo_name,revision=c.commit.raw_id,f_path=c.f_path))}
+        %endif
+     %endif
+    </div>
+</div>
+
+<script>
+    var source_page = true;
+</script>

@@ -1,0 +1,24 @@
+
+% if pylons_context:
+<table class="table table-striped table-condensed">
+  <thead>
+    <th>Key</th>
+    <th>Value</th>
+  </thead>
+  <tbody>
+    % for key in sorted(pylons_context.keys()):
+    <tr>
+      <td>${key}</td>
+      <td>${repr(pylons_context[key])}</td>
+    </tr>
+    % endfor
+  </tbody>
+</table>
+% else:
+<p>No context information found.</p>
+
+<p>The integrated Pylons application has to be abjusted to make the context object available.
+  It should check for <code>environ['debugtoolbar.wants_pylons_context'] == True</code> and set
+  <code>environ['debugtoolbar.pylons_context'] = tmpl_context._current_obj()</code>.</p>
+
+% endif

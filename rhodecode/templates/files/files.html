@@ -1,0 +1,336 @@
+<%inherit file="/base/base.html"/>
+
+<%def name="title(*args)">
+    ${_('%s Files') % c.repo_name}
+    %if hasattr(c,'file'):
+        &middot; ${h.safe_unicode(c.file.path) or '\\'}
+    %endif
+
+    %if c.rhodecode_name:
+        &middot; ${h.branding(c.rhodecode_name)}
+    %endif
+</%def>
+
+<%def name="breadcrumbs_links()">
+    ${_('Files')}
+    %if c.file:
+        @ ${h.show_id(c.commit)}
+    %endif
+</%def>
+
+<%def name="menu_bar_nav()">
+    ${self.menu_items(active='repositories')}
+</%def>
+
+<%def name="menu_bar_subnav()">
+    ${self.repo_menu(active='files')}
+</%def>
+
+<%def name="main()">
+    <div class="title">
+        ${self.repo_page_title(c.rhodecode_db_repo)}
+    </div>
+
+    <div id="pjax-container" class="summary">
+        <div id="files_data">
+            <%include file='files_pjax.html'/>
+        </div>
+    </div>
+    <script>
+        var curState = {
+            commit_id: "${c.commit.raw_id}"
+        };
+
+        var getState = function(context) {
+            var url = $(location).attr('href');
+            var _base_url = '${h.url("files_home",repo_name=c.repo_name,revision='',f_path='')}';
+            var _annotate_url = '${h.url("files_annotate_home",repo_name=c.repo_name,revision='',f_path='')}';
+            _base_url = _base_url.replace('//', '/');
+            _annotate_url = _annotate_url.replace('//', '/');
+
+            //extract f_path from url.
+            var parts = url.split(_base_url);
+            if (parts.length != 2) {
+                parts = url.split(_annotate_url);
+                if (parts.length != 2) {
+                    var rev = "tip";
+                    var f_path = "";
+                } else {
+                    var parts2 = parts[1].split('/');
+                    var rev = parts2.shift(); // pop the first element which is the revision
+                    var f_path = parts2.join('/');
+                }
+
+            } else {
+                var parts2 = parts[1].split('/');
+                var rev = parts2.shift(); // pop the first element which is the revision
+                var f_path = parts2.join('/');
+            }
+
+            var _node_list_url = pyroutes.url('files_nodelist_home',
+                    {repo_name: templateContext.repo_name,
+                     revision: rev, f_path: f_path});
+            var _url_base = pyroutes.url('files_home',
+                    {repo_name: templateContext.repo_name,
+                     revision: rev, f_path:'__FPATH__'});
+            return {
+                url: url,
+                f_path: f_path,
+                rev: rev,
+                commit_id: curState.commit_id,
+                node_list_url: _node_list_url,
+                url_base: _url_base
+            };
+        };
+
+        var metadataRequest = null;
+        var getFilesMetadata = function() {
+            if (metadataRequest && metadataRequest.readyState != 4) {
+                metadataRequest.abort();
+            }
+            if (source_page) {
+                return false;
+            }
+            var state = getState('metadata');
+            var url_data = {
+                'repo_name': templateContext.repo_name,
+                'revision': state.commit_id,
+                'f_path': state.f_path
+            };
+
+            var url = pyroutes.url('files_metadata_list_home', url_data);
+
+            metadataRequest = $.ajax({url: url});
+
+            metadataRequest.done(function(data) {
+                var data = data.metadata;
+                var dataLength = data.length;
+                for (var i = 0; i < dataLength; i++) {
+                    var rowData = data[i];
+                    var name = rowData.name.replace('\\', '\\\\');
+
+                    $('td[title="size-' + name + '"]').html(rowData.size);
+                    var timeComponent = AgeModule.createTimeComponent(
+                            rowData.modified_ts, rowData.modified_at);
+                    $('td[title="modified_at-' + name + '"]').html(timeComponent);
+
+                    $('td[title="revision-' + name + '"]').html(
+                            '<div class="tooltip" title="{0}"><pre>r{1}:{2}</pre></div>'.format(
+                                    data[i].message, data[i].revision, data[i].short_id));
+                    $('td[title="author-' + name + '"]').html(
+                            '<span title="{0}">{1}</span>'.format(
+                                    data[i].author, data[i].user_profile));
+                }
+                tooltip_activate();
+                timeagoActivate();
+            });
+            metadataRequest.fail(function (data, textStatus, errorThrown) {
+                console.log(data);
+                if (data.status != 0) {
+                    alert("Error while fetching metadata.\nError code {0} ({1}).Please consider reloading the page".format(data.status,data.statusText));
+                }
+            });
+        };
+
+        var callbacks = function() {
+            var state = getState('callbacks');
+            tooltip_activate();
+            timeagoActivate();
+
+            // used for history, and switch to
+            var initialCommitData = {
+                id: null,
+                text: "${_("Switch To Commit")}",
+                type: 'sha',
+                raw_id: null,
+                files_url: null
+            };
+
+            if ($('#trimmed_message_box').height() < 50) {
+                $('#message_expand').hide();
+            }
+
+            $('#message_expand').on('click', function(e) {
+                $('#trimmed_message_box').css('max-height', 'none');
+                $(this).hide();
+            });
+
+
+            if (source_page) {
+                // variants for with source code, not tree view
+
+                if (location.href.indexOf('#') != -1) {
+                    page_highlights = location.href.substring(location.href.indexOf('#') + 1).split('L');
+                    if (page_highlights.length == 2) {
+                        highlight_ranges = page_highlights[1].split(",");
+
+                        var h_lines = [];
+                        for (pos in highlight_ranges) {
+                            var _range = highlight_ranges[pos].split('-');
+                            if (_range.length == 2) {
+                                var start = parseInt(_range[0]);
+                                var end = parseInt(_range[1]);
+                                if (start < end) {
+                                    for (var i = start; i <= end; i++) {
+                                        h_lines.push(i);
+                                    }
+                                }
+                            }
+                            else {
+                                h_lines.push(parseInt(highlight_ranges[pos]));
+                            }
+                        }
+
+                        for (pos in h_lines) {
+                            // @comment-highlight-color
+                            $('#L' + h_lines[pos]).css('background-color', '#ffd887');
+                        }
+
+                        var _first_line = $('#L' + h_lines[0]).get(0);
+                        if (_first_line) {
+                            var line = $('#L' + h_lines[0]);
+                            offsetScroll(line, 70);
+                        }
+                    }
+                }
+
+                // select code link event
+                $("#hlcode").mouseup(getSelectionLink);
+
+                // file history select2
+                select2FileHistorySwitcher('#diff1', initialCommitData, state);
+                $('#diff1').on('change', function(e) {
+                    $('#diff').removeClass('disabled').removeAttr("disabled");
+                    $('#show_rev').removeClass('disabled').removeAttr("disabled");
+                });
+
+                // show more authors
+                $('#show_authors').on('click', function(e) {
+                    e.preventDefault();
+                    var url = pyroutes.url('files_authors_home',
+                                {'repo_name': templateContext.repo_name,
+                                 'revision': state.rev, 'f_path': state.f_path});
+
+                    $.pjax({
+                        url: url,
+                        data: 'annotate=${"1" if c.annotate else "0"}',
+                        container: '#file_authors',
+                        push: false,
+                        timeout: pjaxTimeout
+                    }).complete(function(){
+                        $('#show_authors').hide();
+                    })
+                });
+
+                // load file short history
+                $('#file_history_overview').on('click', function(e) {
+                    e.preventDefault();
+                    path = state.f_path;
+                    if (path.indexOf("#") >= 0) {
+                        path = path.slice(0, path.indexOf("#"));
+                    }
+                    var url = pyroutes.url('changelog_file_home',
+                            {'repo_name': templateContext.repo_name,
+                             'revision': state.rev, 'f_path': path, 'limit': 6});
+                    $('#file_history_container').show();
+                    $('#file_history_container').html('<div class="file-history-inner">{0}</div>'.format(_TM['Loading ...']));
+
+                    $.pjax({
+                        url: url,
+                        container: '#file_history_container',
+                        push: false,
+                        timeout: pjaxTimeout
+                    })
+                });
+
+            }
+            else {
+                getFilesMetadata();
+
+                // fuzzy file filter
+                fileBrowserListeners(state.node_list_url, state.url_base);
+
+                // switch to widget
+                select2RefSwitcher('#refs_filter', initialCommitData);
+                $('#refs_filter').on('change', function(e) {
+                    var data = $('#refs_filter').select2('data');
+                    curState.commit_id = data.raw_id;
+                    $.pjax({url: data.files_url, container: '#pjax-container', timeout: pjaxTimeout});
+                });
+
+                $("#prev_commit_link").on('click', function(e) {
+                    var data = $(this).data();
+                    curState.commit_id = data.commitId;
+                });
+
+                $("#next_commit_link").on('click', function(e) {
+                    var data = $(this).data();
+                    curState.commit_id = data.commitId;
+                });
+
+                $('#at_rev').on("keypress", function(e) {
+                    /* ENTER PRESSED */
+                    if (e.keyCode === 13) {
+                        var rev = $('#at_rev').val();
+                        // explicit reload page here. with pjax entering bad input
+                        // produces not so nice results
+                        window.location = pyroutes.url('files_home',
+                                {'repo_name': templateContext.repo_name,
+                                 'revision': rev, 'f_path': state.f_path});
+                    }
+                });
+            }
+        };
+
+        var pjaxTimeout = 5000;
+
+        $(document).pjax(".pjax-link", "#pjax-container", {
+            "fragment": "#pjax-content",
+            "maxCacheLength": 1000,
+            "timeout": pjaxTimeout
+        });
+
+        // define global back/forward states
+        var isPjaxPopState = false;
+        $(document).on('pjax:popstate', function() {
+            isPjaxPopState = true;
+        });
+
+        $(document).on('pjax:end', function(xhr, options) {
+            if (isPjaxPopState) {
+                isPjaxPopState = false;
+                callbacks();
+                _NODEFILTER.resetFilter();
+            }
+
+            // run callback for tracking if defined for google analytics etc.
+            // this is used to trigger tracking on pjax
+            if (typeof window.rhodecode_statechange_callback !== 'undefined') {
+                var state = getState('statechange');
+                rhodecode_statechange_callback(state.url, null)
+            }
+        });
+
+        $(document).on('pjax:success', function(event, xhr, options) {
+            if (event.target.id == "file_history_container") {
+                $('#file_history_overview').hide();
+                $('#file_history_overview_full').show();
+                timeagoActivate();
+                tooltip_activate();
+            } else {
+                callbacks();
+            }
+        });
+
+        $(document).ready(function() {
+            callbacks();
+            var search_GET = "${request.GET.get('search','')}";
+            if (search_GET == "1") {
+                _NODEFILTER.initFilter();
+            }
+        });
+
+    </script>
+
+
+</%def>

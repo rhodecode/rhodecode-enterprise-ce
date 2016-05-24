@@ -1,0 +1,144 @@
+## -*- coding: utf-8 -*-
+<%inherit file="/debug_style/index.html"/>
+
+<%def name="breadcrumbs_links()">
+    ${h.link_to(_('Style'), h.url('debug_style_home'))}
+    &raquo;
+    ${c.active}
+</%def>
+
+
+<%def name="real_main()">
+<div class="box">
+    <div class="title">
+        ${self.breadcrumbs()}
+    </div>
+
+    ##main
+    <div class='sidebar-col-wrapper'>
+    ${self.sidebar()}
+
+    <div class="main-content">
+
+      <h2>Vertical forms</h2>
+
+      <p>Adding the class <code>.form-vertical</code> will align the form
+         elements differently. Otherwise it is the same structure of HTML
+         elements.</p>
+
+      <h2>Simple form elements</h2>
+
+      <div class="bs-example">
+        <form method='post' action='none'>
+          <div class='form form-vertical'>
+            <div class='fields'>
+
+              <div class='field'>
+                <div class='label'>
+                  <label for='example_input'>Example input label:</label>
+                </div>
+                <div class='input'>
+                  <input id="example_input" type="text" placeholder="Example input">
+                </div>
+              </div>
+
+              <div class='field'>
+                <div class='label'>
+                  <label for='example_input_ro'>Example input readonly:</label>
+                </div>
+                <div class='input'>
+                  <input id="example_input_ro" type="text" readonly="readonly" placeholder="Example input">
+                </div>
+              </div>
+
+              <div class='field'>
+                <div class='label'>
+                  <label for='example_select'>Example select input:</label>
+                </div>
+                <div class="select">
+                    <select id="example_select" >
+                        <option value="#">${_('Templates...')}</option>
+                        <option value="ga">Google Analytics</option>
+                        <option value="clicky">Clicky</option>
+                        <option value="server_announce">${_('Server Announcement')}</option>
+                    </select>
+                </div>
+              </div>
+              <script>
+              $(document).ready(function() {
+                  $('#example_select').select2({
+                      containerCssClass: 'drop-menu',
+                      dropdownCssClass: 'drop-menu-dropdown',
+                      dropdownAutoWidth: true,
+                      minimumResultsForSearch: -1
+                  });
+              });
+              </script>
+
+              <div class='field'>
+                <div class='label'>
+                  <label for='example_checkbox'>Example checkbox:</label>
+                </div>
+                <div class="checkboxes">
+                  <div class="checkbox">
+                    <input id="example_checkbox" type="checkbox">
+                    <label for="example_checkbox">Label of the checkbox</label>
+                  </div>
+                </div>
+              </div>
+
+              <div class='field'>
+                <div class='label'>
+                  <label for='example_checkboxes'>Example multiple checkboxes:</label>
+                </div>
+                <div class="checkboxes">
+                  <div class="checkbox">
+                    <input id="example_checkboxes_01" type="checkbox">
+                    <label for="example_checkboxes_01">Label of the first checkbox</label>
+                  </div>
+                  <div class="checkbox">
+                    <input id="example_checkboxes_02" type="checkbox">
+                    <label for="example_checkboxes_02">Label of the first checkbox</label>
+                  </div>
+                  <div class="checkbox">
+                    <input id="example_checkboxes_03" type="checkbox">
+                    <label for="example_checkboxes_03">Label of the first checkbox</label>
+                  </div>
+                </div>
+              </div>
+
+
+              <div class='field'>
+                <div class='label'>
+                  <label for='example_checkboxes'>Example multiple checkboxes:</label>
+                </div>
+                ## TODO: johbo: This is off compared to the checkboxes
+                <div class="radios">
+                  <label><input type="radio" checked="checked" value="hg.create.repository" name="default_repo_create" id="default_repo_create_hgcreaterepository">Enabled</label>
+                  <label><input type="radio" value="hg.create.none" name="default_repo_create" id="default_repo_create_hgcreatenone">Disabled</label>
+                  <span class="help-block">
+                    Permission to allow repository creation. This includes ability
+                    to create repositories in root level. If this option is
+                    disabled admin of repository group can still create
+                    repositories inside that repository group.
+                  </span>
+                </div>
+              </div>
+
+              <div class="buttons">
+                <input type="submit" value="Save" id="example_save" class="btn">
+                <input type="reset" value="Reset" id="example_reset" class="btn">
+              </div>
+
+            </div>
+          </div>
+        </form>
+
+      </div>
+
+
+
+    </div>
+  </div>
+</div>
+</%def>

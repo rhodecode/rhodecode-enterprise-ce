@@ -1,0 +1,137 @@
+// variables for use in all RhodeCode products
+
+// FONTS
+//Primary Colors (brand)
+@rcblue: #427cc9;		//RhodeCode blue
+@rcdarkblue: #305b91;	//RhodeCode dark blue
+@rclightblue: lighten(@rcblue, 30%);
+@rchighlightblue: lighten(@rcblue, 35%);
+
+// Secondary Colors (greyscale)
+@grey1: #202020;		//midnight
+@grey2: #323232;		//charcoal
+@grey3: #666666;		//tungsten
+@grey4: #979797;		//light grey
+@grey5: #dbd9da;		//greyish
+@grey6: #eeeeee;		//silver
+@grey7: #f9f9f9;		//light silver
+
+// special for navigation
+@nav-grey: #CDCCCD;
+
+@grey5-alpha: rgba(219, 217, 218, 0.3);
+
+// Tertiary Colors
+@color1: #879938;		//olive green
+@color2: #fcc93a;		//bright yellow
+@color3: #ff9e07;		//orange-yellow
+@color4: #fc663a;		//bright orange
+@color5: #d63d44;		//signal red
+@color6: #99287c;		//violet
+@color7: #682668;		//dark purple
+@color8: #194f8e;		//dark blue
+
+// Alert Colors (bright)
+@alert1: #0ac878;		//bright green
+@alert2: #e85e4d;		//soft red
+@alert3: #ffc854;		//corn yellow
+@alert4: #84a5d2;		//light blue
+
+// Alert Inner Colors
+@alert1-inner: #daf7eb;		//bright green
+@alert2-inner: #fbdfdb;		//soft red
+@alert3-inner: #fff4dd;		//corn yellow
+@alert4-inner: #e6edf6;		//light blue
+
+// Highlight color for lines and colors
+@comment-highlight-color: #ffd887;
+
+// FONTS
+@basefontsize: 13px;
+@navigation-fontsize: 14px;
+@journal-fontsize: @basefontsize+7px;
+@text-color: @grey2;
+@repo-title-fontsize: 18px;
+
+@text-regular: "proximanovaregular","Proxima Nova Regular", "Proxima Nova", sans-serif;
+@text-italic: "proximanovaitalic","Proxima Nova Italic", "Proxima Nova", sans-serif;
+@text-bold: "proximanovabold","Proxima Nova Bold", "Proxima Nova", sans-serif;
+@text-semibold: "proximanovasemibold","Proxima Nova Semibold", "Proxima Nova", sans-serif;
+@text-bold-italic: "proximanovabolditalic","Proxima Nova Bold Italic", "Proxima Nova", sans-serif;
+@text-light: @text-regular;
+@text-light-italic: @text-italic;
+// Used for .close buttons
+@text-bootstrap: "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+@panel-title: @basefontsize;
+@panel-footer: @basefontsize;
+
+// BORDERS
+@border-thickness: 1px;
+@border-thickness-buttons: 1px;
+@border-thickness-tags: 1px;
+@border-radius: 2px;
+@border-default-color: @grey5;
+@border-highlight-color: @grey4;
+
+// SPACING
+@contentpadding: 15px;  //padding on left and right of pages
+@pagepadding: 40px;		//padding on top and bottom of pages
+@menupadding: 12px;		//padding for sidebar and content
+@sidebarpadding: 15px;	//spacing between sections
+@space: 40px;			//spacing between sections
+@padding: 15px;			//padding inside modules
+@textmargin: 20px;		//spacing below headers
+@header-padding: 20px;
+@panel-padding: @padding;
+@gravatar-size: 16px;   // height/width of gravatar w/o border
+
+// ADMIN
+@form-max-width: 750px;
+
+// FORMS (new)
+@border-thickness-inputs: 1px;
+@input-padding: @button-padding; //needs to match button padding
+// TODO: johbo: Needed for working computation of paddings around labels etc.
+// Expected to be replaced once we are done with the form refactoring.
+@input-padding-px: 12px;
+@legend-width: 220px;
+@form-vertical-margin: 20px;
+@form-check-width: 20px;
+@form-radio-width: 10px;
+@form-textcolor: @grey3;
+
+// FORMS
+@label-width: 220px;
+//TODO: lisa: Eventually we don't need both of these; remove
+//            label-width when legend-width is no longer used
+
+@input-border-thickness: @border-thickness;
+@medium-inline-input-width: 115px;
+@input-description-minwidth: 300px;
+@label2-width: 200px;
+@checkboxes-width: 420px;
+@label-summary-minwidth: 80px;
+@search-form-width: 400px;
+@fields-input-m: 400px;
+@fields-input-l: 800px;
+
+// BUTTONS
+@button-padding: .9em;
+
+// DEFAULT WIDTHS
+@wrapper-maxwidth: 1200px;
+@sidebar-width: 145px;
+@sidebar-all-width: @sidebar-width + 2 * @sidebarpadding;
+@sidebar-small-width: 100px;
+@sidebar-small-all-width: @sidebar-small-width + 2 * @sidebarpadding;
+@texteditor-width: 660px;
+@maincontent-maxwidth: 940px;
+@pullrequest-width: 1025px;
+@summary-menu-stats-width: 200px;
+
+// SCREEN WIDTHS
+@screen-sm-min: 320px;
+
+// For Bootstrap
+@panel-border-radius: @border-radius;

@@ -1,0 +1,395 @@
+## -*- coding: utf-8 -*-
+
+<%inherit file="/base/base.html"/>
+<%namespace name="diff_block" file="/changeset/diff_block.html"/>
+
+<%def name="title()">
+    ${_('%s Commit') % c.repo_name} - ${h.show_id(c.commit)}
+    %if c.rhodecode_name:
+        &middot; ${h.branding(c.rhodecode_name)}
+    %endif
+</%def>
+
+<%def name="menu_bar_nav()">
+    ${self.menu_items(active='repositories')}
+</%def>
+
+<%def name="menu_bar_subnav()">
+    ${self.repo_menu(active='changelog')}
+</%def>
+
+<%def name="main()">
+<script>
+    // TODO: marcink switch this to pyroutes
+    AJAX_COMMENT_DELETE_URL = "${url('changeset_comment_delete',repo_name=c.repo_name,comment_id='__COMMENT_ID__')}";
+    templateContext.commit_data.commit_id = "${c.commit.raw_id}";
+</script>
+<div class="box">
+    <div class="title">
+        ${self.repo_page_title(c.rhodecode_db_repo)}
+    </div>
+
+  <div id="changeset_compare_view_content"  class="summary changeset">
+    <div class="summary-detail">
+      <div class="summary-detail-header">
+          <span class="breadcrumbs files_location">
+            <h4>${_('Commit')}
+              <code>
+                ${h.show_id(c.commit)}
+              </code>
+            </h4>
+          </span>
+          <span id="parent_link">
+            <a href="#" title="${_('Parent Commit')}">${_('Parent')}</a>
+          </span>
+           | 
+          <span id="child_link">
+            <a href="#" title="${_('Child Commit')}">${_('Child')}</a>
+          </span>
+      </div>
+  
+      <div class="fieldset">
+        <div class="left-label">
+          ${_('Description')}:
+        </div>
+        <div class="right-content">
+          <div id="trimmed_message_box" class="commit">${h.urlify_commit_message(c.commit.message,c.repo_name)}</div>
+          <div id="message_expand" style="display:none;">
+            ${_('Expand')}
+          </div>
+        </div>
+      </div>
+  
+      %if c.statuses:
+      <div class="fieldset">
+        <div class="left-label">
+          ${_('Commit status')}:
+        </div>
+        <div class="right-content">
+          <div class="changeset-status-ico">
+            <div class="${'flag_status %s' % c.statuses[0]} pull-left"></div>
+          </div>
+          <div title="${_('Commit status')}" class="changeset-status-lbl">[${h.commit_status_lbl(c.statuses[0])}]</div>
+        </div>
+      </div>
+      %endif
+  
+      <div class="fieldset">
+        <div class="left-label">
+          ${_('References')}:
+        </div>
+        <div class="right-content">
+          <div class="tags">
+  
+            %if c.commit.merge:
+              <span class="mergetag tag">
+               ${_('merge')}
+              </span>
+            %endif
+  
+            %if h.is_hg(c.rhodecode_repo):
+              %for book in c.commit.bookmarks:
+              <span class="booktag tag" title="${_('Bookmark %s') % book}">
+                <a href="${h.url('files_home',repo_name=c.repo_name,revision=c.commit.raw_id)}"><i class="icon-bookmark"></i>${h.shorter(book)}</a>
+              </span>
+              %endfor
+            %endif
+  
+            %for tag in c.commit.tags:
+             <span class="tagtag tag"  title="${_('Tag %s') % tag}">
+              <a href="${h.url('files_home',repo_name=c.repo_name,revision=c.commit.raw_id)}"><i class="icon-tag"></i>${tag}</a>
+             </span>
+            %endfor
+  
+            %if c.commit.branch:
+              <span class="branchtag tag" title="${_('Branch %s') % c.commit.branch}">
+                <a href="${h.url('files_home',repo_name=c.repo_name,revision=c.commit.raw_id)}"><i class="icon-code-fork"></i>${h.shorter(c.commit.branch)}</a>
+              </span>
+            %endif
+            </div>
+          </div>
+        </div>
+
+      <div class="fieldset">
+        <div class="left-label">
+          ${_('Diffs')}:
+        </div>
+        <div class="right-content">
+            <div class="diff-actions">
+              <a href="${h.url('changeset_raw_home',repo_name=c.repo_name,revision=c.commit.raw_id)}"  class="tooltip" title="${h.tooltip(_('Raw diff'))}">
+                ${_('Raw Diff')}
+              </a>
+               | 
+              <a href="${h.url('changeset_patch_home',repo_name=c.repo_name,revision=c.commit.raw_id)}"  class="tooltip" title="${h.tooltip(_('Patch diff'))}">
+                ${_('Patch Diff')}
+              </a>
+               | 
+              <a href="${h.url('changeset_download_home',repo_name=c.repo_name,revision=c.commit.raw_id,diff='download')}" class="tooltip" title="${h.tooltip(_('Download diff'))}">
+                ${_('Download Diff')}
+              </a>
+               | 
+              ${c.ignorews_url(request.GET)}
+               | 
+              ${c.context_url(request.GET)}
+            </div>
+        </div>
+      </div>
+  
+      <div class="fieldset">
+        <div class="left-label">
+          ${_('Comments')}:
+        </div>
+        <div class="right-content">
+            <div class="comments-number">
+                %if c.comments:
+                    <a href="#comments">${ungettext("%d Commit comment", "%d Commit comments", len(c.comments)) % len(c.comments)}</a>,
+                %else:
+                    ${ungettext("%d Commit comment", "%d Commit comments", len(c.comments)) % len(c.comments)}
+                %endif
+                %if c.inline_cnt:
+                    ## this is replaced with a proper link to first comment via JS linkifyComments() func
+                    <a href="#inline-comments" id="inline-comments-counter">${ungettext("%d Inline Comment", "%d Inline Comments", c.inline_cnt) % c.inline_cnt}</a>
+                %else:
+                    ${ungettext("%d Inline Comment", "%d Inline Comments", c.inline_cnt) % c.inline_cnt}
+                %endif
+            </div>
+        </div>
+      </div>
+  
+    </div> <!-- end summary-detail -->
+              
+    <div id="commit-stats" class="sidebar-right">
+      <div class="summary-detail-header">
+        <h4 class="item">
+          ${_('Author')}
+        </h4>
+      </div>
+      <div class="sidebar-right-content">
+        <img alt="gravatar" class="gravatar" title="${h.email_or_none(c.commit.author)}" src="${h.gravatar_url(h.email_or_none(c.commit.author), 40)}" height="16" width="16">
+        <span class="author">
+            ${h.link_to_user(c.commit.author)} - ${h.age_component(c.commit.date)}
+        </span>
+      </div>
+    </div><!-- end sidebar -->
+  </div> <!-- end summary -->
+  <div class="cs_files_title">
+    <span class="cs_files_expand">
+        <span id="files_link"><a href="#" title="${_('Browse files at current commit')}">${_('Browse files')}</a></span> |
+
+        <span id="expand_all_files">${_('Expand All')}</span> | <span id="collapse_all_files">${_('Collapse All')}</span>
+    </span>
+    <h2>
+        ${diff_block.diff_summary_text(len(c.files), c.lines_added, c.lines_deleted, c.limited_diff)}
+    </h2>
+  </div>
+</div> 
+
+<div class="cs_files">
+
+  %if not c.files:
+     <p class="empty_data">${_('No files')}</p>
+  %endif
+
+  <table class="compare_view_files commit_diff">
+      %for FID, (cs1, cs2, change, path, diff, stats, file) in c.changes[c.commit.raw_id].iteritems():
+        <tr class="cs_${change} collapse_file" fid="${FID}">
+          <td class="cs_icon_td">
+              <span class="collapse_file_icon" fid="${FID}"></span>
+          </td>
+          <td class="cs_icon_td">
+              <div class="flag_status not_reviewed hidden"></div>
+          </td>
+          <td class="cs_${change}" id="a_${FID}">
+            <div class="node">
+                <a href="#a_${FID}">
+                    <i class="icon-file-${change.lower()}"></i>
+                    ${h.safe_unicode(path)}
+                </a>
+            </div>
+          </td>
+          <td>
+            <div class="changes pull-right">${h.fancy_file_stats(stats)}</div>
+            <div class="comment-bubble pull-right" data-path="${path}">
+              <i class="icon-comment"></i>
+            </div>
+          </td>
+        </tr>
+        <tr fid="${FID}" id="diff_${FID}" class="diff_links">
+          <td></td>
+          <td></td>
+          <td class="cs_${change}">
+            ${diff_block.diff_menu(c.repo_name, h.safe_unicode(path), cs1, cs2, change, file)}
+          </td>
+          <td class="td-actions rc-form">
+            ${c.ignorews_url(request.GET, h.FID(cs2,path))} |
+            ${c.context_url(request.GET, h.FID(cs2,path))} |
+            <div data-comment-id="${h.FID(cs2,path)}" class="btn-link show-inline-comments comments-visible">
+              <span class="comments-show">${_('Show comments')}</span>
+              <span class="comments-hide">${_('Hide comments')}</span>
+            </div>
+          </td>
+        </tr>
+        <tr id="tr_${FID}">
+          <td></td>
+          <td></td>
+          <td class="injected_diff" colspan="2">
+            <div class="diff-container" id="${'diff-container-%s' % (id(change))}">
+              <div id="${FID}" class="diffblock margined comm">
+                <div class="code-body">
+                    <div class="full_f_path" path="${h.safe_unicode(path)}"></div>
+                    ${diff|n}
+                    % if file and file["is_limited_diff"]:
+                      % if file["exceeds_limit"]:
+                        ${diff_block.file_message()}
+                      % else:
+                        <h5>${_('Diff was truncated. File content available only in full diff.')} <a href="${h.url.current(fulldiff=1, **request.GET.mixed())}" onclick="return confirm('${_("Showing a big diff might take some time and resources, continue?")}')">${_('Show full diff')}</a></h5>
+                      % endif
+                    % endif
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+      %endfor
+  </table>
+</div>
+
+    % if c.limited_diff:
+          ${diff_block.changeset_message()}
+    % endif
+
+    ## template for inline comment form
+    <%namespace name="comment" file="/changeset/changeset_file_comment.html"/>
+    ${comment.comment_inline_form()}
+
+    ## render comments and inlines
+    ${comment.generate_comments()}
+
+    ## main comment form and it status
+    ${comment.comments(h.url('changeset_comment', repo_name=c.repo_name, revision=c.commit.raw_id),
+                       h.commit_status(c.rhodecode_db_repo, c.commit.raw_id))}
+
+    ## FORM FOR MAKING JS ACTION AS CHANGESET COMMENTS
+    <script type="text/javascript">
+
+      $(document).ready(function() {
+
+          var boxmax = parseInt($('#trimmed_message_box').css('max-height'), 10);
+          if($('#trimmed_message_box').height() === boxmax){
+              $('#message_expand').show();
+          }
+
+          $('#message_expand').on('click', function(e){
+              $('#trimmed_message_box').css('max-height', 'none');
+              $(this).hide();
+          });
+
+          $('.show-inline-comments').on('click', function(e){
+              var boxid = $(this).attr('data-comment-id');
+              var button = $(this);
+
+              if(button.hasClass("comments-visible")) {
+                $('#{0} .inline-comments'.format(boxid)).each(function(index){
+                  $(this).hide();
+                })
+                button.removeClass("comments-visible");
+              } else {
+                $('#{0} .inline-comments'.format(boxid)).each(function(index){
+                  $(this).show();
+                })
+                button.addClass("comments-visible");
+              }
+          });
+
+
+          // next links
+          $('#child_link').on('click', function(e){
+              // fetch via ajax what is going to be the next link, if we have
+              // >1 links show them to user to choose
+              if(!$('#child_link').hasClass('disabled')){
+                  $.ajax({
+                    url: '${h.url('changeset_children',repo_name=c.repo_name, revision=c.commit.raw_id)}',
+                    success: function(data) {
+                      if(data.results.length === 0){
+                          $('#child_link').html('${_('No Child Commits')}').addClass('disabled');
+                      }
+                      if(data.results.length === 1){
+                          var commit = data.results[0];
+                          window.location = pyroutes.url('changeset_home', {'repo_name': '${c.repo_name}','revision': commit.raw_id});
+                      }
+                      else if(data.results.length === 2){
+                          $('#child_link').addClass('disabled');
+                          $('#child_link').addClass('double');
+                          var _html = '';
+                          _html +='<a title="__title__" href="__url__">__rev__</a> '
+                                  .replace('__rev__','r{0}:{1}'.format(data.results[0].revision, data.results[0].raw_id.substr(0,6)))
+                                  .replace('__title__', data.results[0].message)
+                                  .replace('__url__', pyroutes.url('changeset_home', {'repo_name': '${c.repo_name}','revision': data.results[0].raw_id}));
+                          _html +=' | '
+                          _html +='<a title="__title__" href="__url__">__rev__</a> '
+                                  .replace('__rev__','r{0}:{1}'.format(data.results[1].revision, data.results[1].raw_id.substr(0,6)))
+                                  .replace('__title__', data.results[1].message)
+                                  .replace('__url__', pyroutes.url('changeset_home', {'repo_name': '${c.repo_name}','revision': data.results[1].raw_id}));
+                          $('#child_link').html(_html);
+                      }
+                    }
+                  });
+                  e.preventDefault();
+              }
+          });
+
+          // prev links
+          $('#parent_link').on('click', function(e){
+              // fetch via ajax what is going to be the next link, if we have
+              // >1 links show them to user to choose
+              if(!$('#parent_link').hasClass('disabled')){
+                  $.ajax({
+                    url: '${h.url('changeset_parents',repo_name=c.repo_name, revision=c.commit.raw_id)}',
+                    success: function(data) {
+                      if(data.results.length === 0){
+                          $('#parent_link').html('${_('No Parent Commits')}').addClass('disabled');
+                      }
+                      if(data.results.length === 1){
+                          var commit = data.results[0];
+                          window.location = pyroutes.url('changeset_home', {'repo_name': '${c.repo_name}','revision': commit.raw_id});
+                      }
+                      else if(data.results.length === 2){
+                          $('#parent_link').addClass('disabled');
+                          $('#parent_link').addClass('double');
+                          var _html = '';
+                          _html +='<a title="__title__" href="__url__">Parent __rev__</a>'
+                                  .replace('__rev__','r{0}:{1}'.format(data.results[0].revision, data.results[0].raw_id.substr(0,6)))
+                                  .replace('__title__', data.results[0].message)
+                                  .replace('__url__', pyroutes.url('changeset_home', {'repo_name': '${c.repo_name}','revision': data.results[0].raw_id}));
+                          _html +=' | '
+                          _html +='<a title="__title__" href="__url__">Parent __rev__</a>'
+                                  .replace('__rev__','r{0}:{1}'.format(data.results[1].revision, data.results[1].raw_id.substr(0,6)))
+                                  .replace('__title__', data.results[1].message)
+                                  .replace('__url__', pyroutes.url('changeset_home', {'repo_name': '${c.repo_name}','revision': data.results[1].raw_id}));
+                          $('#parent_link').html(_html);
+                      }
+                    }
+                  });
+                  e.preventDefault();
+              }
+          });
+
+          if (location.href.indexOf('#') != -1) {
+            var id = '#'+location.href.substring(location.href.indexOf('#') + 1).split('#');
+            var line = $('html').find(id);
+            offsetScroll(line, 70);
+          }
+
+          // browse tree @ revision
+          $('#files_link').on('click', function(e){
+              window.location = '${h.url('files_home',repo_name=c.repo_name, revision=c.commit.raw_id, f_path='')}';
+              e.preventDefault();
+          });
+
+          // inject comments into their proper positions
+          var file_comments = $('.inline-comment-placeholder');
+          renderInlineComments(file_comments, true);
+      })
+    </script>
+
+</%def>

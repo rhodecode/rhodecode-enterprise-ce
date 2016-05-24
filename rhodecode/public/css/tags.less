@@ -1,0 +1,96 @@
+// tags.less
+// For use in RhodeCode applications;
+// see style guide documentation for guidelines.
+
+// TAGS
+.tag,
+.tagtag {
+    display: inline-block;
+    min-height: 0;
+    margin: 0 auto;
+    padding: .25em;
+    text-align: center;
+    font-size: (-1 + @basefontsize); //fit in tables
+    line-height: .9em;
+    border: none;
+    .border-radius(@border-radius);
+    font-family: @text-regular;
+    background-image: none;
+    color: @grey4;
+    .border ( @border-thickness-tags, @grey4 );
+    white-space: nowrap;
+    a {
+        color: inherit;
+        text-decoration: underline;
+
+        i,
+        [class^="icon-"]:before,
+        [class*=" icon-"]:before {
+            text-decoration: none;
+        }
+    }
+}
+
+.tag0 { .border   ( @border-thickness-tags, @grey4 ); color:@grey4; }
+.tag1 { .border   ( @border-thickness-tags, @color1 ); color:@color1; }
+.tag2 { .border   ( @border-thickness-tags, @color2 ); color:@color2; }
+.tag3 { .border   ( @border-thickness-tags, @color3 ); color:@color3; }
+.tag4 { .border   ( @border-thickness-tags, @color4 ); color:@color4; }
+.tag5 { .border   ( @border-thickness-tags, @color5 ); color:@color5; }
+.tag6 { .border   ( @border-thickness-tags, @color6 ); color:@color6; }
+.tag7 { .border   ( @border-thickness-tags, @color7 ); color:@color7; }
+.tag8 { .border   ( @border-thickness-tags, @color8 ); color:@color8; }
+
+.metatag-list {
+    margin: 0;
+    padding: 0;
+
+    li {
+        margin: 0 0 @padding;
+        line-height: 1em;
+        list-style-type: none;
+
+        &:before { content: none; }
+    }
+}
+
+.branchtag, .booktag {
+    &:extend(.tag);
+
+
+    a {
+        color:inherit;
+    }
+}
+
+.metatag {
+    &:extend(.tag);
+    a {
+        color:inherit;
+        text-decoration: underline;
+    }
+}
+
+[tag="featured"] { &:extend(.tag1); }
+[tag="stale"] { &:extend(.tag2); }
+[tag="dead"] { &:extend(.tag3); }
+[tag="lang"] { &:extend(.tag4); }
+[tag="license"] { &:extend(.tag5); }
+[tag="requires"] { &:extend(.tag6); }
+[tag="recommends"] { &:extend(.tag7); }
+[tag="see"] { &:extend(.tag8); }
+
+.perm_tag {
+    &:extend(.tag);
+
+    &.read {
+        &:extend(.tag1);
+    }
+
+    &.write {
+        &:extend(.tag4);
+    }
+    &.admin {
+        &:extend(.tag5);
+    }
+}

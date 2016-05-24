@@ -1,0 +1,36 @@
+<%namespace name="base" file="/base/base.html"/>
+
+<div class="summary-detail-header">
+    <h4 class="item">
+        % if c.file_author:
+            ${_('Last Author')}
+        % else:
+            ${h.literal(ungettext(u'File Author (%s)',u'File Authors (%s)',len(c.authors)) % ('<b>%s</b>' % len(c.authors))) }
+        % endif
+    </h4>
+    <a href="#" id="show_authors" class="action_link">${_('Show All')}</a>
+</div>
+
+% if c.authors:
+<ul class="pull-left">
+    % for email, user in sorted(c.authors, key=lambda e: c.file_last_commit.author_email!=e[0]):
+    <li class="file_author">
+      <div class="contributor tooltip"  title="${h.tooltip(user)}">
+        ${base.gravatar(email, 16)}
+        <span class="author user">
+            ## case initial page load we only have last commit author
+            % if c.file_author:
+                ${h.link_to_user(user)} - ${h.age_component(c.file_last_commit.date)}
+            % else:
+                % if c.file_last_commit.author_email==email:
+                    <strong>${h.link_to_user(user)}</strong> (${_('last author')})
+                % else:
+                    ${h.link_to_user(user)}
+                % endif
+            % endif
+        </span>
+      </div>
+    </li>
+    % endfor
+</ul>
+% endif

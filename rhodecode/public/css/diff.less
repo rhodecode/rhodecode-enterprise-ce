@@ -1,0 +1,78 @@
+div.diffblock .code-header .changeset_header > div {
+    margin: 0 @padding;
+}
+
+
+// Line select and comment
+div.diffblock.margined.comm tr {
+    td {
+        position: relative;
+    }
+
+    .add-comment-line {
+        // Force td width for Firefox
+        width: 20px;
+        
+        // TODO: anderson: fixing mouse-over bug. 
+        // why was it vertical-align baseline in first place??
+        vertical-align: top !important;
+        // Force width and display for IE 9
+        .add-comment-content {
+            display: inline-block;
+            width: 20px;
+
+            a {
+                display: none;
+                position: absolute;
+                top: 2px;
+                left: 2px;
+                color: @grey3;
+            }
+        }
+    }
+
+    &.line {
+        &:hover, &.hover{
+            .add-comment-line a{
+                display: inline;
+            }
+        }
+
+        &.hover, &.selected {
+            &, del, ins {
+                background-color: lighten(@alert3, 10%)  !important;
+            }
+        }
+
+        &.commenting {
+            &, del, ins {
+                    background-image: none !important;
+                    background-color:  lighten(@alert4, 10%) !important; 
+                }
+        }
+    }
+}
+
+.compare-header {
+    overflow-x: auto;
+    overflow-y: hidden;
+    clear: both;
+    padding: @padding;
+    background: @grey6;
+    border: @border-thickness solid @border-default-color;
+    .border-radius(@border-radius);
+
+    .compare-value,
+    .compare-label {
+        float: left;
+        display: inline-block;
+        min-width: 5em;
+        margin: 0;
+        padding: 0.9em 0.9em 0.9em 0;
+    }
+
+    .compare-label {
+        clear: both;
+        font-family: @text-semibold;
+    }
+}

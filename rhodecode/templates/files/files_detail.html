@@ -1,0 +1,62 @@
+<%namespace name="file_base" file="/files/base.html"/>
+
+<div class="fieldset collapsable-content no-hide" data-toggle="summary-details">
+  <div class="left-label">
+    ${_('Commit Description')}:
+  </div>
+  <div class="commit right-content truncate-wrap">${h.urlify_commit_message(h.chop_at_smart(c.commit.message, '\n', suffix_if_chopped='...'), c.repo_name)}</div>
+</div>
+
+<div class="fieldset collapsable-content" data-toggle="summary-details">
+  <div class="left-label">
+    ${_('Commit Description')}:
+  </div>
+  <div class="commit right-content">${h.urlify_commit_message(c.commit.message,c.repo_name)}</div>
+</div>
+
+
+<div class="fieldset " data-toggle="summary-details">
+  <div class="left-label">
+    ${_('References')}:
+  </div>
+  <div class="right-content">
+    <div class="tags tags-main">
+      <code>
+          <a href="${h.url('changeset_home',repo_name=c.repo_name,revision=c.commit.raw_id)}">${h.show_id(c.commit)}</a>
+      </code>
+
+      ${file_base.refs(c.commit)}
+    </div>
+  </div>
+</div>
+
+<div class="fieldset collapsable-content" data-toggle="summary-details">
+  <div class="left-label">
+    ${_('File last commit')}:
+  </div>
+  <div class="right-content">
+    <div class="tags">
+      <code>
+          <a href="${h.url('changeset_home',repo_name=c.repo_name,revision=c.file_last_commit.raw_id)}">${h.show_id(c.file_last_commit)}</a>
+      </code>
+
+      ${file_base.refs(c.file_last_commit)}
+    </div>
+  </div>
+</div>
+
+
+<div id="node_history" class="file_diff_buttons collapsable-content" data-toggle="summary-details">
+  ${h.form(h.url('files_diff_home',repo_name=c.repo_name,f_path=c.f_path),method='get')}
+  ${h.hidden('diff1')}
+  ${h.hidden('diff2',c.file_last_commit.raw_id)}
+
+  ${h.submit('diff',_('Diff to Commit'),class_="btn disabled",disabled="true")}
+  ${h.submit('show_rev',_('Show at Commit'),class_="btn disabled",disabled="true")}
+  ${h.hidden('annotate', c.annotate)}
+  ${h.end_form()}
+</div>
+
+<script>
+  collapsableContent();
+</script>

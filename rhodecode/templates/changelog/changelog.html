@@ -1,0 +1,415 @@
+## -*- coding: utf-8 -*-
+
+<%inherit file="/base/base.html"/>
+
+<%def name="title()">
+    ${_('%s Changelog') % c.repo_name}
+    %if c.changelog_for_path:
+      /${c.changelog_for_path}
+    %endif
+    %if c.rhodecode_name:
+        &middot; ${h.branding(c.rhodecode_name)}
+    %endif
+</%def>
+
+<%def name="breadcrumbs_links()">
+    %if c.changelog_for_path:
+     /${c.changelog_for_path}
+    %endif
+      ${ungettext('showing %d out of %d commit', 'showing %d out of %d commits', c.showing_commits) % (c.showing_commits, c.total_cs)}
+</%def>
+
+<%def name="menu_bar_nav()">
+    ${self.menu_items(active='repositories')}
+</%def>
+
+<%def name="menu_bar_subnav()">
+    ${self.repo_menu(active='changelog')}
+</%def>
+
+<%def name="main()">
+
+<div class="box">
+    <div class="title">
+        ${self.repo_page_title(c.rhodecode_db_repo)}
+        <ul class="links">
+            <li>
+                <a href="#" class="btn btn-small" id="rev_range_container" style="display:none;"></a>
+                %if c.rhodecode_db_repo.fork:
+                    <span>
+                        <a  id="compare_fork_button"
+                            title="${_('Compare fork with %s' % c.rhodecode_db_repo.fork.repo_name)}"
+                            class="btn btn-small"
+                            href="${h.url('compare_url',
+                                repo_name=c.rhodecode_db_repo.fork.repo_name,
+                                source_ref_type=c.rhodecode_db_repo.landing_rev[0],
+                                source_ref=c.rhodecode_db_repo.landing_rev[1],
+                                target_repo=c.repo_name,
+                                target_ref_type='branch' if request.GET.get('branch') else c.rhodecode_db_repo.landing_rev[0],
+                                target_ref=request.GET.get('branch') or c.rhodecode_db_repo.landing_rev[1],
+                                merge=1)
+                            }">
+                                <i class="icon-loop"></i>
+                                ${_('Compare fork with Parent (%s)' % c.rhodecode_db_repo.fork.repo_name)}
+                        </a>
+                    </span>
+                %endif
+
+                ## pr open link
+                %if h.is_hg(c.rhodecode_repo) or h.is_git(c.rhodecode_repo):
+                    <span>
+                        <a id="open_new_pull_request" class="btn btn-small btn-success" href="${h.url('pullrequest_home',repo_name=c.repo_name)}">
+                            ${_('Open new pull request')}
+                        </a>
+                    </span>
+                %endif
+
+                ## clear selection
+                <div title="${_('Clear selection')}" class="btn" id="rev_range_clear" style="display:none">
+                    ${_('Clear selection')}
+                </div>
+
+            </li>
+        </ul>
+    </div>
+
+    % if c.pagination:
+
+        <div class="graph-header">
+            <div id="filter_changelog">
+                ${h.hidden('branch_filter')}
+                 %if c.selected_name:
+                 <div class="btn btn-default" id="clear_filter" >
+                     ${_('Clear filter')}
+                 </div>
+                %endif
+            </div>
+            ${self.breadcrumbs('breadcrumbs_light')}
+        </div>
+
+    <div id="graph">
+        <div class="graph-col-wrapper">
+          <div id="graph_nodes">
+            <div id="graph_canvas" data-graph='${c.jsdata|n}'></div>
+        </div>
+        <div id="graph_content" class="main-content graph_full_width">
+
+          <div class="table">
+            <table id="changesets" class="rctable">
+                <tr>
+                  <th></th>
+                  <th></th>
+                  <th>${_('Author')}</th>
+                  <th>${_('Age')}</th>
+                  <th></th>
+                  <th>${_('Commit Message')}</th>
+                  <th>${_('Commit')}</th>
+                  <th></th>
+                  <th>${_('Refs')}</th>
+                </tr>
+              <tbody>
+              %for cnt,commit in enumerate(c.pagination):
+                <tr id="chg_${cnt+1}" class="container ${'tablerow%s' % (cnt%2)}">
+
+                    <td class="td-checkbox">
+                        ${h.checkbox(commit.raw_id,class_="commit-range")}
+                    </td>
+                    <td class="td-status">
+
+                    %if c.statuses.get(commit.raw_id):
+                      <div class="changeset-status-ico">
+                        %if c.statuses.get(commit.raw_id)[2]:
+                          <a class="tooltip" title="${_('Commit status: %s\nClick to open associated pull request #%s') % (h.commit_status_lbl(c.statuses.get(commit.raw_id)[0]), c.statuses.get(commit.raw_id)[2])}" href="${h.url('pullrequest_show',repo_name=c.statuses.get(commit.raw_id)[3],pull_request_id=c.statuses.get(commit.raw_id)[2])}">
+                            <div class="${'flag_status %s' % c.statuses.get(commit.raw_id)[0]}"></div>
+                          </a>
+                        %else:
+                          <a class="tooltip" title="${_('Commit status: %s') % h.commit_status_lbl(c.statuses.get(commit.raw_id)[0])}" href="${h.url('changeset_home',repo_name=c.repo_name,revision=commit.raw_id,anchor='comment-%s' % c.comments[commit.raw_id][0].comment_id)}">
+                            <div class="${'flag_status %s' % c.statuses.get(commit.raw_id)[0]}"></div>
+                          </a>
+                        %endif
+                      </div>
+                    %endif
+                    </td>
+                    <td class="td-user">
+                      ${self.gravatar(h.email_or_none(commit.author))}
+                      <span title="${commit.author}" class="user">${h.link_to_user(commit.author, length=22)}</span>
+                    </td>
+                    <td class="td-time">
+                        ${h.age_component(commit.date)}
+                    </td>
+
+                    <td class="td-message expand_commit" data-commit-id="${commit.raw_id}" title="${_('Expand commit message')}">
+                      <div class="show_more_col">
+                        <i class="show_more"></i>&nbsp;
+                      </div>
+                    </td>
+                    <td class="mid td-description">
+                      <div class="log-container truncate-wrap">
+                          <div class="message truncate" id="c-${commit.raw_id}">${h.urlify_commit_message(commit.message, c.repo_name)}</div>
+                      </div>
+                      </td>
+
+                    <td class="td-hash">
+                    <code>
+                      <a href="${h.url('changeset_home',repo_name=c.repo_name,revision=commit.raw_id)}">
+                        <span class="commit_hash">${h.show_id(commit)}</span>
+                      </a>
+                    </code>
+                    </td>
+
+                    <td class="td-comments comments-col">
+                    %if c.comments.get(commit.raw_id):
+                      <a title="${_('Commit has comments')}" href="${h.url('changeset_home',repo_name=c.repo_name,revision=commit.raw_id,anchor='comment-%s' % c.comments[commit.raw_id][0].comment_id)}">
+                          ${len(c.comments[commit.raw_id])} <i class="icon-comment icon-comment-colored"></i>
+                      </a>
+                    %endif
+                    </td>
+
+                    <td class="td-tags tags-col truncate-wrap">
+                    <div class="truncate tags-truncate" id="t-${commit.raw_id}">
+                        ## branch
+                        %if commit.branch:
+                          <span class="branchtag tag" title="${_('Branch %s') % commit.branch}">
+                             <a href="${h.url('changelog_home',repo_name=c.repo_name,branch=commit.branch)}"><i class="icon-code-fork"></i>${h.shorter(commit.branch)}</a>
+                          </span>
+                        %endif
+
+                        ## bookmarks
+                        %if h.is_hg(c.rhodecode_repo):
+                            %for book in commit.bookmarks:
+                                <span class="tag booktag" title="${_('Bookmark %s') % book}">
+                                  <a href="${h.url('files_home',repo_name=c.repo_name,revision=commit.raw_id)}"><i class="icon-bookmark"></i>${h.shorter(book)}</a>
+                                </span>
+                            %endfor
+                        %endif
+
+                        ## tags
+                        %for tag in commit.tags:
+                          <span class="tagtag tag"  title="${_('Tag %s') % tag}">
+                            <a href="${h.url('files_home',repo_name=c.repo_name,revision=commit.raw_id)}"><i class="icon-tag"></i>${h.shorter(tag)}</a>
+                          </span>
+                        %endfor
+
+                      </div>
+                    </td>
+                </tr>
+              %endfor
+              </tbody>
+            </table>
+          </div>
+        </div>
+    </div>
+    <div class="pagination-wh pagination-left">
+        ${c.pagination.pager('$link_previous ~2~ $link_next')}
+    </div>
+
+    <script type="text/javascript" src="${h.url('/js/jquery.commits-graph.js')}"></script>
+    <script type="text/javascript">
+        var cache = {};
+        $(function(){
+
+            // Create links to commit ranges when range checkboxes are selected
+             var $commitCheckboxes = $('.commit-range');
+            // cache elements
+            var $commitRangeContainer = $('#rev_range_container');
+            var $commitRangeClear = $('#rev_range_clear');
+
+            var checkboxRangeSelector = function(e){
+                var selectedCheckboxes = [];
+                for (pos in $commitCheckboxes){
+                    if($commitCheckboxes[pos].checked){
+                        selectedCheckboxes.push($commitCheckboxes[pos]);
+                    }
+                }
+                var open_new_pull_request = $('#open_new_pull_request');
+                if(open_new_pull_request){
+                      var selected_changes = selectedCheckboxes.length;
+                      if (selected_changes > 1 || selected_changes == 1 && templateContext.repo_type != 'hg') {
+                          open_new_pull_request.hide();
+                      } else {
+                          if (selected_changes == 1) {
+                             open_new_pull_request.html(_TM['Open new pull request for selected commit']);
+                          } else if (selected_changes == 0) {
+                             open_new_pull_request.html(_TM['Open new pull request']);
+                          }
+                          open_new_pull_request.show();
+                      }
+                }
+
+                if (selectedCheckboxes.length>0){
+                    var revEnd = selectedCheckboxes[0].name;
+                    var revStart = selectedCheckboxes[selectedCheckboxes.length-1].name;
+                    var url = pyroutes.url('changeset_home',
+                            {'repo_name': '${c.repo_name}',
+                             'revision': revStart+'...'+revEnd});
+
+                    var link = (revStart == revEnd)
+                        ? _TM['Show selected commit __S']
+                        : _TM['Show selected commits __S ... __E'];
+
+                    link = link.replace('__S', revStart.substr(0,6));
+                    link = link.replace('__E', revEnd.substr(0,6));
+
+                    $commitRangeContainer
+                        .attr('href',url)
+                        .html(link)
+                        .show();
+
+                    $commitRangeClear.show();
+                    var _url = pyroutes.url('pullrequest_home',
+                                    {'repo_name': '${c.repo_name}',
+                                     'commit': revEnd});
+                    open_new_pull_request.attr('href', _url);
+                    $('#compare_fork_button').hide();
+                } else {
+                    $commitRangeContainer.hide();
+                    $commitRangeClear.hide();
+
+                    %if c.branch_name:
+                        var _url = pyroutes.url('pullrequest_home',
+                                        {'repo_name': '${c.repo_name}',
+                                         'branch':'${c.branch_name}'});
+                        open_new_pull_request.attr('href', _url);
+                    %else:
+                        var _url = pyroutes.url('pullrequest_home',
+                                        {'repo_name': '${c.repo_name}'});
+                        open_new_pull_request.attr('href', _url);
+                    %endif
+                    $('#compare_fork_button').show();
+                }
+            };
+
+            $commitCheckboxes.on('click', checkboxRangeSelector);
+
+            $commitRangeClear.on('click',function(e) {
+                $commitCheckboxes.attr('checked', false)
+                checkboxRangeSelector();
+                e.preventDefault();
+            });
+
+            // make sure the buttons are consistent when navigate back and forth
+            checkboxRangeSelector();
+
+
+            var msgs = $('.message');
+            // get first element height
+            var el = $('#graph_content .container')[0];
+            var row_h = el.clientHeight;
+            for (var i=0; i < msgs.length; i++) {
+                var m = msgs[i];
+
+                var h = m.clientHeight;
+                var pad = $(m).css('padding');
+                if (h > row_h) {
+                    var offset = row_h - (h+12);
+                    $(m.nextElementSibling).css('display','block');
+                    $(m.nextElementSibling).css('margin-top',offset+'px');
+                }
+            }
+
+            $('.expand_commit').on('click',function(e){
+              var target_expand = $(this);
+              var cid = target_expand.data('commitId');
+
+              if (target_expand.hasClass('open')){
+                $('#c-'+cid).css({'height': '1.5em', 'white-space': 'nowrap', 'text-overflow': 'ellipsis', 'overflow':'hidden'});
+                $('#t-'+cid).css({'height': 'auto', 'line-height': '.9em', 'text-overflow': 'ellipsis', 'overflow':'hidden', 'white-space':'nowrap'});
+                target_expand.removeClass('open');
+              }
+              else {
+                $('#c-'+cid).css({'height': 'auto', 'white-space': 'pre-line', 'text-overflow': 'initial', 'overflow':'visible'});
+                $('#t-'+cid).css({'height': 'auto', 'max-height': 'none', 'text-overflow': 'initial', 'overflow':'visible', 'white-space':'normal'});
+                target_expand.addClass('open');
+              }
+                // redraw the graph
+                graph_options.height = $("#changesets").height();
+                $("canvas").remove();
+                $("[data-graph]").commits(graph_options);
+            });
+
+            $("#clear_filter").on("click", function() {
+                var filter = {'repo_name': '${c.repo_name}'};
+                window.location = pyroutes.url('changelog_home', filter);
+            });
+
+            $("#branch_filter").select2({
+                'dropdownAutoWidth': true,
+                'width': 'resolve',
+                'placeholder': "${c.selected_name or _('Filter changelog')}",
+                containerCssClass: "drop-menu",
+                dropdownCssClass: "drop-menu-dropdown",
+                query: function(query){
+                  var key = 'cache';
+                  var cached = cache[key] ;
+                  if(cached) {
+                    var data = {results: []};
+                    //filter results
+                    $.each(cached.results, function(){
+                        var section = this.text;
+                        var children = [];
+                        $.each(this.children, function(){
+                            if(query.term.length == 0 || this.text.toUpperCase().indexOf(query.term.toUpperCase()) >= 0 ){
+                                children.push({'id': this.id, 'text': this.text, 'type': this.type})
+                            }
+                        });
+                        data.results.push({'text': section, 'children': children});
+                        query.callback({results: data.results});
+                    });
+                  }else{
+                      $.ajax({
+                        url: pyroutes.url('repo_refs_changelog_data', {'repo_name': '${c.repo_name}'}),
+                        data: {},
+                        dataType: 'json',
+                        type: 'GET',
+                        success: function(data) {
+                          cache[key] = data;
+                          query.callback({results: data.results});
+                        }
+                      })
+                  }
+                }
+            });
+
+            $('#branch_filter').on('change', function(e){
+                var data = $('#branch_filter').select2('data');
+                var selected = data.text;
+                var filter = {'repo_name': '${c.repo_name}'};
+                if(data.type == 'branch' || data.type == 'branch_closed'){
+                    filter["branch"] = selected;
+                }
+                else if (data.type == 'book'){
+                    filter["bookmark"] = selected;
+                }
+                window.location = pyroutes.url('changelog_home', filter);
+            });
+
+            // Determine max number of edges per row in graph
+            var jsdata = $.parseJSON($("[data-graph]").attr('data-graph'));
+            var edgeCount = 1;
+            $.each(jsdata, function(i, item){
+                $.each(item[2], function(key, value) {
+                    if (value[1] > edgeCount){
+                        edgeCount = value[1];
+                    }
+                });
+            });
+            var x_step = Math.min(18, Math.floor(86 / edgeCount));
+            var graph_options = {
+                width: 100,
+                height: $("#changesets").height(),
+                x_step: x_step,
+                y_step: 42,
+                dotRadius: 3.5,
+                lineWidth: 2.5
+            };
+            $("[data-graph]").commits(graph_options);
+
+        });
+
+    </script>
+    %else:
+        ${_('There are no changes yet')}
+    %endif
+    </div>
+</div>
+</%def>

@@ -1,0 +1,48 @@
+# top level files
+include test.ini
+include MANIFEST.in
+include README.rst
+include rhodecode/VERSION
+
+# docs
+recursive-include docs *
+
+# init.d
+recursive-include init.d *
+
+# translations
+recursive-include rhodecode/i18n *
+
+# bin stuff
+recursive-include rhodecode/bin *
+
+# hook templates
+recursive-include rhodecode/config/hook_templates *
+
+# non-python core stuff
+recursive-include rhodecode *.cfg
+recursive-include rhodecode *.json
+recursive-include rhodecode *.ini_tmpl
+recursive-include rhodecode *.sh
+
+# images, css
+include rhodecode/public/css/*.css
+include rhodecode/public/images/*.*
+
+# sound files
+include rhodecode/public/sounds/*.mp3
+include rhodecode/public/sounds/*.wav
+
+# fonts
+recursive-include rhodecode/public/fonts/ProximaNova *
+recursive-include rhodecode/public/fonts/RCIcons *
+
+# js
+recursive-include rhodecode/public/js *
+
+# templates
+recursive-include rhodecode/templates *
+
+# skip any tests files
+recursive-exclude rhodecode/tests *
+

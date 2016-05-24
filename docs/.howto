@@ -1,0 +1,4 @@
+# building the docs
+cd docs
+nix-build default.nix -o result
+make clean html

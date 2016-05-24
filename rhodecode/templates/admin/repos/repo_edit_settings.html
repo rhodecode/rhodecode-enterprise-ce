@@ -1,0 +1,225 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">${_('Settings for Repository: %s') % c.repo_info.repo_name}</h3>
+    </div>
+    <div class="panel-body">
+    ${h.secure_form(url('repo', repo_name=c.repo_info.repo_name),method='put')}
+    <div class="form">
+        <!-- fields -->
+        <div class="fields">
+            <div class="field">
+                <div class="label">
+                    <label for="repo_name">${_('Name')}:</label>
+                </div>
+                <div class="input">
+                    ${h.text('repo_name',class_="medium")}
+                    <p class="help-block">${_('Non-changeable id')}: `_${c.repo_info.repo_id}` <span><a id="show_more_clone_id" href="#">${_('what is that ?')}</a></span></p>
+                    <p id="clone_id" style="display:none;">
+                        ${_('URL by id')}: `${c.repo_info.clone_url(with_id=True)}` </br>
+                        ${_('''In case this repository is renamed or moved into another group the repository url changes.
+                               Using above url guarantees that this repository will always be accessible under such url.
+                               Useful for CI systems, or any other cases that you need to hardcode the url into 3rd party service.''')}</p>
+                </div>
+           </div>
+           % if c.repo_info.repo_type != 'svn':
+           <div class="field">
+               <div class="label">
+                   <label for="clone_uri">${_('Remote uri')}:</label>
+               </div>
+               <div class="input">
+                   %if c.repo_info.clone_uri:
+                    <div id="clone_uri_hidden" class='text-as-placeholder'>
+                        <span id="clone_uri_hidden_value">${c.repo_info.clone_uri_hidden}</span>
+                        <span class="link" id="edit_clone_uri"><i class="icon-edit"></i>${_('edit')}</span>
+                    </div>
+                    <div id="alter_clone_uri" style="display: none">
+                        ${h.text('clone_uri',class_="medium",  placeholder=_('new value, leave empty to remove'))}
+                        ${h.hidden('clone_uri_change', 'OLD')}
+                        <span class="link" id="cancel_edit_clone_uri">${_('cancel')}</span>
+                    </div>
+                   %else:
+                    ## not set yet, display form to set it
+                    ${h.text('clone_uri',class_="medium")}
+                    ${h.hidden('clone_uri_change', 'NEW')}
+                   %endif
+                 <p id="alter_clone_uri_help_block" class="help-block">${_('http[s] url where from repository was imported, also used for doing remote pulls.')}</p>
+               </div>
+            </div>
+            % else:
+              ${h.hidden('clone_uri', '')}
+            % endif
+            <div class="field">
+                <div class="label">
+                    <label for="repo_group">${_('Repository group')}:</label>
+                </div>
+                <div class="select">
+                    ${h.select('repo_group','',c.repo_groups,class_="medium")}
+                     %if c.personal_repo_group:
+                         <a style="padding: 4px" href="#" id="select_my_group" data-personal-group-id="${c.personal_repo_group.group_id}">${_('Select my personal group (%(repo_group_name)s)') % {'repo_group_name': c.personal_repo_group.group_name}}</a>
+                     %endif
+                    <p class="help-block">${_('Optional select a group to put this repository into.')}</p>
+                </div>
+            </div>
+            <div class="field">
+                <div class="label">
+                    <label for="repo_landing_rev">${_('Landing commit')}:</label>
+                </div>
+                <div class="select">
+                    ${h.select('repo_landing_rev','',c.landing_revs,class_="medium")}
+                    <p class="help-block">${_('Default commit for files page, downloads, whoosh and readme')}</p>
+                </div>
+            </div>
+            <div class="field">
+                <div class="label">
+                    <label for="user">${_('Owner')}:</label>
+                </div>
+                <div class="input">
+                       ${h.text('user', class_="medium", autocomplete="off")}
+                       <p class="help-block">${_('Change owner of this repository.')}</p>
+                </div>
+             </div>
+            <div class="field">
+                <div class="label label-textarea">
+                    <label for="repo_description">${_('Description')}:</label>
+                </div>
+                <div class="textarea text-area editor">
+                    ${h.textarea('repo_description', )}
+                    <p class="help-block">${_('Keep it short and to the point. Use a README file for longer descriptions.')}</p>
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="label label-checkbox">
+                    <label for="repo_private">${_('Private repository')}:</label>
+                </div>
+                <div class="checkboxes">
+                    ${h.checkbox('repo_private',value="True")}
+                    <span class="help-block">${_('Private repositories are only visible to people explicitly added as collaborators.')}</span>
+                </div>
+            </div>
+            <div class="field">
+                <div class="label label-checkbox">
+                    <label for="repo_enable_statistics">${_('Enable statistics')}:</label>
+                </div>
+                <div class="checkboxes">
+                    ${h.checkbox('repo_enable_statistics',value="True")}
+                    <span class="help-block">${_('Enable statistics window on summary page.')}</span>
+                </div>
+            </div>
+            <div class="field">
+                <div class="label label-checkbox">
+                    <label for="repo_enable_downloads">${_('Enable downloads')}:</label>
+                </div>
+                <div class="checkboxes">
+                    ${h.checkbox('repo_enable_downloads',value="True")}
+                    <span class="help-block">${_('Enable download menu on summary page.')}</span>
+                </div>
+            </div>
+            <div class="field">
+                <div class="label label-checkbox">
+                    <label for="repo_enable_locking">${_('Enable automatic locking')}:</label>
+                </div>
+                <div class="checkboxes">
+                    ${h.checkbox('repo_enable_locking',value="True")}
+                    <span class="help-block">${_('Enable automatic locking on repository. Pulling from this repository creates a lock that can be released by pushing back by the same user')}</span>
+                </div>
+            </div>
+
+            %if c.visual.repository_fields:
+              ## EXTRA FIELDS
+              %for field in c.repo_fields:
+                <div class="field">
+                    <div class="label">
+                        <label for="${field.field_key_prefixed}">${field.field_label} (${field.field_key}):</label>
+                    </div>
+                    <div class="input input-medium">
+                        ${h.text(field.field_key_prefixed, field.field_value, class_='medium')}
+                        %if field.field_desc:
+                          <span class="help-block">${field.field_desc}</span>
+                        %endif
+                    </div>
+                 </div>
+              %endfor
+            %endif
+            <div class="buttons">
+              ${h.submit('save',_('Save'),class_="btn")}
+              ${h.reset('reset',_('Reset'),class_="btn")}
+            </div>
+        </div>
+    </div>
+    ${h.end_form()}
+  </div>
+</div>
+
+<script>
+    $(document).ready(function(){
+        var select2Options = {
+          'containerCssClass': "drop-menu",
+          'dropdownCssClass': "drop-menu-dropdown",
+          'dropdownAutoWidth': true
+        };
+
+        var cloneUrl = function() {
+          var alterButton = $('#alter_clone_uri');
+          var editButton = $('#edit_clone_uri');
+          var cancelEditButton = $('#cancel_edit_clone_uri');
+          var hiddenUrl = $('#clone_uri_hidden');
+          var hiddenUrlValue = $('#clone_uri_hidden_value');
+          var input = $('#clone_uri');
+          var helpBlock = $('#alter_clone_uri_help_block');
+          var changedFlag = $('#clone_uri_change');
+          var originalText = helpBlock.html();
+          var obfuscatedUrl = hiddenUrlValue.html();
+
+          var edit = function(e) {
+            alterButton.show();
+            editButton.hide();
+            hiddenUrl.hide();
+
+            //add the old value next to input for verification
+            helpBlock.html("(" + obfuscatedUrl + ")" + "<br\>" + originalText);
+            changedFlag.val('MOD');
+          };
+
+          var cancelEdit = function(e) {
+            alterButton.hide();
+            editButton.show();
+            hiddenUrl.show();
+
+            helpBlock.html(originalText);
+            changedFlag.val('OLD');
+            input.val('');
+          };
+
+          var initEvents = function() {
+            editButton.on('click', edit);
+            cancelEditButton.on('click', cancelEdit);
+          };
+
+          var setInitialState = function() {
+            if (input.hasClass('error')) {
+              alterButton.show();
+              editButton.hide();
+              hiddenUrl.hide();
+            }
+          };
+
+          setInitialState();
+          initEvents();
+        }();
+
+        $('#show_more_clone_id').on('click', function(e){
+            $('#clone_id').show();
+            e.preventDefault();
+        });
+
+        $('#repo_landing_rev').select2(select2Options);
+        $('#repo_group').select2(select2Options);
+
+        UsersAutoComplete('user', '${c.rhodecode_user.user_id}');
+        $('#select_my_group').on('click', function(e){
+            e.preventDefault();
+            $("#repo_group").val($(this).data('personalGroupId')).trigger("change");
+        });
+    });
+</script>

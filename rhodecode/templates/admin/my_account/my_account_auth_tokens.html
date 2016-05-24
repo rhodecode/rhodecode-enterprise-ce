@@ -1,0 +1,102 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">${_('Authentication Tokens')}</h3>
+  </div>
+  <div class="panel-body">
+      <p>
+         ${_('Built-in tokens can be used to authenticate with all possible options.')}<br/>
+         ${_('Each token can have a role. VCS tokens can be used together with the authtoken auth plugin for git/hg operations.')}
+      </p>
+      <table class="rctable auth_tokens">
+        <tr>
+            <td class="truncate-wrap td-authtoken"><div class="user_auth_tokens truncate autoexpand"><code>${c.user.api_key}</code></div></td>
+            <td class="td-buttons">
+                <span class="btn btn-mini btn-info disabled">${_('Built-in')}</span>
+            </td>
+            <td class="td-buttons">
+                <span class="btn btn-mini btn-info disabled">all</span>
+            </td>
+            <td class="td-exp">${_('expires')}: ${_('never')}</td>
+            <td class="td-action">
+                ${h.secure_form(url('my_account_auth_tokens'),method='delete')}
+                    ${h.hidden('del_auth_token',c.user.api_key)}
+                    ${h.hidden('del_auth_token_builtin',1)}
+                    <button class="btn-link btn-danger" type="submit"
+                            onclick="return confirm('${_('Confirm to reset this auth token: %s') % c.user.api_key}');">
+                        <i class="icon-refresh"></i>
+                        ${_('Reset')}
+                    </button>
+                ${h.end_form()}
+            </td>
+        </tr>
+        %if c.user_auth_tokens:
+            %for auth_token in c.user_auth_tokens:
+              <tr class="${'expired' if auth_token.expired else ''}">
+                <td class="truncate-wrap td-authtoken"><div class="user_auth_tokens truncate autoexpand"><code>${auth_token.api_key}</code></div></td>
+                <td class="td-wrap">${auth_token.description}</td>
+                <td class="td-buttons">
+                    <span class="btn btn-mini btn-info disabled">${auth_token.role_humanized}</span>
+                </td>
+                <td class="td-exp">
+                     %if auth_token.expires == -1:
+                      ${_('expires')}: ${_('never')}
+                     %else:
+                        %if auth_token.expired:
+                            ${_('expired')}: ${h.age_component(h.time_to_datetime(auth_token.expires))}
+                        %else:
+                            ${_('expires')}: ${h.age_component(h.time_to_datetime(auth_token.expires))}
+                        %endif
+                     %endif
+                </td>
+                <td class="td-action">
+                    ${h.secure_form(url('my_account_auth_tokens'),method='delete')}
+                        ${h.hidden('del_auth_token',auth_token.api_key)}
+                        <button class="btn btn-link btn-danger" type="submit"
+                                onclick="return confirm('${_('Confirm to remove this auth token: %s') % auth_token.api_key}');">
+                            ${_('Delete')}
+                        </button>
+                    ${h.end_form()}
+                </td>
+              </tr>
+            %endfor
+        %else:
+        <tr><td><div class="ip">${_('No additional auth token specified')}</div></td></tr>
+        %endif
+      </table>
+
+        <div class="user_auth_tokens">
+            ${h.secure_form(url('my_account_auth_tokens'), method='post')}
+            <div class="form form-vertical">
+                <!-- fields -->
+                <div class="fields">
+                     <div class="field">
+                        <div class="label">
+                            <label for="new_email">${_('New authentication token')}:</label>
+                        </div>
+                        <div class="input">
+                            ${h.text('description', placeholder=_('Description'))}
+                            ${h.select('lifetime', '', c.lifetime_options)}
+                            ${h.select('role', '', c.role_options)}
+                        </div>
+                     </div>
+                    <div class="buttons">
+                      ${h.submit('save',_('Add'),class_="btn")}
+                      ${h.reset('reset',_('Reset'),class_="btn")}
+                    </div>
+                </div>
+            </div>
+            ${h.end_form()}
+        </div>
+    </div>
+</div>
+    <script>
+        $(document).ready(function(){
+            var select2Options = {
+                'containerCssClass': "drop-menu",
+                'dropdownCssClass': "drop-menu-dropdown",
+                'dropdownAutoWidth': true
+            };
+            $("#lifetime").select2(select2Options);
+            $("#role").select2(select2Options);
+        });
+    </script>

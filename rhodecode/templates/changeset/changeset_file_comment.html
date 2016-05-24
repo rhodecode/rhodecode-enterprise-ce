@@ -1,0 +1,312 @@
+## -*- coding: utf-8 -*-
+## usage:
+## <%namespace name="comment" file="/changeset/changeset_file_comment.html"/>
+## ${comment.comment_block(comment)}
+##
+<%namespace name="base" file="/base/base.html"/>
+
+<%def name="comment_block(comment, inline=False)">
+  <div class="comment ${'comment-inline' if inline else ''}" id="comment-${comment.comment_id}" line="${comment.line_no}" data-comment-id="${comment.comment_id}">
+      <div class="meta">
+          <div class="author">
+              ${base.gravatar_with_user(comment.author.email, 16)}
+          </div>
+          <div class="date">
+              ${h.age_component(comment.modified_at)}
+          </div>
+          <div class="status-change">
+              %if comment.pull_request:
+                  <a href="${h.url('pullrequest_show',repo_name=comment.pull_request.target_repo.repo_name,pull_request_id=comment.pull_request.pull_request_id)}">
+                      %if comment.status_change:
+                          ${_('Vote on pull request #%s') % comment.pull_request.pull_request_id}:
+                      %else:
+                          ${_('Comment on pull request #%s') % comment.pull_request.pull_request_id}
+                      %endif
+                  </a>
+              %else:
+                  %if comment.status_change:
+                      ${_('Status change on commit')}:
+                  %else:
+                      ${_('Comment on commit')}
+                  %endif
+              %endif
+          </div>
+          %if comment.status_change:
+            <div class="${'flag_status %s' % comment.status_change[0].status}"></div>
+            <div title="${_('Commit status')}" class="changeset-status-lbl">
+                 ${comment.status_change[0].status_lbl}
+            </div>
+          %endif
+          <a class="permalink" href="#comment-${comment.comment_id}"> &para;</a>
+
+
+          <div class="comment-links-block">
+
+            ## show delete comment if it's not a PR (regular comments) or it's PR that is not closed
+            ## only super-admin, repo admin OR comment owner can delete
+            %if not comment.pull_request or (comment.pull_request and not comment.pull_request.is_closed()):
+               %if h.HasPermissionAny('hg.admin')() or h.HasRepoPermissionAny('repository.admin')(c.repo_name) or comment.author.user_id == c.rhodecode_user.user_id:
+                  <div onClick="deleteComment(${comment.comment_id})" class="delete-comment"> ${_('Delete')}</div>
+                  %if inline:
+                    <div class="comment-links-divider"> | </div>
+                  %endif
+               %endif
+            %endif
+
+            %if inline:
+
+                <div id="prev_c_${comment.comment_id}" class="comment-previous-link" title="${_('Previous comment')}">
+                  <a class="arrow_comment_link disabled"><i class="icon-left"></i></a>
+                </div>
+
+                <div id="next_c_${comment.comment_id}" class="comment-next-link" title="${_('Next comment')}">
+                  <a class="arrow_comment_link disabled"><i class="icon-right"></i></a>
+                </div>
+            %endif
+
+          </div>
+      </div>
+      <div class="text">
+          ${comment.render(mentions=True)|n}
+      </div>
+  </div>
+</%def>
+
+<%def name="comment_block_outdated(comment)">
+  <div class="comments" id="comment-${comment.comment_id}">
+    <div class="comment comment-wrapp">
+      <div class="meta">
+        <div class="author">
+          ${base.gravatar_with_user(comment.author.email, 16)}
+        </div>
+        <div class="date">
+            ${h.age_component(comment.modified_at)}
+        </div>
+         %if comment.status_change:
+           <span class="changeset-status-container">
+             <span class="changeset-status-ico">
+                 <div class="${'flag_status %s' % comment.status_change[0].status}"></div>
+             </span>
+             <span title="${_('Commit status')}" class="changeset-status-lbl"> ${comment.status_change[0].status_lbl}</span>
+           </span>
+         %endif
+         <a class="permalink" href="#comment-${comment.comment_id}">&para;</a>
+         ## show delete comment if it's not a PR (regular comments) or it's PR that is not closed
+         ## only super-admin, repo admin OR comment owner can delete
+         %if not comment.pull_request or (comment.pull_request and not comment.pull_request.is_closed()):
+            <div class="comment-links-block">
+               %if h.HasPermissionAny('hg.admin')() or h.HasRepoPermissionAny('repository.admin')(c.repo_name) or comment.author.user_id == c.rhodecode_user.user_id:
+                   <div data-comment-id=${comment.comment_id} class="delete-comment">${_('Delete')}</div>
+               %endif
+            </div>
+         %endif
+      </div>
+      <div class="text">
+          ${comment.render(mentions=True)|n}
+      </div>
+    </div>
+  </div>
+</%def>
+
+<%def name="comment_inline_form()">
+  <div id="comment-inline-form-template" style="display: none;">
+    <div class="comment-inline-form ac">
+    %if c.rhodecode_user.username != h.DEFAULT_USER:
+        ${h.form('#', class_='inline-form', method='get')}
+        <div id="edit-container_{1}" class="clearfix">
+          <div class="comment-title pull-left">
+            ${_('Create a comment on line {1}.')}
+          </div>
+          <div class="comment-help pull-right">
+            ${(_('Comments parsed using %s syntax with %s support.') % (
+                   ('<a href="%s">%s</a>' % (h.url('%s_help' % c.visual.default_renderer), c.visual.default_renderer.upper())),
+                     ('<span  class="tooltip" title="%s">@mention</span>' % _('Use @username inside this text to send notification to this RhodeCode user'))
+                 )
+              )|n
+             }
+          </div>
+              <div style="clear: both"></div>
+              <textarea id="text_{1}" name="text" class="comment-block-ta ac-input"></textarea>
+        </div>
+        <div id="preview-container_{1}" class="clearfix" style="display: none;">
+           <div class="comment-help">
+                ${_('Comment preview')}
+            </div>
+            <div id="preview-box_{1}" class="preview-box"></div>
+        </div>
+        <div class="comment-footer">
+          <div class="comment-button hide-inline-form-button cancel-button">
+            ${h.reset('hide-inline-form', _('Cancel'), class_='btn hide-inline-form', id_="cancel-btn_{1}")}
+          </div>
+          <div class="action-buttons">
+            <input type="hidden" name="f_path" value="{0}">
+            <input type="hidden" name="line" value="{1}">
+            <button id="preview-btn_{1}" class="btn btn-secondary">${_('Preview')}</button>
+            <button id="edit-btn_{1}" class="btn btn-secondary" style="display: none;">${_('Edit')}</button>
+            ${h.submit('save', _('Comment'), class_='btn btn-success save-inline-form')}
+          </div>
+        ${h.end_form()}
+      </div>
+    %else:
+        ${h.form('', class_='inline-form comment-form-login', method='get')}
+        <div class="pull-left">
+            <div class="comment-help pull-right">
+              ${_('You need to be logged in to comment.')} <a href="${h.url('login_home',came_from=h.url.current())}">${_('Login now')}</a>
+            </div>
+        </div>
+        <div class="comment-button pull-right">
+        ${h.reset('hide-inline-form', _('Hide'), class_='btn hide-inline-form')}
+        </div>
+        <div class="clearfix"></div>
+        ${h.end_form()}
+    %endif
+    </div>
+  </div>
+</%def>
+
+
+## generates inlines taken from c.comments var
+<%def name="inlines(is_pull_request=False)">
+    %if is_pull_request:
+    <h2 id="comments">${ungettext("%d Pull Request Comment", "%d Pull Request Comments", len(c.comments)) % len(c.comments)}</h2>
+    %else:
+    <h2 id="comments">${ungettext("%d Commit Comment", "%d Commit Comments", len(c.comments)) % len(c.comments)}</h2>
+    %endif
+    %for path, lines_comments in c.inline_comments:
+        % for line, comments in lines_comments.iteritems():
+            <div style="display: none;" class="inline-comment-placeholder" path="${path}" target_id="${h.safeid(h.safe_unicode(path))}">
+            ## for each comment in particular line
+            %for comment in comments:
+                ${comment_block(comment, inline=True)}
+            %endfor
+            </div>
+        %endfor
+    %endfor
+
+</%def>
+
+## generate inline comments and the main ones
+<%def name="generate_comments(include_pull_request=False, is_pull_request=False)">
+    ## generate inlines for this changeset
+     ${inlines(is_pull_request)}
+
+    %for comment in c.comments:
+        <div id="comment-tr-${comment.comment_id}">
+          ## only render comments that are not from pull request, or from
+          ## pull request and a status change
+          %if not comment.pull_request or (comment.pull_request and comment.status_change) or include_pull_request:
+          ${comment_block(comment)}
+          %endif
+        </div>
+    %endfor
+    ## to anchor ajax comments
+    <div id="injected_page_comments"></div>
+</%def>
+
+## MAIN COMMENT FORM
+<%def name="comments(post_url, cur_status, is_pull_request=False, is_compare=False, change_status=True, form_extras=None)">
+%if is_compare:
+  <% form_id = "comments_form_compare" %>
+%else:
+  <% form_id = "comments_form" %>
+%endif
+
+
+%if is_pull_request:
+<div class="pull-request-merge">
+    %if c.allowed_to_merge:
+    <div class="pull-request-wrap">
+        <div class="pull-right">
+          ${h.secure_form(url('pullrequest_merge', repo_name=c.repo_name, pull_request_id=c.pull_request.pull_request_id), id='merge_pull_request_form')}
+          <span data-role="merge-message">${c.pr_merge_msg} ${c.approval_msg if c.approval_msg else ''}</span>
+          <% merge_disabled = ' disabled' if c.pr_merge_status is False else '' %>
+          <input type="submit" id="merge_pull_request" value="${_('Merge Pull Request')}" class="btn${merge_disabled}"${merge_disabled}>
+          ${h.end_form()}
+        </div>
+    </div>
+    %else:
+    <div class="pull-request-wrap">
+        <div class="pull-right">
+          <span>${c.pr_merge_msg} ${c.approval_msg if c.approval_msg else ''}</span>
+        </div>
+    </div>
+    %endif
+</div>
+%endif
+<div class="comments">
+    %if c.rhodecode_user.username != h.DEFAULT_USER:
+    <div class="comment-form ac">
+        ${h.secure_form(post_url, id_=form_id)}
+        <div id="edit-container" class="clearfix">
+            <div class="comment-title pull-left">
+              %if is_pull_request:
+              ${(_('Create a comment on this Pull Request.'))}
+              %elif is_compare:
+              ${(_('Create comments on this Commit range.'))}
+              %else:
+              ${(_('Create a comment on this Commit.'))}
+              %endif
+            </div>
+            <div class="comment-help pull-right">
+              ${(_('Comments parsed using %s syntax with %s support.') % (
+                     ('<a href="%s">%s</a>' % (h.url('%s_help' % c.visual.default_renderer), c.visual.default_renderer.upper())),
+                       ('<span  class="tooltip" title="%s">@mention</span>' % _('Use @username inside this text to send notification to this RhodeCode user'))
+                   )
+                )|n
+               }
+            </div>
+             <div style="clear: both"></div>
+             ${h.textarea('text', class_="comment-block-ta")}
+        </div>
+
+        <div id="preview-container" class="clearfix" style="display: none;">
+           <div class="comment-title">
+                ${_('Comment preview')}
+            </div>
+            <div id="preview-box" class="preview-box"></div>
+        </div>
+
+        <div id="comment_form_extras">
+        %if form_extras and isinstance(form_extras, (list, tuple)):
+            % for form_ex_el in form_extras:
+                ${form_ex_el|n}
+            % endfor
+        %endif
+        </div>
+        <div class="comment-footer">
+          %if change_status:
+          <div class="status_box">
+              <select id="change_status" name="changeset_status">
+                  <option></option> # Placeholder
+                  %for status,lbl in c.commit_statuses:
+                  <option value="${status}" data-status="${status}">${lbl}</option>
+                      %if is_pull_request and change_status and status in ('approved', 'rejected'):
+                          <option value="${status}_closed" data-status="${status}">${lbl} & ${_('Closed')}</option>
+                      %endif
+                  %endfor
+              </select>
+          </div>
+          %endif
+          <div class="action-buttons">
+              <button id="preview-btn" class="btn btn-secondary">${_('Preview')}</button>
+              <button id="edit-btn" class="btn btn-secondary" style="display:none;">${_('Edit')}</button>
+              <div class="comment-button">${h.submit('save', _('Comment'), class_="btn btn-success comment-button-input")}</div>
+          </div>
+        </div>
+          ${h.end_form()}
+    </div>
+    %endif
+</div>
+<script>
+    // init active elements of commentForm
+    var commitId = templateContext.commit_data.commit_id;
+    var pullRequestId = templateContext.pull_request_data.pull_request_id;
+    var lineNo;
+
+    var mainCommentForm = new CommentForm(
+            "#${form_id}", commitId, pullRequestId, lineNo, true);
+
+    mainCommentForm.initStatusChangeSelector();
+
+</script>
+</%def>

@@ -1,0 +1,56 @@
+## -*- coding: utf-8 -*-
+<%inherit file="/base/base.html"/>
+<%def name="title()">
+    ${_('Journal')}
+    %if c.rhodecode_name:
+        &middot; ${h.branding(c.rhodecode_name)}
+    %endif
+</%def>
+<%def name="breadcrumbs()">
+    <h1 class="block-left">
+    ${h.form(None, id_="filter_form", method="get")}
+        <input class="q_filter_box ${'' if c.search_term else 'initial'}" id="j_filter" size="15" type="text" name="filter" value="${c.search_term}" placeholder="${_('quick filter...')}"/>
+        <input type='submit' value="${_('Filter')}" class="btn" />
+        ${_('Journal')} - ${ungettext('%s entry', '%s entries', c.journal_pager.item_count) % (c.journal_pager.item_count)}
+    ${h.end_form()}
+    </h1>
+    <p class="tooltip filterexample" title="${h.tooltip(h.journal_filter_help())}">${_('Example Queries')}</p>
+</%def>
+<%def name="menu_bar_nav()">
+    ${self.menu_items(active='journal')}
+</%def>
+<%def name="head_extra()">
+<link href="${h.url('journal_atom', auth_token=c.rhodecode_user.feed_token)}" rel="alternate" title="${_('ATOM journal feed')}" type="application/atom+xml" />
+<link href="${h.url('journal_rss', auth_token=c.rhodecode_user.feed_token)}" rel="alternate" title="${_('RSS journal feed')}" type="application/rss+xml" />
+</%def>
+<%def name="main()">
+
+    <div class="box">
+        <!-- box / title -->
+        <div class="title journal">
+         ${self.breadcrumbs()}
+         <ul class="links icon-only-links block-right">
+           <li>
+             <span><a id="refresh" href="${h.url('journal')}"><i class="icon-refresh"></i></a></span>
+           </li>
+           <li>
+             <span><a href="${h.url('journal_atom', auth_token=c.rhodecode_user.feed_token)}"><i class="icon-rss-sign"></i></a></span>
+           </li>
+         </ul>
+        </div>
+        <div id="journal">${c.journal_data}</div>
+    </div>
+
+    <script type="text/javascript">
+
+    $('#j_filter').autoGrowInput();
+    $(document).on('pjax:success',function(){
+      show_more_event();
+      tooltip_activate();
+      show_changeset_tooltip();
+    });
+    $(document).pjax('#refresh', '#journal',
+                     {url: "${h.url.current(filter=c.search_term)}", push: false});
+
+    </script>
+</%def>

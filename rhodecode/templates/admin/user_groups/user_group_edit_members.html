@@ -1,0 +1,30 @@
+<%namespace name="base" file="/base/base.html"/>
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+      <h3 class="panel-title">${_('Members of User Group: %s') % c.user_group.users_group_name}</h3>
+  </div>
+  <div class="panel-body">
+    % if c.group_members_obj:
+      <table class="rctable group_members">
+        <tr>
+          <th>Username</th>
+          <th>Name</th>
+        </tr>
+      %for user in c.group_members_obj:
+        <tr>
+          <td class="td-author">
+            <div class="group_member">
+              ${base.gravatar(user.email, 16)}
+              <span class="username user">${h.link_to(user.username, h.url( 'edit_user',user_id=user.user_id))}</span>
+            </div>
+          </td>
+          <td class="fullname">${user.full_name}</td>
+        </tr>
+      %endfor
+      </table>
+    %else:
+      <p class="empty_data">${_('No members yet')}</p>
+    %endif
+  </div>
+</div>

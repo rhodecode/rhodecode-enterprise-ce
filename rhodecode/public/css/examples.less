@@ -1,0 +1,73 @@
+// Utilities for showing examples in our style guide
+
+.bs-example {
+
+    // TODO: johbo: mainly copy paste here, find better integration
+    border-color: #e5e5e5 #eee #eee;
+    border-style: solid;
+    border-width: 1px 0;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05) inset;
+    margin: 0 -15px 15px;
+    padding: 45px 15px 15px;
+    position: relative;
+
+    background-color: #fff;
+    border-color: #ddd;
+    border-radius: 4px 4px 0 0;
+    border-width: 1px;
+    box-shadow: none;
+    margin-left: 0;
+    margin-right: 0;
+
+    table {
+        width: 100%;
+    }
+}
+
+.sidebar li.divider {
+    padding-top: 30px;
+    border-top:1px solid #eee;
+}
+
+.bs-example:after {
+    color: #959595;
+    content: "Example";
+    font-size: 12px;
+    font-weight: 700;
+    left: 15px;
+    letter-spacing: 1px;
+    position: absolute;
+    text-transform: uppercase;
+    top: 15px;
+}
+
+.template-example {
+    xmp {
+        display: inline;
+    }
+}
+
+#icons-list{
+    span{
+        margin-right: @textmargin/2;
+    }
+}
+
+.rctable.examples {
+    margin: 0;
+
+    td:first-child  { width: 135px; }
+    td:nth-child(2) { width: 400px; }
+
+    &.end { margin-bottom: 40px; }
+}
+
+
+// For use in Style Guide to mark out code examples
+.highlight-html {
+  margin-bottom: 30px;
+  border: 1px solid #dbd9da;
+  border-radius: 2px;
+  color: #979797;
+  background-color: #f3f3f3;
+}

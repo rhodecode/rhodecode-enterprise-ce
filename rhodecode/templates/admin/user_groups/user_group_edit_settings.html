@@ -1,0 +1,91 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">${_('User Group: %s') % c.user_group.users_group_name}</h3>
+    </div>
+    <div class="panel-body">
+    ${h.secure_form(url('update_users_group', user_group_id=c.user_group.users_group_id),method='put', id='edit_users_group')}
+        <div class="form">
+            <!-- fields -->
+                <div class="fields">
+                     <div class="field">
+                        <div class="label">
+                            <label for="users_group_name">${_('Group name')}:</label>
+                        </div>
+                        <div class="input">
+                            ${h.text('users_group_name',class_='medium')}
+                        </div>
+                     </div>
+                     <div class="field">
+                        <div class="label">
+                            <label for="user">${_('Owner')}:</label>
+                        </div>
+                        <div class="input">
+                               ${h.text('user', class_="medium", autocomplete="off")}
+                               <span class="help-block">${_('Change owner of this user group.')}</span>
+                        </div>
+                     </div>
+                     <div class="field">
+                        <div class="label label-textarea">
+                            <label for="user_group_description">${_('Description')}:</label>
+                        </div>
+                        <div class="textarea textarea-small editor">
+                            ${h.textarea('user_group_description',cols=23,rows=5,class_="medium")}
+                            <span class="help-block">${_('Short, optional description for this user group.')}</span>
+                        </div>
+                     </div>
+                     <div class="field">
+                        <div class="label label-checkbox">
+                            <label for="users_group_active">${_('Active')}:</label>
+                        </div>
+                        <div class="checkboxes">
+                            ${h.checkbox('users_group_active',value=True)}
+                        </div>
+                     </div>
+                    <div class="field">
+                        <div class="label">
+                            <label for="users_group_active">${_('Members')}:</label>
+                        </div>
+                        <div class="select side-by-side-selector">
+                            <div class="left-group">
+                                <label class="text" >${_('Chosen group members')}</label>
+                                ${h.select('users_group_members',[x[0] for x in c.group_members],c.group_members,multiple=True,size=8,)}
+                               <div class="btn" id="remove_all_elements" >
+                                   ${_('Remove all elements')}
+                                   <i  class="icon-chevron-right"></i>
+                               </div>
+                            </div>
+                            <div class="middle-group">
+                                <i  id="add_element" class="icon-chevron-left"></i>
+                                <br />
+                                <i  id="remove_element" class="icon-chevron-right"></i>
+                            </div>
+                            <div class="right-group">
+                                 <label class="text" >${_('Available members')}</label>
+                                 ${h.select('available_members',[],c.available_members,multiple=True,size=8,)}
+                                 <div  class="btn" id="add_all_elements" >
+                                     <i  class="icon-chevron-left"></i>${_('Add all elements')}
+                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="buttons">
+                      ${h.submit('Save',_('Save'),class_="btn")}
+                    </div>
+                </div>
+        </div>
+    ${h.end_form()}
+    </div>
+</div>
+<script>
+    $(document).ready(function(){
+        MultiSelectWidget('users_group_members','available_members','edit_users_group');
+
+        $("#group_parent_id").select2({
+            'containerCssClass': "drop-menu",
+            'dropdownCssClass': "drop-menu-dropdown",
+            'dropdownAutoWidth': true
+        });
+
+        UsersAutoComplete('user', '${c.rhodecode_user.user_id}');
+    })
+</script>

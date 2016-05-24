@@ -1,0 +1,130 @@
+## -*- coding: utf-8 -*-
+<%inherit file="/debug_style/index.html"/>
+
+<%def name="breadcrumbs_links()">
+    ${h.link_to(_('Style'), h.url('debug_style_home'))}
+    &raquo;
+    ${c.active}
+</%def>
+
+
+<%def name="real_main()">
+<div class="box">
+    <div class="title">
+        ${self.breadcrumbs()}
+    </div>
+
+    ##main
+    <div class='sidebar-col-wrapper'>
+    ${self.sidebar()}
+
+    <div class="main-content">
+
+      <h2>Too wide tables handling</h2>
+
+
+
+<table class="issuetracker">
+    <tbody><tr>
+        <th>Description</th>
+        <th>Pattern</th>
+        <th>Url</th>
+        <th>Prefix</th>
+        <th></th>
+    </tr>
+    <tr>
+        <td class="issue-tracker-example">Example</td>
+        <td class="issue-tracker-example">(?:#)(?P&lt;issue_id&gt;\d+)</td>
+        <td class="issue-tracker-example">https://myissueserver.com/repo/issue/issue_id</td>
+        <td class="issue-tracker-example">#</td>
+        <td class="issue-tracker-example"><a target="_blank" href="https://rhodecode.com/docs">Read more</a></td>
+    </tr>
+      <tr id="4980baa2985b361e6e91b932f4a897d5">
+          <td class="issuetracker_desc">kjlakjlkjlkj;lkjl;kjl;kjl;kjl;kj;lkj</td>
+          <td class="issuetracker_pat">lkjhlkjhlkjhaslkdjfhalkdjsfhalksjdhf</td>
+          <td class="issuetracker_url">alsdkjhfalskjdfhalskjdhf</td>
+          <td class="issuetracker_pref">alskdjhfalksjdhfalksjdhf</td>
+          <td>
+             <div class="grid_edit">
+               <a class="edit_issuetracker_entry" uid="4980baa2985b361e6e91b932f4a897d5" title="edit" href="#">
+                 <i class="icon-pencil"></i>
+                   <input type="submit" value="edit" class="btn btn-link">
+               </a>
+             </div>
+
+             <div class="grid_delete">
+                <form method="post" action="/_admin/settings/issue-tracker/delete"><div style="display:none">
+<input type="hidden" value="delete" name="_method">
+</div>
+
+<div style="display: none;"><input type="hidden" value="05adf5bfb9be3766186f25db19b545134c6b0077" name="csrf_token" id="csrf_token"></div>
+                    <input type="hidden" value="4980baa2985b361e6e91b932f4a897d5" name="del_uid" id="del_uid">
+                    <i class="icon-remove-sign"></i>
+                    <input type="submit" value="delete" onclick="return confirm('Confirm to remove this pattern: kjlakjlkjlkj;lkjl;kjl;kjl;kjl;kj;lkj');" id="remove_user_3" class="btn btn-link btn-danger">
+                </form>
+             </div>
+
+          </td>
+      </tr>
+      <tr id="98ac51a4ab43bb36a4feceed15ac5b21">
+          <td class="issuetracker_desc">kajls;kdjfal;skdjflaskdjflksjdlfksjdlfksjdlfkjsldkfjslkdjflskdjflkdsjf</td>
+          <td class="issuetracker_pat">lksjdlfkjsldkfjsldkfjlskdjflskjdlfksjdlfksjdlfjslkdfjslkdjf</td>
+          <td class="issuetracker_url">lksdjflskdjflskjdf</td>
+          <td class="issuetracker_pref">sdlfkjsldkfjslkdjf</td>
+          <td>
+             <div class="grid_edit">
+               <a class="edit_issuetracker_entry" uid="98ac51a4ab43bb36a4feceed15ac5b21" title="edit" href="#">
+                 <i class="icon-pencil"></i>
+                   <input type="submit" value="edit" class="btn btn-link">
+               </a>
+             </div>
+
+             <div class="grid_delete">
+                <form method="post" action="/_admin/settings/issue-tracker/delete"><div style="display:none">
+<input type="hidden" value="delete" name="_method">
+</div>
+
+<div style="display: none;"><input type="hidden" value="05adf5bfb9be3766186f25db19b545134c6b0077" name="csrf_token" id="csrf_token"></div>
+                    <input type="hidden" value="98ac51a4ab43bb36a4feceed15ac5b21" name="del_uid" id="del_uid">
+                    <i class="icon-remove-sign"></i>
+                    <input type="submit" value="delete" onclick="return confirm('Confirm to remove this pattern: kajls;kdjfal;skdjflaskdjflksjdlfksjdlfksjdlfkjsldkfjslkdjflskdjflkdsjf');" id="remove_user_3" class="btn btn-link btn-danger">
+                </form>
+             </div>
+
+          </td>
+      </tr>
+      <tr id="098f6bcd4621d373cade4e832627b4f6">
+          <td class="issuetracker_desc">test</td>
+          <td class="issuetracker_pat">test</td>
+          <td class="issuetracker_url">test</td>
+          <td class="issuetracker_pref">test</td>
+          <td>
+             <div class="grid_edit">
+               <a class="edit_issuetracker_entry" uid="098f6bcd4621d373cade4e832627b4f6" title="edit" href="#">
+                 <i class="icon-pencil"></i>
+                   <input type="submit" value="edit" class="btn btn-link">
+               </a>
+             </div>
+
+             <div class="grid_delete">
+                <form method="post" action="/_admin/settings/issue-tracker/delete"><div style="display:none">
+<input type="hidden" value="delete" name="_method">
+</div>
+
+<div style="display: none;"><input type="hidden" value="05adf5bfb9be3766186f25db19b545134c6b0077" name="csrf_token" id="csrf_token"></div>
+                    <input type="hidden" value="098f6bcd4621d373cade4e832627b4f6" name="del_uid" id="del_uid">
+                    <i class="icon-remove-sign"></i>
+                    <input type="submit" value="delete" onclick="return confirm('Confirm to remove this pattern: test');" id="remove_user_3" class="btn btn-link btn-danger">
+                </form>
+             </div>
+
+          </td>
+      </tr>
+</tbody></table>
+
+
+
+    </div>
+  </div>
+</div>
+</%def>

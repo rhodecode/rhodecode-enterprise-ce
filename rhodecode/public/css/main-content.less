@@ -1,0 +1,373 @@
+
+// Contains the style definitions used for .main-content
+// elements which are mainly around the admin settings.
+
+
+// TODO: johbo: Integrate in a better way, this is for "main content" which
+// should not have a limit on the width.
+.main-content-full {
+    clear: both;
+}
+
+
+.main-content {
+    max-width: @maincontent-maxwidth;
+
+    h3,
+    // TODO: johbo: Change templates to use h3 instead of h4 here
+    h4 {
+        line-height: 1em;
+    }
+
+    // TODO: johbo: Check if we can do that on a global level
+    table {
+        th {
+            padding: 0;
+        }
+        td.field{
+                .help-block{
+                    margin-left: 0;
+                }
+        }
+    }
+
+    // TODO: johbo: Tweak this into the general styling, for a full width
+    // textarea
+    .textarea-full {
+        // 2x 10px padding and 2x 1px border
+        margin-right: 22px;
+    }
+
+}
+
+
+// TODO: johbo: duplicated, think about a mixins.less
+.block-left{
+    float: left;
+}
+
+.form {
+    .checkboxes {
+        // TODO: johbo: Should be changed in .checkboxes already
+        width: auto;
+    }
+
+    // TODO: johbo: some settings pages are broken and don't have the .buttons
+    // inside the .fields, tweak those templates and remove this.
+    .buttons {
+        margin-top: @textmargin;
+    }
+
+    .help-block {
+        display: block;
+        margin-left: @label-width;
+    }
+
+    .action_button {
+        color: @grey4;
+    }
+}
+
+.main-content-full-width {
+    .main-content;
+    width: 100%;
+    min-width: 100%;
+}
+
+.field {
+    clear: left;
+    margin-bottom: @padding;
+
+}
+
+.fields {
+	label {
+		color: @grey2;
+	}
+
+    .field {
+        clear: right;
+        margin-bottom: @textmargin;
+        width: 100%;
+
+        .label {
+            float: left;
+            margin-right: @form-vertical-margin;
+            margin-top: 0;
+            padding-top: @input-padding-px + @border-thickness-inputs;
+            width: @label-width - @form-vertical-margin;
+        }
+        // used in forms for fields that show just text
+        .label-text {
+            .label;
+            padding-top: 5px;
+        }
+        // Used to position content on the right side of a .label
+        .content,
+        .side-by-side-selector {
+            padding-top: @input-padding-px + @input-border-thickness;
+        }
+
+        .checkboxes,
+        .input,
+        .select,
+        .textarea,
+        .content {
+            float: none;
+            margin-left: @label-width;
+
+            .help-block{
+                margin-left: 0;
+            }
+        }
+
+        .checkboxes,
+        .input,
+        .select {
+            .help-block {
+                display: block;
+            }
+        }
+
+        .checkboxes,
+        .radios {
+            // TODO: johbo: We get a 4px margin from the from-bootstrap,
+            // compensating here to align well with labels on the left.
+            padding-top: @input-padding-px + @input-border-thickness - 3px;
+        }
+
+        .checkbox,
+        .radio {
+            display: block;
+            width: auto;
+        }
+
+        .checkbox + .checkbox {
+            display: block;
+        }
+
+        .input,
+        .select {
+            .help-block,
+            .info-block {
+                margin-top: @form-vertical-margin / 2;
+            }
+        }
+
+        .input {
+            .medium {
+                width: @fields-input-m;
+            }
+            .large {
+                width: @fields-input-l;
+            }
+
+            .text-as-placeholder {
+                padding-top: @input-padding-px + @border-thickness-inputs;
+            }
+        }
+
+        // TODO: johbo: Try to find a better integration of this bit.
+        // When using a select2 inside of a field, it should not have the
+        // top margin.
+        .select .drop-menu {
+            margin-top: 0;
+        }
+
+        .textarea {
+            float: none;
+
+            textarea {
+                // TODO: johbo: From somewhere we get a clear which does
+                // more harm than good here.
+                clear: none;
+            }
+
+            .CodeMirror {
+               // TODO: johbo: Tweak to position the .help-block nicer,
+               // figure out how to apply for .text-block instead.
+                margin-bottom: 10px;
+            }
+
+            // TODO: johbo: Check if we can remove the grey background on
+            // the global level and remove this if possible.
+            .help-block {
+                background: transparent;
+                padding: 0;
+            }
+        }
+
+        &.tag_patterns,
+        &.branch_patterns {
+
+            input {
+                max-width: 430px;
+            }
+        }
+    }
+
+    .field-sm {
+        .label {
+            padding-top: @input-padding-px / 2 + @input-border-thickness;
+        }
+        .checkboxes,
+        .radios {
+            // TODO: johbo: We get a 4px margin from the from-bootstrap,
+            // compensating here to align well with labels on the left.
+            padding-top: @input-padding-px / 2 + @input-border-thickness - 3px;
+        }
+    }
+
+    .field.customhooks {
+        .label {
+            padding-top: 0;
+        }
+        .input-wrapper {
+            padding-right: 25px;
+
+            input {
+                width: 100%;
+            }
+        }
+        .input {
+            padding-right: 25px;
+        }
+    }
+
+    .buttons {
+        // TODO: johbo: define variable for this value.
+        // Note that this should be 40px but since most elements add some
+        // space in the bottom, we are with 20 closer to 40.
+        margin-top: 20px;
+		clear: both;
+        margin-bottom: @padding;
+    }
+
+    .desc{
+        margin-right: @textmargin;
+    }
+
+    input,
+    .drop-menu {
+        margin-right: @padding/3;
+    }
+
+}
+
+.form-vertical .fields .field {
+
+    .label {
+        float: none;
+        width: auto;
+    }
+
+    .checkboxes,
+    .input,
+    .select,
+    .textarea {
+        margin-left: 0;
+    }
+
+    // TODO: johbo: had to tweak the width here to make it big enough for
+    // the license.
+    .textarea.editor {
+        max-width: none;
+    }
+
+    .textarea.large textarea {
+        min-height: 200px;
+    }
+
+    .help-block {
+        margin-left: 0;
+    }
+}
+
+
+
+
+.main-content {
+    .block-left;
+
+    .section {
+        margin-bottom: @space;
+    }
+
+
+    // Table aligning same way as forms in admin section, e.g.
+    // python packages table
+    table.formalign {
+        float: left;
+        width: auto;
+
+        .label {
+            width: @label-width;
+        }
+
+    }
+
+
+    table.issuetracker {
+
+        color: @text-color;
+
+        .issue-tracker-example {
+            color: @grey4;
+        }
+    }
+
+    .side-by-side-selector{
+        .left-group,
+        .middle-group,
+        .right-group{
+            float: left;
+        }
+
+        .left-group,
+        .right-group{
+            width: 45%;
+            text-align: center;
+
+            label{
+                width: 100%;
+                text-align: left;
+            }
+
+            select{
+                width: 100%;
+                background: none;
+                border-color: @border-highlight-color;
+                color: @text-color;
+                font-family: @text-light;
+                font-size: @basefontsize;
+                color: @grey1;
+                padding: @textmargin/2;
+            }
+
+            select:after{
+                content: "";
+            }
+
+        }
+
+        .middle-group{
+            width: 10%;
+            text-align: center;
+            padding-top: 6em;
+        }
+
+    }
+
+    .permissions_boxes{
+        label, .label{
+            margin-right: @textmargin/2;
+        }
+    }
+
+    .radios{
+        label{
+            margin-right: @textmargin;
+        }
+    }
+}
+

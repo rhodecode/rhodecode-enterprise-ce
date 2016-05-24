@@ -1,0 +1,98 @@
+## -*- coding: utf-8 -*-
+<%inherit file="/base/base.html"/>
+
+<%def name="title()">
+    ${_('User groups administration')}
+    %if c.rhodecode_name:
+        &middot; ${h.branding(c.rhodecode_name)}
+    %endif
+</%def>
+
+<%def name="breadcrumbs_links()">
+    <input class="q_filter_box" id="q_filter" size="15" type="text" name="filter" placeholder="${_('quick filter...')}" value=""/>
+    ${h.link_to(_('Admin'),h.url('admin_home'))} &raquo; <span id="user_group_count">0</span> ${_('user groups')}
+</%def>
+
+<%def name="menu_bar_nav()">
+    ${self.menu_items(active='admin')}
+</%def>
+
+<%def name="main()">
+<div class="box">
+
+    <div class="title">
+        ${self.breadcrumbs()}
+        <ul class="links">
+        %if h.HasPermissionAny('hg.admin', 'hg.usergroup.create.true')():
+          <li>
+            <a href="${h.url('new_users_group')}" class="btn btn-small btn-success">${_(u'Add User Group')}</a>
+          </li>
+        %endif
+        </ul>
+    </div>
+
+    <div id="repos_list_wrap">
+        <table id="user_group_list_table" class="display"></table>
+    </div>
+
+</div>
+<script>
+$(document).ready(function() {
+
+    var get_datatable_count = function(){
+      var api = $('#user_group_list_table').dataTable().api();
+      $('#user_group_count').text(api.page.info().recordsDisplay);
+    };
+
+    // user list
+    $('#user_group_list_table').DataTable({
+      data: ${c.data|n},
+      dom: 'rtp',
+      pageLength: ${c.visual.admin_grid_items},
+      order: [[ 0, "asc" ]],
+      columns: [
+         { data: {"_": "group_name",
+                  "sort": "group_name_raw"}, title: "${_('Name')}", className: "td-componentname"  },
+         { data: {"_": "desc",
+                  "sort": "desc"}, title: "${_('Description')}", className: "td-description" },
+         { data: {"_": "members",
+                  "sort": "members",
+                  "type": Number}, title: "${_('Members')}", className: "td-number" },
+         { data: {"_": "active",
+                  "sort": "active"}, title: "${_('Active')}", className: "td-active", className: "td-number"},
+         { data: {"_": "owner",
+                  "sort": "owner"}, title: "${_('Owner')}", className: "td-user" },
+         { data: {"_": "action",
+                  "sort": "action"}, title: "${_('Action')}", className: "td-action" }
+      ],
+      language: {
+          paginate: DEFAULT_GRID_PAGINATION
+      },
+      "initComplete": function( settings, json ) {
+          get_datatable_count();
+          tooltip_activate();
+      }
+    });
+
+    // update the counter when doing search
+    $('#user_group_list_table').on( 'search.dt', function (e,settings) {
+      get_datatable_count();
+    });
+
+    // filter, filter both grids
+    $('#q_filter').on( 'keyup', function () {
+      var user_api = $('#user_group_list_table').dataTable().api();
+      user_api
+        .columns(0)
+        .search(this.value)
+        .draw();
+    });
+
+    // refilter table if page load via back button
+    $("#q_filter").trigger('keyup');
+
+  });
+
+</script>
+
+</%def>

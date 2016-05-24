@@ -1,0 +1,141 @@
+## -*- coding: utf-8 -*-
+<%inherit file="/base/base.html"/>
+
+<%def name="title()">
+    ${_('Users administration')}
+    %if c.rhodecode_name:
+        &middot; ${h.branding(c.rhodecode_name)}
+    %endif
+</%def>
+
+<%def name="breadcrumbs_links()">
+    <input class="q_filter_box" id="q_filter" size="15" type="text" name="filter" placeholder="${_('quick filter...')}" value=""/>
+    ${h.link_to(_('Admin'),h.url('admin_home'))} &raquo; <span id="user_count">0</span>
+</%def>
+
+<%def name="menu_bar_nav()">
+    ${self.menu_items(active='admin')}
+</%def>
+
+<%def name="main()">
+<div class="box">
+
+    <div class="title">
+        ${self.breadcrumbs()}
+        <ul class="links">
+          <li>
+            <a href="${h.url('new_user')}" class="btn btn-small btn-success">${_(u'Add User')}</a>
+          </li>
+        </ul>
+    </div>
+
+    <div id="repos_list_wrap">
+        <table id="user_list_table" class="display"></table>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+
+    var get_datatable_count = function(){
+      var datatable = $('#user_list_table').dataTable();
+      var api = datatable.api();
+      var total = api.page.info().recordsDisplay;
+      var active = datatable.fnGetFilteredData();
+
+      $('#user_count').text(_TM["{0} active out of {1} users"].format(active, total));
+    };
+
+    // custom filter that filters by username OR email
+    $.fn.dataTable.ext.search.push(
+        function( settings, data, dataIndex ) {
+            var query = $('#q_filter').val();
+            var username = data[1];
+            var email = data[2];
+            var first_name = data[3];
+            var last_name = data[4];
+
+            var query_str = username + " " +
+                            email + " " +
+                            first_name + " " +
+                            last_name;
+            if((query_str).indexOf(query) !== -1){
+                return true;
+            }
+            return false;
+        }
+    );
+    // filtered data plugin
+    $.fn.dataTableExt.oApi.fnGetFilteredData = function ( oSettings ) {
+        var res = [];
+        for ( var i=0, iLen=oSettings.fnRecordsDisplay() ; i<iLen ; i++ ) {
+            var record = oSettings.aoData[i]._aData;
+            if(record['active_raw']){
+                res.push(record);
+            }
+        }
+        return res.length;
+    };
+
+    // user list
+    $('#user_list_table').DataTable({
+      data: ${c.data|n},
+      dom: 'rtp',
+      pageLength: ${c.visual.admin_grid_items},
+      order: [[ 1, "asc" ]],
+      columns: [
+         { data: {"_": "gravatar"}, className: "td-gravatar" },
+         { data: {"_": "username",
+                  "sort": "username_raw"}, title: "${_('Username')}", className: "td-user" },
+         { data: {"_": "email",
+                  "sort": "email"}, title: "${_('Email')}", className: "td-email"  },
+         { data: {"_": "first_name",
+                  "sort": "first_name"}, title: "${_('First Name')}", className: "td-user" },
+         { data: {"_": "last_name",
+                  "sort": "last_name"}, title: "${_('Last Name')}", className: "td-user" },
+         { data: {"_": "last_login",
+                  "sort": "last_login_raw",
+                  "type": Number}, title: "${_('Last login')}", className: "td-time" },
+         { data: {"_": "active",
+                  "sort": "active_raw"}, title: "${_('Active')}", className: "td-active" },
+         { data: {"_": "admin",
+                  "sort": "admin_raw"}, title: "${_('Admin')}", className: "td-admin" },
+         { data: {"_": "extern_type",
+                  "sort": "extern_type"}, title: "${_('Authentication type')}", className: "td-type"  },
+         { data: {"_": "action",
+                  "sort": "action"}, title: "${_('Action')}", className: "td-action" }
+      ],
+      language: {
+          paginate: DEFAULT_GRID_PAGINATION
+      },
+      "initComplete": function( settings, json ) {
+          get_datatable_count();
+          tooltip_activate();
+      },
+      "createdRow": function ( row, data, index ) {
+          if (!data['active_raw']){
+            $(row).addClass('closed')
+          }
+      }
+    });
+
+    // update the counter when doing search
+    $('#user_list_table').on( 'search.dt', function (e,settings) {
+      get_datatable_count();
+    });
+
+    // filter, filter both grids
+    $('#q_filter').on( 'keyup', function () {
+      var user_api = $('#user_list_table').dataTable().api();
+      user_api
+        .draw();
+    });
+
+    // refilter table if page load via back button
+    $("#q_filter").trigger('keyup');
+
+  });
+
+</script>
+
+</%def>

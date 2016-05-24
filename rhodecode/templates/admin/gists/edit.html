@@ -1,0 +1,136 @@
+## -*- coding: utf-8 -*-
+<%inherit file="/base/base.html"/>
+
+<%def name="title()">
+    ${_('Edit Gist')} &middot; ${c.gist.gist_access_id}
+    %if c.rhodecode_name:
+        &middot; ${h.branding(c.rhodecode_name)}
+    %endif
+</%def>
+
+<%def name="breadcrumbs_links()">
+    ${_('Edit Gist')} &middot; ${c.gist.gist_access_id}
+</%def>
+
+<%def name="menu_bar_nav()">
+    ${self.menu_items(active='gists')}
+</%def>
+
+<%def name="main()">
+<div class="box">
+    <!-- box / title -->
+    <div class="title">
+        ${self.breadcrumbs()}
+    </div>
+
+    <div class="table">
+        <div id="edit_error" class="flash_msg" style="display:none;">
+            <div class="alert alert-warning">
+              ${h.literal(_('Gist was updated since you started editing. Copy your changes and click %(here)s to reload the new version.')
+                             % {'here': h.link_to('here',h.url('edit_gist', gist_id=c.gist.gist_access_id))})}
+            </div>
+        </div>
+
+        <div id="files_data">
+          ${h.secure_form(h.url('edit_gist', gist_id=c.gist.gist_access_id), method='post', id='eform')}
+            <div>
+                <input type="hidden" value="${c.file_last_commit.raw_id}" name="parent_hash">
+                <textarea id="description" name="description"
+                          placeholder="${_('Gist description ...')}">${c.gist.gist_description}</textarea>
+                <div>
+                    <span class="gist-gravatar">
+                      ${self.gravatar(h.email_or_none(c.rhodecode_user.full_contact), 30)}
+                    </span>
+                    <label for='lifetime'>${_('Gist lifetime')}</label>
+                    ${h.dropdownmenu('lifetime', '0', c.lifetime_options)}
+
+                    <label for='acl_level'>${_('Gist access level')}</label>
+                    ${h.dropdownmenu('acl_level', c.gist.acl_level, c.acl_options)}
+                </div>
+            </div>
+
+            % for cnt, file in enumerate(c.files):
+                <div id="codeblock" class="codeblock" >
+                  <div class="code-header">
+                    <div class="form">
+                      <div class="fields">
+                        <input type="hidden" value="${file.path}" name="org_files">
+                        <input id="filename_${h.FID('f',file.path)}" name="files" size="30" type="text" value="${file.path}">
+                          ${h.dropdownmenu('mimetypes' ,'plain',[('plain',_('plain'))],enable_filter=True, id='mimetype_'+h.FID('f',file.path))}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="editor_container">
+                      <pre id="editor_pre"></pre>
+                      <textarea id="editor_${h.FID('f',file.path)}" name="contents" >${file.content}</textarea>
+                  </div>
+                </div>
+
+                ## dynamic edit box.
+                <script type="text/javascript">
+                $(document).ready(function(){
+                    var myCodeMirror = initCodeMirror(
+                            "editor_${h.FID('f',file.path)}", '');
+
+                    var modes_select = $('#mimetype_${h.FID('f',file.path)}');
+                    fillCodeMirrorOptions(modes_select);
+
+                    // try to detect the mode based on the file we edit
+                    var mimetype = "${file.mimetype}";
+                    var detected_mode = detectCodeMirrorMode(
+                            "${file.path}", mimetype);
+
+                    if(detected_mode){
+                        $(modes_select).select2("val", mimetype);
+                        $(modes_select).change();
+                        setCodeMirrorMode(myCodeMirror, detected_mode);
+                    }
+
+                    var filename_selector = '#filename_${h.FID('f',file.path)}';
+                    // on change of select field set mode
+                    setCodeMirrorModeFromSelect(
+                            modes_select, filename_selector, myCodeMirror, null);
+
+                    // on entering the new filename set mode, from given extension
+                    setCodeMirrorModeFromInput(
+                        modes_select, filename_selector, myCodeMirror, null);
+                });
+                </script>
+
+            %endfor
+
+            <div class="pull-right">
+            ${h.submit('update',_('Update Gist'),class_="btn btn-success")}
+            <a class="btn" href="${h.url('gist', gist_id=c.gist.gist_access_id)}">${_('Cancel')}</a>
+            </div>
+          ${h.end_form()}
+        </div>
+    </div>
+
+</div>
+<script>
+  $('#update').on('click', function(e){
+      e.preventDefault();
+
+      // check for newer version.
+      $.ajax({
+        url: "${h.url('edit_gist_check_revision', gist_id=c.gist.gist_access_id)}",
+        data: {
+            'revision': '${c.file_last_commit.raw_id}'
+        },
+        dataType: 'json',
+        type: 'GET',
+        success: function(data) {
+          if(data.success === false){
+              $('#edit_error').show();
+              window.scrollTo(0,0);
+          }
+          else{
+            $('#eform').submit();
+          }
+        }
+      });
+  })
+
+</script>
+</%def>

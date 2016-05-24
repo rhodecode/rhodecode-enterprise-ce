@@ -1,0 +1,87 @@
+// See panels-bootstrap.less
+// These provide overrides for custom styling of Bootstrap panels
+
+.panel {
+    &:extend(.clearfix);
+
+    width: 100%;
+    margin: 0 0 25px 0;
+    border-color: @grey5;
+    .border-radius(@border-radius);
+    .box-shadow(none);
+
+    .permalink {
+        visibility: hidden;
+    }
+
+    &:hover .permalink {
+        visibility: visible;
+        color: @rcblue;
+    }
+
+    .panel-heading {
+        position: relative;
+        min-height: 1em;
+        padding: @padding @panel-padding;
+        background-color: @grey6;
+        border-bottom: none;
+
+        .panel-title,
+        h3.panel-title {
+            float: left;
+            padding: 0 @padding 0 0;
+            line-height: 1;
+            font-size: @panel-title;
+            color: @grey1;
+        }
+
+        .panel-edit {
+            float: right;
+            line-height: 1;
+            font-size: @panel-title;
+        }
+    }
+
+    .panel-body {
+        padding: @panel-padding;
+    }
+    
+    .panel-footer {
+        background-color: white;
+        padding: .65em @panel-padding .5em;
+        font-size: @panel-footer;
+        color: @text-muted;
+    }
+
+    .q_filter_box {
+        min-width: 40%;
+    }
+
+    // special cases
+    &.user-profile {
+        float: left;
+
+        .panel-heading {
+            margin-bottom: @padding;
+        }
+    
+        .panel-body {
+            &:extend(.clearfix);
+        }
+    }
+}
+
+.main-content h3.panel-title {
+    font-size: @panel-title;
+    color: @grey1;
+}
+
+.panel-body-title-text {
+    margin: 0 0 20px 0;
+}
+
+// play nice with the current form and field css
+.field.panel-default,
+.form.panel-default {
+    width: auto;
+}

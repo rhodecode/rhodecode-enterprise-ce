@@ -1,0 +1,14 @@
+<%namespace name="base" file="/base/base.html"/>
+
+<div class="summary-detail-header">
+  <h4 class="item">
+    ${_('Commit Author')}
+  </h4>
+</div>
+<div class="sidebar-right-content">
+  ${base.gravatar(h.email_or_none(c.commit.author), 16)}
+  <span class="author user">
+      ${h.link_to_user(c.commit.author)} - ${h.age_component(c.commit.date)}
+  </span>
+</div>
+

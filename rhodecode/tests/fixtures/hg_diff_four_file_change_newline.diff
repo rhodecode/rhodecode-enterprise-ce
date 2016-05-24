@@ -1,0 +1,25 @@
+diff --git a/file b/file
+new file mode 100644
+--- /dev/null
++++ b/file
+@@ -0,0 +1,1 @@
++file
+diff --git a/file2 b/file2
+new file mode 100644
+--- /dev/null
++++ b/file2
+@@ -0,0 +1,1 @@
++another line
+diff --git a/file3 b/file3
+new file mode 100644
+--- /dev/null
++++ b/file3
+@@ -0,0 +1,1 @@
++newline
+diff --git a/file4 b/file4
+new file mode 100644
+--- /dev/null
++++ b/file4
+@@ -0,0 +1,1 @@
++fil4
+\ No newline at end of file

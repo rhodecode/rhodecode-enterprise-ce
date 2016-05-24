@@ -1,0 +1,174 @@
+## -*- coding: utf-8 -*-
+<%inherit file="/debug_style/index.html"/>
+
+<%def name="breadcrumbs_links()">
+    ${h.link_to(_('Style'), h.url('debug_style_home'))}
+    &raquo;
+    ${c.active}
+</%def>
+
+
+<%def name="real_main()">
+<div class="box">
+    <div class="title">
+        ${self.breadcrumbs()}
+    </div>
+
+    <div class='sidebar-col-wrapper'>
+    ${self.sidebar()}
+
+    <div class="main-content">
+
+
+    <h2>Inline form elements</h2>
+
+    <p>A few places have a button close to an input element or similar.</p>
+
+
+    <h3>Submit button after select element</h3>
+
+    <div class="bs-example">
+
+      ## TODO: johbo: not sure if we should add a class like .form-inline
+      ## here. Seems to work good enough right now.
+      <form method="post" action="">
+        <div class="form">
+          <div class="fields">
+            <select id="example_select" >
+                <option value="#">${_('Templates...')}</option>
+                <option value="ga">Google Analytics</option>
+                <option value="clicky">Clicky</option>
+                <option value="server_announce">${_('Server Announcement')}</option>
+            </select>
+            <input type="submit" value="Set" id="example_save" class="btn">
+          </div>
+
+          <script>
+          $(document).ready(function() {
+              $('#example_select').select2({
+                  containerCssClass: 'drop-menu',
+                  dropdownCssClass: 'drop-menu-dropdown',
+                  dropdownAutoWidth: true,
+                  minimumResultsForSearch: -1
+              });
+          });
+          </script>
+
+         </div>
+      </form>
+
+    </div>
+
+
+
+    <h3>Submit button after input element</h3>
+
+    <div class="bs-example">
+
+      ## TODO: johbo: not sure if we should add a class like .form-inline
+      ## here. Seems to work good enough right now.
+      <form method="post" action="">
+        <div class="form">
+
+          <div class="fields">
+            <input type="text" id="example_input" placeholder="Placeholder...">
+            <input type="submit" value="Set" id="example_save" class="btn">
+          </div>
+
+         </div>
+      </form>
+
+    </div>
+
+
+
+    <h3>Submit and Reset button after input element</h3>
+
+    <div class="bs-example">
+
+      ## TODO: johbo: not sure if we should add a class like .form-inline
+      ## here. Seems to work good enough right now.
+      <form method="post" action="">
+        <div class="form">
+
+          <div class="fields">
+            <input type="text" id="example_input" placeholder="Placeholder...">
+            <input type="submit" value="Set" id="example_save" class="btn">
+            <input type="reset" value="Reset" id="example_reset" class="btn">
+          </div>
+
+         </div>
+      </form>
+
+    </div>
+
+
+
+    <h3>Checkbox wrapped in the label itself</h3>
+
+    <div class="bs-example">
+
+      <div class="field">
+        <label><input id="example_label_checkbox" type="checkbox">Checkbox with label around it</label>
+      </div>
+
+      <div class="field">
+        <label><input id="example_label_checkbox" type="radio">Radio with label around it</label>
+      </div>
+
+    </div>
+
+
+    <h3>Checkbox wrapped in the label itself</h3>
+
+    <div class="bs-example">
+
+      <div class="form">
+        <div class="fields">
+          <label>Label</label> <input type="text">
+        </div>
+      </div>
+    </div>
+
+
+    <div class="bs-example">
+      <div class="form">
+        <div class="fields">
+            <label>Label</label>
+            <select id="02_example_select1" >
+                <option value="#">${_('Templates...')}</option>
+                <option value="ga">Google Analytics</option>
+                <option value="clicky">Clicky</option>
+                <option value="server_announce">${_('Server Announcement')}</option>
+            </select>
+
+            <label>Label</label>
+            <select id="02_example_select2" >
+                <option value="#">${_('Templates...')}</option>
+                <option value="ga">Google Analytics</option>
+                <option value="clicky">Clicky</option>
+                <option value="server_announce">${_('Server Announcement')}</option>
+            </select>
+        </div>
+      </div>
+
+      <script>
+      $(document).ready(function() {
+          $('#02_example_select1').select2({
+              containerCssClass: 'drop-menu',
+              dropdownCssClass: 'drop-menu-dropdown',
+              dropdownAutoWidth: true,
+              minimumResultsForSearch: -1
+          });
+          $('#02_example_select2').select2({
+              containerCssClass: 'drop-menu',
+              dropdownCssClass: 'drop-menu-dropdown',
+              dropdownAutoWidth: true,
+              minimumResultsForSearch: -1
+          });
+      });
+      </script>
+    </div>
+  </div>
+</div>
+</%def>

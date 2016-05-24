@@ -1,0 +1,279 @@
+## -*- coding: utf-8 -*-
+<%inherit file="/debug_style/index.html"/>
+
+<%def name="breadcrumbs_links()">
+    ${h.link_to(_('Style'), h.url('debug_style_home'))}
+    &raquo;
+    ${c.active}
+</%def>
+
+
+<%def name="real_main()">
+<div class="box">
+    <div class="title">
+        ${self.breadcrumbs()}
+    </div>
+
+    <div class='sidebar-col-wrapper'>
+    ${self.sidebar()}
+
+      <div class="main-content">
+
+        <h2>Simple form elements</h2>
+        <p>When working with forms, please upgrade to this new form layout. See the depreciated forms pages for the previous layout.</p>
+        <p>These forms are marked by the class <code>rcform</code>. See html for details on formatting. 
+        </p>
+        <p>Some other notes: The customized checkboxes and radio buttons use the label for styling. This has been disabled for lower versions of IE using the <code>:not()</code> selector. Select2 dropdowns need to be redone, but this may be in a later iteration.
+        </p>
+
+        <h2>Examples</h2>
+
+          <form method='post' action='none' class="rcform">
+
+            <fieldset>
+              <legend>Dropdown:</legend>
+              <div class="fields">
+                <select id="example_select" >
+                    <option value="#">${_('Templates...')}</option>
+                    <option value="ga">Google Analytics</option>
+                    <option value="clicky">Clicky</option>
+                    <option value="server_announce">${_('Server Announcement')}</ option>
+                </select>
+                <script>
+                  $(document).ready(function() {
+                      $('#example_select').select2({
+                          containerCssClass: 'drop-menu',
+                          dropdownCssClass: 'drop-menu-dropdown',
+                          dropdownAutoWidth: true,
+                          minimumResultsForSearch: -1
+                      });
+                  });
+                </script>
+              </fields>
+            </fieldset>
+
+            <fieldset>
+              <legend>Multiple Dropdowns in a list:</legend>
+              <ul class="fields formlist">
+                <li>
+                  <select id="example_select3" >
+                      <option value="#">${_('Templates...')}</option>
+                      <option value="ga">Google Analytics</option>
+                      <option value="clicky">Clicky</option>
+                      <option value="server_announce">${_('Server Announcement')} </ option>
+                  </select>
+                  <script>
+                    $(document).ready(function() {
+                        $('#example_select3').select2({
+                            containerCssClass: 'drop-menu',
+                            dropdownCssClass: 'drop-menu-dropdown',
+                            dropdownAutoWidth: true,
+                            minimumResultsForSearch: -1
+                        });
+                    });
+                  </script>
+                </li>
+                <li>
+                  <select id="example_select4" >
+                      <option value="#">${_('Templates...')}</option>
+                      <option value="ga">Google Analytics</option>
+                      <option value="clicky">Clicky</option>
+                      <option value="server_announce">${_('Server Announcement')} </ option>
+                  </select>
+                  <script>
+                    $(document).ready(function() {
+                        $('#example_select4').select2({
+                            containerCssClass: 'drop-menu',
+                            dropdownCssClass: 'drop-menu-dropdown',
+                            dropdownAutoWidth: true,
+                            minimumResultsForSearch: -1
+                        });
+                    });
+                  </script>
+                </li>
+                <li>
+                  <select id="example_select5" >
+                      <option value="#">${_('Templates...')}</option>
+                      <option value="ga">Google Analytics</option>
+                      <option value="clicky">Clicky</option>
+                      <option value="server_announce">${_('Server Announcement')} </ option>
+                  </select>
+                  <script>
+                    $(document).ready(function() {
+                        $('#example_select5').select2({
+                            containerCssClass: 'drop-menu',
+                            dropdownCssClass: 'drop-menu-dropdown',
+                            dropdownAutoWidth: true,
+                            minimumResultsForSearch: -1
+                        });
+                    });
+                  </script>
+                </li>
+              </ul>
+            </fieldset>
+
+            <fieldset>
+              <legend>Dropdown with checkbox:</legend>
+              <div class="fields">
+                <select id="example_select2" >
+                  <option value="#">${_('Some text...')}</option>
+                  <option value="ga">A really long thing</option>
+                  <option value="clicky">Repo Name</option>
+                  <option value="server_announce">${_('Variable Item')}</option>
+                </select>
+                <input type="checkbox" name="size" id="size_1" value="small"/>
+                <label for="size_1">Checkbox for something</label>\
+                <span class="label">Checkbox for something</span>
+                <span class="help-block">
+                  Note: There is a very specific selector which centers the checkbox on the dropdown;
+                  it requires that the script NOT be between the two.
+                </span>
+              </div>
+                <script>
+                  $(document).ready(function() {
+                      $('#example_select2').select2({
+                          containerCssClass: 'drop-menu',
+                          dropdownCssClass: 'drop-menu-dropdown',
+                          dropdownAutoWidth: true,
+                          minimumResultsForSearch: -1
+                      });
+                  });
+                </script>
+            </fieldset>
+
+            <fieldset>
+              <legend>Radio Buttons:</legend>
+              <div class="fields">
+                <input type="radio" name="size" id="size_2" value="small"/>
+                <label for="size_2">Radio one</label>
+                <span class="label">Radio Button One</span>
+                <input type="radio" name="size" id="size_3" value="small"/>
+                <label for="size_3">Radio two</label>
+                <span class="label">Radio Button Two</span>
+                <input type="radio" checked name="size" id="size_4" value="small"/>
+                <label for="size_4">Radio three</label>
+                <span class="label">Radio Button Three</span>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend>Checkboxes with help text:</legend>
+              <div class="fields">
+                <input type="checkbox" name="size" id="size_5" value="small"/>
+                <label for="size_5">Checkbox one</label>
+                <span class="label">Checkbox One</span>
+                <input type="checkbox" checked name="size" id="size_6" value="small"/>
+                <label for="size_6">Checkbox two</label>
+                <span class="label">Checkbox Two</span>
+                <input type="checkbox" checked name="size" id="size_7" value="small"/>
+                <label for="size_7">Checkbox three</label>
+                <span class="label">Checkbox Three</span>
+                <span class="help-block">
+                  Help text can be put wherever needed. Inside of .fields, it is confined to the width of the input sections.
+                </span>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend>Checkboxes as a list:</legend>
+                <div class="fields">
+                  <ul class="formlist">
+                    <li>
+                      <input type="checkbox" name="size" id="size_8" value="small "/>
+                      <label for="size_8">Checkbox one</label>
+                      <span class="label">Checkbox One</span>
+                    </li>
+                    <li>
+                      <input type="checkbox" checked name="size" id="size_9"  value="    small"/>
+                      <label for="size_9">Checkbox two</label>
+                      <span class="label">Checkbox Two</span>
+                    </li>
+                    <li>
+                      <input type="checkbox" checked name="size" id="size_10"   value="    small"/>
+                      <label for="size_10">Checkbox three</label>
+                      <span class="label">Checkbox Three</span>
+                    </li>
+                </ul>
+                <span class="help-block">
+                  In some instances, you may wish for dropdowns, checkboxes, or radio buttons to be in a list rather than inline. This is achieved using .formlist.
+                </span>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend>Text Input:</legend>
+              <div class="fields">
+                <input id="example_input" type="text" placeholder="Example input">
+                <input id="example_input" type="text" placeholder="Example input">
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend>Textarea:</legend>
+              <div class="fields">
+                <textarea placeholder="This is a textarea."></textarea>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend>Some Inputs with a button:</legend>
+              <div class="fields">
+                <input class="disabled" id="paths_root_path" name="paths_root_path" readonly="readonly" size="59" type="text" value="Disabled input">
+                <span id="path_unlock" class="tooltip" title="Click to unlock. You must restart RhodeCode in order to make this setting take effect.">
+                  <div class="btn btn-default">
+                      <span><i id="path_unlock_icon" class="icon-lock"></i></span>
+                  </div>
+                </span>
+                <input id="paths_root_path" name="paths_root_path" size="59" type="text" placeholder="Input">
+                <span class="btn btn-x" onclick="ajaxDeletePattern(11,'id11')">
+                  Delete
+                </span>
+              </div>
+            </fieldset>
+  
+            <fieldset class="select side-by-side-selector">
+                  <div class="left-group">
+                      <label class="text" >${_('Chosen group members')}</label>
+                      <select id="users_group_members2" multiple size='8'>
+                      </select>
+                     <div class="btn" id="remove_all_elements2" >
+                         ${_('Remove all elements')}
+                         <i class="icon-chevron-right"></i>
+                     </div>
+                  </div>
+                  <div class="middle-group">
+                      <i id="add_element2" class="icon-chevron-left"></i>
+                      <br />
+                      <i id="remove_element2" class="icon-chevron-right"></i>
+                  </div>
+                  <div class="right-group">
+                       <label class="text" >${_('Available members')}</label>
+                        <select id="available_members2" multiple size='8'>
+                            <option value="#">${_('Some example text...')}</option>
+                            <option value="ga">A really long thing</option>
+                            <option value="clicky">Repo Name</option>
+                            <option value="server_announce">${_('Variable Item')}</option>
+                        </select>
+                       <div class="btn" id="add_all_elements2" >
+                           <i class="icon-chevron-left"></i>${_('Add all elements')}
+                       </div>
+                  </div>
+              </fieldset>
+  
+            <script>
+                $(document).ready(function(){
+                    MultiSelectWidget('users_group_members2','available_members', 'edit_users_group');
+                })
+            </script>
+
+          <div class="buttons">
+            <input type="submit" value="Save" id="example_save" class="btn">
+            <input type="reset" value="Reset" id="example_reset" class="btn">
+          </div>
+  
+          </form>
+
+      </div>  <!-- .main-content  --> 
+    </div>  <!-- .sidebar-col-wrappe  --> 
+</div> <!-- .box -->
+</%def>

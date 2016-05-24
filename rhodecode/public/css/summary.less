@@ -1,0 +1,268 @@
+// summary.less
+// For use in RhodeCode applications;
+// Used for headers and file detail summary screens.
+
+.summary {
+    float: left;
+    position: relative;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+
+    .summary-detail-header {
+        float: left;
+        display: block;
+        width: 100%;
+        margin-bottom: @textmargin;
+        padding: 0 0 .5em 0;
+        border-bottom: @border-thickness solid @border-default-color;
+
+        .breadcrumbs {
+            float: left;
+            display: inline;
+            margin: 0;
+            padding: 0;
+        }
+        h4 {
+            float: left;
+            margin: 0 1em 0 0;
+            padding: 0;
+            line-height: 1.2em;
+            font-size: @basefontsize;
+        }
+
+        .action_link {
+            float: right;
+        }
+
+        .new-file {
+            float: right;
+            margin-top: -1.5em;
+        }
+    }
+
+    .summary-detail {
+        float: left;
+        position: relative;
+        width: 73%;
+        margin: 0 3% @space 0;
+        padding: 0;
+
+        .file_diff_buttons {
+            margin-top: @space;
+        }
+
+        // commit message
+        .commit {
+          white-space: pre-wrap;
+        }
+
+        #clone_url,
+        #clone_url_id {
+            min-width: 29em;
+            padding:  @padding/4;
+        }
+
+        &.directory {
+            margin-bottom: 0;
+        }
+
+        .desc {
+            white-space: pre-wrap;
+        }
+        .disabled {
+            opacity: .5;
+        }
+        .help-block {
+            color: inherit;
+            margin: 0;
+        }
+    }
+
+    .sidebar-right {
+        float: left;
+        width: 24%;
+        margin: 0;
+        padding: 0;
+
+        ul {
+            margin-left: 0;
+            padding-left: 0;
+
+            li {
+
+                &:before {
+                    content: none;
+                    width: 0;
+                }
+            }
+        }
+    }
+
+    #clone_by_name, #clone_by_id{
+        display: inline-block;
+        margin-left: @padding;
+    }
+
+    .codeblock {
+        border: none;
+        background-color: transparent;
+    }
+
+    .code-body {
+        border: @border-thickness solid @border-default-color;
+        .border-radius(@border-radius);
+    }
+}
+
+// this is used outside of just the summary
+.fieldset, // similar to form fieldset
+.summary .sidebar-right-content { // these have to match
+    clear: both;
+    float: left;
+    position: relative;
+    display:block;
+    width: 100%;
+    min-height: 1em;
+    margin-bottom: @textmargin;
+    padding: 0;
+    line-height: 1.2em;
+
+    &:after { // clearfix
+        content: "";
+        clear: both;
+        width: 100%;
+        height: 1em;
+    }
+}
+
+.summary .sidebar-right-content {
+    margin-bottom: @space;
+}
+
+.fieldset {
+
+    .left-label { // similar to form legend
+        float: left;
+        display: block;
+        width: 25%;
+        margin: 0;
+        padding: 0;
+        font-family: @text-semibold;
+    }
+    
+    .right-content { // similar to form fields
+        float: left;
+        display: block;
+        width: 75%;
+        margin: 0 0 0 -15%;
+        padding: 0 0 0 15%;
+
+        .truncate-wrap,
+        .truncate {
+            max-width: 100%;
+            width: 100%;
+        }
+
+        .commit-long {
+            overflow-x: auto;
+        }
+    }
+}
+
+// expand commit message
+#message_expand {
+    clear: both;
+    display: block;
+    color: @rcblue;
+    cursor: pointer;
+}
+
+#trimmed_message_box {
+    max-height: floor(2 * @basefontsize * 1.2);  // 2 lines * line-height
+    overflow: hidden;
+}
+
+// show/hide comments button
+.show-inline-comments {
+    display: inline;
+    cursor: pointer;
+
+    .comments-show { display: inline; }
+    .comments-hide { display: none; }
+    
+    &.comments-visible {
+        .comments-show { display: none; }
+        .comments-hide { display: inline; }
+    }
+}
+    
+// Quick Start section
+.quick_start {
+    float: left;
+    display: block;
+    position: relative;
+
+    // adds some space to make copy and paste easier
+    .left-label,
+    .right-content {
+        line-height: 1.6em;
+    }
+}
+
+.submodule {
+    .summary-detail {
+        width: 100%;
+
+        .btn-collapse {
+            display: none;
+        }
+    }
+}
+
+.codeblock-header {
+    float: left;
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: @space 0 @padding 0;
+    border-top: @border-thickness solid @border-default-color; 
+
+    .stats {
+        float: left;
+        width: 50%;
+    }
+
+    .buttons {
+        float: right;
+        width: 50%;
+        text-align: right;
+        color: @grey4;
+    }
+}
+
+#summary-menu-stats {
+
+    .stats-bullet {
+        color: @grey3;
+        min-width: 3em;
+    }
+
+    .repo-size {
+        margin-bottom: .5em;
+    }
+    
+}
+
+#readme {
+    width: 100%;
+
+    .readme {
+        overflow-x: auto;
+        border: @border-thickness solid @border-default-color;
+        .border-radius(@border-radius);
+    }
+    .readme_box {
+        margin: 15px;
+    }
+}

@@ -1,0 +1,159 @@
+<%inherit file="/base/base.html"/>
+<%namespace name="diff_block" file="/changeset/diff_block.html"/>
+<%def name="title()">
+    ${_('%s File Diff') % c.repo_name}
+    %if c.rhodecode_name:
+        &middot; ${h.branding(c.rhodecode_name)}
+    %endif
+</%def>
+
+<%def name="breadcrumbs_links()">
+    ${_('Compare')}
+    r${c.commit_1.revision}:${h.short_id(c.commit_1.raw_id)}
+    % if c.filename1 != c.filename:
+        <i class="icon-file"></i> ${c.filename1}
+    % endif
+    ...
+    r${c.commit_2.revision}:${h.short_id(c.commit_2.raw_id)}
+</%def>
+
+<%def name="menu_bar_nav()">
+    ${self.menu_items(active='repositories')}
+</%def>
+
+<%def name="menu_bar_subnav()">
+    ${self.repo_menu(active='changelog')}
+</%def>
+
+<%def name="breadcrumbs_links()">
+    ${_('Compare')}
+    r${c.commit_1.revision}:${h.short_id(c.commit_1.raw_id)}
+    % if c.filename1 != c.filename:
+        <i class="icon-file"></i> ${c.filename1}
+    % endif
+    ...
+    r${c.commit_2.revision}:${h.short_id(c.commit_2.raw_id)}
+    % if c.filename1 == c.filename:
+        ${_('for')} <i class="icon-file"></i> ${c.filename1}
+    % endif
+</%def>
+
+<%def name="main()">
+<div class="box">
+
+    <div class="title">
+        ${self.repo_page_title(c.rhodecode_db_repo)}
+    </div>
+
+    ${self.breadcrumbs()}
+
+    <div class="compare-header">
+
+        %if not c.commit_ranges:
+          <p class="empty_data">${_('No commits')}</p>
+
+        %else:
+            <div class="compare-label">${_('Target')}</div>
+            <div class="compare-value">
+                <code>
+                    ${h.link_to('r%s:%s' % (c.commit_1.revision, h.short_id(c.commit_1.raw_id)), h.url('changeset_home',repo_name=c.repo_name, revision=c.commit_1.raw_id))}
+                </code>
+            </div>
+            <div class="compare-label">${_('Source')}</div>
+            <div class="compare-value">
+                <code>
+                   ${h.link_to('r%s:%s' % (c.commit_2.revision, h.short_id(c.commit_2.raw_id)), h.url('changeset_home',repo_name=c.repo_name, revision=c.commit_2.raw_id))}
+                </code>
+            </div>
+        %endif
+    </div>
+
+    ##CS
+    <%include file="../compare/compare_commits.html" />
+
+    ## FILES
+    <div class="cs_files_title">
+        <span class="cs_files_expand">
+            <span id="expand_all_files">${_('Expand All')}</span> | <span id="collapse_all_files">${_('Collapse All')}</span>
+        </span>
+        <h2>
+            % if c.binary_file:
+                ${_('Cannot diff binary files')}
+            % elif (c.lines_added == 0 and c.lines_deleted == 0):
+                ${_('File was not changed in this commit range')}
+            % else:
+                ${diff_block.diff_summary_text(len(c.files), c.lines_added, c.lines_deleted)}
+            % endif
+        </h2>
+    </div>
+
+% if (c.lines_added > 0 or c.lines_deleted > 0):
+    <div class="cs_files">
+        <table class="compare_view_files commit_diff">
+            %for FID, (cs1, cs2, change, path, diff, stats, file) in c.changes.iteritems():
+                <tr class="cs_${change} collapse_file" fid="${FID}">
+                  <td class="cs_icon_td">
+                      <span class="collapse_file_icon" fid="${FID}"></span>
+                  </td>
+                  <td class="cs_icon_td">
+                      <div class="flag_status not_reviewed hidden"></div>
+                  </td>
+                  <td class="cs_${change}" id="a_${FID}">
+                    <div class="node">
+                        <a href="#a_${FID}">
+                            <i class="icon-file-${change.lower()}"></i>
+                            ${h.safe_unicode(path)}
+                        </a>
+                    </div>
+                  </td>
+                  <td>
+                    %if (stats):
+                      <div class="changes pull-right">${h.fancy_file_stats(stats)}</div>
+                    %endif
+                      <div class="comment-bubble pull-right" data-path="${path}">
+                        <i class="icon-comment"></i>
+                      </div>
+                  </td>
+                </tr>
+                <tr fid="${FID}" id="diff_${FID}" class="diff_links">
+                  <td></td>
+                  <td></td>
+                  <td class="cs_${change}">
+                    ${diff_block.diff_menu(c.repo_name, h.safe_unicode(path), cs1, cs2, change, file)}
+                  </td>
+                  <td class="td-actions rc-form">
+                    ${c.ignorews_url(request.GET, h.FID(cs2,path))} |
+                    ${c.context_url(request.GET, h.FID(cs2,path))} |
+                    <div data-comment-id="${h.FID(cs2,path)}" class="btn-link show-inline-comments comments-visible">
+                      <span class="comments-show">${_('Show comments')}</span>
+                      <span class="comments-hide">${_('Hide comments')}</span>
+                    </div>
+                  </td>
+                </tr>
+                <tr id="tr_${FID}">
+                  <td></td>
+                  <td></td>
+                  <td class="injected_diff" colspan="2">
+                    <div class="diff-container" id="${'diff-container-%s' % (id(change))}">
+                      <div id="${FID}" class="diffblock margined comm">
+                        <div class="code-body">
+                            <div class="full_f_path" path="${h.safe_unicode(path)}"></div>
+                            ${diff|n}
+                            % if file and file["is_limited_diff"]:
+                              % if file["exceeds_limit"]:
+                                ${diff_block.file_message()}
+                              % else:
+                                <h5>${_('Diff was truncated. File content available only in full diff.')} <a href="${h.url.current(fulldiff=1, **request.GET.mixed())}" onclick="return confirm('${_("Showing a big diff might take some time and resources, continue?")}')">${_('Show full diff')}</a></h5>
+                              % endif
+                            % endif
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+            %endfor
+        </table>
+    </div>
+% endif
+</div>
+</%def>

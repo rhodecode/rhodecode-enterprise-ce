@@ -1,0 +1,4 @@
+Usage of make-config is deprecated.
+Please use rhodecode-config to generate RhodeCode .ini config file.
+rhodecode-config is a part of RhodeCode Tools package. Install it via
+pip install https://rhodecode.com/dl/tools/latest

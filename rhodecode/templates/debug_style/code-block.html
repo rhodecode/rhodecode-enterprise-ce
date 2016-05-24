@@ -1,0 +1,1162 @@
+## -*- coding: utf-8 -*-
+<%namespace name="base" file="/base/base.html"/>
+<%inherit file="/debug_style/index.html"/>
+
+<%def name="breadcrumbs_links()">
+    ${h.link_to(_('Style'), h.url('debug_style_home'))}
+    &raquo;
+    ${c.active}
+</%def>
+
+<%def name="js_extra()">
+<script type="text/javascript" src="${h.url('/js/mergerly.js')}"></script>
+</%def>
+
+<%def name="css_extra()">
+<link rel="stylesheet" type="text/css" href="${h.url('/css/mergerly.css')}"/>
+</%def>
+
+
+<%def name="real_main()">
+<div class="box">
+    <div class="title">
+        ${self.breadcrumbs()}
+    </div>
+
+    ##main
+    <div class='sidebar-col-wrapper'>
+    ${self.sidebar()}
+
+    <div class="main-content">
+
+
+
+      <h2>Code Blocks</h2>
+
+      <dl class="dl-horizontal">
+        <dt><code>.codeblock</code></dt>
+        <dd>Used as a wrapping element around <code>.code-header</code> and
+          <code>.code-body</code>. Used to show the content of a file or a
+          Gist.</dd>
+
+        <dt><code>.diffblock</code></dt>
+        <dd>Used as a wrapping element to show a diff in a Commit or Pull
+          Request page. Contains usually <code>.code-header</code>,
+          <code>.code-body</code> and in the edit case a <code>.message</code>.
+          </dd>
+      </dl>
+
+
+      <p>Code Blocks are used in the following areas:</p>
+
+      <ul>
+        <li>Commit: Showing the Diff (still called Changeset in a few
+          places).</li>
+        <li>File: Display a file, annotations, and edit a file.</li>
+        <li>Gist: Show the Gist and edit it.</li>
+        <li>Pull Request: Display the Diff of a Pull Request.</li>
+      </ul>
+
+
+
+<!--
+  Compare Commits
+ -->
+      <h2>Compare Commits</h2>
+
+      <div id="c-e589e34d6be8-5ab783e6d81b" class="diffblock margined comm">
+        <div class="code-header">
+            <div title="Go back to changed files overview">
+                <a href="#changes_box">
+                    <i class="icon-circle-arrow-up"></i>
+                </a>
+            </div>
+            <div class="changeset_header">
+                <div class="changeset_file">
+                    <i class="icon-file"></i>
+                    <a href="/example/files/e589e34d6be8ec2b44017f6c2e0bbe782f1aba6d/rhodecode/public/css/code-block.less">rhodecode/public/css/code-block.less</a>
+                </div>
+                <div class="diff-actions">
+                  <a href="/example/diff/rhodecode/public/css/code-block.less?fulldiff=1&amp;diff1=d12301bafcc0aea15c9283d3af018daee2b04cd9&amp;diff=diff&amp;diff2=e589e34d6be8ec2b44017f6c2e0bbe782f1aba6d" class="tooltip" title="Show full diff for this file">
+                      <img class="icon" src="/images/icons/page_white_go.png">
+                  </a>
+                  <a href="/example/diff-2way/rhodecode/public/css/code-block.less?fulldiff=1&amp;diff1=d12301bafcc0aea15c9283d3af018daee2b04cd9&amp;diff=diff&amp;diff2=e589e34d6be8ec2b44017f6c2e0bbe782f1aba6d" class="tooltip" title="Show full side-by-side diff for this file">
+                      <img class="icon" src="/images/icons/application_double.png">
+                  </a>
+                  <a href="/example/diff/rhodecode/public/css/code-block.less?diff1=d12301bafcc0aea15c9283d3af018daee2b04cd9&amp;diff=raw&amp;diff2=e589e34d6be8ec2b44017f6c2e0bbe782f1aba6d" class="tooltip" title="Raw diff" tt_title="Raw diff">
+                      <img class="icon" src="/images/icons/page_white.png">
+                  </a>
+                  <a href="/example/diff/rhodecode/public/css/code-block.less?diff1=d12301bafcc0aea15c9283d3af018daee2b04cd9&amp;diff=download&amp;diff2=e589e34d6be8ec2b44017f6c2e0bbe782f1aba6d" class="tooltip" title="Download diff">
+                      <img class="icon" src="/images/icons/page_save.png">
+                  </a>
+                  <a class="tooltip" href="/example/changeset/d12301bafcc0aea15c9283d3af018daee2b04cd9...80ead1899f50a894889e19ffeb49c9cebf5bf045?c-e589e34d6be8-5ab783e6d81b=WS%3A1&amp;c-e589e34d6be8-5ab783e6d81b=C%3A3#c-e589e34d6be8-5ab783e6d81b" title="Ignore white space"><img alt="Ignore white space" class="icon" src="/images/icons/text_strikethrough.png"></a>
+                  <a class="tooltip" href="/example/changeset/d12301bafcc0aea15c9283d3af018daee2b04cd9...80ead1899f50a894889e19ffeb49c9cebf5bf045?c-e589e34d6be8-5ab783e6d81b=C%3A6#c-e589e34d6be8-5ab783e6d81b" title="increase diff context to 6 lines"><img alt="increase diff context to 6 lines" class="icon" src="/images/icons/table_add.png"></a>
+                </div>
+                <span>
+                  <label>
+                  Show inline comments
+                  <input checked="checked" class="show-inline-comments" id="" id_for="c-e589e34d6be8-5ab783e6d81b" name="" type="checkbox" value="1">
+                  </label>
+                </span>
+            </div>
+        </div>
+        <div class="code-body">
+            <div class="full_f_path" path="rhodecode/public/css/code-block.less"></div>
+            <table class="code-difftable">
+<tbody><tr class="line context">
+  <td class="lineno old"><a href="#rhodecodepubliccsscode-blockless_o...">...</a></td>
+  <td class="lineno new"><a href="#rhodecodepubliccsscode-blockless_n...">...</a></td>
+  <td class="code no-comment">
+    <pre>@@ -391,7 +391,7 @@
+</pre>
+  </td>
+</tr>
+<tr class="line unmod">
+  <td id="rhodecodepubliccsscode-blockless_o391" class="lineno old"><a href="#rhodecodepubliccsscode-blockless_o391">391</a></td>
+  <td id="rhodecodepubliccsscode-blockless_n391" class="lineno new"><a href="#rhodecodepubliccsscode-blockless_n391">391</a></td>
+  <td class="code no-comment">
+    <pre>}  /* Existing line, it might have a quite long content actually and in this case we might need some horizontal scrolling. The remaining text here is just used to make this line very long.
+</pre>
+  </td>
+</tr>
+<tr class="line unmod">
+  <td id="rhodecodepubliccsscode-blockless_o392" class="lineno old"><a href="#rhodecodepubliccsscode-blockless_o392">392</a></td>
+  <td id="rhodecodepubliccsscode-blockless_n392" class="lineno new"><a href="#rhodecodepubliccsscode-blockless_n392">392</a></td>
+  <td class="code no-comment">
+    <pre></pre>
+  </td>
+</tr>
+<tr class="line unmod">
+  <td id="rhodecodepubliccsscode-blockless_o393" class="lineno old"><a href="#rhodecodepubliccsscode-blockless_o393">393</a></td>
+  <td id="rhodecodepubliccsscode-blockless_n393" class="lineno new"><a href="#rhodecodepubliccsscode-blockless_n393">393</a></td>
+  <td class="code no-comment">
+    <pre>.code-body.textarea.editor,
+</pre>
+  </td>
+</tr>
+<tr class="line del">
+  <td id="rhodecodepubliccsscode-blockless_o394" class="lineno old"><a href="#rhodecodepubliccsscode-blockless_o394">394</a></td>
+  <td class="lineno new"><a href="#rhodecodepubliccsscode-blockless_n"></a></td>
+  <td class="code no-comment">
+    <pre>div.code-body{
+</pre>
+  </td>
+</tr>
+<tr class="line add">
+  <td class="lineno old"><a href="#rhodecodepubliccsscode-blockless_o"></a></td>
+  <td id="rhodecodepubliccsscode-blockless_n394" class="lineno new"><a href="#rhodecodepubliccsscode-blockless_n394">394</a></td>
+  <td class="code no-comment">
+    <pre>div.code-body<ins> </ins>{
+</pre>
+  </td>
+</tr>
+<tr class="line unmod">
+  <td id="rhodecodepubliccsscode-blockless_o395" class="lineno old"><a href="#rhodecodepubliccsscode-blockless_o395">395</a></td>
+  <td id="rhodecodepubliccsscode-blockless_n395" class="lineno new"><a href="#rhodecodepubliccsscode-blockless_n395">395</a></td>
+  <td class="code no-comment">
+    <pre>    float: left;
+</pre>
+  </td>
+</tr>
+<tr class="line unmod">
+  <td id="rhodecodepubliccsscode-blockless_o396" class="lineno old"><a href="#rhodecodepubliccsscode-blockless_o396">396</a></td>
+  <td id="rhodecodepubliccsscode-blockless_n396" class="lineno new"><a href="#rhodecodepubliccsscode-blockless_n396">396</a></td>
+  <td class="code no-comment">
+    <pre>    position: relative;
+</pre>
+  </td>
+</tr>
+<tr class="line unmod">
+  <td id="rhodecodepubliccsscode-blockless_o397" class="lineno old"><a href="#rhodecodepubliccsscode-blockless_o397">397</a></td>
+  <td id="rhodecodepubliccsscode-blockless_n397" class="lineno new"><a href="#rhodecodepubliccsscode-blockless_n397">397</a></td>
+  <td class="code no-comment">
+    <pre>    max-width: none;
+</pre>
+  </td>
+</tr>
+<tr class="line context">
+  <td class="lineno old"><a href="#rhodecodepubliccsscode-blockless_o...">...</a></td>
+  <td class="lineno new"><a href="#rhodecodepubliccsscode-blockless_n...">...</a></td>
+  <td class="code no-comment">
+    <pre>@@ -399,3 +399,6 @@
+</pre>
+  </td>
+</tr>
+<tr class="line unmod">
+  <td id="rhodecodepubliccsscode-blockless_o399" class="lineno old"><a href="#rhodecodepubliccsscode-blockless_o399">399</a></td>
+  <td id="rhodecodepubliccsscode-blockless_n399" class="lineno new"><a href="#rhodecodepubliccsscode-blockless_n399">399</a></td>
+  <td class="code no-comment">
+    <pre>    box-sizing: border-box;
+</pre>
+  </td>
+</tr>
+<tr class="line unmod">
+  <td id="rhodecodepubliccsscode-blockless_o400" class="lineno old"><a href="#rhodecodepubliccsscode-blockless_o400">400</a></td>
+  <td id="rhodecodepubliccsscode-blockless_n400" class="lineno new"><a href="#rhodecodepubliccsscode-blockless_n400">400</a></td>
+  <td class="code no-comment">
+    <pre>}
+</pre>
+  </td>
+</tr>
+<tr class="line unmod">
+  <td id="rhodecodepubliccsscode-blockless_o401" class="lineno old"><a href="#rhodecodepubliccsscode-blockless_o401">401</a></td>
+  <td id="rhodecodepubliccsscode-blockless_n401" class="lineno new"><a href="#rhodecodepubliccsscode-blockless_n401">401</a></td>
+  <td class="code no-comment">
+    <pre></pre>
+  </td>
+</tr>
+<tr class="line add">
+  <td class="lineno old"><a href="#rhodecodepubliccsscode-blockless_o"></a></td>
+  <td id="rhodecodepubliccsscode-blockless_n402" class="lineno new"><a href="#rhodecodepubliccsscode-blockless_n402">402</a></td>
+  <td class="code no-comment">
+    <pre>.code-body td{
+</pre>
+  </td>
+</tr>
+<tr class="line add">
+  <td class="lineno old"><a href="#rhodecodepubliccsscode-blockless_o"></a></td>
+  <td id="rhodecodepubliccsscode-blockless_n403" class="lineno new"><a href="#rhodecodepubliccsscode-blockless_n403">403</a></td>
+  <td class="code no-comment">
+    <pre>    line-height: 1.2em;
+</pre>
+  </td>
+</tr>
+<tr class="line add">
+  <td class="lineno old"><a href="#rhodecodepubliccsscode-blockless_o"></a></td>
+  <td id="rhodecodepubliccsscode-blockless_n404" class="lineno new"><a href="#rhodecodepubliccsscode-blockless_n404">404</a></td>
+  <td class="code no-comment">
+    <pre>}
+</pre>
+  </td>
+</tr>
+<tr class="line context">
+  <td class="lineno old"><a href="#rhodecodepubliccsscode-blockless_o...">...</a></td>
+  <td class="lineno new"><a href="#rhodecodepubliccsscode-blockless_n...">...</a></td>
+  <td class="code no-comment">
+    <pre> No newline at end of file
+</pre>
+  </td>
+</tr>
+</tbody></table>
+        </div>
+    </div>
+
+
+
+
+
+
+<!--
+ Pull Request
+ -->
+
+    <h2>Pull Request</h2>
+
+<div class="cs_files">
+              <table class="compare_view_files">
+
+                  <tbody><tr class="cs_M collapse_file" fid="c--5f1d017cf13b">
+                      <td class="cs_icon_td">
+                          <span class="collapse_file_icon" fid="c--5f1d017cf13b"></span>
+                      </td>
+                      <td class="cs_icon_td">
+                          <div class="flag_status not_reviewed hidden"></div>
+                      </td>
+                      <td id="a_c--5f1d017cf13b">
+                          <a class="compare_view_filepath" href="#a_c--5f1d017cf13b">
+                              rhodecode/public/css/main.less
+                          </a>
+                          <span id="diff_c--5f1d017cf13b" class="diff_links" style="">
+                            <a href="/example/diff/rhodecode/public/css/main.less?fulldiff=1&amp;diff1=f73e9946825c8a7ef2c1178cd1e67986d5831f8f&amp;diff=diff&amp;diff2=27eb56cf467ca849112536d62decb2ed020b3ebc">
+                                Unified Diff
+                            </a>
+                            |
+                            <a href="/example/diff-2way/rhodecode/public/css/main.less?fulldiff=1&amp;diff1=f73e9946825c8a7ef2c1178cd1e67986d5831f8f&amp;diff=diff&amp;diff2=27eb56cf467ca849112536d62decb2ed020b3ebc">
+                                Side-by-side Diff
+                            </a>
+                          </span>
+                      </td>
+                      <td>
+                          <div class="changes pull-right"><div style="width:100px"><div class="added top-left-rounded-corner-mid bottom-left-rounded-corner-mid" style="width:33.3333333333%">1</div><div class="deleted top-right-rounded-corner-mid bottom-right-rounded-corner-mid" style="width:66.6666666667%">2</div></div></div>
+                          <div class="comment-bubble pull-right" data-path="rhodecode/public/css/main.less">
+                            <i class="icon-comment"></i>
+                          </div>
+                      </td>
+                  </tr>
+                  <tr id="tr_c--5f1d017cf13b">
+                    <td></td>
+                    <td></td>
+                    <td class="injected_diff" colspan="2">
+
+ <div class="diff-container" id="diff-container-140360026534904">
+    <div id="c--5f1d017cf13b_target"></div>
+    <div id="c--5f1d017cf13b" class="diffblock margined comm">
+        <div class="code-body">
+            <div class="full_f_path" path="rhodecode/public/css/main.less" style="display: none;"></div>
+            <table class="code-difftable">
+<tbody><tr class="line context">
+  <td class="lineno old"><a href="#rhodecodepubliccssmainless_o...">...</a></td>
+  <td class="lineno new"><a href="#rhodecodepubliccssmainless_n...">...</a></td>
+  <td class="code ">
+    <pre>@@ -2110,7 +2110,6 @@
+</pre>
+  </td>
+</tr>
+<tr class="line unmod">
+  <td id="rhodecodepubliccssmainless_o2110" class="lineno old"><a href="#rhodecodepubliccssmainless_o2110">2110</a></td>
+  <td id="rhodecodepubliccssmainless_n2110" class="lineno new"><a href="#rhodecodepubliccssmainless_n2110">2110</a></td>
+  <td class="code ">
+    <pre><span class="tab-escape">  </span>width: auto !important;
+</pre>
+  </td>
+</tr>
+<tr class="line unmod">
+  <td id="rhodecodepubliccssmainless_o2111" class="lineno old"><a href="#rhodecodepubliccssmainless_o2111">2111</a></td>
+  <td id="rhodecodepubliccssmainless_n2111" class="lineno new"><a href="#rhodecodepubliccssmainless_n2111">2111</a></td>
+  <td class="code ">
+    <pre><span class="tab-escape">  </span>min-width: 160px;
+</pre>
+  </td>
+</tr>
+<tr class="line unmod">
+  <td id="rhodecodepubliccssmainless_o2112" class="lineno old"><a href="#rhodecodepubliccssmainless_o2112">2112</a></td>
+  <td id="rhodecodepubliccssmainless_n2112" class="lineno new"><a href="#rhodecodepubliccssmainless_n2112">2112</a></td>
+  <td class="code ">
+    <pre><span class="tab-escape">  </span>margin: @padding @padding @padding 0;
+</pre>
+  </td>
+</tr>
+<tr class="line del">
+  <td id="rhodecodepubliccssmainless_o2113" class="lineno old"><a href="#rhodecodepubliccssmainless_o2113">2113</a></td>
+  <td class="lineno new"><a href="#rhodecodepubliccssmainless_n"></a></td>
+  <td class="code ">
+    <pre><span class="tab-escape">  </span>padding: .9em;  /* Old comment which was making this line a very long line so that we might have to deal with it by either adding horizontal scrolling or some smart way of breaking this line. */
+</pre>
+  </td>
+</tr>
+<tr class="line unmod">
+  <td id="rhodecodepubliccssmainless_o2114" class="lineno old"><a href="#rhodecodepubliccssmainless_o2114">2114</a></td>
+  <td id="rhodecodepubliccssmainless_n2113" class="lineno new"><a href="#rhodecodepubliccssmainless_n2113">2113</a></td>
+  <td class="code ">
+    <pre>    line-height: 1em;
+</pre>
+  </td>
+</tr>
+<tr class="line unmod">
+  <td id="rhodecodepubliccssmainless_o2115" class="lineno old"><a href="#rhodecodepubliccssmainless_o2115">2115</a></td>
+  <td id="rhodecodepubliccssmainless_n2114" class="lineno new"><a href="#rhodecodepubliccssmainless_n2114">2114</a></td>
+  <td class="code ">
+    <pre><span class="tab-escape">  </span>z-index: 100;//js sets the menu below it to 9999
+</pre>
+  </td>
+</tr>
+<tr class="line unmod">
+  <td id="rhodecodepubliccssmainless_o2116" class="lineno old"><a href="#rhodecodepubliccssmainless_o2116">2116</a></td>
+  <td id="rhodecodepubliccssmainless_n2115" class="lineno new"><a href="#rhodecodepubliccssmainless_n2115">2115</a></td>
+  <td class="code ">
+    <pre><span class="tab-escape">  </span>background-color: white;
+</pre>
+  </td>
+</tr>
+<tr class="line context">
+  <td class="lineno old"><a href="#rhodecodepubliccssmainless_o...">...</a></td>
+  <td class="lineno new"><a href="#rhodecodepubliccssmainless_n...">...</a></td>
+  <td class="code ">
+    <pre>@@ -2118,7 +2117,7 @@
+</pre>
+  </td>
+</tr>
+<tr class="line unmod">
+  <td id="rhodecodepubliccssmainless_o2118" class="lineno old"><a href="#rhodecodepubliccssmainless_o2118">2118</a></td>
+  <td id="rhodecodepubliccssmainless_n2117" class="lineno new"><a href="#rhodecodepubliccssmainless_n2117">2117</a></td>
+  <td class="code ">
+    <pre></pre>
+  </td>
+</tr>
+<tr class="line unmod">
+  <td id="rhodecodepubliccssmainless_o2119" class="lineno old"><a href="#rhodecodepubliccssmainless_o2119">2119</a></td>
+  <td id="rhodecodepubliccssmainless_n2118" class="lineno new"><a href="#rhodecodepubliccssmainless_n2118">2118</a></td>
+  <td class="code ">
+    <pre><span class="tab-escape">  </span>a {
+</pre>
+  </td>
+</tr>
+<tr class="line unmod">
+  <td id="rhodecodepubliccssmainless_o2120" class="lineno old"><a href="#rhodecodepubliccssmainless_o2120">2120</a></td>
+  <td id="rhodecodepubliccssmainless_n2119" class="lineno new"><a href="#rhodecodepubliccssmainless_n2119">2119</a></td>
+  <td class="code ">
+    <pre><span class="tab-escape">  </span><span class="tab-escape">  </span>display:block;
+</pre>
+  </td>
+</tr>
+<tr class="line del">
+  <td id="rhodecodepubliccssmainless_o2121" class="lineno old"><a href="#rhodecodepubliccssmainless_o2121">2121</a></td>
+  <td class="lineno new"><a href="#rhodecodepubliccssmainless_n"></a></td>
+  <td class="code ">
+    <pre><span class="tab-escape">  </span><del><span< del=""> <del>class=</del><del>"tab-escape"</del><del>&gt;  </del>padding: <del>0</del>;
+</span<></del></pre>
+  </td>
+</tr>
+<tr class="line add">
+  <td class="lineno old"><a href="#rhodecodepubliccssmainless_o"></a></td>
+  <td id="rhodecodepubliccssmainless_n2120" class="lineno new"><a href="#rhodecodepubliccssmainless_n2120">2120</a></td>
+  <td class="code ">
+    <pre><span class="tab-escape">  </span><ins> </ins> <ins> </ins><ins> </ins>padding: <ins>.9em</ins>;
+</pre>
+  </td>
+</tr>
+<tr class="line unmod">
+  <td id="rhodecodepubliccssmainless_o2122" class="lineno old"><a href="#rhodecodepubliccssmainless_o2122">2122</a></td>
+  <td id="rhodecodepubliccssmainless_n2121" class="lineno new"><a href="#rhodecodepubliccssmainless_n2121">2121</a></td>
+  <td class="code ">
+    <pre></pre>
+  </td>
+</tr>
+<tr class="line unmod">
+  <td id="rhodecodepubliccssmainless_o2123" class="lineno old"><a href="#rhodecodepubliccssmainless_o2123">2123</a></td>
+  <td id="rhodecodepubliccssmainless_n2122" class="lineno new"><a href="#rhodecodepubliccssmainless_n2122">2122</a></td>
+  <td class="code ">
+    <pre><span class="tab-escape">  </span><span class="tab-escape">  </span>&amp;:after {
+</pre>
+  </td>
+</tr>
+<tr class="line unmod">
+  <td id="rhodecodepubliccssmainless_o2124" class="lineno old"><a href="#rhodecodepubliccssmainless_o2124">2124</a></td>
+  <td id="rhodecodepubliccssmainless_n2123" class="lineno new"><a href="#rhodecodepubliccssmainless_n2123">2123</a></td>
+  <td class="code ">
+    <pre><span class="tab-escape">  </span><span class="tab-escape">  </span><span class="tab-escape">  </span>content: "\00A0\25BE";
+</pre>
+  </td>
+</tr>
+</tbody></table>
+        </div>
+    </div>
+  </div>
+
+                    </td>
+                  </tr>
+              </tbody></table>
+              </div>
+
+
+
+
+
+
+
+
+
+<!--
+ File View
+ -->
+
+##TODO: lisa: I believe this needs to be updated as the layout has changed.
+<h2>File View</h2>
+
+<div class="codeblock">
+    <div class="code-header">
+        <div class="stats">
+            <div class="img">
+              <i class="icon-file"></i>
+              <span class="revision_id item"><a href="/example/changeset/fc252256eb0fcb4f2613e66f0126ea27967ae28c">r5487:fc252256eb0f</a></span>
+               <span>1.2 KiB</span>
+               <span class="item last">text/x-python</span>
+              <div class="buttons">
+
+                <a id="file_history_overview" class="btn btn-mini" href="#">
+                    <i class="icon-time"></i> history
+                </a>
+                <a id="file_history_overview_full" class="btn btn-mini" style="display: none" href="/example/changelog/fc252256eb0fcb4f2613e66f0126ea27967ae28c/rhodecode/websetup.py">
+                    <i class="icon-time"></i> show full history
+                </a>
+                  <a class="btn btn-mini" href="/example/annotate/fc252256eb0fcb4f2613e66f0126ea27967ae28c/rhodecode/websetup.py">annotation</a>
+                <a class="btn btn-mini" href="/example/raw/fc252256eb0fcb4f2613e66f0126ea27967ae28c/rhodecode/websetup.py">raw</a>
+                <a class="btn btn-mini" href="/example/rawfile/fc252256eb0fcb4f2613e66f0126ea27967ae28c/rhodecode/websetup.py">
+                    <i class="icon-archive"></i> download
+                </a>
+
+                  <a class="btn btn-mini disabled tooltip" href="#" title="Editing files allowed only when on branch head commit">edit</a>
+                  <a class="btn btn-mini btn-danger disabled tooltip" href="#" title="Deleting files allowed only when on branch head commit">delete</a>
+              </div>
+            </div>
+        </div>
+        <div id="file_history_container"></div>
+        <div class="author">
+            <div class="gravatar">
+                <img alt="gravatar" src="https://secure.gravatar.com/avatar/99e27b99c64003ca8c9875c9e3843495?d=identicon&amp;s=32" height="16" width="16">
+            </div>
+            <div title="Marcin Kuzminski <marcin@python-works.com>" class="user">Marcin Kuzminski - <span class="tooltip" title="Wed, 02 Jul 2014 08:48:15">6m and 12d ago</span></div>
+        </div>
+        <div id="trimmed_message_box" class="commit">License changes</div>
+        <div id="message_expand" style="display: none;">
+            <i class="icon-resize-vertical"></i>
+            expand
+            <i class="icon-resize-vertical"></i>
+        </div>
+    </div>
+    <div class="code-body">
+              <table class="code-highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><a href="#L1"> 1</a>
+<a href="#L2"> 2</a>
+<a href="#L3"> 3</a>
+<a href="#L4"> 4</a>
+<a href="#L5"> 5</a>
+<a href="#L6"> 6</a>
+<a href="#L7"> 7</a>
+<a href="#L8"> 8</a>
+<a href="#L9"> 9</a>
+<a href="#L10">10</a>
+<a href="#L11">11</a>
+<a href="#L12">12</a>
+<a href="#L13">13</a>
+<a href="#L14">14</a>
+<a href="#L15">15</a>
+<a href="#L16">16</a>
+<a href="#L17">17</a>
+<a href="#L18">18</a>
+<a href="#L19">19</a>
+<a href="#L20">20</a>
+<a href="#L21">21</a>
+<a href="#L22">22</a>
+<a href="#L23">23</a>
+<a href="#L24">24</a>
+<a href="#L25">25</a>
+<a href="#L26">26</a>
+<a href="#L27">27</a>
+<a href="#L28">28</a>
+<a href="#L29">29</a>
+<a href="#L30">30</a>
+<a href="#L31">31</a>
+<a href="#L32">32</a>
+<a href="#L33">33</a>
+<a href="#L34">34</a>
+<a href="#L35">35</a>
+<a href="#L36">36</a>
+<a href="#L37">37</a>
+<a href="#L38">38</a>
+<a href="#L39">39</a>
+<a href="#L40">40</a>
+<a href="#L41">41</a>
+<a href="#L42">42</a></pre></div></td><td id="hlcode" class="code"><div class="code-highlight"><pre><div id="L1"><a name="L-1"></a><span class="c"># -*- coding: utf-8 -*-</span>
+</div><div id="L2"><a name="L-2"></a>
+</div><div id="L3"><a name="L-3"></a><span class="c"># Published under Business Source License.</span>
+</div><div id="L4"><a name="L-4"></a><span class="c"># Read the full license text at https://rhodecode.com/licenses.</span>
+</div><div id="L5"><a name="L-5"></a><span class="sd">"""</span>
+</div><div id="L6"><a name="L-6"></a><span class="sd">rhodecode.websetup</span>
+</div><div id="L7"><a name="L-7"></a><span class="sd">~~~~~~~~~~~~~~~~~~</span>
+</div><div id="L8"><a name="L-8"></a>
+</div><div id="L9"><a name="L-9"></a><span class="sd">Weboperations and setup for rhodecode. Intentionally long line to show what will happen if this line does not fit onto the screen. It might have some horizontal scrolling applied or some other fancy mechanism to deal with it.</span>
+</div><div id="L10"><a name="L-10"></a>
+</div><div id="L11"><a name="L-11"></a><span class="sd">:created_on: Dec 11, 2010</span>
+</div><div id="L12"><a name="L-12"></a><span class="sd">:author: marcink</span>
+</div><div id="L13"><a name="L-13"></a><span class="sd">:copyright: (c) 2013-2015 RhodeCode GmbH.</span>
+</div><div id="L14"><a name="L-14"></a><span class="sd">:license: Business Source License, see LICENSE for more details.</span>
+</div><div id="L15"><a name="L-15"></a><span class="sd">"""</span>
+</div><div id="L16"><a name="L-16"></a>
+</div><div id="L17"><a name="L-17"></a><span class="kn">import</span> <span class="nn">logging</span>
+</div><div id="L18"><a name="L-18"></a>
+</div><div id="L19"><a name="L-19"></a><span class="kn">from</span> <span class="nn">rhodecode.config.environment</span> <span class="kn">import</span> <span class="n">load_environment</span>
+</div><div id="L20"><a name="L-20"></a><span class="kn">from</span> <span class="nn">rhodecode.lib.db_manage</span> <span class="kn">import</span> <span class="n">DbManage</span>
+</div><div id="L21"><a name="L-21"></a><span class="kn">from</span> <span class="nn">rhodecode.model.meta</span> <span class="kn">import</span> <span class="n">Session</span>
+</div><div id="L22"><a name="L-22"></a>
+</div><div id="L23"><a name="L-23"></a>
+</div><div id="L24"><a name="L-24"></a><span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+</div><div id="L25"><a name="L-25"></a>
+</div><div id="L26"><a name="L-26"></a>
+</div><div id="L27"><a name="L-27"></a><span class="k">def</span> <span class="nf">setup_app</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">conf</span><span class="p">,</span> <span class="nb">vars</span><span class="p">):</span>
+</div><div id="L28"><a name="L-28"></a>    <span class="sd">"""Place any commands to setup rhodecode here"""</span>
+</div><div id="L29"><a name="L-29"></a>    <span class="n">dbconf</span> <span class="o">=</span> <span class="n">conf</span><span class="p">[</span><span class="s">'sqlalchemy.db1.url'</span><span class="p">]</span>
+</div><div id="L30"><a name="L-30"></a>    <span class="n">dbmanage</span> <span class="o">=</span> <span class="n">DbManage</span><span class="p">(</span><span class="n">log_sql</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">dbconf</span><span class="o">=</span><span class="n">dbconf</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="n">conf</span><span class="p">[</span><span class="s">'here'</span><span class="p">],</span>
+</div><div id="L31"><a name="L-31"></a>                        <span class="n">tests</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">cli_args</span><span class="o">=</span><span class="n">command</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">__dict__</span><span class="p">)</span>
+</div><div id="L32"><a name="L-32"></a>    <span class="n">dbmanage</span><span class="o">.</span><span class="n">create_tables</span><span class="p">(</span><span class="n">override</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</div><div id="L33"><a name="L-33"></a>    <span class="n">dbmanage</span><span class="o">.</span><span class="n">set_db_version</span><span class="p">()</span>
+</div><div id="L34"><a name="L-34"></a>    <span class="n">opts</span> <span class="o">=</span> <span class="n">dbmanage</span><span class="o">.</span><span class="n">config_prompt</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span>
+</div><div id="L35"><a name="L-35"></a>    <span class="n">dbmanage</span><span class="o">.</span><span class="n">create_settings</span><span class="p">(</span><span class="n">opts</span><span class="p">)</span>
+</div><div id="L36"><a name="L-36"></a>    <span class="n">dbmanage</span><span class="o">.</span><span class="n">create_default_user</span><span class="p">()</span>
+</div><div id="L37"><a name="L-37"></a>    <span class="n">dbmanage</span><span class="o">.</span><span class="n">admin_prompt</span><span class="p">()</span>
+</div><div id="L38"><a name="L-38"></a>    <span class="n">dbmanage</span><span class="o">.</span><span class="n">create_permissions</span><span class="p">()</span>
+</div><div id="L39"><a name="L-39"></a>    <span class="n">dbmanage</span><span class="o">.</span><span class="n">populate_default_permissions</span><span class="p">()</span>
+</div><div id="L40"><a name="L-40"></a>    <span class="n">Session</span><span class="p">()</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+</div><div id="L41"><a name="L-41"></a>    <span class="n">load_environment</span><span class="p">(</span><span class="n">conf</span><span class="o">.</span><span class="n">global_conf</span><span class="p">,</span> <span class="n">conf</span><span class="o">.</span><span class="n">local_conf</span><span class="p">,</span> <span class="n">initial</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</div><div id="L42"><a name="L-42"></a>    <span class="n">DbManage</span><span class="o">.</span><span class="n">check_waitress</span><span class="p">()</span>
+</div></pre></div>
+</td></tr></tbody></table>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+<!--
+Gist Edit
+-->
+
+
+<h2>Gist Edit</h2>
+
+<div class="codeblock">
+                <div class="code-header">
+                    <div class="form">
+                        <div class="fields">
+                            <input id="filename" name="filename" placeholder="name this file..." size="30" type="text">
+                            <div class="select2-container drop-menu" id="s2id_mimetype"><a href="javascript:void(0)" class="select2-choice" tabindex="-1">   <span class="select2-chosen" id="select2-chosen-3">Python</span><abbr class="select2-search-choice-close"></abbr>   <span class="select2-arrow" role="presentation"><b role="presentation"></b></span></a><label for="s2id_autogen3" class="select2-offscreen"></label><input class="select2-focusser select2-offscreen" type="text" aria-haspopup="true" role="button" aria-labelledby="select2-chosen-3" id="s2id_autogen3"><div class="select2-drop select2-display-none drop-menu-dropdown select2-with-searchbox">   <div class="select2-search">       <label for="s2id_autogen3_search" class="select2-offscreen"></label>       <input type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="select2-input" role="combobox" aria-expanded="true" aria-autocomplete="list" aria-owns="select2-results-3" id="s2id_autogen3_search" placeholder="">   </div>   <ul class="select2-results" role="listbox" id="select2-results-3">   </ul></div></div><select id="mimetype" name="mimetype" tabindex="-1" title="" style="display: none;">
+<option selected="selected" value="plain">plain</option>
+<option value="text/apl" mode="apl">APL</option><option value="text/x-asterisk" mode="asterisk">Asterisk</option><option value="text/x-csrc" mode="clike">C</option><option value="text/x-c++src" mode="clike">C++</option><option value="text/x-cobol" mode="cobol">Cobol</option><option value="text/x-java" mode="clike">Java</option><option value="text/x-csharp" mode="clike">C#</option><option value="text/x-scala" mode="clike">Scala</option><option value="text/x-clojure" mode="clojure">Clojure</option><option value="text/x-coffeescript" mode="coffeescript">CoffeeScript</option><option value="text/x-common-lisp" mode="commonlisp">Common Lisp</option><option value="text/css" mode="css">CSS</option><option value="text/x-d" mode="d">D</option><option value="text/x-diff" mode="diff">diff</option><option value="application/xml-dtd" mode="dtd">DTD</option><option value="text/x-dylan" mode="dylan">Dylan</option><option value="text/x-ecl" mode="ecl">ECL</option><option value="text/x-eiffel" mode="eiffel">Eiffel</option><option value="text/x-erlang" mode="erlang">Erlang</option><option value="text/x-fortran" mode="fortran">Fortran</option><option value="text/x-fsharp" mode="mllike">F#</option><option value="text/x-gas" mode="gas">Gas</option><option value="text/x-go" mode="go">GO</option><option value="text/x-feature" mode="gherkin">Gherkin</option><option value="text/x-go" mode="go">Go</option><option value="text/x-groovy" mode="groovy">Groovy</option><option value="text/x-haml" mode="haml">HAML</option><option value="text/x-haskell" mode="haskell">Haskell</option><option value="text/x-haxe" mode="haxe">Haxe</option><option value="application/x-aspx" mode="htmlembedded">ASP.NET</option><option value="application/x-ejs" mode="htmlembedded">Embedded Javascript</option><option value="application/x-jsp" mode="htmlembedded">JavaServer Pages</option><option value="text/html" mode="htmlmixed">HTML</option><option value="message/http" mode="http">HTTP</option><option value="text/x-jade" mode="jade">Jade</option><option value="text/javascript" mode="javascript">JavaScript</option><option value="application/json" mode="javascript">JSON</option><option value="application/typescript" mode="javascript">TypeScript</option><option value="jinja2" mode="jinja2">Jinja2</option><option value="text/x-julia" mode="julia">Julia</option><option value="text/x-less" mode="less">LESS</option><option value="text/x-livescript" mode="livescript">LiveScript</option><option value="text/x-lua" mode="lua">Lua</option><option value="text/x-markdown" mode="markdown">Markdown (GitHub-flavour)</option><option value="text/mirc" mode="mirc">mIRC</option><option value="text/x-nginx-conf" mode="nginx">Nginx</option><option value="text/n-triples" mode="ntriples">NTriples</option><option value="text/x-ocaml" mode="ocaml">OCaml</option><option value="text/x-ocaml" mode="mllike">OCaml</option><option value="text/x-octave" mode="octave">Octave</option><option value="text/x-pascal" mode="pascal">Pascal</option><option value="null" mode="pegjs">PEG.js</option><option value="text/x-perl" mode="perl">Perl</option><option value="text/x-php" mode="php">PHP</option><option value="text/x-pig" mode="pig">Pig</option><option value="text/plain" mode="null">Plain Text</option><option value="text/x-properties" mode="properties">Properties files</option><option value="text/x-python" mode="python">Python</option><option value="text/x-puppet" mode="puppet">Puppet</option><option value="text/x-rsrc" mode="r">R</option><option value="text/x-rst" mode="rst">reStructuredText</option><option value="text/x-ruby" mode="ruby">Ruby</option><option value="text/x-rustsrc" mode="rust">Rust</option><option value="text/x-sass" mode="sass">Sass</option><option value="text/x-scheme" mode="scheme">Scheme</option><option value="text/x-scss" mode="css">SCSS</option><option value="text/x-sh" mode="shell">Shell</option><option value="application/sieve" mode="sieve">Sieve</option><option value="text/x-stsrc" mode="smalltalk">Smalltalk</option><option value="text/x-smarty" mode="smarty">Smarty</option><option value="text/x-smarty" mode="smartymixed">SmartyMixed</option><option value="text/x-solr" mode="solr">Solr</option><option value="application/x-sparql-query" mode="sparql">SPARQL</option><option value="text/x-sql" mode="sql">SQL</option><option value="text/x-mariadb" mode="sql">MariaDB</option><option value="text/x-stex" mode="stex">sTeX</option><option value="text/x-latex" mode="stex">LaTeX</option><option value="text/x-systemverilog" mode="verilog">SystemVerilog</option><option value="text/x-tcl" mode="tcl">Tcl</option><option value="text/x-tiddlywiki" mode="tiddlywiki">TiddlyWiki </option><option value="text/tiki" mode="tiki">Tiki wiki</option><option value="text/x-toml" mode="toml">TOML</option><option value="text/turtle" mode="turtle">Turtle</option><option value="text/x-vb" mode="vb">VB.NET</option><option value="text/vbscript" mode="vbscript">VBScript</option><option value="text/velocity" mode="velocity">Velocity</option><option value="text/x-verilog" mode="verilog">Verilog</option><option value="application/xml" mode="xml">XML</option><option value="text/html" mode="xml">HTML</option><option value="application/xquery" mode="xquery">XQuery</option><option value="text/x-yaml" mode="yaml">YAML</option><option value="text/x-z80" mode="z80">Z80</option></select>
+        <script>
+            $(document).ready(function() {
+                  $('#mimetype').select2({
+                      containerCssClass: 'drop-menu',
+                      dropdownCssClass: 'drop-menu-dropdown',
+                      dropdownAutoWidth: true
+                  });
+            });
+        </script>
+
+                        </div>
+                    </div>
+                </div>
+                <div id="editor_container">
+                    <div id="editor_pre"></div>
+                    <textarea id="editor" name="content" style="display: none;"></textarea><div class="CodeMirror cm-s-default"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 484px; left: 219.4091796875px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" style="position: absolute; padding: 0px; width: 1000px; height: 1em; outline: none;" tabindex="0"></textarea></div><div class="CodeMirror-hscrollbar" style="left: 29px; min-height: 18px;"><div style="height: 100%; min-height: 1px; width: 0px;"></div></div><div class="CodeMirror-vscrollbar" style="min-width: 18px; display: block; bottom: 0px;"><div style="min-width: 1px; height: 619px;"></div></div><div class="CodeMirror-scrollbar-filler"></div><div class="CodeMirror-gutter-filler"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="min-width: 700.269653320313px; margin-left: 29px; min-height: 619px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines"><div style="position: relative; outline: none;"><div class="CodeMirror-measure"><div class="CodeMirror-linenumber CodeMirror-gutter-elt"><div>47</div></div></div><div style="position: relative; z-index: 1; display: none;"></div><div class="CodeMirror-code"><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">1</div></div><pre><span class="cm-keyword">import</span> <span class="cm-variable">re</span></pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">2</div></div><pre>&nbsp;</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">3</div></div><pre><span class="cm-keyword">from</span> <span class="cm-variable">django</span>.<span class="cm-variable">utils</span>.<span class="cm-variable">text</span> <span class="cm-keyword">import</span> <span class="cm-variable">compress_sequence</span>, <span class="cm-variable">compress_string</span></pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">4</div></div><pre><span class="cm-keyword">from</span> <span class="cm-variable">django</span>.<span class="cm-variable">utils</span>.<span class="cm-variable">cache</span> <span class="cm-keyword">import</span> <span class="cm-variable">patch_vary_headers</span></pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">5</div></div><pre>&nbsp;</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">6</div></div><pre><span class="cm-variable">re_accepts_gzip</span> = <span class="cm-variable">re</span>.<span class="cm-builtin">compile</span>(<span class="cm-string">r'\bgzip\b'</span>)</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">7</div></div><pre>&nbsp;</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">8</div></div><pre>&nbsp;</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">9</div></div><pre><span class="cm-keyword">class</span> <span class="cm-def">GZipMiddleware</span>(<span class="cm-builtin">object</span>): # Intentionally long line to show what will happen if this line does not fit onto the screen. It might have some horizontal scrolling applied or some other fancy mechanism to deal with it.</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">10</div></div><pre>    <span class="cm-string">"""</span></pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">11</div></div><pre><span class="cm-string">    This middleware compresses content if the browser allows gzip compression.</span></pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">12</div></div><pre><span class="cm-string">    It sets the Vary header accordingly, so that caches will base their storage</span></pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">13</div></div><pre><span class="cm-string">    on the Accept-Encoding header.</span></pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">14</div></div><pre><span class="cm-string">    """</span></pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">15</div></div><pre>    <span class="cm-keyword">def</span> <span class="cm-def">process_response</span>(<span class="cm-variable-2">self</span>, <span class="cm-variable">request</span>, <span class="cm-variable">response</span>):</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">16</div></div><pre>        <span class="cm-comment"># It's not worth attempting to compress really short responses.</span></pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">17</div></div><pre>        <span class="cm-keyword">if</span> <span class="cm-operator">not</span> <span class="cm-variable">response</span>.<span class="cm-variable">streaming</span> <span class="cm-operator">and</span> <span class="cm-builtin">len</span>(<span class="cm-variable">response</span>.<span class="cm-variable">content</span>) <span class="cm-operator">&lt;</span> <span class="cm-number">200</span>:</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">18</div></div><pre>            <span class="cm-keyword">return</span> <span class="cm-variable">response</span></pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">19</div></div><pre>&nbsp;</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">20</div></div><pre>        <span class="cm-comment"># Avoid gzipping if we've already got a content-encoding.</span></pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">21</div></div><pre>        <span class="cm-keyword">if</span> <span class="cm-variable">response</span>.<span class="cm-variable">has_header</span>(<span class="cm-string">'Content-Encoding'</span>):</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">22</div></div><pre>            <span class="cm-keyword">return</span> <span class="cm-variable">response</span></pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">23</div></div><pre>&nbsp;</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">24</div></div><pre>        <span class="cm-variable">patch_vary_headers</span>(<span class="cm-variable">response</span>, (<span class="cm-string">'Accept-Encoding'</span>,))</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">25</div></div><pre>&nbsp;</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">26</div></div><pre>        <span class="cm-variable">ae</span> = <span class="cm-variable">request</span>.<span class="cm-variable">META</span>.<span class="cm-variable">get</span>(<span class="cm-string">'HTTP_ACCEPT_ENCODING'</span>, <span class="cm-string">''</span>)</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">27</div></div><pre>        <span class="cm-keyword">if</span> <span class="cm-operator">not</span> <span class="cm-variable">re_accepts_gzip</span>.<span class="cm-variable">search</span>(<span class="cm-variable">ae</span>):</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">28</div></div><pre>            <span class="cm-keyword">return</span> <span class="cm-variable">response</span></pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">29</div></div><pre>&nbsp;</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">30</div></div><pre>        <span class="cm-keyword">if</span> <span class="cm-variable">response</span>.<span class="cm-variable">streaming</span>:</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">31</div></div><pre>            <span class="cm-comment"># Delete the `Content-Length` header for streaming content, because</span></pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">32</div></div><pre>            <span class="cm-comment"># we won't know the compressed size until we stream it.</span></pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">33</div></div><pre>            <span class="cm-variable">response</span>.<span class="cm-variable">streaming_content</span> = <span class="cm-variable">compress_sequence</span>(<span class="cm-variable">response</span>.<span class="cm-variable">streaming_content</span>)</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">34</div></div><pre>            <span class="cm-keyword">del</span> <span class="cm-variable">response</span>[<span class="cm-string">'Content-Length'</span>]</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">35</div></div><pre>        <span class="cm-keyword">else</span>:</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">36</div></div><pre>            <span class="cm-comment"># Return the compressed content only if it's actually shorter.</span></pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">37</div></div><pre>            <span class="cm-variable">compressed_content</span> = <span class="cm-variable">compress_string</span>(<span class="cm-variable">response</span>.<span class="cm-variable">content</span>)</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">38</div></div><pre>            <span class="cm-keyword">if</span> <span class="cm-builtin">len</span>(<span class="cm-variable">compressed_content</span>) <span class="cm-operator">&gt;=</span> <span class="cm-builtin">len</span>(<span class="cm-variable">response</span>.<span class="cm-variable">content</span>):</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">39</div></div><pre>                <span class="cm-keyword">return</span> <span class="cm-variable">response</span></pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">40</div></div><pre>            <span class="cm-variable">response</span>.<span class="cm-variable">content</span> = <span class="cm-variable">compressed_content</span></pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">41</div></div><pre>            <span class="cm-variable">response</span>[<span class="cm-string">'Content-Length'</span>] = <span class="cm-builtin">str</span>(<span class="cm-builtin">len</span>(<span class="cm-variable">response</span>.<span class="cm-variable">content</span>))</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">42</div></div><pre>&nbsp;</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">43</div></div><pre>        <span class="cm-keyword">if</span> <span class="cm-variable">response</span>.<span class="cm-variable">has_header</span>(<span class="cm-string">'ETag'</span>):</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">44</div></div><pre>            <span class="cm-variable">response</span>[<span class="cm-string">'ETag'</span>] = <span class="cm-variable">re</span>.<span class="cm-variable">sub</span>(<span class="cm-string">'"$'</span>, <span class="cm-string">';gzip"'</span>, <span class="cm-variable">response</span>[<span class="cm-string">'ETag'</span>])</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">45</div></div><pre>        <span class="cm-variable">response</span>[<span class="cm-string">'Content-Encoding'</span>] = <span class="cm-string">'gzip'</span></pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">46</div></div><pre>&nbsp;</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">47</div></div><pre>        <span class="cm-keyword">return</span> <span class="cm-variable">response</span></pre></div></div><div class="CodeMirror-cursor" style="left: 189.4091796875px; top: 598px; height: 13px;">&nbsp;</div><div class="CodeMirror-cursor CodeMirror-secondarycursor" style="display: none;">&nbsp;</div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px; top: 619px;"></div><div class="CodeMirror-gutters" style="height: 619px;"><div class="CodeMirror-gutter CodeMirror-linenumbers" style="width: 28px;"></div></div></div></div>
+                </div>
+            </div>
+
+
+
+
+
+<!--
+File Edit
+-->
+
+<h2>File Edit</h2>
+
+<div class="codeblock">
+        <div class="code-header">
+            <div class="stats">
+                <i class="icon-file"></i>
+                <span class="item"><a href="/example/changeset/80ead1899f50a894889e19ffeb49c9cebf5bf045">r8248:80ead1899f50</a></span>
+                <span class="item">1.2 KiB</span>
+                <span class="item last">text/x-python</span>
+                <div class="buttons">
+                  <a class="btn btn-mini" href="/example/changelog/80ead1899f50a894889e19ffeb49c9cebf5bf045/rhodecode/websetup.py">
+                      <i class="icon-time"></i> history
+                  </a>
+
+                        <a class="btn btn-mini" href="/example/files/80ead1899f50a894889e19ffeb49c9cebf5bf045/rhodecode/websetup.py">source</a>
+                      <a class="btn btn-mini" href="/example/raw/80ead1899f50a894889e19ffeb49c9cebf5bf045/rhodecode/websetup.py">raw</a>
+                      <a class="btn btn-mini" href="/example/rawfile/80ead1899f50a894889e19ffeb49c9cebf5bf045/rhodecode/websetup.py">
+                          <i class="icon-archive"></i> download
+                      </a>
+                </div>
+            </div>
+            <div class="form">
+                <label for="set_mode">Editing file:</label>
+                rhodecode /
+                <input type="text" name="filename" value="websetup.py">
+
+                <div class="select2-container drop-menu" id="s2id_set_mode"><a href="javascript:void(0)" class="select2-choice" tabindex="-1">   <span class="select2-chosen" id="select2-chosen-2">plain</span><abbr class="select2-search-choice-close"></abbr>   <span class="select2-arrow" role="presentation"><b role="presentation"></b></span></a><label for="s2id_autogen2" class="select2-offscreen">Editing file:</label><input class="select2-focusser select2-offscreen" type="text" aria-haspopup="true" role="button" aria-labelledby="select2-chosen-2" id="s2id_autogen2"><div class="select2-drop select2-display-none drop-menu-dropdown select2-with-searchbox">   <div class="select2-search">       <label for="s2id_autogen2_search" class="select2-offscreen">Editing file:</label>       <input type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="select2-input" role="combobox" aria-expanded="true" aria-autocomplete="list" aria-owns="select2-results-2" id="s2id_autogen2_search" placeholder="">   </div>   <ul class="select2-results" role="listbox" id="select2-results-2">   </ul></div></div><select id="set_mode" name="set_mode" tabindex="-1" title="Editing file:" style="display: none;">
+<option selected="selected" value="plain">plain</option>
+<option value="apl">APL</option><option value="asterisk">Asterisk</option><option value="clike">C</option><option value="clike">C++</option><option value="cobol">Cobol</option><option value="clike">Java</option><option value="clike">C#</option><option value="clike">Scala</option><option value="clojure">Clojure</option><option value="coffeescript">CoffeeScript</option><option value="commonlisp">Common Lisp</option><option value="css">CSS</option><option value="d">D</option><option value="diff">diff</option><option value="dtd">DTD</option><option value="dylan">Dylan</option><option value="ecl">ECL</option><option value="eiffel">Eiffel</option><option value="erlang">Erlang</option><option value="fortran">Fortran</option><option value="mllike">F#</option><option value="gas">Gas</option><option value="go">GO</option><option value="gherkin">Gherkin</option><option value="go">Go</option><option value="groovy">Groovy</option><option value="haml">HAML</option><option value="haskell">Haskell</option><option value="haxe">Haxe</option><option value="htmlembedded">ASP.NET</option><option value="htmlembedded">Embedded Javascript</option><option value="htmlembedded">JavaServer Pages</option><option value="htmlmixed">HTML</option><option value="http">HTTP</option><option value="jade">Jade</option><option value="javascript">JavaScript</option><option value="javascript">JSON</option><option value="javascript">TypeScript</option><option value="jinja2">Jinja2</option><option value="julia">Julia</option><option value="less">LESS</option><option value="livescript">LiveScript</option><option value="lua">Lua</option><option value="markdown">Markdown (GitHub-flavour)</option><option value="mirc">mIRC</option><option value="nginx">Nginx</option><option value="ntriples">NTriples</option><option value="ocaml">OCaml</option><option value="mllike">OCaml</option><option value="octave">Octave</option><option value="pascal">Pascal</option><option value="pegjs">PEG.js</option><option value="perl">Perl</option><option value="php">PHP</option><option value="pig">Pig</option><option value="null">Plain Text</option><option value="properties">Properties files</option><option value="python" selected="selected">Python</option><option value="puppet">Puppet</option><option value="r">R</option><option value="rst">reStructuredText</option><option value="ruby">Ruby</option><option value="rust">Rust</option><option value="sass">Sass</option><option value="scheme">Scheme</option><option value="css">SCSS</option><option value="shell">Shell</option><option value="sieve">Sieve</option><option value="smalltalk">Smalltalk</option><option value="smarty">Smarty</option><option value="smartymixed">SmartyMixed</option><option value="solr">Solr</option><option value="sparql">SPARQL</option><option value="sql">SQL</option><option value="sql">MariaDB</option><option value="stex">sTeX</option><option value="stex">LaTeX</option><option value="verilog">SystemVerilog</option><option value="tcl">Tcl</option><option value="tiddlywiki">TiddlyWiki </option><option value="tiki">Tiki wiki</option><option value="toml">TOML</option><option value="turtle">Turtle</option><option value="vb">VB.NET</option><option value="vbscript">VBScript</option><option value="velocity">Velocity</option><option value="verilog">Verilog</option><option value="xml">XML</option><option value="xml">HTML</option><option value="xquery">XQuery</option><option value="yaml">YAML</option><option value="z80">Z80</option></select>
+        <script>
+            $(document).ready(function() {
+                  $('#set_mode').select2({
+                      containerCssClass: 'drop-menu',
+                      dropdownCssClass: 'drop-menu-dropdown',
+                      dropdownAutoWidth: true
+                  });
+            });
+        </script>
+
+                <label for="line_wrap">line wraps</label>
+                <div class="select2-container drop-menu" id="s2id_line_wrap"><a href="javascript:void(0)" class="select2-choice" tabindex="-1">   <span class="select2-chosen" id="select2-chosen-3">off</span><abbr class="select2-search-choice-close"></abbr>   <span class="select2-arrow" role="presentation"><b role="presentation"></b></span></a><label for="s2id_autogen3" class="select2-offscreen">line wraps</label><input class="select2-focusser select2-offscreen" type="text" aria-haspopup="true" role="button" aria-labelledby="select2-chosen-3" id="s2id_autogen3"><div class="select2-drop select2-display-none drop-menu-dropdown">   <div class="select2-search select2-search-hidden select2-offscreen">       <label for="s2id_autogen3_search" class="select2-offscreen">line wraps</label>       <input type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="select2-input" role="combobox" aria-expanded="true" aria-autocomplete="list" aria-owns="select2-results-3" id="s2id_autogen3_search" placeholder="">   </div>   <ul class="select2-results" role="listbox" id="select2-results-3">   </ul></div></div><select id="line_wrap" name="line_wrap" tabindex="-1" title="line wraps" style="display: none;">
+<option value="on">on</option>
+<option selected="selected" value="off">off</option>
+</select>
+        <script>
+            $(document).ready(function() {
+                  $('#line_wrap').select2({
+                      containerCssClass: 'drop-menu',
+                      dropdownCssClass: 'drop-menu-dropdown',
+                      dropdownAutoWidth: true,
+                        minimumResultsForSearch: -1
+
+                  });
+            });
+        </script>
+
+                <div id="render_preview" class="btn btn-mini hidden disabled">Preview</div>
+            </div>
+        </div>
+            <div id="editor_container">
+                <pre id="editor_pre"></pre>
+                <textarea id="editor" name="content" style="display: none;"># -*- coding: utf-8 -*-
+
+# Published under Commercial License.
+# Read the full license text at https://rhodecode.com/licenses.
+"""
+rhodecode.websetup
+~~~~~~~~~~~~~~~~~~
+
+Weboperations and setup for rhodecode
+
+:created_on: Dec 11, 2010
+:author: marcink
+:copyright: (c) 2013-2015 RhodeCode GmbH.
+:license: Commercial License, see LICENSE for more details.
+"""
+
+import logging
+
+from rhodecode.config.environment import load_environment
+from rhodecode.lib.db_manage import DbManage
+from rhodecode.model.meta import Session
+
+
+log = logging.getLogger(__name__)
+
+
+def setup_app(command, conf, vars):
+    """Place any commands to setup rhodecode here"""
+    dbconf = conf['sqlalchemy.db1.url']
+    dbmanage = DbManage(log_sql=True, dbconf=dbconf, root=conf['here'],
+                        tests=False, cli_args=command.options.__dict__)
+    dbmanage.create_tables(override=True)
+    dbmanage.set_db_version()
+    opts = dbmanage.config_prompt(None)
+    dbmanage.create_settings(opts)
+    dbmanage.create_default_user()
+    dbmanage.admin_prompt()
+    dbmanage.create_permissions()
+    dbmanage.populate_default_permissions()
+    Session().commit()
+    load_environment(conf.global_conf, conf.local_conf, initial=True)
+</textarea><div class="CodeMirror cm-s-default CodeMirror-focused"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 5px; left: 34px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" style="position: absolute; padding: 0px; width: 1000px; height: 1em; outline: none;" tabindex="0"></textarea></div><div class="CodeMirror-hscrollbar" style="left: 29px; min-height: 18px;"><div style="height: 100%; min-height: 1px; width: 0px;"></div></div><div class="CodeMirror-vscrollbar" style="display: block; bottom: 0px; min-width: 18px;"><div style="min-width: 1px; height: 554px;"></div></div><div class="CodeMirror-scrollbar-filler"></div><div class="CodeMirror-gutter-filler"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="min-width: 579.350463867188px; margin-left: 29px; min-height: 554px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines"><div style="position: relative; outline: none;"><div class="CodeMirror-measure"><div style="width: 50px; height: 50px; overflow-x: scroll;"></div></div><div style="position: relative; z-index: 1; display: none;"></div><div class="CodeMirror-code"><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">1</div></div><pre><span class="cm-comment"># -*- coding: utf-8 -*-</span></pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">2</div></div><pre>&nbsp;</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">3</div></div><pre><span class="cm-comment"># Published under Commercial License.</span></pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">4</div></div><pre><span class="cm-comment"># Read the full license text at https://rhodecode.com/licenses.</span></pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">5</div></div><pre><span class="cm-string">"""</span></pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">6</div></div><pre><span class="cm-string">rhodecode.websetup</span></pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">7</div></div><pre><span class="cm-string">~~~~~~~~~~~~~~~~~~</span></pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">8</div></div><pre>&nbsp;</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">9</div></div><pre><span class="cm-string">Weboperations and setup for rhodecode</span></pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">10</div></div><pre>&nbsp;</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">11</div></div><pre><span class="cm-string">:created_on: Dec 11, 2010</span></pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">12</div></div><pre><span class="cm-string">:author: marcink</span></pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">13</div></div><pre><span class="cm-string">:copyright: (c) 2013-2015 RhodeCode GmbH.</span></pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">14</div></div><pre><span class="cm-string">:license: Commercial License, see LICENSE for more details.</span></pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">15</div></div><pre><span class="cm-string">"""</span></pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">16</div></div><pre>&nbsp;</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">17</div></div><pre><span class="cm-keyword">import</span> <span class="cm-variable">logging</span></pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">18</div></div><pre>&nbsp;</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">19</div></div><pre><span class="cm-keyword">from</span> <span class="cm-variable">rhodecode</span>.<span class="cm-variable">config</span>.<span class="cm-variable">environment</span> <span class="cm-keyword">import</span> <span class="cm-variable">load_environment</span></pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">20</div></div><pre><span class="cm-keyword">from</span> <span class="cm-variable">rhodecode</span>.<span class="cm-variable">lib</span>.<span class="cm-variable">db_manage</span> <span class="cm-keyword">import</span> <span class="cm-variable">DbManage</span></pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">21</div></div><pre><span class="cm-keyword">from</span> <span class="cm-variable">rhodecode</span>.<span class="cm-variable">model</span>.<span class="cm-variable">meta</span> <span class="cm-keyword">import</span> <span class="cm-variable">Session</span></pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">22</div></div><pre>&nbsp;</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">23</div></div><pre>&nbsp;</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">24</div></div><pre><span class="cm-variable">log</span> = <span class="cm-variable">logging</span>.<span class="cm-variable">getLogger</span>(<span class="cm-variable">__name__</span>)  # Intentionally long line to show what will happen if this line does not fit onto the screen. It might have some horizontal scrolling applied or some other fancy mechanism to deal with it.</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">25</div></div><pre>&nbsp;</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">26</div></div><pre>&nbsp;</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">27</div></div><pre><span class="cm-keyword">def</span> <span class="cm-def">setup_app</span>(<span class="cm-variable">command</span>, <span class="cm-variable">conf</span>, <span class="cm-builtin">vars</span>):</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">28</div></div><pre>    <span class="cm-string">"""Place any commands to setup rhodecode here"""</span></pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">29</div></div><pre>    <span class="cm-variable">dbconf</span> = <span class="cm-variable">conf</span>[<span class="cm-string">'sqlalchemy.db1.url'</span>]</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">30</div></div><pre>    <span class="cm-variable">dbmanage</span> = <span class="cm-variable">DbManage</span>(<span class="cm-variable">log_sql</span>=<span class="cm-builtin">True</span>, <span class="cm-variable">dbconf</span>=<span class="cm-variable">dbconf</span>, <span class="cm-variable">root</span>=<span class="cm-variable">conf</span>[<span class="cm-string">'here'</span>],</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">31</div></div><pre>                        <span class="cm-variable">tests</span>=<span class="cm-builtin">False</span>, <span class="cm-variable">cli_args</span>=<span class="cm-variable">command</span>.<span class="cm-variable">options</span>.<span class="cm-variable">__dict__</span>)</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">32</div></div><pre>    <span class="cm-variable">dbmanage</span>.<span class="cm-variable">create_tables</span>(<span class="cm-variable">override</span>=<span class="cm-builtin">True</span>)</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">33</div></div><pre>    <span class="cm-variable">dbmanage</span>.<span class="cm-variable">set_db_version</span>()</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">34</div></div><pre>    <span class="cm-variable">opts</span> = <span class="cm-variable">dbmanage</span>.<span class="cm-variable">config_prompt</span>(<span class="cm-builtin">None</span>)</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">35</div></div><pre>    <span class="cm-variable">dbmanage</span>.<span class="cm-variable">create_settings</span>(<span class="cm-variable">opts</span>)</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">36</div></div><pre>    <span class="cm-variable">dbmanage</span>.<span class="cm-variable">create_default_user</span>()</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">37</div></div><pre>    <span class="cm-variable">dbmanage</span>.<span class="cm-variable">admin_prompt</span>()</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">38</div></div><pre>    <span class="cm-variable">dbmanage</span>.<span class="cm-variable">create_permissions</span>()</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">39</div></div><pre>    <span class="cm-variable">dbmanage</span>.<span class="cm-variable">populate_default_permissions</span>()</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">40</div></div><pre>    <span class="cm-variable">Session</span>().<span class="cm-variable">commit</span>()</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">41</div></div><pre>    <span class="cm-variable">load_environment</span>(<span class="cm-variable">conf</span>.<span class="cm-variable">global_conf</span>, <span class="cm-variable">conf</span>.<span class="cm-variable">local_conf</span>, <span class="cm-variable">initial</span>=<span class="cm-builtin">True</span>)</pre></div><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">42</div></div><pre>&nbsp;</pre></div></div><div class="CodeMirror-cursor" style="left: 4px; top: 0px; height: 13px;">&nbsp;</div><div class="CodeMirror-cursor CodeMirror-secondarycursor" style="display: none;">&nbsp;</div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px; top: 554px;"></div><div class="CodeMirror-gutters" style="height: 554px;"><div class="CodeMirror-gutter CodeMirror-linenumbers" style="width: 28px;"></div></div></div></div>
+                <div id="editor_preview"></div>
+            </div>
+            <div class="message">
+                <label class="codeblock-label">Commit Message</label>
+                <textarea id="commit" name="message" placeholder="Edited file rhodecode/websetup.py via RhodeCode"></textarea>
+            </div>
+        </div>
+
+
+
+
+
+
+<!--
+  Commit with comments
+-->
+
+<h2>Commit with comments</h2>
+
+<div class="diff-container" id="diff-container-140360037209920">
+    <div id="c-4e5ee86997c6-7046e4320b26_target"></div>
+    <div id="c-4e5ee86997c6-7046e4320b26" class="diffblock margined comm">
+        <div class="code-header">
+            <div title="Go back to changed files overview">
+                <a href="#changes_box">
+                    <i class="icon-circle-arrow-up"></i>
+                </a>
+            </div>
+            <div class="changeset_header">
+                <div class="changeset_file">
+                    <i class="icon-file"></i>
+                    <a href="/andersonsantos/rhodecode-dev-fork/files/4e5ee86997c64981d85cf62283af448624e26929/rhodecode/tests/functional/test_compare_local.py">rhodecode/tests/functional/test_compare_local.py</a>
+                </div>
+                <div class="diff-actions">
+                  <a href="/andersonsantos/rhodecode-dev-fork/diff/rhodecode/tests/functional/test_compare_local.py?fulldiff=1&amp;diff1=682135c2e3958d7c84db06d716efe482bd3ce7c6&amp;diff=diff&amp;diff2=4e5ee86997c64981d85cf62283af448624e26929" class="tooltip" title="Show full diff for this file">
+                      <img class="icon" src="/images/icons/page_white_go.png">
+                  </a>
+                  <a href="/andersonsantos/rhodecode-dev-fork/diff-2way/rhodecode/tests/functional/test_compare_local.py?fulldiff=1&amp;diff1=682135c2e3958d7c84db06d716efe482bd3ce7c6&amp;diff=diff&amp;diff2=4e5ee86997c64981d85cf62283af448624e26929" class="tooltip" title="Show full side-by-side diff for this file">
+                      <img class="icon" src="/images/icons/application_double.png">
+                  </a>
+                  <a href="/andersonsantos/rhodecode-dev-fork/diff/rhodecode/tests/functional/test_compare_local.py?diff1=682135c2e3958d7c84db06d716efe482bd3ce7c6&amp;diff=raw&amp;diff2=4e5ee86997c64981d85cf62283af448624e26929" class="tooltip" title="Raw diff">
+                      <img class="icon" src="/images/icons/page_white.png">
+                  </a>
+                  <a href="/andersonsantos/rhodecode-dev-fork/diff/rhodecode/tests/functional/test_compare_local.py?diff1=682135c2e3958d7c84db06d716efe482bd3ce7c6&amp;diff=download&amp;diff2=4e5ee86997c64981d85cf62283af448624e26929" class="tooltip" title="Download diff">
+                      <img class="icon" src="/images/icons/page_save.png">
+                  </a>
+                  <a class="tooltip" href="/andersonsantos/rhodecode-dev-fork/changeset/4e5ee86997c64981d85cf62283af448624e26929?c-4e5ee86997c6-7046e4320b26=WS%3A1&amp;c-4e5ee86997c6-7046e4320b26=C%3A3#c-4e5ee86997c6-7046e4320b26" title="Ignore white space"><img alt="Ignore white space" class="icon" src="/images/icons/text_strikethrough.png"></a>
+                  <a class="tooltip" href="/andersonsantos/rhodecode-dev-fork/changeset/4e5ee86997c64981d85cf62283af448624e26929?c-4e5ee86997c6-7046e4320b26=C%3A6#c-4e5ee86997c6-7046e4320b26" title="increase diff context to 6 lines"><img alt="increase diff context to 6 lines" class="icon" src="/images/icons/table_add.png"></a>
+                </div>
+                <span>
+                  <label>
+                  Show inline comments
+                  <input checked="checked" class="show-inline-comments" id="" id_for="c-4e5ee86997c6-7046e4320b26" name="" type="checkbox" value="1">
+                  </label>
+                </span>
+            </div>
+        </div>
+        <div class="code-body">
+            <div class="full_f_path" path="rhodecode/tests/functional/test_compare_local.py"></div>
+            <table class="code-difftable">
+<tbody><tr class="line context">
+  <td class="lineno old"><a href="#rhodecodetestsfunctionaltest_compare_localpy_o...">...</a></td>
+  <td class="lineno new"><a href="#rhodecodetestsfunctionaltest_compare_localpy_n...">...</a></td>
+  <td class="code ">
+    <pre>@@ -59,7 +59,7 @@
+</pre>
+  </td>
+</tr>
+<tr class="line unmod">
+  <td id="rhodecodetestsfunctionaltest_compare_localpy_o59" class="lineno old"><a href="#rhodecodetestsfunctionaltest_compare_localpy_o59">59</a></td>
+  <td id="rhodecodetestsfunctionaltest_compare_localpy_n59" class="lineno new"><a href="#rhodecodetestsfunctionaltest_compare_localpy_n59">59</a></td>
+  <td class="code ">
+    <pre>                'tag': 'v0.2.0',
+</pre>
+  </td>
+</tr>
+<tr class="line unmod">
+  <td id="rhodecodetestsfunctionaltest_compare_localpy_o60" class="lineno old"><a href="#rhodecodetestsfunctionaltest_compare_localpy_o60">60</a></td>
+  <td id="rhodecodetestsfunctionaltest_compare_localpy_n60" class="lineno new"><a href="#rhodecodetestsfunctionaltest_compare_localpy_n60">60</a></td>
+  <td class="code ">
+    <pre>                'branch': 'default',
+</pre>
+  </td>
+</tr>
+<tr class="line unmod">
+  <td id="rhodecodetestsfunctionaltest_compare_localpy_o61" class="lineno old"><a href="#rhodecodetestsfunctionaltest_compare_localpy_o61">61</a></td>
+  <td id="rhodecodetestsfunctionaltest_compare_localpy_n61" class="lineno new"><a href="#rhodecodetestsfunctionaltest_compare_localpy_n61">61</a></td>
+  <td class="code ">
+    <pre>                'response':  # Intentionally long line to show what will happen if this line does not fit onto the screen. It might have some horizontal scrolling applied or some other fancy mechanism to deal with it.
+</pre>
+  </td>
+</tr>
+<tr class="line del">
+  <td id="rhodecodetestsfunctionaltest_compare_localpy_o62" class="lineno old"><a href="#rhodecodetestsfunctionaltest_compare_localpy_o62">62</a></td>
+  <td class="lineno new"><a href="#rhodecodetestsfunctionaltest_compare_localpy_n"></a></td>
+  <td class="code ">
+    <pre>                   '147 files changed: 5700 inserted, 10176 deleted'
+</pre>
+  </td>
+</tr>
+<tr class="line add">
+  <td class="lineno old"><a href="#rhodecodetestsfunctionaltest_compare_localpy_o"></a></td>
+  <td id="rhodecodetestsfunctionaltest_compare_localpy_n62" class="lineno new"><a href="#rhodecodetestsfunctionaltest_compare_localpy_n62">62</a></td>
+  <td class="code ">
+    <pre><ins> </ins>                   '147 files changed: 5700 inserted, 10176 deleted'
+</pre>
+  </td>
+</tr>
+<tr class="line unmod">
+  <td id="rhodecodetestsfunctionaltest_compare_localpy_o63" class="lineno old"><a href="#rhodecodetestsfunctionaltest_compare_localpy_o63">63</a></td>
+  <td id="rhodecodetestsfunctionaltest_compare_localpy_n63" class="lineno new"><a href="#rhodecodetestsfunctionaltest_compare_localpy_n63">63</a></td>
+  <td class="code ">
+    <pre>            },
+</pre>
+  </td>
+</tr>
+<tr class="line unmod">
+  <td id="rhodecodetestsfunctionaltest_compare_localpy_o64" class="lineno old"><a href="#rhodecodetestsfunctionaltest_compare_localpy_o64">64</a></td>
+  <td id="rhodecodetestsfunctionaltest_compare_localpy_n64" class="lineno new"><a href="#rhodecodetestsfunctionaltest_compare_localpy_n64">64</a></td>
+  <td class="code ">
+    <pre>            'git': {
+</pre>
+  </td>
+</tr>
+<tr class="line unmod">
+  <td id="rhodecodetestsfunctionaltest_compare_localpy_o65" class="lineno old"><a href="#rhodecodetestsfunctionaltest_compare_localpy_o65">65</a></td>
+  <td id="rhodecodetestsfunctionaltest_compare_localpy_n65" class="lineno new"><a href="#rhodecodetestsfunctionaltest_compare_localpy_n65">65</a></td>
+  <td class="code ">
+    <pre>                'tag': 'v0.2.2',
+</pre>
+  </td>
+</tr>
+<tr class="line context">
+  <td class="lineno old"><a href="#rhodecodetestsfunctionaltest_compare_localpy_o...">...</a></td>
+  <td class="lineno new"><a href="#rhodecodetestsfunctionaltest_compare_localpy_n...">...</a></td>
+  <td class="code ">
+    <pre>@@ -77,9 +77,11 @@
+</pre>
+  </td>
+</tr>
+<tr class="line unmod">
+  <td id="rhodecodetestsfunctionaltest_compare_localpy_o77" class="lineno old"><a href="#rhodecodetestsfunctionaltest_compare_localpy_o77">77</a></td>
+  <td id="rhodecodetestsfunctionaltest_compare_localpy_n77" class="lineno new"><a href="#rhodecodetestsfunctionaltest_compare_localpy_n77">77</a></td>
+  <td class="code ">
+    <pre>            target_ref=revisions[backend.alias]['tag'],
+</pre>
+  </td>
+</tr>
+<tr class="line unmod">
+  <td id="rhodecodetestsfunctionaltest_compare_localpy_o78" class="lineno old"><a href="#rhodecodetestsfunctionaltest_compare_localpy_o78">78</a></td>
+  <td id="rhodecodetestsfunctionaltest_compare_localpy_n78" class="lineno new"><a href="#rhodecodetestsfunctionaltest_compare_localpy_n78">78</a></td>
+  <td class="code ">
+    <pre>            ))
+</pre>
+  </td>
+</tr><tr id="comment-tr-3754" class="inline-comments"><td></td><td></td><td>
+
+  <div class="comment" id="comment-3754" line="n78">
+    <div class="comment-wrapp">
+      <div class="meta">
+        <span class="gravatar">
+            <img src="https://secure.gravatar.com/avatar/72706ebd30734451af9ff3fb59f05ff1?d=identicon&amp;s=40" height="20" width="20">
+        </span>
+        <span class="user">
+            anderson
+        </span>
+        <span class="date">
+            just now |
+        </span>
+        <span class="status-change">
+              Comment on commit
+        </span>
+         <a class="permalink" href="#comment-3754">¶</a>
+      </div>
+      <div class="text">
+          <div class="rst-block"><p>commented line
+with multiple lines</p>
+</div>
+      </div>
+    </div>
+  </div><div class="add-comment"><span class="btn btn-default">Add another comment</span></div>
+
+</td></tr>
+<tr class="line unmod">
+  <td id="rhodecodetestsfunctionaltest_compare_localpy_o79" class="lineno old"><a href="#rhodecodetestsfunctionaltest_compare_localpy_o79">79</a></td>
+  <td id="rhodecodetestsfunctionaltest_compare_localpy_n79" class="lineno new"><a href="#rhodecodetestsfunctionaltest_compare_localpy_n79">79</a></td>
+  <td class="code ">
+    <pre></pre>
+  </td>
+</tr>
+<tr class="line del form-open hl-comment">
+  <td id="rhodecodetestsfunctionaltest_compare_localpy_o80" class="lineno old"><a href="#rhodecodetestsfunctionaltest_compare_localpy_o80">80</a></td>
+  <td class="lineno new"><a href="#rhodecodetestsfunctionaltest_compare_localpy_n"></a></td>
+  <td class="code ">
+    <pre>        response.mustcontain('%s@%s' % (<del>backend.repo_name,</del>
+</pre>
+  </td>
+</tr><tr id="comment-tr-undefined" class="comment-form-inline"><td></td><td></td><td>
+  <div class="comment-inline-form ac">
+    <div class="overlay"><div class="overlay-text">Submitting...</div></div>
+      <form action="#" class="inline-form" method="get">
+      <div id="edit-container_o80" class="clearfix">
+        <div class="comment-title pull-left">
+          Commenting on line o80.
+        </div>
+        <div class="comment-help pull-right">
+          Comments parsed using <a href="http://docutils.sourceforge.net/docs/user/rst/quickref.html">RST</a> syntax with <span class="tooltip" title="Use @username inside this text to send notification to this RhodeCode user">@mention</span> support.
+        </div>
+            <div style="clear: both"></div>
+            <textarea id="text_o80" name="text" class="comment-block-ta ac-input" autocomplete="off"></textarea>
+      </div>
+      <div id="preview-container_o80" class="clearfix" style="display: none;">
+         <div class="comment-help">
+              Comment preview
+          </div>
+          <div id="preview-box_o80" class="preview-box"></div>
+      </div>
+      <div class="comment-button pull-right">
+        <input type="hidden" name="f_path" value="rhodecode/tests/functional/test_compare_local.py">
+        <input type="hidden" name="line" value="o80">
+        <div id="preview-btn_o80" class="btn btn-default">Preview</div>
+        <div id="edit-btn_o80" class="btn" style="display: none;">Edit</div>
+        <input class="btn btn-success save-inline-form" id="save" name="save" type="submit" value="Comment">
+      </div>
+      <div class="comment-button hide-inline-form-button">
+      <input class="btn hide-inline-form" id="hide-inline-form" name="hide-inline-form" type="reset" value="Cancel">
+      </div>
+      </form>
+  </div>
+</td></tr>
+<tr class="line add">
+  <td class="lineno old"><a href="#rhodecodetestsfunctionaltest_compare_localpy_o"></a></td>
+  <td id="rhodecodetestsfunctionaltest_compare_localpy_n80" class="lineno new"><a href="#rhodecodetestsfunctionaltest_compare_localpy_n80">80</a></td>
+  <td class="code ">
+    <pre>        response.mustcontain('%s@%s' % (
+</pre>
+  </td>
+</tr>
+<tr class="line add">
+  <td class="lineno old"><a href="#rhodecodetestsfunctionaltest_compare_localpy_o"></a></td>
+  <td id="rhodecodetestsfunctionaltest_compare_localpy_n81" class="lineno new"><a href="#rhodecodetestsfunctionaltest_compare_localpy_n81">81</a></td>
+  <td class="code ">
+    <pre>            backend.repo_name,
+</pre>
+  </td>
+</tr>
+<tr class="line unmod">
+  <td id="rhodecodetestsfunctionaltest_compare_localpy_o81" class="lineno old"><a href="#rhodecodetestsfunctionaltest_compare_localpy_o81">81</a></td>
+  <td id="rhodecodetestsfunctionaltest_compare_localpy_n82" class="lineno new"><a href="#rhodecodetestsfunctionaltest_compare_localpy_n82">82</a></td>
+  <td class="code ">
+    <pre>            revisions[backend.alias]['branch']))
+</pre>
+  </td>
+</tr>
+<tr class="line del">
+  <td id="rhodecodetestsfunctionaltest_compare_localpy_o82" class="lineno old"><a href="#rhodecodetestsfunctionaltest_compare_localpy_o82">82</a></td>
+  <td class="lineno new"><a href="#rhodecodetestsfunctionaltest_compare_localpy_n"></a></td>
+  <td class="code ">
+    <pre>        response.mustcontain('%s@%s' % (<del>backend.repo_name,</del>
+</pre>
+  </td>
+</tr>
+<tr class="line add">
+  <td class="lineno old"><a href="#rhodecodetestsfunctionaltest_compare_localpy_o"></a></td>
+  <td id="rhodecodetestsfunctionaltest_compare_localpy_n83" class="lineno new"><a href="#rhodecodetestsfunctionaltest_compare_localpy_n83">83</a></td>
+  <td class="code ">
+    <pre>        response.mustcontain('%s@%s' % (
+</pre>
+  </td>
+</tr>
+<tr class="line add">
+  <td class="lineno old"><a href="#rhodecodetestsfunctionaltest_compare_localpy_o"></a></td>
+  <td id="rhodecodetestsfunctionaltest_compare_localpy_n84" class="lineno new"><a href="#rhodecodetestsfunctionaltest_compare_localpy_n84">84</a></td>
+  <td class="code ">
+    <pre>            backend.repo_name,
+</pre>
+  </td>
+</tr>
+<tr class="line unmod">
+  <td id="rhodecodetestsfunctionaltest_compare_localpy_o83" class="lineno old"><a href="#rhodecodetestsfunctionaltest_compare_localpy_o83">83</a></td>
+  <td id="rhodecodetestsfunctionaltest_compare_localpy_n85" class="lineno new"><a href="#rhodecodetestsfunctionaltest_compare_localpy_n85">85</a></td>
+  <td class="code ">
+    <pre>            revisions[backend.alias]['tag']))
+</pre>
+  </td>
+</tr>
+<tr class="line unmod">
+  <td id="rhodecodetestsfunctionaltest_compare_localpy_o84" class="lineno old"><a href="#rhodecodetestsfunctionaltest_compare_localpy_o84">84</a></td>
+  <td id="rhodecodetestsfunctionaltest_compare_localpy_n86" class="lineno new"><a href="#rhodecodetestsfunctionaltest_compare_localpy_n86">86</a></td>
+  <td class="code ">
+    <pre>        response.mustcontain(revisions[backend.alias]['response'])
+</pre>
+  </td>
+</tr>
+<tr class="line unmod">
+  <td id="rhodecodetestsfunctionaltest_compare_localpy_o85" class="lineno old"><a href="#rhodecodetestsfunctionaltest_compare_localpy_o85">85</a></td>
+  <td id="rhodecodetestsfunctionaltest_compare_localpy_n87" class="lineno new"><a href="#rhodecodetestsfunctionaltest_compare_localpy_n87">87</a></td>
+  <td class="code ">
+    <pre></pre>
+  </td>
+</tr>
+</tbody></table>
+        </div>
+    </div>
+</div>
+
+
+
+<!--
+ Side-by-side diff
+ -->
+
+ <h2>Side-by-side diff</h2>
+
+<div class="box">
+    <div class="diff-container" style="overflow-x: hidden">
+        <div class="diffblock comm" style="margin:3px; padding:1px">
+            <div class="code-header">
+                <div class="changeset_header">
+                    <div class="changeset_file">
+                        <i class="icon-file"></i>
+                        <a href="/pygments/files/ea295cfb622620f5ba13e226ec531e3fe5296399/tests/test_basic_api.py">tests/test_basic_api.py</a>
+                         [mode: <span id="selected_mode">python</span>]
+                    </div>
+                    <div class="diff-actions">
+                      <a href="/pygments/diff/tests/test_basic_api.py?diff2=ea295cfb622620f5ba13e226ec531e3fe5296399&amp;diff=diff&amp;diff1=de45f950b669e2d991c4ba512fa6fe450c6616db&amp;fulldiff=1" class="tooltip" title="Show full diff for this file">
+                          <img class="icon" src="/images/icons/page_white_go.png">
+                      </a>
+                      <a href="/pygments/diff-2way/tests/test_basic_api.py?diff2=ea295cfb622620f5ba13e226ec531e3fe5296399&amp;diff=diff&amp;diff1=de45f950b669e2d991c4ba512fa6fe450c6616db&amp;fulldiff=1" class="tooltip" title="Show full side-by-side diff for this file" tt_title="Show full side-by-side diff for this file">
+                          <img class="icon" src="/images/icons/application_double.png">
+                      </a>
+                      <a href="/pygments/diff/tests/test_basic_api.py?diff2=ea295cfb622620f5ba13e226ec531e3fe5296399&amp;diff1=de45f950b669e2d991c4ba512fa6fe450c6616db&amp;diff=raw" class="tooltip" title="Raw diff">
+                          <img class="icon" src="/images/icons/page_white.png">
+                      </a>
+                      <a href="/pygments/diff/tests/test_basic_api.py?diff2=ea295cfb622620f5ba13e226ec531e3fe5296399&amp;diff1=de45f950b669e2d991c4ba512fa6fe450c6616db&amp;diff=download" class="tooltip" title="Download diff">
+                          <img class="icon" src="/images/icons/page_save.png">
+                      </a>
+                      <label><input id="ignorews" name="ignorews" type="checkbox" value="1">ignore white space</label>
+                      <label><input id="edit_mode" name="edit_mode" type="checkbox" value="1">turn on edit mode</label>
+
+                    </div>
+                    <div style="float: right; padding: 0px 10px 0px 0px">
+    r1538:de45f950b669 ... r1539:ea295cfb6226
+</div>
+                </div>
+            </div>
+            <div id="compare"></div>
+        </div>
+    </div>
+
+<script>
+$(document).ready(function () {
+    var example_lines = '1\n2\n3\n4\n5\n6\n7\n8\n9\n \n';
+
+    $('#compare').mergely({
+        width: 'auto',
+        height: '600',
+        fgcolor: {a:'#ddffdd',c:'#cccccc',d:'#ffdddd'},
+        bgcolor: '#fff',
+        viewport: true,
+        cmsettings: {mode: 'text/plain', readOnly: true, lineWrapping: false, lineNumbers: true},
+        lhs: function(setValue) {
+            if("False" == "True"){
+                setValue('Binary file')
+            }
+            else if("MercurialCommit" == "EmptyCommit"){
+                setValue('');
+            }
+            else{
+                var left_value = example_lines.slice(0, 10) +
+                    '123456789 '.repeat(10) +
+                    '\n'+
+                    example_lines.slice(10, 20);
+                setValue(left_value + example_lines.repeat(9));
+            }
+
+        },
+        rhs: function(setValue) {
+            if("False" == "True"){
+                setValue('Binary file')
+            }
+            else if("MercurialCommit" == "EmptyCommit"){
+                setValue('');
+            }
+            else{
+                var right_value = example_lines +
+                    example_lines.slice(0, 8) +
+                    'abcdefghi '.repeat(10) +
+                    '\n'+
+                    example_lines.slice(8, 20);
+                setValue(right_value + example_lines.repeat(9));
+            }
+        },
+    });
+
+    var detected_mode = detectCodeMirrorModeFromExt('test_basic_api.py', true);
+    if(detected_mode){
+        setCodeMirrorMode($('#compare').mergely('cm', 'lhs'), detected_mode);
+        setCodeMirrorMode($('#compare').mergely('cm', 'rhs'), detected_mode);
+        $('#selected_mode').html(detected_mode);
+    }
+
+    $('#ignorews').change(function(e){
+        var val = e.currentTarget.checked;
+        $('#compare').mergely('options', {ignorews: val});
+        $('#compare').mergely('update');
+    })
+    $('#edit_mode').change(function(e){
+        var val = !e.currentTarget.checked;
+        $('#compare').mergely('cm', 'lhs').setOption('readOnly', val);
+        $('#compare').mergely('cm', 'rhs').setOption('readOnly', val);
+        $('#compare').mergely('update');
+    })
+});
+</script>
+
+</div>
+
+<!-- end examples -->
+
+    </div>
+  </div>
+</div>
+</%def>

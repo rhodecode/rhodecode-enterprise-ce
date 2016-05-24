@@ -1,0 +1,967 @@
+## -*- coding: utf-8 -*-
+<%inherit file="/debug_style/index.html"/>
+
+<%def name="breadcrumbs_links()">
+    ${h.link_to(_('Style'), h.url('debug_style_home'))}
+    &raquo;
+    ${c.active}
+</%def>
+
+
+<%def name="real_main()">
+<div class="box">
+    <div class="title">
+        ${self.breadcrumbs()}
+    </div>
+
+    <div class='sidebar-col-wrapper'>
+    ${self.sidebar()}
+
+      <div class="main-content">
+
+        <h2>Collapsable Content</h2>
+        <p>Where a section may have a very long list of information, it can be desirable to use collapsable content. There is a premade function for showing/hiding elements, though its use may or may not be practical, depending on the situation. Use it, or don't, on a case-by-case basis.</p>
+
+        <p><strong>To use the collapsable-content function:</strong> Create a toggle button using <code>&lt;div class="btn-collapse"&gt;Show More&lt;/div&gt;</code> and a data attribute using <code>data-toggle</code>. Clicking this button will toggle any sibling element(s) containing the class <code>collapsable-content</code> and an identical <code>data-toggle</code> attribute. It will also change the button to read "Show Less"; another click toggles it back to the previous state. Ideally, use pre-existing elements and add the class and attribute; creating a new div around the existing content may lead to unexpected results, as the toggle function will use <code>display:block</code> if no previous display specification was found.
+        </p>
+        <p>Notes:</p>
+        <ul>
+          <li>Changes made to the text of the button will require adjustment to the function, but for the sake of consistency and user experience, this is best avoided. </li>
+          <li>Collapsable content inside of a pjax loaded container will require <code>collapsableContent();</code> to be called from within the container. No variables are necessary.</li>
+        </ul>
+
+      </div>  <!-- .main-content  -->
+    </div>  <!-- .sidebar-col-wrapper  -->
+</div> <!-- .box -->
+
+  <!-- CONTENT -->
+  <div id="content" class="wrapper">
+
+      <div class="main">
+
+<div class="box">
+  <div class="title">
+    <h1>
+        Diff: enable filename with spaces on diffs
+    </h1>
+    <h1>
+            <i class="icon-hg" ></i>
+
+            <i class="icon-lock"></i>
+        <span><a href="/rhodecode-momentum">rhodecode-momentum</a></span>
+
+    </h1>
+  </div>
+
+  <div class="box pr-summary">
+      <div class="summary-details block-left">
+
+        <div class="pr-details-title">
+
+    Pull request #720 From Tue, 17 Feb 2015 16:21:38
+<div class="btn-collapse" data-toggle="description">Show More</div>
+        </div>
+        <div id="summary" class="fields pr-details-content">
+           <div class="field">
+            <div class="label-summary">
+                <label>Origin:</label>
+            </div>
+            <div class="input">
+                <div>
+                    <span class="tag">
+                        <a href="/andersonsantos/rhodecode-momentum-fork#fix_574">book: fix_574</a>
+                    </span>
+                    <span class="clone-url">
+                        <a href="/andersonsantos/rhodecode-momentum-fork">https://code.rhodecode.com/andersonsantos/rhodecode-momentum-fork</a>
+                    </span>
+                </div>
+                <div>
+                     <br>
+                        <input type="text"  value="hg pull -r 46b3d50315f0 https://code.rhodecode.com/andersonsantos/rhodecode-momentum-fork" readonly="readonly">
+                </div>
+            </div>
+           </div>
+           <div class="field">
+            <div class="label-summary">
+                <label>Review:</label>
+            </div>
+            <div class="input">
+              <div class="flag_status under_review tooltip pull-left" title="Pull request status calculated from votes"></div>
+                <span class="changeset-status-lbl tooltip" title="Pull request status calculated from votes">
+                  Under Review
+                </span>
+
+            </div>
+           </div>
+            <div class="field collapsable-content" data-toggle="description">
+             <div class="label-summary">
+                 <label>Description:</label>
+             </div>
+             <div class="input">
+                 <div class="pr-description">Fixing issue <a class="issue- tracker-link" href="http://bugs.rhodecode.com/issues/574">#  574</a>, changing regex for capturing filenames</div>
+             </div>
+            </div>
+            <div class="field collapsable-content" data-toggle="description">
+             <div class="label-summary">
+                 <label>Comments:</label>
+             </div>
+             <div class="input">
+                 <div>
+                     <div class="comments-number">
+                         <a href="#inline-comments-container">0 Pull request   comments</a>,
+                         0 Inline Comments
+                     </div>
+                 </div>
+              </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="reviewers-title block-right">
+          <div class="pr-details-title">
+              Author
+          </div>
+        </div>
+        <div class="block-right pr-details-content reviewers">
+            <ul class="group_members">
+              <li>
+                <img class="gravatar" src="https://secure.gravatar.com/avatar/72706ebd30734451af9ff3fb59f05ff1?d=identicon&amp;s=32" height="16" width="16">
+                <span class="user"> <a href="/_profiles/lolek">lolek (Lolek Santos)</a></span>
+              </li>
+            </ul>
+        </div>
+        <div class="reviewers-title block-right">
+          <div class="pr-details-title">
+              Pull request reviewers
+              <span class="btn-collapse" data-toggle="reviewers">Show More</span>
+          </div>
+
+        </div>
+        <div id="reviewers" class="block-right pr-details-content reviewers">
+
+            <ul id="review_members" class="group_members">
+              <li id="reviewer_70">
+                <div class="reviewers_member">
+                    <div class="reviewer_status tooltip pull-left" title="Not Reviewed">
+                      <div class="flag_status rejected pull-left reviewer_member_status"></div>
+                    </div>
+                  <img class="gravatar" src="https://secure.gravatar.com/avatar/153a0fab13160b3e64a2cbc7c0373506?d=identicon&amp;s=32" height="16" width="16">
+                  <span class="user"> <a href="/_profiles/jenkins-tests">jenkins-tests</a> (reviewer)</span>
+                </div>
+                  <input id="reviewer_70_input" type="hidden" value="70" name="review_members">
+                  <div class="reviewer_member_remove action_button" onclick="removeReviewMember(70, true)" style="visibility: hidden;">
+                    <i class="icon-remove-sign"></i>
+                  </div>
+              </li>
+              <li id="reviewer_33" class="collapsable-content" data-toggle="reviewers">
+                <div class="reviewers_member">
+                    <div class="reviewer_status tooltip pull-left" title="Not Reviewed">
+                      <div class="flag_status approved pull-left reviewer_member_status"></div>
+                    </div>
+                  <img class="gravatar" src="https://secure.gravatar.com/avatar/ffd6a317ec2b66be880143cd8459d0d9?d=identicon&amp;s=32" height="16" width="16">
+                  <span class="user"> <a href="/_profiles/jenkins-tests">garbas (Rok Garbas)</a> (reviewer)</span>
+                </div>
+              </li>
+              <li id="reviewer_2" class="collapsable-content" data-toggle="reviewers">
+                <div class="reviewers_member">
+                    <div class="reviewer_status tooltip pull-left" title="Not Reviewed">
+                      <div class="flag_status not_reviewed pull-left reviewer_member_status"></div>
+                    </div>
+                  <img class="gravatar" src="https://secure.gravatar.com/avatar/aad9d40cac1259ea39b5578554ad9d64?d=identicon&amp;s=32" height="16" width="16">
+                  <span class="user"> <a href="/_profiles/jenkins-tests">marcink (Marcin Kuzminski)</a> (reviewer)</span>
+                </div>
+              </li>
+              <li id="reviewer_36" class="collapsable-content" data-toggle="reviewers">
+                <div class="reviewers_member">
+                    <div class="reviewer_status tooltip pull-left" title="Not Reviewed">
+                      <div class="flag_status approved pull-left reviewer_member_status"></div>
+                    </div>
+                  <img class="gravatar" src="https://secure.gravatar.com/avatar/7a4da001a0af0016ed056ab523255db9?d=identicon&amp;s=32" height="16" width="16">
+                  <span class="user"> <a href="/_profiles/jenkins-tests">johbo (Johannes Bornhold)</a> (reviewer)</span>
+                </div>
+              </li>
+              <li id="reviewer_47" class="collapsable-content" data-toggle="reviewers">
+                <div class="reviewers_member">
+                    <div class="reviewer_status tooltip pull-left" title="Not Reviewed">
+                      <div class="flag_status under_review pull-left reviewer_member_status"></div>
+                    </div>
+                  <img class="gravatar" src="https://secure.gravatar.com/avatar/8f6dc00dce79d6bd7d415be5cea6a008?d=identicon&amp;s=32" height="16" width="16">
+                  <span class="user"> <a href="/_profiles/jenkins-tests">lisaq (Lisa Quatmann)</a> (reviewer)</span>
+                </div>
+              </li>
+              <li id="reviewer_49" class="collapsable-content" data-toggle="reviewers">
+                <div class="reviewers_member">
+                    <div class="reviewer_status tooltip pull-left" title="Not Reviewed">
+                      <div class="flag_status approved pull-left reviewer_member_status"></div>
+                    </div>
+                  <img class="gravatar" src="https://secure.gravatar.com/avatar/89f722927932a8f737a0feafb03a606e?d=identicon&amp;s=32" height="16" width="16">
+                  <span class="user"> <a href="/_profiles/jenkins-tests">paris (Paris Kolios)</a> (reviewer)</span>
+                </div>
+              </li>
+              <li id="reviewer_50" class="collapsable-content" data-toggle="reviewers">
+                <div class="reviewers_member">
+                    <div class="reviewer_status tooltip pull-left" title="Not Reviewed">
+                      <div class="flag_status approved pull-left reviewer_member_status"></div>
+                    </div>
+                  <img class="gravatar" src="https://secure.gravatar.com/avatar/081322c975e8545ec269372405fbd016?d=identicon&amp;s=32" height="16" width="16">
+                  <span class="user"> <a href="/_profiles/jenkins-tests">ergo (Marcin Lulek)</a> (reviewer)</span>
+                </div>
+              </li>
+              <li id="reviewer_54" class="collapsable-content" data-toggle="reviewers">
+                <div class="reviewers_member">
+                    <div class="reviewer_status tooltip pull-left" title="Not Reviewed">
+                      <div class="flag_status under_review pull-left reviewer_member_status"></div>
+                    </div>
+                  <img class="gravatar" src="https://secure.gravatar.com/avatar/72706ebd30734451af9ff3fb59f05ff1?d=identicon&amp;s=32" height="16" width="16">
+                  <span class="user"> <a href="/_profiles/jenkins-tests">anderson (Anderson Santos)</a> (reviewer)</span>
+                </div>
+              </li>
+              <li id="reviewer_57" class="collapsable-content" data-toggle="reviewers">
+                <div class="reviewers_member">
+                    <div class="reviewer_status tooltip pull-left" title="Not Reviewed">
+                      <div class="flag_status approved pull-left reviewer_member_status"></div>
+                    </div>
+                  <img class="gravatar" src="https://secure.gravatar.com/avatar/23e2ee8f5fd462cba8129a40cc1e896c?d=identicon&amp;s=32" height="16" width="16">
+                  <span class="user"> <a href="/_profiles/jenkins-tests">gmgauthier (Greg Gauthier)</a> (reviewer)</span>
+                </div>
+              </li>
+              <li id="reviewer_31" class="collapsable-content" data-toggle="reviewers">
+                <div class="reviewers_member">
+                    <div class="reviewer_status tooltip pull-left" title="Not Reviewed">
+                      <div class="flag_status under_review pull-left reviewer_member_status"></div>
+                    </div>
+                  <img class="gravatar" src="https://secure.gravatar.com/avatar/0c9a7e6674b6f0b35d98dbe073e3f0ab?d=identicon&amp;s=32" height="16" width="16">
+                  <span class="user"> <a href="/_profiles/jenkins-tests">ostrobel (Oliver Strobel)</a> (reviewer)</span>
+                </div>
+              </li>
+            </ul>
+          <div id="add_reviewer_input" class="ac" style="display: none;">
+          </div>
+        </div>
+        </div>
+      </div>
+  </div>
+  <div class="box">
+      <div class="table" >
+          <div id="changeset_compare_view_content">
+              <div class="compare_view_commits_title">
+                  <h2>Compare View: 6 commits<span class="btn-collapse" data-toggle="commits">Show More</span></h2>
+
+              </div>
+              <div class="container">
+
+
+    <table class="rctable compare_view_commits">
+    <tr>
+        <th>Time</th>
+        <th>Author</th>
+        <th>Commit</th>
+        <th></th>
+        <th>Title</th>
+    </tr>
+        <tr id="row-7e83e5cd7812dd9e055ce30e77c65cdc08154b43" commit_id="7e83e5cd7812dd9e055ce30e77c65cdc08154b43" class="compare_select">
+            <td class="td-time">
+                <span class="tooltip" title="3 hours and 23 minutes ago" tt_title="3 hours and 23 minutes ago">2015-02-18 10:13:34</span>
+            </td>
+            <td class="td-user">
+                <div class="gravatar_with_user">
+                    <img class="gravatar" alt="gravatar" src="https://secure.gravatar.com/avatar/02cc31cea73b88b7209ba302c5967a9d?d=identicon&amp;s=16">
+                    <span title="Lolek Santos <lolek@rhodecode.com>" class="user">brian (Brian Butler)</span>
+                </div>
+            </td>
+            <td class="td-hash">
+                <code>
+                    <a href="/brian/documentation-rep/changeset/7e83e5cd7812dd9e055ce30e77c65cdc08154b43">r395:7e83e5cd7812</a>
+                </code>
+            </td>
+            <td class="expand_commit" data-commit-id="7e83e5cd7812dd9e055ce30e77c65cdc08154b43" title="Expand commit message">
+                <div class="show_more_col">
+                <i class="show_more"></i>
+                </div>
+            </td>
+            <td class="mid td-description">
+                <div class="log-container truncate-wrap">
+                    <div id="c-7e83e5cd7812dd9e055ce30e77c65cdc08154b43" class="message truncate">rep: added how we doc to guide</div>
+                  </div>
+            </td>
+        </tr>
+        <tr id="row-48ce1581bdb3aa7679c246cbdd3fb030623f5c87" commit_id="48ce1581bdb3aa7679c246cbdd3fb030623f5c87" class="compare_select">
+            <td class="td-time">
+                <span class="tooltip" title="4 hours and 18 minutes ago">2015-02-18 09:18:31</span>
+            </td>
+            <td class="td-user">
+                <div class="gravatar_with_user">
+                    <img class="gravatar" alt="gravatar" src="https://secure.gravatar.com/avatar/02cc31cea73b88b7209ba302c5967a9d?d=identicon&amp;s=16">
+                    <span title="Lolek Santos <lolek@rhodecode.com>" class="user">brian (Brian Butler)</span>
+                </div>
+            </td>
+            <td class="td-hash">
+                <code>
+                    <a href="/brian/documentation-rep/changeset/48ce1581bdb3aa7679c246cbdd3fb030623f5c87">r394:48ce1581bdb3</a>
+                </code>
+            </td>
+            <td class="expand_commit" data-commit-id="48ce1581bdb3aa7679c246cbdd3fb030623f5c87" title="Expand commit message">
+                <div class="show_more_col">
+                <i class="show_more"></i>
+                </div>
+            </td>
+            <td class="mid td-description">
+                <div class="log-container truncate-wrap">
+                    <div id="c-48ce1581bdb3aa7679c246cbdd3fb030623f5c87" class="message truncate">repo 0004 - typo</div>
+                  </div>
+            </td>
+        </tr>
+        <tr id="row-982d857aafb4c71e7686e419c32b71c9a837257d" commit_id="982d857aafb4c71e7686e419c32b71c9a837257d" class="compare_select collapsable-content" data-toggle="commits">
+            <td class="td-time">
+                <span class="tooltip" title="4 hours and 22 minutes ago">2015-02-18 09:14:45</span>
+            </td>
+            <td class="td-user">
+                <span class="gravatar" commit_id="982d857aafb4c71e7686e419c32b71c9a837257d">
+                    <img alt="gravatar" src="https://secure.gravatar.com/avatar/02cc31cea73b88b7209ba302c5967a9d?d=identicon&amp;s=28" height="14" width="14">
+                </span>
+                <span class="author">brian (Brian Butler)</span>
+            </td>
+            <td class="td-hash">
+                <code>
+                    <a href="/brian/documentation-rep/changeset/982d857aafb4c71e7686e419c32b71c9a837257d">r393:982d857aafb4</a>
+                </code>
+            </td>
+            <td class="expand_commit" data-commit-id="982d857aafb4c71e7686e419c32b71c9a837257d" title="Expand commit message">
+                <div class="show_more_col">
+                <i class="show_more"></i>
+                </div>
+            </td>
+            <td class="mid td-description">
+                <div class="log-container truncate-wrap">
+                    <div id="c-982d857aafb4c71e7686e419c32b71c9a837257d" class="message truncate">internals: how to doc section added</div>
+                  </div>
+            </td>
+        </tr>
+        <tr id="row-4c7258ad1af6dae91bbaf87a933e3597e676fab8" commit_id="4c7258ad1af6dae91bbaf87a933e3597e676fab8" class="compare_select collapsable-content" data-toggle="commits">
+            <td class="td-time">
+                <span class="tooltip" title="20 hours and 16 minutes ago">2015-02-17 17:20:44</span>
+            </td>
+            <td class="td-user">
+                <span class="gravatar" commit_id="4c7258ad1af6dae91bbaf87a933e3597e676fab8">
+                    <img alt="gravatar" src="https://secure.gravatar.com/avatar/02cc31cea73b88b7209ba302c5967a9d?d=identicon&amp;s=28" height="14" width="14">
+                </span>
+                <span class="author">brian (Brian Butler)</span>
+            </td>
+            <td class="td-hash">
+                <code>
+                    <a href="/brian/documentation-rep/changeset/4c7258ad1af6dae91bbaf87a933e3597e676fab8">r392:4c7258ad1af6</a>
+                </code>
+            </td>
+            <td class="expand_commit" data-commit-id="4c7258ad1af6dae91bbaf87a933e3597e676fab8" title="Expand commit message">
+                <div class="show_more_col">
+                <i class="show_more"></i>
+                </div>
+            </td>
+            <td class="mid td-description">
+                <div class="log-container truncate-wrap">
+                    <div id="c-4c7258ad1af6dae91bbaf87a933e3597e676fab8" class="message truncate">REP: 0004 Documentation standards</div>
+                  </div>
+            </td>
+        </tr>
+        <tr id="row-46b3d50315f0f2b1f64485ac95af4f384948f9cb" commit_id="46b3d50315f0f2b1f64485ac95af4f384948f9cb" class="compare_select collapsable-content" data-toggle="commits">
+            <td class="td-time">
+                <span class="tooltip" title="18 hours and 19 minutes ago">2015-02-17 16:18:49</span>
+            </td>
+            <td class="td-user">
+                <span class="gravatar" commit_id="46b3d50315f0f2b1f64485ac95af4f384948f9cb">
+                    <img alt="gravatar" src="https://secure.gravatar.com/avatar/72706ebd30734451af9ff3fb59f05ff1?d=identicon&amp;s=28" height="14" width="14">
+                </span>
+                <span class="author">anderson (Anderson Santos)</span>
+            </td>
+            <td class="td-hash">
+                <code>
+                    <a href="/andersonsantos/rhodecode-momentum-fork/changeset/46b3d50315f0f2b1f64485ac95af4f384948f9cb">r8743:46b3d50315f0</a>
+                </code>
+            </td>
+            <td class="expand_commit" data-commit-id="46b3d50315f0f2b1f64485ac95af4f384948f9cb" title="Expand commit message">
+                <div class="show_more_col">
+                <i class="show_more" ></i>
+                </div>
+            </td>
+            <td class="mid td-description">
+                <div class="log-container truncate-wrap">
+                    <div id="c-46b3d50315f0f2b1f64485ac95af4f384948f9cb" class="message truncate">Diff: created tests for the diff with filenames with spaces</div>
+                    
+                  </div>
+            </td>
+        </tr>
+        <tr id="row-1e57d2549bd6c34798075bf05ac39f708bb33b90" commit_id="1e57d2549bd6c34798075bf05ac39f708bb33b90" class="compare_select collapsable-content" data-toggle="commits">
+            <td class="td-time">
+                <span class="tooltip" title="2 days ago">2015-02-16 10:06:08</span>
+            </td>
+            <td class="td-user">
+                <span class="gravatar" commit_id="1e57d2549bd6c34798075bf05ac39f708bb33b90">
+                    <img alt="gravatar" src="https://secure.gravatar.com/avatar/72706ebd30734451af9ff3fb59f05ff1?d=identicon&amp;s=28" height="14" width="14">
+                </span>
+                <span class="author">anderson (Anderson Santos)</span>
+            </td>
+            <td class="td-hash">
+                <code>
+                    <a href="/andersonsantos/rhodecode-momentum-fork/changeset/1e57d2549bd6c34798075bf05ac39f708bb33b90">r8742:1e57d2549bd6</a>
+                </code>
+            </td>
+            <td class="expand_commit" data-commit-id="1e57d2549bd6c34798075bf05ac39f708bb33b90" title="Expand commit message">
+                <div class="show_more_col">
+                <i class="show_more" ></i>
+                </div>
+            </td>
+            <td class="mid td-description">
+                <div class="log-container truncate-wrap">
+                    <div id="c-1e57d2549bd6c34798075bf05ac39f708bb33b90" class="message truncate">Diff: fix renaming files with spaces <a class="issue-tracker-link" href="http://bugs.rhodecode.com/issues/574">#574</a></div>
+                    
+                  </div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<script>
+$('.expand_commit').on('click',function(e){
+    $(this).children('i').hide();
+    var cid = $(this).data('commitId');
+    $('#c-'+cid).css({'height': 'auto', 'margin': '.65em 1em .65em 0','white-space': 'pre-line', 'text-overflow': 'initial', 'overflow':'visible'})
+    $('#t-'+cid).css({'height': 'auto', 'text-overflow': 'initial', 'overflow':'visible', 'white-space':'normal'})
+});
+$('.compare_select').on('click',function(e){
+    var cid = $(this).attr('commit_id');
+    $('#row-'+cid).toggleClass('hl', !$('#row-'+cid).hasClass('hl'));
+});
+</script>
+              <div class="cs_files_title">
+                  <span class="cs_files_expand">
+                      <span id="expand_all_files">Expand All</span> | <span id="collapse_all_files">Collapse All</span>
+                  </span>
+                  <h2>
+                      7 files changed: 55 inserted, 9 deleted
+                  </h2>
+              </div>
+              <div class="cs_files">
+              <table class="compare_view_files">
+
+                  <tr class="cs_A expand_file" fid="c--efbe5b7a3f13">
+                      <td class="cs_icon_td">
+                          <span class="expand_file_icon" fid="c--efbe5b7a3f13"></span>
+                      </td>
+                      <td class="cs_icon_td">
+                          <div class="flag_status not_reviewed hidden"></div>
+                      </td>
+                      <td id="a_c--efbe5b7a3f13">
+                          <a class="compare_view_filepath" href="#a_c--efbe5b7a3f13">
+                              rhodecode/tests/fixtures/git_diff_rename_file_with_spaces.diff
+                          </a>
+                          <span id="diff_c--efbe5b7a3f13" class="diff_links" style="display: none;">
+                            <a href="/andersonsantos/rhodecode-momentum-fork/diff/rhodecode/tests/fixtures/git_diff_rename_file_with_spaces.diff?diff2=46b3d50315f0f2b1f64485ac95af4f384948f9cb&amp;diff1=b78e2376b986b2cf656a2b4390b09f303291c886&amp;fulldiff=1&amp;diff=diff">
+                                Unified Diff
+                            </a>
+                            |
+                            <a href="/andersonsantos/rhodecode-momentum-fork/diff-2way/rhodecode/tests/fixtures/git_diff_rename_file_with_spaces.diff?diff2=46b3d50315f0f2b1f64485ac95af4f384948f9cb&amp;diff1=b78e2376b986b2cf656a2b4390b09f303291c886&amp;fulldiff=1&amp;diff=diff">
+                                Side-by-side Diff
+                            </a>
+                          </span>
+                      </td>
+                      <td>
+                          <div class="changes pull-right"><div style="width:100px"><div class="added top-right-rounded-corner-mid bottom-right-rounded-corner-mid top-left-rounded-corner-mid bottom-left-rounded-corner-mid" style="width:100.0%">4</div><div class="deleted top-right-rounded-corner-mid bottom-right-rounded-corner-mid" style="width:0%"></div></div></div>
+                          <div class="comment-bubble pull-right" data-path="rhodecode/tests/fixtures/git_diff_rename_file_with_spaces.diff">
+                            <i class="icon-comment"></i>
+                          </div>
+                      </td>
+                  </tr>
+                  <tr id="tr_c--efbe5b7a3f13">
+                    <td></td>
+                    <td></td>
+                    <td class="injected_diff" colspan="2">
+
+ <div class="diff-container" id="diff-container-140716195039928">
+    <div id="c--efbe5b7a3f13_target" ></div>
+    <div id="c--efbe5b7a3f13" class="diffblock margined comm" >
+        <div class="code-body">
+            <div class="full_f_path" path="rhodecode/tests/fixtures/git_diff_rename_file_with_spaces.diff" style="display: none;"></div>
+            <table class="code-difftable">
+<tr class="line context">
+    <td class="add-comment-line"><span class="add-comment-content"></span></td>
+    <td  class="lineno old"><a href="#rhodecodetestsfixturesgit_diff_rename_file_with_spacesdiff_o"></a></td>
+    <td  class="lineno new"><a href="#rhodecodetestsfixturesgit_diff_rename_file_with_spacesdiff_n"></a></td>
+    <td class="code no-comment">
+        <pre>new file 100644</pre>
+    </td>
+</tr>
+<tr class="line add">
+    <td class="add-comment-line"><span class="add-comment-content"><a href="#"><span class="icon-comment-add"></span></a></span></td>
+    <td  class="lineno old"><a href="#rhodecodetestsfixturesgit_diff_rename_file_with_spacesdiff_o"></a></td>
+    <td id="rhodecodetestsfixturesgit_diff_rename_file_with_spacesdiff_n1" class="lineno new"><a href="#rhodecodetestsfixturesgit_diff_rename_file_with_spacesdiff_n1">1</a></td>
+    <td class="code">
+        <pre>diff --git a/file_with_ spaces.txt b/file_with_  two spaces.txt
+</pre>
+    </td>
+</tr>
+<tr class="line add">
+    <td class="add-comment-line"><span class="add-comment-content"><a href="#"><span class="icon-comment-add"></span></a></span></td>
+    <td  class="lineno old"><a href="#rhodecodetestsfixturesgit_diff_rename_file_with_spacesdiff_o"></a></td>
+    <td id="rhodecodetestsfixturesgit_diff_rename_file_with_spacesdiff_n2" class="lineno new"><a href="#rhodecodetestsfixturesgit_diff_rename_file_with_spacesdiff_n2">2</a></td>
+    <td class="code">
+        <pre>similarity index 100%
+</pre>
+    </td>
+</tr>
+<tr class="line add">
+    <td class="add-comment-line"><span class="add-comment-content"><a href="#"><span class="icon-comment-add"></span></a></span></td>
+    <td  class="lineno old"><a href="#rhodecodetestsfixturesgit_diff_rename_file_with_spacesdiff_o"></a></td>
+    <td id="rhodecodetestsfixturesgit_diff_rename_file_with_spacesdiff_n3" class="lineno new"><a href="#rhodecodetestsfixturesgit_diff_rename_file_with_spacesdiff_n3">3</a></td>
+    <td class="code">
+        <pre>rename from file_with_ spaces.txt
+</pre>
+    </td>
+</tr>
+<tr class="line add">
+    <td class="add-comment-line"><span class="add-comment-content"><a href="#"><span class="icon-comment-add"></span></a></span></td>
+    <td  class="lineno old"><a href="#rhodecodetestsfixturesgit_diff_rename_file_with_spacesdiff_o"></a></td>
+    <td id="rhodecodetestsfixturesgit_diff_rename_file_with_spacesdiff_n4" class="lineno new"><a href="#rhodecodetestsfixturesgit_diff_rename_file_with_spacesdiff_n4">4</a></td>
+    <td class="code">
+        <pre>rename to file_with_  two spaces.txt
+</pre>
+    </td>
+</tr>
+<tr class="line context">
+    <td class="add-comment-line"><span class="add-comment-content"></span></td>
+    <td  class="lineno old"><a href="#rhodecodetestsfixturesgit_diff_rename_file_with_spacesdiff_o...">...</a></td>
+    <td  class="lineno new"><a href="#rhodecodetestsfixturesgit_diff_rename_file_with_spacesdiff_n...">...</a></td>
+    <td class="code no-comment">
+        <pre> No newline at end of file</pre>
+    </td>
+</tr>
+</table>
+        </div>
+    </div>
+  </div>
+
+                    </td>
+                  </tr>
+                  <tr class="cs_A expand_file" fid="c--c21377f778f9">
+                      <td class="cs_icon_td">
+                          <span class="expand_file_icon" fid="c--c21377f778f9"></span>
+                      </td>
+                      <td class="cs_icon_td">
+                          <div class="flag_status not_reviewed hidden"></div>
+                      </td>
+                      <td id="a_c--c21377f778f9">
+                          <a class="compare_view_filepath" href="#a_c--c21377f778f9">
+                              rhodecode/tests/fixtures/hg_diff_copy_file_with_spaces.diff
+                          </a>
+                          <span id="diff_c--c21377f778f9" class="diff_links" style="display: none;">
+                            <a href="/andersonsantos/rhodecode-momentum-fork/diff/rhodecode/tests/fixtures/hg_diff_copy_file_with_spaces.diff?diff2=46b3d50315f0f2b1f64485ac95af4f384948f9cb&amp;diff1=b78e2376b986b2cf656a2b4390b09f303291c886&amp;fulldiff=1&amp;diff=diff">
+                                Unified Diff
+                            </a>
+                            |
+                            <a href="/andersonsantos/rhodecode-momentum-fork/diff-2way/rhodecode/tests/fixtures/hg_diff_copy_file_with_spaces.diff?diff2=46b3d50315f0f2b1f64485ac95af4f384948f9cb&amp;diff1=b78e2376b986b2cf656a2b4390b09f303291c886&amp;fulldiff=1&amp;diff=diff">
+                                Side-by-side Diff
+                            </a>
+                          </span>
+                      </td>
+                      <td>
+                          <div class="changes pull-right"><div style="width:100px"><div class="added top-right-rounded-corner-mid bottom-right-rounded-corner-mid top-left-rounded-corner-mid bottom-left-rounded-corner-mid" style="width:100.0%">3</div><div class="deleted top-right-rounded-corner-mid bottom-right-rounded-corner-mid" style="width:0%"></div></div></div>
+                          <div class="comment-bubble pull-right" data-path="rhodecode/tests/fixtures/hg_diff_copy_file_with_spaces.diff">
+                            <i class="icon-comment"></i>
+                          </div>
+                      </td>
+                  </tr>
+                  <tr id="tr_c--c21377f778f9">
+                    <td></td>
+                    <td></td>
+                    <td class="injected_diff" colspan="2">
+
+ <div class="diff-container" id="diff-container-140716195038344">
+    <div id="c--c21377f778f9_target" ></div>
+    <div id="c--c21377f778f9" class="diffblock margined comm" >
+        <div class="code-body">
+            <div class="full_f_path" path="rhodecode/tests/fixtures/hg_diff_copy_file_with_spaces.diff" style="display: none;"></div>
+            <table class="code-difftable">
+<tr class="line context">
+    <td class="add-comment-line"><span class="add-comment-content"></span></td>
+    <td  class="lineno old"><a href="#rhodecodetestsfixtureshg_diff_copy_file_with_spacesdiff_o"></a></td>
+    <td  class="lineno new"><a href="#rhodecodetestsfixtureshg_diff_copy_file_with_spacesdiff_n"></a></td>
+    <td class="code no-comment">
+        <pre>new file 100644</pre>
+    </td>
+</tr>
+<tr class="line add">
+    <td class="add-comment-line"><span class="add-comment-content"><a href="#"><span class="icon-comment-add"></span></a></span></td>
+    <td  class="lineno old"><a href="#rhodecodetestsfixtureshg_diff_copy_file_with_spacesdiff_o"></a></td>
+    <td id="rhodecodetestsfixtureshg_diff_copy_file_with_spacesdiff_n1" class="lineno new"><a href="#rhodecodetestsfixtureshg_diff_copy_file_with_spacesdiff_n1">1</a></td>
+    <td class="code">
+        <pre>diff --git a/file_changed_without_spaces.txt b/file_copied_ with  spaces.txt
+</pre>
+    </td>
+</tr>
+<tr class="line add">
+    <td class="add-comment-line"><span class="add-comment-content"><a href="#"><span class="icon-comment-add"></span></a></span></td>
+    <td  class="lineno old"><a href="#rhodecodetestsfixtureshg_diff_copy_file_with_spacesdiff_o"></a></td>
+    <td id="rhodecodetestsfixtureshg_diff_copy_file_with_spacesdiff_n2" class="lineno new"><a href="#rhodecodetestsfixtureshg_diff_copy_file_with_spacesdiff_n2">2</a></td>
+    <td class="code">
+        <pre>copy from file_changed_without_spaces.txt
+</pre>
+    </td>
+</tr>
+<tr class="line add">
+    <td class="add-comment-line"><span class="add-comment-content"><a href="#"><span class="icon-comment-add"></span></a></span></td>
+    <td  class="lineno old"><a href="#rhodecodetestsfixtureshg_diff_copy_file_with_spacesdiff_o"></a></td>
+    <td id="rhodecodetestsfixtureshg_diff_copy_file_with_spacesdiff_n3" class="lineno new"><a href="#rhodecodetestsfixtureshg_diff_copy_file_with_spacesdiff_n3">3</a></td>
+    <td class="code">
+        <pre>copy to file_copied_ with  spaces.txt
+</pre>
+    </td>
+</tr>
+<tr class="line context">
+    <td class="add-comment-line"><span class="add-comment-content"></span></td>
+    <td  class="lineno old"><a href="#rhodecodetestsfixtureshg_diff_copy_file_with_spacesdiff_o...">...</a></td>
+    <td  class="lineno new"><a href="#rhodecodetestsfixtureshg_diff_copy_file_with_spacesdiff_n...">...</a></td>
+    <td class="code no-comment">
+        <pre> No newline at end of file</pre>
+    </td>
+</tr>
+</table>
+        </div>
+    </div>
+  </div>
+
+                    </td>
+                  </tr>
+                  <tr class="cs_A expand_file" fid="c--ee62085ad7a8">
+                      <td class="cs_icon_td">
+                          <span class="expand_file_icon" fid="c--ee62085ad7a8"></span>
+                      </td>
+                      <td class="cs_icon_td">
+                          <div class="flag_status not_reviewed hidden"></div>
+                      </td>
+                      <td id="a_c--ee62085ad7a8">
+                          <a class="compare_view_filepath" href="#a_c--ee62085ad7a8">
+                              rhodecode/tests/fixtures/hg_diff_rename_file_with_spaces.diff
+                          </a>
+                          <span id="diff_c--ee62085ad7a8" class="diff_links" style="display: none;">
+                            <a href="/andersonsantos/rhodecode-momentum-fork/diff/rhodecode/tests/fixtures/hg_diff_rename_file_with_spaces.diff?diff2=46b3d50315f0f2b1f64485ac95af4f384948f9cb&amp;diff1=b78e2376b986b2cf656a2b4390b09f303291c886&amp;fulldiff=1&amp;diff=diff">
+                                Unified Diff
+                            </a>
+                            |
+                            <a href="/andersonsantos/rhodecode-momentum-fork/diff-2way/rhodecode/tests/fixtures/hg_diff_rename_file_with_spaces.diff?diff2=46b3d50315f0f2b1f64485ac95af4f384948f9cb&amp;diff1=b78e2376b986b2cf656a2b4390b09f303291c886&amp;fulldiff=1&amp;diff=diff">
+                                Side-by-side Diff
+                            </a>
+                          </span>
+                      </td>
+                      <td>
+                          <div class="changes pull-right"><div style="width:100px"><div class="added top-right-rounded-corner-mid bottom-right-rounded-corner-mid top-left-rounded-corner-mid bottom-left-rounded-corner-mid" style="width:100.0%">3</div><div class="deleted top-right-rounded-corner-mid bottom-right-rounded-corner-mid" style="width:0%"></div></div></div>
+                          <div class="comment-bubble pull-right" data-path="rhodecode/tests/fixtures/hg_diff_rename_file_with_spaces.diff">
+                            <i class="icon-comment"></i>
+                          </div>
+                      </td>
+                  </tr>
+                  <tr id="tr_c--ee62085ad7a8">
+                    <td></td>
+                    <td></td>
+                    <td class="injected_diff" colspan="2">
+
+ <div class="diff-container" id="diff-container-140716195039496">
+    <div id="c--ee62085ad7a8_target" ></div>
+    <div id="c--ee62085ad7a8" class="diffblock margined comm" >
+        <div class="code-body">
+            <div class="full_f_path" path="rhodecode/tests/fixtures/hg_diff_rename_file_with_spaces.diff" style="display: none;"></div>
+            <table class="code-difftable">
+<tr class="line context">
+    <td class="add-comment-line"><span class="add-comment-content"></span></td>
+    <td  class="lineno old"><a href="#rhodecodetestsfixtureshg_diff_rename_file_with_spacesdiff_o"></a></td>
+    <td  class="lineno new"><a href="#rhodecodetestsfixtureshg_diff_rename_file_with_spacesdiff_n"></a></td>
+    <td class="code no-comment">
+        <pre>new file 100644</pre>
+    </td>
+</tr>
+<tr class="line add">
+    <td class="add-comment-line"><span class="add-comment-content"><a href="#"><span class="icon-comment-add"></span></a></span></td>
+    <td  class="lineno old"><a href="#rhodecodetestsfixtureshg_diff_rename_file_with_spacesdiff_o"></a></td>
+    <td id="rhodecodetestsfixtureshg_diff_rename_file_with_spacesdiff_n1" class="lineno new"><a href="#rhodecodetestsfixtureshg_diff_rename_file_with_spacesdiff_n1">1</a></td>
+    <td class="code">
+        <pre>diff --git a/file_ with update.txt b/file_changed _.txt
+</pre>
+    </td>
+</tr>
+<tr class="line add">
+    <td class="add-comment-line"><span class="add-comment-content"><a href="#"><span class="icon-comment-add"></span></a></span></td>
+    <td  class="lineno old"><a href="#rhodecodetestsfixtureshg_diff_rename_file_with_spacesdiff_o"></a></td>
+    <td id="rhodecodetestsfixtureshg_diff_rename_file_with_spacesdiff_n2" class="lineno new"><a href="#rhodecodetestsfixtureshg_diff_rename_file_with_spacesdiff_n2">2</a></td>
+    <td class="code">
+        <pre>rename from file_ with update.txt
+</pre>
+    </td>
+</tr>
+<tr class="line add">
+    <td class="add-comment-line"><span class="add-comment-content"><a href="#"><span class="icon-comment-add"></span></a></span></td>
+    <td  class="lineno old"><a href="#rhodecodetestsfixtureshg_diff_rename_file_with_spacesdiff_o"></a></td>
+    <td id="rhodecodetestsfixtureshg_diff_rename_file_with_spacesdiff_n3" class="lineno new"><a href="#rhodecodetestsfixtureshg_diff_rename_file_with_spacesdiff_n3">3</a></td>
+    <td class="code">
+        <pre>rename to file_changed _.txt</pre>
+    </td>
+</tr>
+</table>
+        </div>
+    </div>
+  </div>
+
+                    </td>
+                  </tr>
+
+</table>
+        </div>
+    </div>
+  </div>
+
+                    </td>
+                  </tr>
+              </table>
+              </div>
+          </div>
+      </div>
+
+
+
+
+<div id="comment-inline-form-template" style="display: none;">
+  <div class="comment-inline-form ac">
+    <div class="overlay"><div class="overlay-text">Submitting...</div></div>
+      <form action="#" class="inline-form" method="get">
+      <div id="edit-container_{1}" class="clearfix">
+        <div class="comment-title pull-left">
+          Commenting on line {1}.
+        </div>
+        <div class="comment-help pull-right">
+          Comments parsed using <a href="http://docutils.sourceforge.net/docs/user/rst/quickref.html">RST</a> syntax with <span  class="tooltip" title="Use @username inside this text to send notification to this RhodeCode user">@mention</span> support.
+        </div>
+            <div style="clear: both"></div>
+            <textarea id="text_{1}" name="text" class="comment-block-ta ac-input"></textarea>
+      </div>
+      <div id="preview-container_{1}" class="clearfix" style="display: none;">
+         <div class="comment-help">
+              Comment preview
+          </div>
+          <div id="preview-box_{1}" class="preview-box"></div>
+      </div>
+      <div class="comment-button pull-right">
+        <input type="hidden" name="f_path" value="{0}">
+        <input type="hidden" name="line" value="{1}">
+        <div id="preview-btn_{1}" class="btn btn-default">Preview</div>
+        <div id="edit-btn_{1}" class="btn" style="display: none;">Edit</div>
+        <input class="btn btn-success save-inline-form" id="save" name="save" type="submit" value="Comment" />
+      </div>
+      <div class="comment-button hide-inline-form-button">
+      <input class="btn hide-inline-form" id="hide-inline-form" name="hide-inline-form" type="reset" value="Cancel" />
+      </div>
+      </form>
+  </div>
+</div>
+
+
+
+<div class="comments">
+    <div id="inline-comments-container">
+
+    <h2>0 Pull Request Comments</h2>
+
+
+    </div>
+
+</div>
+
+
+
+
+<div class="pull-request-merge">
+</div>
+<div class="comments">
+    <div class="comment-form ac">
+        <form action="/rhodecode-momentum/pull-request-comment/720" id="comments_form" method="POST">
+<div style="display: none;"><input id="csrf_token" name="csrf_token" type="hidden" value="6dbc0b19ac65237df65d57202a3e1f2df4153e38" /></div>
+        <div id="edit-container" class="clearfix">
+            <div class="comment-title pull-left">
+              Create a comment on this Pull Request.
+            </div>
+            <div class="comment-help pull-right">
+              Comments parsed using <a href="http://docutils.sourceforge.net/docs/user/rst/quickref.html">RST</a> syntax with <span  class="tooltip" title="Use @username inside this text to send notification to this RhodeCode user">@mention</span> support.
+            </div>
+             <div style="clear: both"></div>
+             <textarea class="comment-block-ta" id="text" name="text"></textarea>
+        </div>
+
+        <div id="preview-container" class="clearfix" style="display: none;">
+           <div class="comment-title">
+                Comment preview
+            </div>
+            <div id="preview-box" class="preview-box"></div>
+        </div>
+
+        <div id="comment_form_extras">
+        </div>
+        <div class="action-button pull-right">
+            <div id="preview-btn" class="btn">
+                Preview
+            </div>
+            <div id="edit-btn" class="btn" style="display: none;">
+                Edit
+            </div>
+            <div class="comment-button">
+                <input class="btn btn-small btn-success comment-button-input" id="save" name="save" type="submit" value="Comment" />
+            </div>
+        </div>
+        </form>
+    </div>
+</div>
+<script>
+
+$(document).ready(function() {
+
+    var cm = initCommentBoxCodeMirror('#text');
+
+    // main form preview
+    $('#preview-btn').on('click', function(e) {
+        $('#preview-btn').hide();
+        $('#edit-btn').show();
+        var _text = cm.getValue();
+        if (!_text) {
+            return;
+        }
+        var post_data = {
+            'text': _text,
+            'renderer': DEFAULT_RENDERER,
+            'csrf_token': CSRF_TOKEN
+        };
+        var previewbox = $('#preview-box');
+        previewbox.addClass('unloaded');
+        previewbox.html(_TM['Loading ...']);
+        $('#edit-container').hide();
+        $('#preview-container').show();
+
+        var url = pyroutes.url('changeset_comment_preview', {'repo_name': 'rhodecode-momentum'});
+
+        ajaxPOST(url, post_data, function(o) {
+            previewbox.html(o);
+            previewbox.removeClass('unloaded');
+        });
+    });
+    $('#edit-btn').on('click', function(e) {
+        $('#preview-btn').show();
+        $('#edit-btn').hide();
+        $('#edit-container').show();
+        $('#preview-container').hide();
+    });
+
+    var formatChangeStatus = function(state, escapeMarkup) {
+        var originalOption = state.element;
+        return '<div class="flag_status ' + $(originalOption).data('status') + ' pull-left"></div>' +
+               '<span>' + escapeMarkup(state.text) + '</span>';
+    };
+
+    var formatResult = function(result, container, query, escapeMarkup) {
+        return formatChangeStatus(result, escapeMarkup);
+    };
+
+    var formatSelection = function(data, container, escapeMarkup) {
+        return formatChangeStatus(data, escapeMarkup);
+    };
+
+    $('#change_status').select2({
+        placeholder: "Status Review",
+        formatResult: formatResult,
+        formatSelection: formatSelection,
+        containerCssClass: "drop-menu status_box_menu",
+        dropdownCssClass: "drop-menu-dropdown",
+        dropdownAutoWidth: true,
+        minimumResultsForSearch: -1
+    });
+});
+</script>
+
+
+      <script type="text/javascript">
+        // TODO: switch this to pyroutes
+        AJAX_COMMENT_DELETE_URL = "/rhodecode-momentum/pull-request-comment/__COMMENT_ID__/delete";
+
+        $(function(){
+            ReviewerAutoComplete('user');
+
+            $('#open_edit_reviewers').on('click', function(e){
+                $('#open_edit_reviewers').hide();
+                $('#close_edit_reviewers').show();
+                $('#add_reviewer_input').show();
+                $('.reviewer_member_remove').css('visibility', 'visible');
+            });
+
+            $('#close_edit_reviewers').on('click', function(e){
+                $('#open_edit_reviewers').show();
+                $('#close_edit_reviewers').hide();
+                $('#add_reviewer_input').hide();
+                $('.reviewer_member_remove').css('visibility', 'hidden');
+            });
+
+            $('.show-inline-comments').on('change', function(e){
+                var show = 'none';
+                var target = e.currentTarget;
+                if(target.checked){
+                    show = ''
+                }
+                var boxid = $(target).attr('id_for');
+                var comments = $('#{0} .inline-comments'.format(boxid));
+                var fn_display = function(idx){
+                   $(this).css('display', show);
+                };
+                $(comments).each(fn_display);
+                var btns = $('#{0} .inline-comments-button'.format(boxid));
+                $(btns).each(fn_display);
+            });
+
+            // inject comments into they proper positions
+            var file_comments = $('.inline-comment-placeholder');
+            renderInlineComments(file_comments);
+            var commentTotals = {};
+            $.each(file_comments, function(i, comment) {
+                var path = $(comment).attr('path');
+                var comms = $(comment).children().length;
+                if (path in commentTotals) {
+                    commentTotals[path] += comms;
+                } else {
+                    commentTotals[path] = comms;
+                }
+            });
+            $.each(commentTotals, function(path, total) {
+                var elem = $('.comment-bubble[data-path="'+ path +'"]')
+                elem.css('visibility', 'visible');
+                elem.html(elem.html() + ' ' + total );
+            });
+
+            $('#merge_pull_request_form').submit(function() {
+                if (!$('#merge_pull_request').attr('disabled')) {
+                    $('#merge_pull_request').attr('disabled', 'disabled');
+                }
+                return true;
+            });
+
+            $('#update_pull_request').on('click', function(e){
+                updateReviewers(undefined, "rhodecode-momentum", "720");
+            });
+
+            $('#update_commits').on('click', function(e){
+                updateCommits("rhodecode-momentum", "720");
+            });
+
+            $('#close_pull_request').on('click', function(e){
+                closePullRequest("rhodecode-momentum", "720");
+            });
+        })
+      </script>
+
+  </div>
+</div></div>
+
+</div>
+
+
+</%def>

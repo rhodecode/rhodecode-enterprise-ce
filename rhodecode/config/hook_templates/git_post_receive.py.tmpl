@@ -1,0 +1,46 @@
+#!_ENV_
+import os
+import sys
+
+try:
+    from vcsserver import hooks
+except ImportError:
+    if os.environ.get('RC_DEBUG_GIT_HOOK'):
+        import traceback
+        print traceback.format_exc()
+    hooks = None
+
+
+RC_HOOK_VER = '_TMPL_'
+
+
+def main():
+    if hooks is None:
+        # exit with success if we cannot import rhodecode.lib.hooks !!
+        # this allows simply push to this repo even without rhodecode
+        sys.exit(0)
+
+    if os.environ.get('RC_SKIP_HOOKS'):
+        sys.exit(0)
+
+    repo_path = os.getcwd()
+    push_data = sys.stdin.readlines()
+    os.environ['RC_HOOK_VER'] = RC_HOOK_VER
+    # os.environ is modified here by a subprocess call that
+    # runs git and later git executes this hook.
+    # Environ gets some additional info from rhodecode system
+    # like IP or username from basic-auth
+    try:
+        result = hooks.git_post_receive(repo_path, push_data, os.environ)
+        sys.exit(result)
+    except Exception as error:
+        # TODO: johbo: Improve handling of this special case
+        if not getattr(error, '_vcs_kind', None) == 'repo_locked':
+            raise
+        print 'ERROR:', error
+        sys.exit(1)
+    sys.exit(0)
+
+
+if __name__ == '__main__':
+    main()

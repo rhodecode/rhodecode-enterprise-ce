@@ -1,0 +1,526 @@
+
+// tables.less
+// For use in RhodeCode application tables;
+// see style guide documentation for guidelines.
+
+// TABLES
+
+.rctable,
+table.rctable,
+table.dataTable {
+    clear:both;
+    width: 100%;
+    margin: 0 auto @padding;
+    padding: 0;
+    vertical-align: baseline;
+    line-height:1.5em;
+    border: none;
+    outline: none;
+    border-collapse: collapse;
+    border-spacing: 0;
+    color: @grey2;
+
+    b {
+        font-weight: normal;
+    }
+
+    em {
+        font-weight: bold;
+        font-style: normal;
+    }
+
+    th,
+    td {
+        height: auto;
+        max-width: 20%;
+        padding: .65em 1em .65em 0;
+        vertical-align: middle;
+        border-bottom: @border-thickness solid @grey5;
+        white-space: normal;
+
+        &.td-radio,
+        &.td-checkbox {
+            padding-right: 0;
+            text-align: center;
+
+            input {
+                margin: 0 1em;
+            }
+        }
+
+        &.truncate-wrap {
+            white-space: nowrap !important;
+        }
+
+        pre {
+            margin: 0;
+        }
+
+        .show_more {
+            height: inherit;
+        }
+    }
+
+    .expired td {
+        background-color: @grey7;
+    }
+
+    .td-radio + .td-owner {
+        padding-left: 1em;
+    }
+
+
+    th {
+        text-align: left;
+        font-family: @text-semibold;
+    }
+
+    .hl {
+        td {
+            background-color: lighten(@alert4,25%);
+        }
+    }
+
+// Special Data Cell Types
+// See style guide for desciptions and examples.
+
+    td {
+
+        &.user {
+            padding-left: 1em;
+        }
+
+        &.td-rss {
+            width: 20px;
+            min-width: 0;
+            margin: 0;
+        }
+
+        &.quick_repo_menu {
+            width: 15px;
+            text-align: center;
+
+            &:hover {
+                background-color: @grey5;
+            }
+        }
+
+        &.td-hash {
+            min-width: 80px;
+            width: 200px;
+        }
+
+        &.td-time {
+            width: 160px;
+            white-space: nowrap;
+        }
+
+        &.annotate{
+            padding-right: 0;
+        
+            div.annotatediv{
+                margin: 0 0.7em;
+            }
+        }
+
+        &.td-gravatar {
+            width: 16px;
+            padding: 0 5px;
+        }
+
+        &.tags-col {
+            padding-right: 0;
+        }
+
+        &.td-description {
+            min-width: 350px;
+        }
+
+        &.td-componentname {
+            white-space: nowrap;
+        }
+
+        &.td-journalaction {
+            min-width: 300px;
+
+            .journal_action_params { 
+                // waiting for feedback
+            }
+        }
+
+        &.td-active {
+            padding-left: .65em;
+        }
+
+        &.td-url {
+            white-space: nowrap;
+        }
+
+        &.td-comments {
+            min-width: 3em;
+        }
+
+        &.td-buttons {
+            padding: .3em 0;
+        }
+
+        &.td-action {
+            // this is for the remove/delete/edit buttons
+            padding-right: 0;
+            min-width: 95px;
+            text-transform: capitalize;
+
+            i {
+                display: none;
+            }
+        }
+
+        // TODO: lisa: this needs to be cleaned up with the buttons
+        .grid_edit,
+        .grid_delete {
+            display: inline-block;
+            margin: 0 @padding/3 0 0;
+            font-family: @text-light;
+
+            i {
+                display: none;
+            }
+        }
+
+        .grid_edit + .grid_delete {
+            border-left: @border-thickness solid @grey5;
+            padding-left: @padding/2;
+        }
+
+        &.td-compare {
+
+            input {
+                margin-right: 1em;
+            }
+
+            .compare-radio-button {
+                margin: 0 1em 0 0;
+            }
+
+
+        }
+
+        &.td-tags {
+            padding: .5em 1em .5em 0;
+
+            .tag {
+                margin: 1px;
+            }
+        }
+
+        .icon-svn, .icon-hg, .icon-git {
+            font-size: 1.4em;
+        }
+
+        &.collapse_commit,
+        &.expand_commit {
+            padding-right: 0;
+            padding-left: 1em;
+        }
+    }
+
+    .perm_admin_row {
+        color: @grey4;
+        background-color: @grey6;
+    }
+
+    .noborder {
+        border: none;
+
+        td {
+            border: none;
+        }
+    }
+}
+
+// TRUNCATING
+// TODO: lisaq: should this possibly be moved out of tables.less?
+// for truncated text
+// used inside of table cells and in code block headers
+.truncate-wrap {
+    white-space: nowrap !important;
+
+    //truncated text
+    .truncate {
+        max-width: 450px;
+        width: 300px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        -o-text-overflow: ellipsis;
+        -ms-text-overflow: ellipsis;
+
+        &.autoexpand {
+            width: 120px;
+            margin-right: 200px;
+        }
+    }
+    &:hover .truncate.autoexpand {
+        overflow: visible;
+    }
+
+    .tags-truncate {
+        width: 150px;
+        height: 22px;
+        overflow: hidden;
+    
+        .tag {
+            display: inline-block;
+        }
+    
+        &.truncate {
+            height: 22px;
+            max-height:2em;
+            width: 140px;
+        }
+    }
+}
+
+.apikeys_wrap {
+    margin-bottom: @padding;
+
+    table.rctable td:first-child {
+        width: 340px;
+    }
+}
+
+
+
+// SPECIAL CASES
+
+// Repository Followers
+table.rctable.followers_data {
+    width: 75%;
+    margin: 0;
+}
+
+// Repository List
+// Group Members List
+table.rctable.group_members,
+table#repo_list_table {
+    min-width: 600px;
+}
+
+// Keyboard mappings
+table.keyboard-mappings {
+    th {
+        text-align: left;
+        font-family: @text-semibold;
+    }
+}
+
+// Branches, Tags, and Bookmarks
+#obj_list_table.dataTable {
+    td.td-time {
+        padding-right: 1em;
+    }
+}
+
+// User Admin
+.rctable.useremails,
+.rctable.account_emails {
+    .tag,
+    .btn {
+        float: right;
+    }
+    .btn { //to line up with tags
+        margin-right: 1.65em;
+    }
+}
+
+// User List
+#user_list_table {
+
+    td.td-user {
+        min-width: 100px;
+    }
+}
+
+// Pull Request List Table
+#pull_request_list_table.dataTable {
+
+    //TODO: lisa: This needs to be removed once the description is adjusted
+    //            for using an expand_commit button (see issue 765)
+     td {
+         vertical-align: middle;
+     }
+}
+
+// Settings (no border)
+table.rctable.dl-settings {
+    td {
+        border: none;
+    }
+}
+
+
+// Statistics
+table.trending_language_tbl {
+    width: 100%;
+    line-height: 1em;
+
+    td div {
+        overflow: visible;
+    }
+}
+
+.trending_language_tbl, .trending_language_tbl td {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+}
+
+.trending_language_tbl, .trending_language_tbl tr {
+    border-spacing: 0 3px;
+}
+
+.trending_language {
+    position: relative;
+    width: 100%;
+    height: 19px;
+    overflow: hidden;
+    background-color: @grey6;
+
+    span, b{
+        position: absolute;
+        display: block;
+        height: 12px;
+        margin-bottom: 0px;
+        white-space: pre;
+        padding: floor(@basefontsize/4);
+        top: 0;
+        left: 0;
+    }
+
+    span{
+        color: @text-color;
+        z-index: 0;
+        min-width: 20px;
+    }
+
+    b {
+        z-index: 1;
+        overflow: hidden;
+        background-color: @rcblue;
+        color: #FFF;
+        text-decoration: none;
+    }
+
+}
+
+// Changesets
+#changesets.rctable {
+
+    // td must be fixed height for graph
+    td {
+        height: 32px;
+        padding: 0 1em 0 0;
+        vertical-align: middle;
+        white-space: nowrap;
+
+        &.td-description {
+            white-space: normal;
+        }
+
+        &.expand_commit {
+            padding-right: 0;
+        }
+    }
+}
+
+// Compare 
+table.compare_view_commits {
+    margin-top: @space;
+
+    td.td-time {
+        padding-left: .5em;
+    }
+
+    tr:hover {
+        cursor: pointer;
+
+        td {
+            background-color: lighten(@alert4,25%);
+        }
+    }
+}
+
+.file_history {
+    td.td-actions {
+        text-align: right;
+    }
+}
+
+.compare_view_files {
+
+    td.td-actions {
+        text-align: right;
+    }
+
+    .flag_status {
+        margin: 0 0 0 5px;
+    }
+
+    td.injected_diff {
+
+        .code-difftable {
+            border:none;
+        }
+
+        .diff-container {
+            border: @border-thickness solid @border-default-color;
+            .border-radius(@border-radius);
+        }
+
+        div.diffblock {
+            border:none;
+        }
+
+        div.code-body {
+            max-width: 1152px;
+        }
+    }
+
+    .rctable {
+
+        td {
+            padding-top: @space;
+        }
+        
+        &:first-child td {
+            padding-top: 0;
+        }
+    }
+
+    .comment-bubble,
+    .show_comments {
+        float: right;
+        visibility: hidden;
+        padding: 0 1em 0 0;
+    }
+
+    .injected_diff {
+        padding-bottom: @padding;
+    }
+}
+
+// Gist List
+#gist_list_table {
+    td {
+        vertical-align: middle;
+
+        div{
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        img{
+            vertical-align: middle;
+        }
+    }
+}

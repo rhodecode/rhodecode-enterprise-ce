@@ -1,0 +1,600 @@
+// Default styles
+
+.diff-collapse {
+    margin: @padding 0;
+    text-align: right;
+}
+
+.diff-container {
+    margin-bottom: @space;
+
+    .diffblock {
+        margin-bottom: @space;
+    }
+
+    &.hidden {
+        display: none;
+        overflow: hidden;
+    }
+}
+
+.compare_view_files {
+
+    .diff-container {
+
+        .diffblock {
+            margin-bottom: 0;
+        }
+    }
+}
+
+div.diffblock .sidebyside {
+ background: #ffffff;
+}
+
+div.diffblock {
+    overflow-x: auto;
+    overflow-y: hidden;
+    clear: both;
+    padding: 0px;
+    background: @grey6;
+    border: @border-thickness solid @grey5;
+    -webkit-border-radius: @border-radius @border-radius 0px 0px;
+    border-radius: @border-radius @border-radius 0px 0px;
+
+
+    .comments-number {
+        float: right;
+    }
+
+    // BEGIN CODE-HEADER STYLES
+
+    .code-header {
+        background: @grey6;
+        padding: 10px 0 10px 0;
+        height: auto;
+        width: 100%;
+
+        .hash {
+            float: left;
+            padding: 2px 0 0 2px;
+        }
+
+        .date {
+            float: left;
+            text-transform: uppercase;
+            padding: 4px 0px 0px 2px;
+        }
+
+        div {
+            margin-left: 4px;
+        }
+
+        div.compare_header {
+            min-height: 40px;
+            margin: 0;
+            padding: 0 @padding;
+
+            .drop-menu {
+                float:left;
+                display: block;
+                margin:0 0 @padding 0;
+            }
+
+            .compare-label {
+                float: left;
+                clear: both;
+                display: inline-block;
+                min-width: 5em;
+                margin: 0;
+                padding: @button-padding @button-padding @button-padding 0;
+                font-family: @text-semibold;
+            }
+
+            .compare-buttons {
+                float: left;
+                margin: 0;
+                padding: 0 0 @padding;
+
+                .btn {
+                    margin: 0 @padding 0 0;
+                }
+            }
+        }
+
+    }
+
+    .parents {
+        float: left;
+        width: 100px;
+        font-weight: 400;
+        vertical-align: middle;
+        padding: 0px 2px 0px 2px;
+        background-color: @grey6;
+
+        #parent_link {
+           margin: 00px 2px;
+
+           &.double {
+               margin: 0px 2px;
+            }
+
+            &.disabled{
+                margin-right: @padding;
+            }
+        }
+    }
+
+    .children {
+        float: right;
+        width: 100px;
+        font-weight: 400;
+        vertical-align: middle;
+        text-align: right;
+        padding: 0px 2px 0px 2px;
+        background-color: @grey6;
+
+        #child_link {
+           margin: 0px 2px;
+
+           &.double {
+               margin: 0px 2px;
+            }
+
+            &.disabled{
+                margin-right: @padding;
+            }
+        }
+    }
+
+    .changeset_header {
+        height: 16px;
+
+        & > div{
+            margin-right: @padding;
+       }
+    }
+
+    .changeset_file {
+        text-align: left;
+        float: left;
+        padding: 0;
+
+        a{
+            display: inline-block;
+            margin-right: 0.5em;
+        }
+
+       #selected_mode{
+            margin-left: 0;
+       }
+    }
+
+    .diff-menu-wrapper {
+        float: left;
+    }
+
+    .diff-menu {
+        position: absolute;
+        background: none repeat scroll 0 0 #FFFFFF;
+        border-color: #003367 @grey3 @grey3;
+        border-right: 1px solid @grey3;
+        border-style: solid solid solid;
+        border-width: @border-thickness;
+        box-shadow: 2px 8px 4px rgba(0, 0, 0, 0.2);
+        margin-top: 5px;
+        margin-left: 1px;
+    }
+
+    .diff-actions, .editor-actions {
+        float: left;
+
+        input{
+            margin: 0 0.5em 0 0;
+        }
+    }
+
+    // END CODE-HEADER STYLES
+
+    // BEGIN CODE-BODY STYLES
+
+    .code-body {
+        background: white;
+        padding: 0;
+        background-color: #ffffff;
+        position: relative;
+        max-width: none;
+        box-sizing: border-box;
+        // TODO: johbo: Parent has overflow: auto, this forces the child here
+        // to have the intended size and to scroll. Should be simplified.
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    pre.raw {
+        background: white;
+        color: @grey1;
+    }
+    // END CODE-BODY STYLES
+
+}
+
+
+table.code-difftable {
+    border-collapse: collapse;
+    width: 99%;
+    border-radius: 0px !important;
+
+     td {
+        padding: 0 !important;
+        background: none !important;
+        border: 0 !important;
+    }
+
+    .context {
+        background: none repeat scroll 0 0 #DDE7EF;
+    }
+
+    .add {
+        background: none repeat scroll 0 0 #DDFFDD;
+
+        ins {
+            background: none repeat scroll 0 0 #AAFFAA;
+            text-decoration: none;
+        }
+    }
+
+    .del {
+        background: none repeat scroll 0 0 #FFDDDD;
+
+        del {
+            background: none repeat scroll 0 0 #FFAAAA;
+            text-decoration: none;
+        }
+    }
+
+    /** LINE NUMBERS **/
+    .lineno {
+        padding-left: 2px;
+        padding-right: 2px;
+        text-align: right;
+        width: 32px;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        border-right: @border-thickness solid @grey5 !important;
+        border-left: 0px solid #CCC !important;
+        border-top: 0px solid #CCC !important;
+        border-bottom: none !important;
+
+        a {
+            &:extend(pre);
+            text-align: right;
+            padding-right: 2px;
+            cursor: pointer;
+            display: block;
+            width: 32px;
+        }
+    }
+
+    .context {
+        cursor: auto;
+        &:extend(pre);
+    }
+
+    .lineno-inline {
+        background: none repeat scroll 0 0 #FFF !important;
+        padding-left: 2px;
+        padding-right: 2px;
+        text-align: right;
+        width: 30px;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+    }
+
+    /** CODE **/
+    .code {
+        display: block;
+        width: 100%;
+
+        td {
+            margin: 0;
+            padding: 0;
+        }
+
+        pre {
+            margin: 0;
+            padding: 0;
+            margin-left: .5em;
+        }
+    }
+}
+
+
+// Comments
+
+div.comment:target {
+    border-left: 6px solid @comment-highlight-color;
+    padding-left: 3px;
+    margin-left: -9px;
+}
+
+//TODO: anderson: can't get an absolute number out of anything, so had to put the
+//current values that might change. But to make it clear I put as a calculation
+@comment-max-width: 1065px;
+@pr-extra-margin: 34px;
+@pr-border-spacing: 4px;
+@pr-comment-width: @comment-max-width - @pr-extra-margin - @pr-border-spacing;
+
+// Pull Request
+.cs_files .code-difftable {
+    border: @border-thickness solid @grey5; //borders only on PRs
+
+    .comment-inline-form,
+    div.comment {
+        width: @pr-comment-width;
+    }
+}
+
+// Changeset
+.code-difftable {
+    .comment-inline-form,
+    div.comment {
+        width: @comment-max-width;
+    }
+}
+
+//Style page
+@style-extra-margin: @sidebar-width + (@sidebarpadding * 3) + @padding;
+#style-page .code-difftable{
+    .comment-inline-form,
+    div.comment {
+        width: @comment-max-width - @style-extra-margin;
+    }
+}
+
+#context-bar > h2 {
+    font-size: 20px;
+}
+
+#context-bar > h2> a {
+    font-size: 20px;
+}
+// end of defaults
+
+.file_diff_buttons {
+    padding: 0 0 @padding;
+
+    .drop-menu {
+        float: left;
+        margin: 0 @padding 0 0;
+    }
+    .btn {
+        margin: 0 @padding 0 0;
+    }
+}
+
+.code-body.textarea.editor {
+    max-width: none;
+    padding: 15px;
+}
+
+td.injected_diff{
+    max-width: 1178px;
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    div.diff-container,
+    div.diffblock{
+        max-width: 100%;
+    }
+
+    div.code-body {
+        max-width: 1124px;
+        overflow-x: auto;
+        padding: 0;
+    }
+    div.diffblock {
+        border: none;
+    }
+
+    &.inline-form {
+        width: 99%
+    }
+ }
+
+
+table.code-difftable {
+    width: 100%;
+}
+
+/** PYGMENTS COLORING **/
+div.codeblock {
+
+    // TODO: johbo: Added interim to get rid of the margin around
+    // Select2 widgets. This needs further cleanup.
+    margin-top: @padding;
+
+    overflow: auto;
+    padding: 0px;
+    border: @border-thickness solid @grey5;
+    background: @grey6;
+    .border-radius(@border-radius);
+
+    #remove_gist {
+        float: right;
+    }
+
+    .author {
+        clear: both;
+        vertical-align: middle;
+        font-family: @text-bold;
+    }
+
+    .btn-mini {
+        float: left;
+        margin: 0 5px 0 0;
+    }
+
+    .code-header {
+        padding: @padding;
+        border-bottom: @border-thickness solid @grey5;
+
+        .stats {
+            clear: both;
+            margin: 0 0 @padding 0;
+            padding: 0;
+            .left {
+                float: left;
+                clear: left;
+                max-width: 75%;
+                margin: 0 0 @padding 0;
+
+                &.item {
+                    margin-right: @padding;
+                    &.last { border-right: none; }
+                }
+            }
+            .buttons { float: right; }
+            .author {
+                height: 25px; margin-left: 15px; font-weight: bold;
+            }
+        }
+
+        .commit {
+            margin: 5px 0 0 26px;
+            font-weight: normal;
+            white-space: pre-wrap;
+        }
+    }
+
+    .message {
+        position: relative;
+        margin: @padding;
+
+        .codeblock-label {
+            margin: 0 0 1em 0;
+        }
+    }
+
+    .code-body {
+        padding: @padding;
+        background-color: #ffffff;
+        min-width: 100%;
+        box-sizing: border-box;
+        // TODO: johbo: Parent has overflow: auto, this forces the child here
+        // to have the intended size and to scroll. Should be simplified.
+        width: 100%;
+        overflow-x: auto;
+    }
+}
+
+.code-highlighttable,
+div.codeblock .code-body table {
+    width: 0 !important;
+    border: 0px !important;
+    margin: 0;
+    letter-spacing: normal;
+
+
+    td {
+        border: 0px !important;
+        vertical-align: top;
+    }
+}
+
+div.codeblock .code-header .search-path { padding: 0 0 0 10px; }
+div.search-code-body {
+    background-color: #ffffff; padding: 5px 0 5px 10px;
+    pre {
+        .match { background-color: #faffa6;}
+        .break { display: block; width: 100%; background-color: #DDE7EF; color: #747474; }
+    }
+}
+
+div.annotatediv { margin-left: 2px; margin-right: 4px; }
+.code-highlight {
+    margin: 0; padding: 0; border-left: @border-thickness solid @grey5;
+    pre, .linenodiv pre { padding: 0 5px; margin: 0; }
+    pre div:target {background-color: @comment-highlight-color !important;}
+}
+
+.linenos a { text-decoration: none; }
+
+.CodeMirror-selected { background: @rchighlightblue; }
+.CodeMirror-focused .CodeMirror-selected { background: @rchighlightblue; }
+.CodeMirror ::selection { background: @rchighlightblue; }
+.CodeMirror ::-moz-selection { background: @rchighlightblue; }
+
+.code { display: block; border:0px !important; }
+.code-highlight,
+.codehilite {
+    .hll { background-color: #ffffcc }
+    .c { color: #408080; font-style: italic } /* Comment */
+    .err, .codehilite .err { border: @border-thickness solid #FF0000 } /* Error */
+    .k { color: #008000; font-weight: bold } /* Keyword */
+    .o { color: #666666 } /* Operator */
+    .cm { color: #408080; font-style: italic } /* Comment.Multiline */
+    .cp { color: #BC7A00 } /* Comment.Preproc */
+    .c1 { color: #408080; font-style: italic } /* Comment.Single */
+    .cs { color: #408080; font-style: italic } /* Comment.Special */
+    .gd { color: #A00000 } /* Generic.Deleted */
+    .ge { font-style: italic } /* Generic.Emph */
+    .gr { color: #FF0000 } /* Generic.Error */
+    .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+    .gi { color: #00A000 } /* Generic.Inserted */
+    .go { color: #808080 } /* Generic.Output */
+    .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+    .gs { font-weight: bold } /* Generic.Strong */
+    .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+    .gt { color: #0040D0 } /* Generic.Traceback */
+    .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+    .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+    .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+    .kp { color: #008000 } /* Keyword.Pseudo */
+    .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+    .kt { color: #B00040 } /* Keyword.Type */
+    .m { color: #666666 } /* Literal.Number */
+    .s { color: #BA2121 } /* Literal.String */
+    .na { color: #7D9029 } /* Name.Attribute */
+    .nb { color: #008000 } /* Name.Builtin */
+    .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+    .no { color: #880000 } /* Name.Constant */
+    .nd { color: #AA22FF } /* Name.Decorator */
+    .ni { color: #999999; font-weight: bold } /* Name.Entity */
+    .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+    .nf { color: #0000FF } /* Name.Function */
+    .nl { color: #A0A000 } /* Name.Label */
+    .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+    .nt { color: #008000; font-weight: bold } /* Name.Tag */
+    .nv { color: #19177C } /* Name.Variable */
+    .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+    .w { color: #bbbbbb } /* Text.Whitespace */
+    .mf { color: #666666 } /* Literal.Number.Float */
+    .mh { color: #666666 } /* Literal.Number.Hex */
+    .mi { color: #666666 } /* Literal.Number.Integer */
+    .mo { color: #666666 } /* Literal.Number.Oct */
+    .sb { color: #BA2121 } /* Literal.String.Backtick */
+    .sc { color: #BA2121 } /* Literal.String.Char */
+    .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+    .s2 { color: #BA2121 } /* Literal.String.Double */
+    .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+    .sh { color: #BA2121 } /* Literal.String.Heredoc */
+    .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+    .sx { color: #008000 } /* Literal.String.Other */
+    .sr { color: #BB6688 } /* Literal.String.Regex */
+    .s1 { color: #BA2121 } /* Literal.String.Single */
+    .ss { color: #19177C } /* Literal.String.Symbol */
+    .bp { color: #008000 } /* Name.Builtin.Pseudo */
+    .vc { color: #19177C } /* Name.Variable.Class */
+    .vg { color: #19177C } /* Name.Variable.Global */
+    .vi { color: #19177C } /* Name.Variable.Instance */
+    .il { color: #666666 } /* Literal.Number.Integer.Long */
+}
+
+/* customized pre blocks for markdown/rst */
+pre.literal-block, .codehilite pre{
+    padding: @padding;
+    border: 1px solid @grey6;
+    .border-radius(@border-radius);
+    background-color: @grey7;
+}

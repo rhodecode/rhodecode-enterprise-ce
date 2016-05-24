@@ -1,0 +1,45 @@
+<%namespace name="base" file="/base/base.html"/>
+<div class="table">
+
+    <table class="table rctable file_history">
+    %for cnt,cs in enumerate(c.pagination):
+        <tr id="chg_${cnt+1}" class="${'tablerow%s' % (cnt%2)}">
+            <td class="td-user">
+                ${base.gravatar_with_user(cs.author, 16)}
+            </td>
+            <td class="td-time">
+                <div class="date">
+                    ${h.age_component(cs.date)}
+                </div>
+            </td>
+            <td class="td-message">
+                <div class="log-container">
+
+                    %if cs.merge:
+                        <span class="mergetag">
+                         ${_('merge')}
+                        </span>
+                    %endif
+                    <div class="message_history" title="${cs.message}">
+                        <a href="${h.url('changeset_home',repo_name=c.repo_name,revision=cs.raw_id)}">
+                            ${h.shorter(cs.message, 75)}
+                        </a>
+                    </div>
+                </div>
+            </td>
+            <td class="td-hash">
+                <code>
+                    <a href="${h.url('changeset_home',repo_name=c.repo_name,revision=cs.raw_id)}">
+                        <span>${h.show_id(cs)}</span>
+                    </a>
+                </code>
+            </td>
+            <td class="td-actions">
+                <a href="${h.url('files_home',repo_name=c.repo_name,f_path=c.changelog_for_path,revision=cs.raw_id)}">
+                    ${_('Show File')}
+                </a>
+            </td>
+        </tr>
+    %endfor
+    </table>
+</div>

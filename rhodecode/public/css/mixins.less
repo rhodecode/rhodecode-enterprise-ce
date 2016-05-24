@@ -1,0 +1,255 @@
+
+
+/* inset border for buttons - does not work in ie */
+.inner-border(@size:1px,@border-color:#000) {
+    -webkit-box-shadow: inset 0 0 0 @size @border-color;
+       -moz-box-shadow: inset 0 0 0 @size @border-color;
+            box-shadow: inset 0 0 0 @size @border-color;
+            -ms-filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius=@size,MakeShadow=true,ShadowOpacity=1);
+                filter:  progid:DXImageTransform.Microsoft.Blur(PixelRadius=@size,MakeShadow=true,ShadowOpacity=1);
+            zoom: 1;
+}
+
+.border(@size:1px,@border-color:#000) {
+  border: @size solid @border-color;
+}
+
+.inner-border-bottom(@size:1px,@border-color:#000) {
+    -webkit-box-shadow: inset 0 (-@size*2) 0 -@size @border-color;
+       -moz-box-shadow: inset 0 (-@size*2) 0 -@size @border-color;
+            box-shadow: inset 0 (-@size*2) 0 -@size @border-color;
+}
+
+/* rounded borders */
+.border-radius(@radius: 2px) {
+  -webkit-border-radius: @radius;
+     -moz-border-radius: @radius;
+          border-radius: @radius;
+}
+
+/* rounded borders - bottom only */
+.border-radius-bottom(@radius: 2px) {
+  -webkit-border-bottom-right-radius: @radius;
+   -webkit-border-bottom-left-radius: @radius;
+      -moz-border-radius-bottomright: @radius;
+       -moz-border-radius-bottomleft: @radius;
+          border-bottom-right-radius: @radius;
+           border-bottom-left-radius: @radius;
+}
+
+/* rounded borders - top only */
+.border-radius-top(@radius: 2px) {
+  -webkit-border-top-right-radius: @radius;
+   -webkit-border-top-left-radius: @radius;
+      -moz-border-radius-topright: @radius;
+       -moz-border-radius-topleft: @radius;
+          border-top-right-radius: @radius;
+           border-top-left-radius: @radius;
+}
+
+/* text shadow */
+.text-shadow(@width:1px) {
+    text-shadow: 0 @width 0 rgba(0,0,0,.75);
+}
+
+/* centers text in a circle - input diameter of circle and color */
+.circle (@radius:20,@color:#000) {
+    height: @radius;
+    width: @radius;
+    padding: round(@radius/2);
+    font-size: @radius;
+    line-height:1em;
+    .border-radius(50%);
+    text-align: center;
+    vertical-align: middle;
+    background-color: @color;
+    color: white;
+}
+
+/* pill version of the circle */
+.pill (@radius:20,@color:#000) {
+    height: @radius;
+    width: @radius;
+    padding: 1px round(@radius*1.2);
+    font-size: @radius;
+    line-height:1em;
+    .border-radius(round(@radius*1.2));
+    text-align: center;
+    vertical-align: middle;
+    background-color: @color;
+    color: white;
+}
+
+.absolute-center {
+  margin: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+// rotates
+.rotate(@degrees:180deg) {
+  -ms-transform: rotate(@degrees);
+  -webkit-transform: rotate(@degrees);
+  transform: rotate(@degrees);
+}
+
+
+// Box sizing
+.box-sizing(@boxmodel) {
+  -webkit-box-sizing: @boxmodel;
+     -moz-box-sizing: @boxmodel;
+          box-sizing: @boxmodel;
+}
+
+// WebKit-style focus
+.tab-focus() {
+  // Default
+  outline: thin dotted;
+  // WebKit
+  outline: 5px auto -webkit-focus-ring-color;
+  outline-offset: -2px;
+}
+
+//box-shadow
+.box-shadow(@shadow) {
+    -webkit-box-shadow: @shadow;
+       -moz-box-shadow: @shadow;
+            box-shadow: @shadow; // iOS <4.3 & Android <4.1
+}
+
+
+// Transitions
+
+.transition(@transition) {
+  -webkit-transition: @transition;
+       -o-transition: @transition;
+          transition: @transition;
+}
+.transition-property(@transition-property) {
+  -webkit-transition-property: @transition-property;
+          transition-property: @transition-property;
+}
+.transition-delay(@transition-delay) {
+  -webkit-transition-delay: @transition-delay;
+          transition-delay: @transition-delay;
+}
+.transition-duration(@transition-duration) {
+  -webkit-transition-duration: @transition-duration;
+          transition-duration: @transition-duration;
+}
+.transition-timing-function(@timing-function) {
+  -webkit-transition-timing-function: @timing-function;
+          transition-timing-function: @timing-function;
+}
+.transition-transform(@transition) {
+  -webkit-transition: -webkit-transform @transition;
+     -moz-transition: -moz-transform @transition;
+       -o-transition: -o-transform @transition;
+          transition: transform @transition;
+}
+
+
+// Placeholder text
+.placeholder(@color: @input-color-placeholder) {
+  // Firefox
+  &::-moz-placeholder {
+    color: @color;
+    opacity: 1; // See https://github.com/twbs/bootstrap/pull/11526
+  }
+  &:-ms-input-placeholder { color: @color; } // Internet Explorer 10+
+  &::-webkit-input-placeholder  { color: @color; } // Safari and Chrome
+}
+
+// Rounded Corners
+// these are used to generate graphics in code-block.html
+
+.top-left-rounded-corner {
+    -webkit-border-top-left-radius: @border-radius;
+    -khtml-border-radius-topleft: @border-radius;
+    border-top-left-radius: @border-radius;
+}
+
+.top-right-rounded-corner {
+    -webkit-border-top-right-radius: @border-radius;
+    -khtml-border-radius-topright: @border-radius;
+    border-top-right-radius: @border-radius;
+}
+
+.bottom-left-rounded-corner {
+    -webkit-border-bottom-left-radius: @border-radius;
+    -khtml-border-radius-bottomleft: @border-radius;
+    border-bottom-left-radius: @border-radius;
+}
+
+.bottom-right-rounded-corner {
+    -webkit-border-bottom-right-radius: @border-radius;
+    -khtml-border-radius-bottomright: @border-radius;
+    border-bottom-right-radius: @border-radius;
+}
+
+.top-left-rounded-corner-mid {
+    -webkit-border-top-left-radius: @border-radius;
+    -khtml-border-radius-topleft: @border-radius;
+    border-top-left-radius: @border-radius;
+}
+
+.top-right-rounded-corner-mid {
+    -webkit-border-top-right-radius: @border-radius;
+    -khtml-border-radius-topright: @border-radius;
+    border-top-right-radius: @border-radius;
+}
+
+.bottom-left-rounded-corner-mid {
+    -webkit-border-bottom-left-radius: @border-radius;
+    -khtml-border-radius-bottomleft: @border-radius;
+    border-bottom-left-radius: @border-radius;
+}
+
+.bottom-right-rounded-corner-mid {
+    -webkit-border-bottom-right-radius: @border-radius;
+    -khtml-border-radius-bottomright: @border-radius;
+    border-bottom-right-radius: @border-radius;
+}
+
+// For Bootstrap
+.border-top-radius(@radius) {
+  border-top-right-radius: @radius;
+   border-top-left-radius: @radius;
+}
+.border-right-radius(@radius) {
+  border-bottom-right-radius: @radius;
+     border-top-right-radius: @radius;
+}
+.border-bottom-radius(@radius) {
+  border-bottom-right-radius: @radius;
+   border-bottom-left-radius: @radius;
+}
+.border-left-radius(@radius) {
+  border-bottom-left-radius: @radius;
+     border-top-left-radius: @radius;
+}
+.panel-variant(@border; @heading-text-color; @heading-bg-color; @heading-border) {
+  border-color: @border;
+
+  & > .panel-heading {
+    color: @heading-text-color;
+    background-color: @heading-bg-color;
+    border-color: @heading-border;
+
+    + .panel-collapse > .panel-body {
+      border-top-color: @border;
+    }
+    .badge {
+      color: @heading-bg-color;
+      background-color: @heading-text-color;
+    }
+  }
+  & > .panel-footer {
+    + .panel-collapse > .panel-body {
+      border-bottom-color: @border;
+    }
+  }
+}

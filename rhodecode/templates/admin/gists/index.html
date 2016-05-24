@@ -1,0 +1,151 @@
+## -*- coding: utf-8 -*-
+<%inherit file="/base/base.html"/>
+
+<%def name="title()">
+    %if c.show_private:
+        ${_('Private Gists for user %s') % c.rhodecode_user.username}
+    %elif c.show_public:
+        ${_('Public Gists for user %s') % c.rhodecode_user.username}
+    %else:
+        ${_('Public Gists')}
+    %endif
+    %if c.rhodecode_name:
+        &middot; ${h.branding(c.rhodecode_name)}
+    %endif
+</%def>
+
+<%def name="breadcrumbs_links()">
+    <input class="q_filter_box" id="q_filter" size="15" type="text" name="filter" placeholder="${_('quick filter...')}" value=""/>
+    %if c.show_private and not c.show_public:
+        ${_('Private Gists for user %s') % c.rhodecode_user.username}
+    %elif c.show_public and not c.show_private:
+        ${_('Public Gists for user %s') % c.rhodecode_user.username}
+    %elif c.show_public and c.show_private:
+        ${_('All Gists for user %s') % c.rhodecode_user.username}
+    %else:
+        ${_('All Public Gists')}
+    %endif
+    -  <span id="gists_count">0</span>
+</%def>
+
+<%def name="menu_bar_nav()">
+    ${self.menu_items(active='gists')}
+</%def>
+
+
+
+<%def name="main()">
+<div class="box">
+  <div class="title">
+      ${self.breadcrumbs(class_="breadcrumbs block-left")}
+      %if c.rhodecode_user.username != h.DEFAULT_USER:
+      <ul class="links block-right">
+        <li>
+           <a href="${h.url('new_gist')}" class="btn btn-primary">${_(u'Create New Gist')}</a>
+        </li>
+      </ul>
+      %endif
+  </div>
+
+
+  <div class="sidebar-col-wrapper scw-small">
+    ##main
+    <div class="sidebar">
+        <ul class="nav nav-pills nav-stacked">
+          % if h.HasPermissionAll('hg.admin')('access admin gists page'):
+            <li class="${'active' if c.active=='all' else ''}"><a href="${h.url('gists', all=1)}">${_('All gists')}</a></li>
+          %endif
+          <li class="${'active' if c.active=='public' else ''}"><a href="${h.url('gists')}">${_('All public')}</a></li>
+          %if c.rhodecode_user.username != h.DEFAULT_USER:
+            <li class="${'active' if c.active=='my_all' else ''}"><a href="${h.url('gists', public=1, private=1)}">${_('My gists')}</a></li>
+            <li class="${'active' if c.active=='my_private' else ''}"><a href="${h.url('gists', private=1)}">${_('My private')}</a></li>
+            <li class="${'active' if c.active=='my_public' else ''}"><a href="${h.url('gists', public=1)}">${_('My public')}</a></li>
+          %endif
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div id="repos_list_wrap">
+            <table id="gist_list_table" class="display"></table>
+        </div>
+    </div>
+  </div>
+</div>
+<script>
+$(document).ready(function() {
+
+    var get_datatable_count = function(){
+      var api = $('#gist_list_table').dataTable().api();
+      $('#gists_count').text(api.page.info().recordsDisplay);
+    };
+
+
+    // custom filter that filters by access_id, description or author
+    $.fn.dataTable.ext.search.push(
+        function( settings, data, dataIndex ) {
+            var query = $('#q_filter').val();
+            var author = data[0].strip();
+            var access_id = data[2].strip();
+            var description = data[3].strip();
+
+            var query_str = (access_id + " " + author + " " + description).toLowerCase();
+
+            if(query_str.indexOf(query.toLowerCase()) !== -1){
+                return true;
+            }
+            return false;
+        }
+    );
+
+    // gists list
+    $('#gist_list_table').DataTable({
+      data: ${c.data|n},
+      dom: 'rtp',
+      pageLength: ${c.visual.dashboard_items},
+      order: [[ 4, "desc" ]],
+      columns: [
+         { data: {"_": "author",
+                  "sort": "author_raw"}, title: "${_("Author")}", width: "250px", className: "td-user" },
+         { data: {"_": "type",
+                  "sort": "type"}, title: "${_("Type")}", width: "70px", className: "td-tags" },
+         { data: {"_": "access_id",
+                  "sort": "access_id"}, title: "${_("Name")}", width:"150px", className: "td-componentname" },
+         { data: {"_": "description",
+                  "sort": "description"}, title: "${_("Description")}", width: "250px", className: "td-description" },
+         { data: {"_": "created_on",
+                  "sort": "created_on_raw"}, title: "${_("Created on")}", className: "td-time" },
+         { data: {"_": "expires",
+                  "sort": "expires"}, title: "${_("Expires")}", className: "td-exp" }
+      ],
+      language: {
+          paginate: DEFAULT_GRID_PAGINATION
+      },
+      "initComplete": function( settings, json ) {
+          timeagoActivate();
+          tooltip_activate();
+          get_datatable_count();
+      }
+    });
+
+    // update the counter when things change
+    $('#gist_list_table').on('draw.dt', function() {
+        timeagoActivate();
+        tooltip_activate();
+        get_datatable_count();
+    });
+
+    // filter, filter both grids
+    $('#q_filter').on( 'keyup', function () {
+      var repo_api = $('#gist_list_table').dataTable().api();
+      repo_api
+        .draw();
+    });
+
+    // refilter table if page load via back button
+    $("#q_filter").trigger('keyup');
+
+  });
+
+</script>
+</%def>
+

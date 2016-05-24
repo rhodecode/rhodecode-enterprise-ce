@@ -1,0 +1,15 @@
+diff -rup kombu-1.5.1-orig/kombu/utils/__init__.py kombu-1.5.1/kombu/utils/__init__.py
+--- kombu-1.5.1-orig/kombu/utils/__init__.py	2016-03-09 15:11:34.000000000 +0100
++++ kombu-1.5.1/kombu/utils/__init__.py	2016-03-09 15:15:52.000000000 +0100
+@@ -11,7 +11,10 @@ Internal utilities.
+ import sys
+ 
+ from time import sleep
+-from uuid import UUID, uuid4 as _uuid4, _uuid_generate_random
++from uuid import UUID, uuid4 as _uuid4
++
++# Fix for Python 2.7.11
++_uuid_generate_random = None
+ 
+ from kombu.utils.encoding import safe_repr as _safe_repr
+ 

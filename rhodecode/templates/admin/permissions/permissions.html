@@ -1,0 +1,56 @@
+## -*- coding: utf-8 -*-
+<%inherit file="/base/base.html"/>
+
+<%def name="title()">
+    ${_('Permissions Administration')}
+    %if c.rhodecode_name:
+        &middot; ${h.branding(c.rhodecode_name)}
+    %endif
+</%def>
+
+<%def name="breadcrumbs_links()">
+    ${h.link_to(_('Admin'),h.url('admin_home'))}
+    &raquo;
+    ${_('Permissions')}
+</%def>
+
+<%def name="menu_bar_nav()">
+    ${self.menu_items(active='admin')}
+</%def>
+
+
+<%def name="main()">
+<div class="box">
+  <div class="title">
+      ${self.breadcrumbs()}
+  </div>
+
+  <div class="sidebar-col-wrapper scw-small">
+    ##main
+    <div class="sidebar">
+        <ul class="nav nav-pills nav-stacked">
+          <li class="${'active' if c.active=='application' else ''}">
+            <a href="${h.url('admin_permissions_application')}">${_('Application')}</a>
+          </li>
+          <li class="${'active' if c.active=='global' else ''}">
+            <a href="${h.url('admin_permissions_global')}">${_('Global')}</a>
+          </li>
+          <li class="${'active' if c.active=='objects' else ''}">
+            <a href="${h.url('admin_permissions_object')}">${_('Object')}</a>
+          </li>
+          <li class="${'active' if c.active=='ips' else ''}">
+            <a href="${h.url('admin_permissions_ips')}">${_('IP Whitelist')}</a>
+          </li>
+          <li class="${'active' if c.active=='perms' else ''}">
+            <a href="${h.url('admin_permissions_overview')}">${_('Overview')}</a>
+          </li>
+        </ul>
+    </div>
+
+    <div class="main-content-full-width">
+        <%include file="/admin/permissions/permissions_${c.active}.html"/>
+    </div>
+  </div>
+</div>
+
+</%def>

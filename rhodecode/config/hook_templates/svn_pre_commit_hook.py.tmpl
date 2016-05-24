@@ -1,0 +1,19 @@
+#!_ENV_
+
+import os
+import sys
+
+
+RC_HOOK_VER = '_TMPL_'
+
+
+def main():
+    if os.environ.get('SSH_READ_ONLY') == '1':
+        sys.stderr.write('Only read-only access is allowed')
+        sys.exit(1)
+
+    sys.exit(0)
+
+
+if __name__ == '__main__':
+    main()

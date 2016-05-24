@@ -1,0 +1,55 @@
+/*
+ * statistics-graph
+ *
+ * Style definitions for the statistics component. This component is available
+ * for each repository which has statistics enabled.
+ */
+
+.statistics-graph {
+    .data-info {
+        padding: 0 10px 10px 17px;
+    }
+
+    #graph-main {
+        width: 450px;
+        height: 300px;
+        float: left;
+    }
+
+    .graph-divider {
+        clear: both;
+        height: 10px;
+    }
+
+    #graph-overview {
+        width: 450px;
+        height: 100px;
+        float: left;
+    }
+
+    #legend_data {
+        clear: both;
+        margin-top: 10px;
+        width: 100%;
+        float: left;
+
+        #legend_container {
+            table {
+                width: auto;
+                margin: 0;
+            }
+        }
+    }
+
+    #legend_choices_tables {
+        border: 0;
+        font-size: smaller;
+        color: @grey3
+    }
+
+    .legendLabel {
+        label {
+            margin-left: @input-padding;
+        }
+    }
+}

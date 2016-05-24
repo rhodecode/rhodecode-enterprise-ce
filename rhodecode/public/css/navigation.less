@@ -1,0 +1,623 @@
+// navigation.less
+// For use in RhodeCode applications;
+// see style guide documentation for guidelines.
+
+// HEADER NAVIGATION
+
+.horizontal-list {
+    float: right;
+    display: block;
+    margin: 0;
+    padding: 0;
+    -webkit-padding-start: 0;
+    text-align: left;
+    font-size: @navigation-fontsize;
+    color: @grey6;
+    z-index:10;
+
+    li {
+        line-height: 1em;
+        list-style-type: none;
+
+        a {
+            padding: 0 .5em;
+
+            &.menu_link_notifications {
+                .pill(7px,@rcblue);
+                display: inline;
+                margin: 0 7px 0 .7em;
+                font-size: @basefontsize;
+                color: white;
+            
+                &.empty {
+                    background-color: @grey4;
+                }
+
+                &:hover {
+                    background-color: @rcdarkblue;
+                }
+            }
+        }
+        .pill_container {
+            margin: 1.25em 0px 0px 0px;
+            float: right;
+        }
+
+        &#quick_login_li {
+            &:hover {
+                color: @grey5;
+            }
+
+            a.menu_link_notifications {
+                color: white;
+            }
+
+            .user {
+                padding-bottom: 10px;
+            }
+
+            &.open {
+                .user {
+                    border-bottom: 5px solid @rcblue;
+                }
+            }
+        }
+
+        &:before { content: none; }
+
+        &:last-child {
+            .menulabel {
+                padding-right: 0;
+                border-right: none;
+
+                .show_more {
+                    padding-right: 0;
+                }
+            }
+
+            &> a {
+                border-bottom: none;
+            }
+        }
+
+        &.active {
+            border-bottom: 5px solid @rcblue;
+        }
+
+        &.open {
+
+            a {
+                color: white;
+            }
+        }
+
+        &:focus {
+            outline: none;
+        }
+    
+        ul li  {
+            display: block;
+
+            &:last-child> a {
+                border-bottom: none;
+            }
+
+            ul li:last-child a {
+                /* we don't expect more then 3 levels of submenu and the third
+                level can have different html structure */
+                border-bottom: none;
+            }
+        }
+    }
+
+    > li {
+        float: left;
+        display: block;
+        padding: 0;
+
+        > a,
+        &.has_select2 a {
+            display: block;
+            padding: 10px 0 2px;
+
+            .show_more {
+                margin-top: -4px;
+                padding-right: .5em;
+            }
+        }
+
+        .menulabel {
+            padding: 0 .5em;
+            line-height: 1em;
+            // for this specifically we do not use a variable
+            border-right: 1px solid @grey4;
+        }
+
+        .pr_notifications {
+            padding-left: .5em;
+        }
+
+        .pr_notifications + .menulabel {
+            display:inline;
+            padding-left: 0;
+        }
+
+        &:hover,
+        &.open,
+        &.active {
+            a { 
+                color: @grey1;
+            }
+        }
+    }
+
+    pre {
+        margin: 0;
+        padding: 0;
+    }
+
+    .select2-container,
+    .menulink.childs {
+        position: relative;
+    }
+
+    #quick_login {
+
+        li a {
+            padding: .5em 0;
+            border-bottom: none;
+            color: @grey2;
+
+            &:hover { color: @grey1; }
+        }
+
+        .show_more {
+            padding-left: .5em;
+        }
+    }
+
+    #quick_login_link {
+        display: inline-block;
+
+        .gravatar {
+            border: 1px solid @grey2;
+        }
+
+        .gravatar-login {
+            height: 20px;
+            width: 20px;
+            margin: -8px 0;
+            padding: 0;
+        }
+
+        &:hover .user {
+            color: @grey6;
+        }
+    }
+}
+.header .horizontal-list {
+
+    li {
+
+        &#quick_login_li {
+            padding-left: .5em;
+
+            &:hover #quick_login_link {
+                color: inherit;
+            }
+        }
+
+        &:before { content: none; }
+    }
+
+    > li {
+
+        a {
+            padding: 18px 0 12px 0;
+            color: @nav-grey;
+
+            &.menu_link_notifications {
+                padding: 1px 8px;
+            }
+        }
+
+        &:hover,
+        &.open,
+        &.active {
+            .pill_container a {
+                // don't select text for the pill container, it has it' own
+                // hover behaviour
+                color: @nav-grey;
+            }
+        }
+
+        &:hover,
+        &.open,
+        &.active {
+            a {
+                color: @grey6;
+            }
+        }
+
+        .select2-dropdown-open a {
+            color: @grey6;
+        }
+
+        .repo-switcher {
+            padding-left: 0;
+
+            .menulabel {
+                padding-left: 0;
+            }
+        }
+    }
+
+    li ul li  {
+        background-color:@grey2;
+
+        a {
+            padding: .5em 0;
+            border-bottom: @border-thickness solid @border-default-color;
+            color: @grey6;
+        }
+
+         &:last-child a, &.last a{
+            border-bottom: none;
+        }
+
+        &:hover {
+            background-color: @grey3;
+        }
+    }
+
+    .submenu {
+        margin-top: 5px;
+    }
+}
+
+// SUBMENUS
+.navigation .submenu {
+    display: none;
+}
+
+.navigation li.open {
+
+   .submenu,
+   .repo_switcher {
+       display: block;
+   }
+}
+
+.submenu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 150px;
+    margin: 6px 0 0;
+    padding: 0;
+    text-align: left;
+    font-family: @text-light;
+    border-radius: @border-radius;
+    z-index: 20;
+
+    li {
+        display: block;
+        margin: 0;
+        padding: 0 .5em;
+        line-height: 1em;
+        color: @grey3;
+        background-color: @grey6;
+
+        &:before { content: none; }
+
+        a {
+            display: block;
+            width: 100%;
+            padding: .5em 0;
+            border-right: none;
+            border-bottom: @border-thickness solid white;
+            color: @grey3;
+        }
+
+        ul {
+            display: none;
+            position: absolute;
+            top: 0;
+            right: 100%;
+            padding: 0;
+            z-index: 30;
+        }
+        &:hover {
+            background-color: @grey5;
+            -webkit-transition: background .3s;
+               -moz-transition: background .3s;
+                 -o-transition: background .3s;
+                    transition: background .3s;
+            
+            ul {
+                display: block;
+            }
+        }
+    }
+}
+
+
+
+
+// repo dropdown
+.quick_repo_menu {
+    width: 15px;
+    text-align: center;
+    position: relative;
+    cursor: pointer;
+
+    div {
+        overflow: visible !important;
+    }
+
+    &.sorting {
+        cursor: auto;
+    }
+
+    &:hover {
+        .menu_items_container {
+            position: absolute;
+            display: block;
+        }
+        .menu_items {
+            display: block;
+        }
+    }
+
+    i {
+        margin: 0;
+        color: @grey4;
+    }
+
+    .menu_items_container {
+        position: absolute;
+        top: 0;
+        left: 100%;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        background-color: @grey6;
+        z-index: 999;
+        text-align: left;
+
+        a {
+            color: @grey2;
+        }
+
+        ul.menu_items {
+            margin: 0;
+            padding: 0;
+        }
+
+        li {
+            margin: 0;
+            padding: 0;
+            line-height: 1em;
+            list-style-type: none;
+
+            &:before { content: none; }
+
+            a {
+                display: block;
+                height: 16px;
+                padding: 8px; //must add up to td height (28px)
+
+                &:hover {
+                    background-color: @grey5;
+                    -webkit-transition: background .3s;
+                       -moz-transition: background .3s;
+                         -o-transition: background .3s;
+                            transition: background .3s;
+                }
+            }
+        }
+    }
+}
+
+// Header Repository Switcher
+// Select2 Dropdown
+#select2-drop.select2-drop.repo-switcher-dropdown  {
+    width: auto !important;
+    margin-top: 5px;
+    padding: 1em 0;
+    text-align: left;
+    .border-radius-bottom(@border-radius);
+    border-color: transparent;
+    color: @grey6;
+    background-color: @grey2;
+
+    input {
+        min-width: 90%;
+    }
+
+    ul.select2-result-sub {
+
+        li {
+            line-height: 1em;
+
+            &:hover,
+            &.select2-highlighted {
+                background-color: @grey3;
+            }
+        }
+
+        &:before { content: none; }
+    }
+
+    ul.select2-results {
+        min-width: 200px;
+        margin: 0;
+        padding: 0;
+        list-style-type: none;
+        overflow-x: visible;
+        overflow-y: scroll;
+
+        li {
+            padding: 0 8px;
+            line-height: 1em;
+            color: @grey6;
+
+            &:before { content: none; }
+
+            &>.select2-result-label {
+                padding: 8px 0;
+                border-bottom: @border-thickness solid @grey3;
+                white-space: nowrap;
+                color: @grey5;
+                cursor: pointer;
+            }
+
+            &.select2-result-with-children {
+                margin: 0;
+                padding: 0;
+            }
+
+            &.select2-result-unselectable > .select2-result-label {
+                margin: 0 8px;
+            }
+                
+        }
+    }
+
+    ul.select2-result-sub {
+        margin: 0;
+        padding: 0;
+
+        li {
+            display: block;
+            margin: 0;
+            border-right: none;
+            line-height: 1em;
+            font-family: @text-light;
+            color: @grey2;
+
+            &:before { content: none; }
+
+            &:hover {
+                background-color: @grey3;
+            }
+        }
+    }
+}
+
+
+#context-bar {
+    display: block;
+    margin: 0 auto;
+    padding: 0 @header-padding;
+    background-color: @grey6;
+    border-bottom: @border-thickness solid @grey5;
+
+    .clear {
+        clear: both;
+    }
+}
+
+ul#context-pages {
+    li {
+        line-height: 1em;
+
+        &:before { content: none; }
+
+        a {
+            color: @grey3;
+        }
+
+        &.active {
+            // special case, non-variable color
+            border-bottom: 4px solid @nav-grey;
+
+            a {
+                color: @grey1;
+            }
+        }
+    }
+}
+
+// PAGINATION
+
+.pagination {
+    border: @border-thickness solid @rcblue;
+    color: @rcblue;
+
+    .current {
+        color: @grey4;
+    }
+}
+
+.dataTables_paginate, .pagination-wh {
+    text-align: left;
+    display: inline-block;
+    border-left: 1px solid @rcblue;
+    float: none;
+    overflow: hidden;
+
+    .paginate_button, .pager_curpage,
+    .pager_link, .pg-previous, .pg-next, .pager_dotdot {
+        display: inline-block;
+        padding: @menupadding/4 @menupadding;
+        border: 1px solid @rcblue;
+        border-left: 0;
+        color: @rcblue;
+        cursor: pointer;
+        float: left;
+    }
+
+    .pager_curpage, .pager_dotdot,
+    .paginate_button.current, .paginate_button.disabled,
+    .disabled {
+        color: @grey3;
+        cursor: default;
+    }
+}
+
+// SIDEBAR
+
+.sidebar {
+    .block-left;
+    clear: left;
+    max-width: @sidebar-width;
+    margin-right: @sidebarpadding;
+    padding-right: @sidebarpadding;
+    font-family: @text-regular;
+    color: @grey1;
+
+    &#graph_nodes {
+        clear:both;
+        width: auto;
+        margin-left: -100px;
+        padding: 0;
+        border: none;
+    }
+    
+    .nav-pills {
+        margin: 0;
+    }
+
+    .nav {
+        list-style: none;
+        padding: 0;
+
+        li {
+            padding-bottom: @menupadding;
+            line-height: 1em;
+            color: @grey4;
+
+            &.active a {
+                color: @grey2;
+            }
+
+            a {
+                color: @grey4;
+            }
+
+            &:before { content: none; }
+        }
+
+    }
+}

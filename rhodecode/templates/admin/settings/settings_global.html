@@ -1,0 +1,245 @@
+${h.secure_form(url('admin_settings_global'), method='post')}
+
+<div class="panel panel-default">
+    <div class="panel-heading" id="branding-options">
+        <h3 class="panel-title">${_('Branding')} <a class="permalink" href="#branding-options"> ¶</a></h3>
+    </div>
+    <div class="panel-body">
+        <div class="label">
+            <label for="rhodecode_title">${_('Title')}</label>
+        </div>
+        <div class="field input">
+            ${h.text('rhodecode_title',size=60)}
+        </div>
+        <div class="field">
+            <span class="help-block">
+                ${_('Set a custom title for your RhodeCode instance (limited to 40 characters).')}
+            </span>
+        </div>
+        <div class="label">
+            <label for="rhodecode_realm">${_('HTTP[S] authentication realm')}</label>
+        </div>
+        <div class="field input">
+            ${h.text('rhodecode_realm',size=60)}
+        </div>
+        <div class="field">
+            <span class="help-block">
+                ${_('Set a custom text that is shown as authentication message to clients trying to connect.')}
+            </span>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading" id="captcha-options">
+        <h3 class="panel-title">${_('Registration Captcha')} <a class="permalink" href="#captcha-options"> ¶</a></h3>
+    </div>
+    <div class="panel-body">
+        <div class="label">
+            <label for="rhodecode_captcha_public_key">${_('Google ReCaptcha public key')}</label>
+        </div>
+        <div class="field input">
+            ${h.text('rhodecode_captcha_public_key',size=60)}
+        </div>
+        <div class="field">
+            <span class="help-block">
+                ${_('Public key for reCaptcha system.')}
+            </span>
+        </div>
+
+        <div class="label">
+            <label for="rhodecode_captcha_private_key">${_('Google ReCaptcha private key')}</label>
+        </div>
+        <div class="field input">
+            ${h.text('rhodecode_captcha_private_key',size=60)}
+        </div>
+        <div class="field">
+            <span class="help-block">
+                ${_('Private key for reCaptcha system. Setting this value will enable captcha on registration')}
+            </span>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading" id="header-code-options">
+        <h3 class="panel-title">${_('Custom Header Code')} <a class="permalink" href="#header-code-options"> ¶</a></h3>
+    </div>
+    <div class="panel-body">
+        <div class="select">
+            <select id="pre_template" >
+                <option value="#">${_('Templates...')}</option>
+                <option value="ga">Google Analytics</option>
+                <option value="clicky">Clicky</option>
+                <option value="server_announce">${_('Server Announcement')}</option>
+            </select>
+        </div>
+        <div style="padding: 10px 0px"></div>
+        <div class="textarea text-area">
+            ${h.textarea('rhodecode_pre_code',cols=23,rows=5,class_="medium")}
+            <span class="help-block">${_('Custom js/css code added at the end of the <header> tag.')}
+                         ${_('Use <script> or <css> tags to define custom styling or scripting')}</span>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading" id="footer-code-options">
+        <h3 class="panel-title">${_('Custom Footer Code')} <a class="permalink" href="#footer-code-options"> ¶</a></h3>
+    </div>
+    <div class="panel-body">
+        <div class="select">
+            <select id="post_template" >
+                <option value="#">${_('Templates...')}</option>
+                <option value="ga">Google Analytics</option>
+                <option value="clicky">Clicky</option>
+                <option value="server_announce">${_('Server Announcement')}</option>
+            </select>
+        </div>
+        <div style="padding: 10px 0px"></div>
+        <div class="textarea text-area">
+            ${h.textarea('rhodecode_post_code',cols=23,rows=5, class_="medium")}
+            <span class="help-block">${_('Custom js/css code added at the end of the <body> tag.')}
+                        ${_('Use <script> or <css> tags to define custom styling or scripting')}</span>
+        </div>
+    </div>
+</div>
+
+<div class="buttons">
+    ${h.submit('save',_('Save settings'),class_="btn")}
+    ${h.reset('reset',_('Reset'),class_="btn")}
+</div>
+${h.end_form()}
+
+
+
+## TEMPLATES ##
+###############
+
+<script id="ga_tmpl" type="text/x-template">
+<%text filter="h">
+<script>
+ // Google Analytics
+ // Put your Google Analytics code instead of _GACODE_
+ var _gaq_code = '_GACODE_';
+ var _gaq = _gaq || [];
+ _gaq.push(['_setAccount', _gaq_code]);
+ _gaq.push(['_trackPageview']);
+
+ (function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+ })();
+
+ rhodecode_statechange_callback = function(url, data){
+  // ANALYTICS callback on html5 history state changed
+  // triggered by file browser, url is the new url,
+  // data is extra info passed from the State object
+  if (typeof window._gaq !== 'undefined') {
+    _gaq.push(['_trackPageview', url]);
+  }
+ };
+</script>
+</%text>
+</script>
+
+
+
+<script id="clicky_tmpl" type="text/x-template">
+<%text filter="h">
+<script src="//static.getclicky.com/js" type="text/javascript"></script>
+<script type="text/javascript">
+ // Clicky Analytics - should be used in the footer code section.
+ // Put your Clicky code instead of _CLICKYCODE_ here,
+ // and below in the <img> tag.
+ var _cl_code = _CLICKYCODE_;
+ try{clicky.init(_cl_code);}catch(e){}
+
+ rhodecode_statechange_callback = function(url, data){
+  // ANALYTICS callback on html5 history state changed
+  // triggered by file browser, url is the new url,
+  // data is extra info passed from the State object
+  if (typeof window.clicky !== 'undefined') {
+   clicky.log(url);
+  }
+}
+</script>
+<noscript>
+// Put your clicky code in the src file.
+<p><img alt="Clicky" width="1" height="1"
+        src="//in.getclicky.com/_CLICKYCODE_ns.gif" /></p>
+</noscript>
+</%text>
+</script>
+
+
+
+<script id="server_announce_tmpl" type='text/x-template'>
+<%text filter="h">
+<script>
+// Server announcement displayed on the top of the page.
+// This can be used to send a global maintainance messages or other
+// important messages to all users of the RhodeCode Enterprise system.
+
+$(document).ready(function(e){
+ // put your message below
+ var message = "TYPE YOUR MESSAGE HERE";
+
+ $('#body').prepend(
+  ('<div class="flash_msg">'+
+   '<div class="alert alert-info">_MSG_'+
+   '</div></div>').replace('_MSG_', message)
+ )
+})
+</script>
+</%text>
+</script>
+
+
+
+<script>
+var pre_cm = initCodeMirror('rhodecode_pre_code', '', false);
+var pre_old = pre_cm.getValue();
+
+var post_cm = initCodeMirror('rhodecode_post_code', '', false);
+var post_old = post_cm.getValue();
+
+var get_data = function(type, old){
+    var get_tmpl = function(tmpl_name){
+        // unescape some stuff
+        var html = htmlEnDeCode.htmlDecode($('#'+tmpl_name+'_tmpl').html());
+        return html;
+    };
+    return {
+        '#': old,
+        'ga': get_tmpl('ga'),
+        'clicky': get_tmpl('clicky'),
+        'server_announce': get_tmpl('server_announce')
+    }[type]
+};
+
+$('#pre_template').select2({
+    containerCssClass: 'drop-menu',
+    dropdownCssClass: 'drop-menu-dropdown',
+    dropdownAutoWidth: true,
+    minimumResultsForSearch: -1
+});
+
+$('#post_template').select2({
+    containerCssClass: 'drop-menu',
+    dropdownCssClass: 'drop-menu-dropdown',
+    dropdownAutoWidth: true,
+    minimumResultsForSearch: -1
+});
+
+$('#post_template').on('change', function(e){
+    var sel = this.value;
+    post_cm.setValue(get_data(sel, post_old))
+});
+
+$('#pre_template').on('change', function(e){
+    var sel = this.value;
+    pre_cm.setValue(get_data(sel, pre_old))
+})
+</script>

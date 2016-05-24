@@ -1,0 +1,322 @@
+## -*- coding: utf-8 -*-
+<%inherit file="/base/base.html"/>
+
+<%def name="title()">
+    %if c.compare_home:
+        ${_('%s Compare') % c.repo_name}
+    %else:
+        ${_('%s Compare') % c.repo_name} - ${'%s@%s' % (c.source_repo.repo_name, c.source_ref)} &gt; ${'%s@%s' % (c.target_repo.repo_name, c.target_ref)}
+    %endif
+    %if c.rhodecode_name:
+        &middot; ${h.branding(c.rhodecode_name)}
+    %endif
+</%def>
+
+<%def name="breadcrumbs_links()">
+  ${ungettext('%s commit','%s commits', len(c.commit_ranges)) % len(c.commit_ranges)}
+</%def>
+
+<%def name="menu_bar_nav()">
+    ${self.menu_items(active='repositories')}
+</%def>
+
+<%def name="menu_bar_subnav()">
+    ${self.repo_menu(active='compare')}
+</%def>
+
+<%def name="main()">
+<script type="text/javascript">
+    // set fake commitId on this commit-range page
+    templateContext.commit_data.commit_id = "${h.EmptyCommit().raw_id}";
+</script>
+
+    <div class="box">
+        <div class="title">
+            ${self.repo_page_title(c.rhodecode_db_repo)}
+            <div class="breadcrumbs">
+                ${_('Compare Commits')}
+            </div>
+        </div>
+
+        <div class="table">
+            <div id="codeblock" class="diffblock">
+                <div class="code-header" >
+                    <div class="compare_header">
+                        ## The hidden elements are replaced with a select2 widget
+                        <div class="compare-label">${_('Target')}</div>${h.hidden('compare_source')}
+                        <div class="compare-label">${_('Source')}</div>${h.hidden('compare_target')}
+
+                        %if not c.preview_mode:
+                            <div class="compare-label"></div>
+                            <div class="compare-buttons">
+                                %if not c.compare_home:
+                                    <a id="btn-swap" class="btn btn-primary" href="${c.swap_url}"><i class="icon-refresh"></i> ${_('Swap')}</a>
+                                %endif
+                                <div id="compare_revs" class="btn btn-primary"><i class ="icon-loop"></i> ${_('Compare Commits')}</div>
+                                %if c.files:
+                                    <div id="compare_changeset_status_toggle" class="btn btn-primary">${_('Comment')}</div>
+                                %endif
+                            </div>
+                        %endif
+                    </div>
+                </div>
+            </div>
+            ## use JS script to load it quickly before potentially large diffs render long time
+            ## this prevents from situation when large diffs block rendering of select2 fields
+            <script type="text/javascript">
+
+                var cache = {};
+
+                var formatSelection = function(repoName){
+                    return function(data, container, escapeMarkup) {
+                        var selection = data ? this.text(data) : "";
+                        return escapeMarkup('{0}@{1}'.format(repoName, selection));
+                    }
+                };
+
+                var feedCompareData = function(query, cachedValue){
+                    var data = {results: []};
+                    //filter results
+                    $.each(cachedValue.results, function() {
+                        var section = this.text;
+                        var children = [];
+                        $.each(this.children, function() {
+                            if (query.term.length === 0 || this.text.toUpperCase().indexOf(query.term.toUpperCase()) >= 0) {
+                                children.push({
+                                    'id': this.id,
+                                    'text': this.text,
+                                    'type': this.type
+                                })
+                            }
+                        });
+                        data.results.push({
+                            'text': section,
+                            'children': children
+                        })
+                    });
+                    //push the typed in changeset
+                    data.results.push({
+                        'text': _TM['specify commit'],
+                        'children': [{
+                            'id': query.term,
+                            'text': query.term,
+                            'type': 'rev'
+                        }]
+                    });
+                    query.callback(data);
+                };
+
+                var loadCompareData = function(repoName, query, cache){
+                    $.ajax({
+                        url: pyroutes.url('repo_refs_data', {'repo_name': repoName}),
+                        data: {},
+                        dataType: 'json',
+                        type: 'GET',
+                        success: function(data) {
+                            cache[repoName] = data;
+                            query.callback({results: data.results});
+                        }
+                    })
+                };
+
+                var enable_fields = ${"false" if c.preview_mode else "true"};
+                $("#compare_source").select2({
+                    placeholder: "${'%s@%s' % (c.source_repo.repo_name, c.source_ref)}",
+                    containerCssClass: "drop-menu",
+                    dropdownCssClass: "drop-menu-dropdown",
+                    formatSelection: formatSelection("${c.source_repo.repo_name}"),
+                    dropdownAutoWidth: true,
+                    query: function(query) {
+                        var repoName = '${c.source_repo.repo_name}';
+                        var cachedValue = cache[repoName];
+
+                        if (cachedValue){
+                            feedCompareData(query, cachedValue);
+                        }
+                        else {
+                            loadCompareData(repoName, query, cache);
+                        }
+                    }
+                }).select2("enable", enable_fields);
+
+                $("#compare_target").select2({
+                    placeholder: "${'%s@%s' % (c.target_repo.repo_name, c.target_ref)}",
+                    dropdownAutoWidth: true,
+                    containerCssClass: "drop-menu",
+                    dropdownCssClass: "drop-menu-dropdown",
+                    formatSelection: formatSelection("${c.target_repo.repo_name}"),
+                    query: function(query) {
+                        var repoName = '${c.target_repo.repo_name}';
+                        var cachedValue = cache[repoName];
+
+                        if (cachedValue){
+                            feedCompareData(query, cachedValue);
+                        }
+                        else {
+                            loadCompareData(repoName, query, cache);
+                        }
+                    }
+                }).select2("enable", enable_fields);
+                var initial_compare_source = {id: "${c.source_ref}", type:"${c.source_ref_type}"};
+                var initial_compare_target = {id: "${c.target_ref}", type:"${c.target_ref_type}"};
+
+                $('#compare_revs').on('click', function(e) {
+                    var source = $('#compare_source').select2('data') || initial_compare_source;
+                    var target = $('#compare_target').select2('data')  || initial_compare_target;
+                    if (source && target) {
+                        var url_data = {
+                            repo_name: "${c.repo_name}",
+                            source_ref: source.id,
+                            source_ref_type: source.type,
+                            target_ref: target.id,
+                            target_ref_type: target.type
+                        };
+                        window.location = pyroutes.url('compare_url', url_data);
+                    }
+                });
+                $('#compare_changeset_status_toggle').on('click', function(e) {
+                    $('#compare_changeset_status').toggle();
+                });
+
+            </script>
+
+            ## changeset status form
+            <%namespace name="comment" file="/changeset/changeset_file_comment.html"/>
+            ## main comment form and it status
+            <%
+            def revs(_revs):
+                form_inputs = []
+                for cs in _revs:
+                    tmpl = '<input type="hidden" data-commit-id="%(cid)s" name="commit_ids" value="%(cid)s">' % {'cid': cs.raw_id}
+                    form_inputs.append(tmpl)
+                return form_inputs
+            %>
+            <div id="compare_changeset_status" style="display: none;">
+                ${comment.comments(h.url('changeset_comment', repo_name=c.repo_name, revision='0'*16), None, is_compare=True, form_extras=revs(c.commit_ranges))}
+                <script type="text/javascript">
+
+                    mainCommentForm.setHandleFormSubmit(function(o) {
+                        var text = mainCommentForm.cm.getValue();
+                        var status = mainCommentForm.getCommentStatus();
+
+                        if (text === "" && !status) {
+                            return;
+                        }
+
+                        // we can pick which commits we want to make the comment by
+                        // selecting them via click on preview pane, this will alter the hidden inputs
+                        var cherryPicked = $('#changeset_compare_view_content .compare_select.hl').length > 0;
+
+                        var commitIds = [];
+                        $('#changeset_compare_view_content .compare_select').each(function(el) {
+                            var commitId = this.id.replace('row-', '');
+                            if ($(this).hasClass('hl') || !cherryPicked) {
+                                $("input[data-commit-id='{0}']".format(commitId)).val(commitId)
+                                commitIds.push(commitId);
+                            } else {
+                                $("input[data-commit-id='{0}']".format(commitId)).val('')
+                            }
+                        });
+
+                        mainCommentForm.setActionButtonsDisabled(true);
+                        mainCommentForm.cm.setOption("readOnly", true);
+                        var postData = {
+                            'text': text,
+                            'changeset_status': status,
+                            'commit_ids': commitIds,
+                            'csrf_token': CSRF_TOKEN
+                        };
+
+                        var submitSuccessCallback = function(o) {
+                            location.reload(true);
+                        };
+                        var submitFailCallback = function(){
+                            mainCommentForm.resetCommentFormState(text)
+                        };
+                        mainCommentForm.submitAjaxPOST(
+                            mainCommentForm.submitUrl, postData, submitSuccessCallback, submitFailCallback);
+                    });
+                </script>
+
+            </div>
+
+            %if c.compare_home:
+                <div id="changeset_compare_view_content">
+                 <div class="help-block">${_('Compare commits, branches, bookmarks or tags.')}</div>
+                </div>
+            %else:
+                <div id="changeset_compare_view_content">
+                    ##CS
+                    <%include file="compare_commits.html"/>
+
+                    ## FILES
+                  <div class="cs_files_title">
+                    <span class="cs_files_expand">
+                        <span id="expand_all_files">${_('Expand All')}</span> | <span id="collapse_all_files">${_('Collapse All')}</span>
+                    </span>
+                    <h2>
+                        ${diff_block.diff_summary_text(len(c.files), c.lines_added, c.lines_deleted, c.limited_diff)}
+                    </h2>
+                  </div>
+                    <div class="cs_files">
+                      %if not c.files:
+                         <p class="empty_data">${_('No files')}</p>
+                      %endif
+                  <table class="compare_view_files">
+                  <%namespace name="diff_block" file="/changeset/diff_block.html"/>
+                    %for FID, change, path, stats, file in c.files:
+                    <tr class="cs_${change} collapse_file" fid="${FID}">
+                        <td class="cs_icon_td">
+                            <span class="collapse_file_icon" fid="${FID}"></span>
+                        </td>
+                        <td class="cs_icon_td">
+                            <div class="flag_status not_reviewed hidden"></div>
+                        </td>
+                        <td class="cs_${change}" id="a_${FID}">
+                            <div class="node">
+                                <a href="#a_${FID}">
+                                    <i class="icon-file-${change.lower()}"></i>
+                                    ${h.safe_unicode(path)}
+                                </a>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="changes pull-right">${h.fancy_file_stats(stats)}</div>
+                            <div class="comment-bubble pull-right" data-path="${path}">
+                              <i class="icon-comment"></i>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr fid="${FID}" id="diff_${FID}" class="diff_links">
+                        <td></td>
+                        <td></td>
+                        <td class="cs_${change}">
+                            %if c.target_repo.repo_name == c.repo_name:
+                                ${diff_block.diff_menu(c.repo_name, h.safe_unicode(path), c.source_ref, c.target_ref, change, file)}
+                            %else:
+                                ## this is slightly different case later, since the target repo can have this
+                                ## file in target state than the source repo
+                                ${diff_block.diff_menu(c.target_repo.repo_name, h.safe_unicode(path), c.source_ref, c.target_ref, change, file)}
+                            %endif
+                        </td>
+                        <td class="td-actions rc-form">
+                        </td>
+                    </tr>
+                    <tr id="tr_${FID}">
+                      <td></td>
+                      <td></td>
+                      <td class="injected_diff" colspan="2">
+                          ${diff_block.diff_block_simple([c.changes[FID]])}
+                      </td>
+                    </tr>
+                  %endfor
+                  </table>
+                    % if c.limited_diff:
+                        ${diff_block.changeset_message()}
+                    % endif
+                 </div>
+            %endif
+        </div>
+    </div>
+</div>
+</%def>

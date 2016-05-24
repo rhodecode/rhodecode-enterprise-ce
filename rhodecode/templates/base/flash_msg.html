@@ -1,0 +1,16 @@
+<div class="flash_msg">
+    <% messages = h.flash.pop_messages() %>
+    % if messages:
+        % for message in messages:
+            <div class="alert alert-dismissable alert-${message.category}">
+              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+              ${message}
+            </div>
+        % endfor
+    % endif
+    <script>
+    if (typeof jQuery != 'undefined') {
+        $(".alert").alert();
+    }
+    </script>
+</div>

@@ -1,0 +1,126 @@
+## -*- coding: utf-8 -*-
+<%inherit file="/base/base.html"/>
+
+<%def name="title()">
+    ${_('%s Commits') % c.repo_name} -
+    r${c.commit_ranges[0].revision}:${h.short_id(c.commit_ranges[0].raw_id)}
+    ...
+    r${c.commit_ranges[-1].revision}:${h.short_id(c.commit_ranges[-1].raw_id)}
+    ${ungettext('(%s commit)','(%s commits)', len(c.commit_ranges)) % len(c.commit_ranges)}
+    %if c.rhodecode_name:
+        &middot; ${h.branding(c.rhodecode_name)}
+    %endif
+</%def>
+
+<%def name="breadcrumbs_links()">
+    ${_('Commits')} -
+    r${c.commit_ranges[0].revision}:${h.short_id(c.commit_ranges[0].raw_id)}
+    ...
+    r${c.commit_ranges[-1].revision}:${h.short_id(c.commit_ranges[-1].raw_id)}
+    ${ungettext('(%s commit)','(%s commits)', len(c.commit_ranges)) % len(c.commit_ranges)}
+</%def>
+
+<%def name="menu_bar_nav()">
+    ${self.menu_items(active='repositories')}
+</%def>
+
+<%def name="menu_bar_subnav()">
+    ${self.repo_menu(active='changelog')}
+</%def>
+
+<%def name="main()">
+  <div class="summary-header">
+      <div class="title">
+        <div class="title-content">
+          ${self.repo_page_title(c.rhodecode_db_repo)}
+        </div>
+      </div>
+      <div class="header-buttons">
+        <a href="${h.url('compare_url', repo_name=c.repo_name, source_ref_type='rev', source_ref=getattr(c.commit_ranges[0].parents[0] if c.commit_ranges[0].parents else h.EmptyCommit(), 'raw_id'), target_ref_type='rev', target_ref=c.commit_ranges[-1].raw_id)}"
+           class="btn btn-default">
+            ${_('Show combined compare')}
+        </a>
+      </div>
+  </div>
+
+  <div class="summary-detail">
+    <div class="title">
+      <h2>
+        ${self.breadcrumbs_links()}
+      </h2>
+    </div>
+
+    <div id="changeset_compare_view_content">
+      ##CS
+      <%include file="../compare/compare_commits.html"/>
+      ## FILES
+      <div class="cs_files_title">
+        <span class="cs_files_expand">
+            <span id="expand_all_files">${_('Expand All')}</span> | <span id="collapse_all_files">${_('Collapse All')}</span>
+        </span>
+        <h2>
+            ${diff_block.diff_summary_text(len(c.files), c.lines_added, c.lines_deleted, c.limited_diff)}
+        </h2>
+      </div>
+    </div>
+  </div>
+
+  <div class="cs_files">
+    <table class="compare_view_files">
+      <%namespace name="comment" file="/changeset/changeset_file_comment.html"/>
+      <%namespace name="diff_block" file="/changeset/diff_block.html"/>
+      %for cs in c.commit_ranges:
+        <tr class="rctable">
+          <td colspan="4">
+              <a class="tooltip revision" title="${h.tooltip(cs.message)}" href="${h.url('changeset_home',repo_name=c.repo_name,revision=cs.raw_id)}">${'r%s:%s' % (cs.revision,h.short_id(cs.raw_id))}</a> |
+              ${h.age_component(cs.date)}
+          </td>
+        </tr>
+          %for FID, (cs1, cs2, change, path, diff, stats, file) in c.changes[cs.raw_id].iteritems():
+            <tr class="cs_${change} collapse_file" fid="${FID}">
+              <td class="cs_icon_td">
+                  <span class="collapse_file_icon" fid="${FID}"></span>
+              </td>
+              <td class="cs_icon_td">
+                  <div class="flag_status not_reviewed hidden"></div>
+              </td>
+              <td class="cs_${change}" id="a_${FID}">
+                <div class="node">
+                    <a href="#a_${FID}">
+                        <i class="icon-file-${change.lower()}"></i>
+                        ${h.safe_unicode(path)}
+                    </a>
+                </div>
+              </td>
+              <td>
+                <div class="changes">${h.fancy_file_stats(stats)}</div>
+              </td>
+            </tr>
+            <tr fid="${FID}" id="diff_${FID}" class="diff_links">
+              <td></td>
+              <td></td>
+              <td class="cs_${change}">
+                ${diff_block.diff_menu(c.repo_name, h.safe_unicode(path), cs1, cs2, change, file)}
+              </td>
+              <td class="td-actions rc-form"></td>
+            </tr>
+            <tr id="tr_${FID}">
+              <td></td>
+              <td></td>
+              <td class="injected_diff" colspan="2">
+                <div id="diff-container-${FID}" class="diff-container">
+                  <div id="${FID}" class="diffblock margined comm">
+                    <div class="code-body">
+                      ${diff|n}
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          %endfor
+      %endfor
+    </table>
+  </div>
+## end summary detail
+
+</%def>

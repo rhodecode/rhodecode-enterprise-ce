@@ -1,0 +1,197 @@
+## -*- coding: utf-8 -*-
+<%inherit file="/debug_style/index.html"/>
+
+<%def name="breadcrumbs_links()">
+    ${h.link_to(_('Style'), h.url('debug_style_home'))}
+    &raquo;
+    ${c.active}
+</%def>
+
+
+<%def name="real_main()">
+<div class="box">
+    <div class="title">
+        ${self.breadcrumbs()}
+    </div>
+
+    <div class='sidebar-col-wrapper'>
+    ${self.sidebar()}
+
+    <div class="main-content">
+
+      <h2>Buttons</h2>
+
+      <p>
+        Form buttons in various sizes. Buttons are always capitalised.
+        Use the following classes:
+      </p>
+
+      <ul>
+        ## TODO: lisa: Are we actually using three sizes of buttons??
+        <li><code>.btn-lg</code> for large buttons</li>
+        <li><code>.btn-sm</code> for small buttons</li>
+        <li><code>.btn-xs</code> for xtra small buttons</li>
+      </ul>
+
+      <p>Note that <code>.btn-mini</code> is supported for legacy reasons.</p>
+
+      <div class="bs-example">
+        ## TODO: johbo: Should also work without the form element
+        <form method='post' action=''>
+          <div class='form'>
+
+              <div class="buttons">
+                <input type="submit" value="Save .btn-lg" id="example_save" class="btn btn-lg">
+                <input type="reset" value="Reset" id="example_reset" class="btn btn-lg">
+                <button class="btn btn-lg">Large</button>
+                <a class="btn btn-lg" href="#">A link as button</a>
+              </div>
+
+              <div class="buttons">
+                <input type="submit" value="Save" id="example_save" class="btn">
+                <input type="reset" value="Reset" id="example_reset" class="btn">
+                <button class="btn">Normal</button>
+                <button class="btn btn-danger">Normal</button>
+                <a class="btn" href="#">A link as button</a>
+              </div>
+
+              <div class="buttons">
+                <input type="submit" value="Save .btn-sm" id="example_save" class="btn btn-sm">
+                <input type="reset" value="Reset" id="example_reset" class="btn btn-sm">
+                <button class="btn btn-sm">Small</button>
+                <button class="btn btn-sm btn-danger">Small</button>
+                <a class="btn btn-sm" href="#">A link as button</a>
+              </div>
+
+              <div class="buttons">
+                <input type="submit" value="Save .btn-xs" id="example_save" class="btn btn-xs">
+                <input type="reset" value="Reset" id="example_reset" class="btn btn-xs">
+                <button class="btn btn-xs">XSmall</button>
+                <button class="btn btn-xs btn-danger">XSmall</button>
+                <a class="btn btn-xs" href="#">A link as button</a>
+              </div>
+
+              <div class="buttons">
+                <input type="submit" value="Save .btn-mini" id="example_save" class="btn btn-mini">
+                <input type="reset" value="Reset" id="example_reset" class="btn btn-mini">
+              </div>
+
+              <div class="buttons">
+                Buttons of style <code>.btn-link</code>:
+                <input type="reset" value="Reset" id="example_reset" class="btn btn-link">
+                <button class="btn btn-link">Edit</button>
+                <button class="btn btn-danger btn-link">Delete</button>
+              </div>
+          </div>
+         </form>
+      </div>
+
+    
+      <h2>Buttons as Links</h2>
+      <p>
+        Most of our Edit/Delete buttons come in the following form.
+        Inside of a table, these are "action buttons", and while an 
+        Edit <em>link</em> is a typical blue link, a Delete <em>button</em>
+        is red as per the 'btn-danger' styling and use <code>.btn-link</code>.
+      </p>
+      <p>
+        We use "Delete" when the thing being deleted cannot be undone;
+        "Reset", and "Revoke" are used where applicable.
+      </p>
+      <p>
+        Note: Should there be a need for a change in the wording, be
+        aware that corresponding documentation may also need updating.
+      </p>
+    <div class="bs-example">
+      <table class="rctable edit_fields">
+        <tr><td></td><td></td></tr>
+        <tr>
+          <td></td>
+          <td class=" td-action">
+           <div class="grid_edit">
+              <a href="/_admin/repo_groups/breads/edit" title="Edit">Edit</a>
+           </div>
+           <div class="grid_delete">
+              <form action="/_admin/repo_groups/breads" method="post"><div style="display:none">
+          <input name="_method" type="hidden" value="delete">
+          </div>
+          <div style="display: none;"><input id="csrf_token" name="csrf_token" type="hidden" value="03d6cc48726b885039b2f7675e85596b7dae6ecf"></div>
+                  <button class="btn btn-link btn-danger" type="submit" onclick="return confirm('" +ungettext('confirm="" to="" delete="" this="" group:="" %s="" with="" repository','confirm="" repositories',gr_count)="" %="" (repo_group_name,="" gr_count)+"');"="">
+                    Delete
+                  </button>
+              </form>
+           </div>
+          </td>
+        </tr>
+      </table>
+      <div class="highlight-html"><xmp>
+    <a href="some-link" title="${_('Edit')}">${_('Edit')}</a>
+
+    <button class="btn btn-link btn-danger" type="submit"
+        onclick="return confirm('${_('Confirm to remove this field: Field')}');">
+        ${_('Delete')}
+    </button>
+      </xmp></div>
+    </div>
+
+
+      <h2>Buttons disabled</h2>
+
+      <p>Note that our application still uses the class <code>.disabled</code>
+         in some places. Interim we support both but prefer to use the
+         attribute <code>disabled</code> where possible.</p>
+
+      <div class="bs-example">
+        ## TODO: johbo: Should also work without the form element
+        <form method='post' action=''>
+          <div class='form'>
+
+              <div class="buttons">
+                <input type="submit" value="Save .btn-lg" id="example_save" class="btn btn-lg" disabled>
+                <input type="reset" value="Reset" id="example_reset" class="btn btn-lg" disabled>
+                <button class="btn btn-lg" disabled>Large</button>
+              </div>
+
+              <div class="buttons">
+                <input type="submit" value="Save" id="example_save" class="btn" disabled>
+                <input type="reset" value="Reset" id="example_reset" class="btn" disabled>
+                <button class="btn" disabled>Normal</button>
+                <button class="btn btn-danger" disabled>Normal</button>
+              </div>
+
+              <div class="buttons">
+                <input type="submit" value="Save .btn-sm" id="example_save" class="btn btn-sm" disabled>
+                <input type="reset" value="Reset" id="example_reset" class="btn btn-sm" disabled>
+                <button class="btn btn-sm" disabled>Small</button>
+                <button class="btn btn-sm btn-danger" disabled>Small</button>
+              </div>
+
+              <div class="buttons">
+                <input type="submit" value="Save .btn-xs" id="example_save" class="btn btn-xs" disabled>
+                <input type="reset" value="Reset" id="example_reset" class="btn btn-xs" disabled>
+                <button class="btn btn-xs" disabled>XSmall</button>
+                <button class="btn btn-xs btn-danger" disabled>XSmall</button>
+              </div>
+
+              <div class="buttons">
+                <input type="submit" value="Save .btn-mini" id="example_save" class="btn btn-mini" disabled>
+                <input type="reset" value="Reset" id="example_reset" class="btn btn-mini" disabled>
+              </div>
+
+              <div class="buttons">
+                Buttons of style <code>.btn-link</code>:
+                <input type="reset" value="Reset" id="example_reset" class="btn btn-link" disabled>
+                <button class="btn btn-link" disabled>Edit</button>
+                <button class="btn btn-link btn-danger" disabled>Delete</button>
+              </div>
+
+          </div>
+         </form>
+      </div>
+
+
+
+      </div>
+    </div>  <!-- .main-content  --> 
+  </div> <!-- .box -->
+</%def>

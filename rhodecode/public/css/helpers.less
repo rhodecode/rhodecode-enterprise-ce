@@ -1,0 +1,78 @@
+//--- RESETS ---//
+:focus { outline: none; }
+a { cursor: pointer; }
+
+//--- clearfix --//
+.clearfix {
+    &:before,
+    &:after {
+        content:"";
+        width: 100%;
+        clear: both;
+        float: left;
+    }
+}
+
+.linebreak {
+    display: block;
+}
+
+.pull-right {
+    float: right !important;
+}
+
+.pull-left {
+    float: left !important;
+}
+
+.block-left {
+    float: left;
+}
+
+.block-right {
+    float: right;
+    clear: right;
+
+    li:before { content:none; }
+}
+
+//--- DEVICE-SPECIFIC CLASSES ---------------//
+//regular tablet and up
+@media (min-width:768px) {
+    .no-mobile {
+        display: block;
+    }
+    .mobile-only {
+        display: none;
+    }
+}
+//small tablet and phone
+@media (max-width:767px) {
+    .mobile-only {
+        display: block;
+    }
+    .no-mobile {
+        display: none;
+    }
+}
+
+//--- STICKY FOOTER ---//
+html, body {
+    height: 100%;
+    margin: 0;
+}
+.outerwrapper {
+    height: 100%;
+    min-height: 100%;
+    margin: 0;
+    padding-bottom: 3em; /* must be equal to footer height */
+}
+.outerwrapper:after{
+    content:" ";
+}
+#footer {
+    clear: both;
+    position: relative;
+    height: 3em; /* footer height */
+    margin: -3em 0 0; /* must be equal to footer height */
+}

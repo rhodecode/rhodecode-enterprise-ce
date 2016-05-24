@@ -1,0 +1,116 @@
+@font-face {
+  font-family: 'rcicons';
+  src: url('../fonts/RCIcons/rcicons.eot?18742416');
+  src: url('../fonts/RCIcons/rcicons.eot?18742416#iefix') format('embedded-opentype'),
+       url('../fonts/RCIcons/rcicons.woff?18742416') format('woff'),
+       url('../fonts/RCIcons/rcicons.ttf?18742416') format('truetype'),
+       url('../fonts/RCIcons/rcicons.svg?18742416#rcicons') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+/* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */
+/* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */
+/*
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: 'rcicons';
+    src: url('../font/rcicons.svg?18742415#rcicons') format('svg');
+  }
+}
+*/
+ 
+ [class^="icon-"]:before, [class*=" icon-"]:before {
+  font-family: "rcicons";
+  font-style: normal;
+  font-weight: normal;
+  speak: none;
+ 
+  display: inline-block;
+  text-decoration: inherit;
+  width: 1em;
+  margin-right: .2em;
+  text-align: center;
+  /* opacity: .8; */
+ 
+  /* For safety - reset parent styles, that can break glyph codes*/
+  font-variant: normal;
+  text-transform: none;
+     
+  /* fix buttons height, for twitter bootstrap */
+  line-height: 1em;
+ 
+  /* Animation center compensation - margins should be symmetric */
+  /* remove if not needed */
+  margin-left: .2em;
+ 
+  /* you can be more comfortable with increased icons size */
+  /* font-size: 120%; */
+ 
+  /* Uncomment for 3D effect */
+  /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
+}
+ 
+.icon-svn-transparent:before { content: '\e800'; } /* '' */
+.icon-hg-transparent:before { content: '\e801'; } /* '' */
+.icon-git-transparent:before { content: '\e802'; } /* '' */
+.icon-svn:before { content: '\e803'; } /* '' */
+.icon-hg:before { content: '\e804'; } /* '' */
+.icon-git:before { content: '\e805'; } /* '' */
+.icon-plus:before { content: '\e806'; } /* '' */
+.icon-minus:before { content: '\e807'; } /* '' */
+.icon-remove:before { content: '\e808'; } /* '' */
+.icon-bookmark:before { content: '\e809'; } /* '' */
+.icon-branch:before { content: '\e80a'; } /* '' */
+.icon-tag:before { content: '\e80b'; } /* '' */
+.icon-lock:before { content: '\e80c'; } /* '' */
+.icon-unlock:before { content: '\e80d'; } /* '' */
+.icon-delete:before,
+.icon-false:before { content: '\e80e'; } /* '' */
+.icon-ok:before,
+.icon-true:before { content: '\e80f'; } /* '' */
+.icon-comment:before { content: '\e810'; } /* '' */
+.icon-feed:before { content: '\e811'; } /* '' */
+.icon-right:before { content: '\e812'; } /* '' */
+.icon-left:before { content: '\e813'; } /* '' */
+.icon-arrow_down:before { content: '\e814'; } /* '' */
+.icon-group:before { content: '\e815'; } /* '' */
+.icon-folder:before { content: '\e816'; } /* '' */
+.icon-fork:before { content: '\e817'; } /* '' */
+.icon-more:before { content: '\e818'; } /* '' */
+.icon-comment-add:before { content: '\e819'; } /* '' */
+
+
+.icon-remove-sign:before { &:extend(.icon-remove:before); } 
+.icon-repo-private:before,
+.icon-repo-lock:before { &:extend(.icon-lock:before); }
+.icon-unlock-alt:before,
+.icon-repo-unlock:before,
+.icon-repo-public:before { &:extend(.icon-unlock:before); } 
+.icon-rss-sign:before { &:extend(.icon-feed:before); } 
+.icon-chevron-right:before { &:extend(.icon-right:before); } 
+.icon-chevron-left:before { &:extend(.icon-left:before); } 
+.icon-caret-down:before {  &:extend(.icon-arrow_down:before); } 
+.icon-folder-close:before { &:extend(.icon-folder:before); } 
+.icon-code-fork:before {  &:extend(.icon-fork:before);  } 
+
+
+//--- ICONS STYLING ------------------//
+
+.icon-git { color: @color4 !important; }
+.icon-hg { color: @color8 !important; }
+.icon-svn { color: @color1 !important; }
+.icon-repo-lock { color: #FF0000; }
+.icon-repo-unlock { color: #FF0000; }
+
+.repo-switcher-dropdown .select2-result-label {
+    .icon-git:before {
+        &:extend(.icon-git-transparent:before);
+    }
+    .icon-hg:before {
+        &:extend(.icon-hg-transparent:before);
+        color: @alert4;
+    }
+    .icon-svn:before {
+        &:extend(.icon-svn-transparent:before);
+    }
+}

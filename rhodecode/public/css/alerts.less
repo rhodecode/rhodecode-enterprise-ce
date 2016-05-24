@@ -1,0 +1,58 @@
+.alert1 { .border ( @border-thickness-tags, @alert1 ); color:@alert1; }
+.alert2 { .border ( @border-thickness-tags, @alert2 ); color:@alert2; }
+.alert3 { .border ( @border-thickness-tags, @alert3 ); color:@alert3; }
+.alert4 { .border ( @border-thickness-tags, @alert4 ); color:@alert4; }
+
+.alert {
+    clear: both;
+    margin: @space auto 0 auto;
+    padding: @padding;
+    border: @border-thickness solid;
+    border-radius: @border-radius;
+
+    // overwritter css from specific alerts
+    color: @grey3;
+    border-color: @alert4;
+    background-color: @alert4-inner;
+
+    a {
+        text-decoration: underline;
+    }
+    .close {
+        color: @grey3;
+    }
+}
+
+.infoform .alert {
+    width: 100%;
+    margin-top: 0;
+}
+
+.alert-success {
+    border-color: @alert1;
+    background-color: @alert1-inner;
+}
+
+.alert-error {
+    border-color: @alert2;
+    background-color: @alert2-inner;
+}
+
+.alert-warning {
+    border-color: @alert3;
+    background-color: @alert3-inner;
+}
+
+.alert-dismissable {
+    padding-right: 10px;
+
+    .close {
+        margin-top: -5px;
+    }
+}
+
+.loginbox {
+    .alert {
+        margin: 0 auto 35px auto;
+    }
+}

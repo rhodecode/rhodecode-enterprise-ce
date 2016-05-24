@@ -1,0 +1,152 @@
+## -*- coding: utf-8 -*-
+<%inherit file="/debug_style/index.html"/>
+
+<%def name="breadcrumbs_links()">
+    ${h.link_to(_('Style'), h.url('debug_style_home'))}
+    &raquo;
+    ${c.active}
+</%def>
+
+<%def name="real_main()">
+    <div class="box">
+        <div class="title">
+            ${self.breadcrumbs()}
+        </div>
+
+        <div class='sidebar-col-wrapper'>
+        ${self.sidebar()}
+
+        <div class="main-content">
+
+            <h2>Panels</h2>
+
+            <p>
+              Panels are based on
+              <a href="http://getbootstrap.com/components/#panels">
+                Bootstrap panels</a>, with custom styles added.</p>
+            <p>
+                Examples how to use it:
+            </p>
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Panel title
+                </div>
+                <div class="panel-body">
+                    Panel with a plain <code>.panel-heading</code>
+                    and <code>.panel-footer</code>.
+                </div>
+                <div class="panel-footer">
+                    Panel footer
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Panel title
+                </div>
+                <div class="panel-body">
+                  Footers are optional.
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <div class="panel-title">
+                  Panel title
+                </div>
+              </div>
+                <div class="panel-body">
+                    A <code>div.panel-title</code>
+                </div>
+                <div class="panel-footer">
+                    Panel footer
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h3 class="panel-title">
+                  Panel title
+                </h3>
+              </div>
+                <div class="panel-body">
+                    A <code>h3.panel-title</code>
+                </div>
+                <div class="panel-footer">
+                    Panel footer
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Panel title
+                    Panel title
+                    Panel title
+                    Panel title
+                    Panel title
+                    Panel title
+                    Panel title
+                    Panel title
+                    Panel title
+                    Panel title
+                    Panel title
+                    Panel title
+                    Panel title
+                    Panel title
+                    Panel title
+                    Panel title
+                    Panel title
+                    Panel title
+                </div>
+                <div class="panel-body">
+                    Content, title and footer can be of arbritary length.
+                    Content, title and footer can be of arbritary length.
+                    Content, title and footer can be of arbritary length.
+                    Content, title and footer can be of arbritary length.
+                    Content, title and footer can be of arbritary length.
+                    Content, title and footer can be of arbritary length.
+                    Content, title and footer can be of arbritary length.
+                    Content, title and footer can be of arbritary length.
+                    Content, title and footer can be of arbritary length.
+                </div>
+                <div class="panel-footer">
+                    Panel footer
+                    Panel footer
+                    Panel footer
+                    Panel footer
+                    Panel footer
+                    Panel footer
+                    Panel footer
+                    Panel footer
+                    Panel footer
+                    Panel footer
+                    Panel footer
+                    Panel footer
+                    Panel footer
+                    Panel footer
+                    Panel footer
+                    Panel footer
+                </div>
+            </div>
+            <p>
+                Use the HTML format below:
+            </p>
+            <div class="bs-example template-example">
+<xmp><div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Panel title</h3>
+    </div>
+    <div class="panel-body">
+        Panel content
+    </div>
+    <div class="panel-footer">
+        Panel footer
+    </div>
+</div></xmp>
+            </div>
+
+        </div>
+      </div>
+    </div>
+</%def>

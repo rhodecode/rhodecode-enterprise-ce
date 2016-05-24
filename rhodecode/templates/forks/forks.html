@@ -1,0 +1,45 @@
+## -*- coding: utf-8 -*-
+<%inherit file="/base/base.html"/>
+
+<%def name="title()">
+    ${_('%s Forks') % c.repo_name}
+    %if c.rhodecode_name:
+        &middot; ${h.branding(c.rhodecode_name)}
+    %endif
+</%def>
+
+<%def name="breadcrumbs_links()">
+    ${_('Forks')}
+</%def>
+
+<%def name="menu_bar_nav()">
+    ${self.menu_items(active='repositories')}
+</%def>
+
+<%def name="menu_bar_subnav()">
+    ${self.repo_menu(active='summary')}
+</%def>
+
+<%def name="main()">
+<div class="box">
+    <div class="title">
+        ${self.repo_page_title(c.rhodecode_db_repo)}
+        <ul class="links">
+            <li>
+            ## fork open link
+            <span>
+                <a class="btn btn-small btn-success" href="${h.url('repo_fork_home',repo_name=c.repo_name)}">
+                    ${_('Create new fork')}
+                </a>
+            </span>
+
+            </li>
+        </ul>
+    </div>
+    <div class="table">
+        <div id="forks">
+            ${c.forks_data}
+        </div>
+    </div>
+</div>
+</%def>

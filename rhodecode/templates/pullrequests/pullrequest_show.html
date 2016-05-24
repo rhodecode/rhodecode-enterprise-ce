@@ -1,0 +1,568 @@
+<%inherit file="/base/base.html"/>
+
+<%def name="title()">
+    ${_('%s Pull Request #%s') % (c.repo_name, c.pull_request.pull_request_id)}
+    %if c.rhodecode_name:
+        &middot; ${h.branding(c.rhodecode_name)}
+    %endif
+</%def>
+
+<%def name="breadcrumbs_links()">
+    <span id="pr-title">
+    ${c.pull_request.title}
+    %if c.pull_request.is_closed():
+        (${_('Closed')})
+    %endif
+    </span>
+    <div id="pr-title-edit" class="input" style="display: none;">
+        ${h.text('pullrequest_title', id_="pr-title-input", class_="large", value=c.pull_request.title)}
+    </div>
+</%def>
+
+<%def name="menu_bar_nav()">
+    ${self.menu_items(active='repositories')}
+</%def>
+
+<%def name="menu_bar_subnav()">
+    ${self.repo_menu(active='showpullrequest')}
+</%def>
+
+<%def name="main()">
+<script type="text/javascript">
+    // TODO: marcink switch this to pyroutes
+    AJAX_COMMENT_DELETE_URL = "${url('pullrequest_comment_delete',repo_name=c.repo_name,comment_id='__COMMENT_ID__')}";
+    templateContext.pull_request_data.pull_request_id = ${c.pull_request.pull_request_id};
+</script>
+<div class="box">
+  <div class="title">
+    ${self.repo_page_title(c.rhodecode_db_repo)}
+  </div>
+
+  ${self.breadcrumbs()}
+
+
+  <div class="box pr-summary">
+      <div class="summary-details block-left">
+        <%summary = lambda n:{False:'summary-short'}.get(n)%>
+        <div class="pr-details-title">
+            ${_('Pull request #%s') % c.pull_request.pull_request_id} ${_('From')} ${h.format_date(c.pull_request.created_on)}
+            %if c.allowed_to_update:
+              <span id="open_edit_pullrequest" class="block-right action_button">${_('Edit')}</span>
+              <span id="close_edit_pullrequest" class="block-right action_button" style="display: none;">${_('Close')}</span>
+            %endif
+        </div>
+
+        <div id="summary" class="fields pr-details-content">
+           <div class="field">
+            <div class="label-summary">
+                <label>${_('Origin')}:</label>
+            </div>
+            <div class="input">
+                <div class="pr-origininfo">
+                    ## branch link is only valid if it is a branch
+                    <span class="tag">
+                      %if c.pull_request.source_ref_parts.type == 'branch':
+                        <a href="${h.url('changelog_home', repo_name=c.pull_request.source_repo.repo_name, branch=c.pull_request.source_ref_parts.name)}">${c.pull_request.source_ref_parts.type}: ${c.pull_request.source_ref_parts.name}</a>
+                      %else:
+                        ${c.pull_request.source_ref_parts.type}: ${c.pull_request.source_ref_parts.name}
+                      %endif
+                    </span>
+                    <span class="clone-url">
+                        <a href="${h.url('summary_home', repo_name=c.pull_request.source_repo.repo_name)}">${c.pull_request.source_repo.clone_url()}</a>
+                    </span>
+                </div>
+                <div class="pr-pullinfo">
+                     %if h.is_hg(c.pull_request.source_repo):
+                        <input type="text"  value="hg pull -r ${h.short_id(c.source_ref)} ${c.pull_request.source_repo.clone_url()}" readonly="readonly">
+                     %elif h.is_git(c.pull_request.source_repo):
+                        <input type="text"  value="git pull ${c.pull_request.source_repo.clone_url()} ${c.pull_request.source_ref_parts.name}" readonly="readonly">
+                     %endif
+                </div>
+            </div>
+           </div>
+           <div class="field">
+            <div class="label-summary">
+                <label>${_('Target')}:</label>
+            </div>
+            <div class="input">
+                <div class="pr-targetinfo">
+                    ## branch link is only valid if it is a branch
+                    <span class="tag">
+                      %if c.pull_request.target_ref_parts.type == 'branch':
+                        <a href="${h.url('changelog_home', repo_name=c.pull_request.target_repo.repo_name, branch=c.pull_request.target_ref_parts.name)}">${c.pull_request.target_ref_parts.type}: ${c.pull_request.target_ref_parts.name}</a>
+                      %else:
+                        ${c.pull_request.target_ref_parts.type}: ${c.pull_request.target_ref_parts.name}
+                      %endif
+                    </span>
+                    <span class="clone-url">
+                        <a href="${h.url('summary_home', repo_name=c.pull_request.target_repo.repo_name)}">${c.pull_request.target_repo.clone_url()}</a>
+                    </span>
+                </div>
+            </div>
+           </div>
+           <div class="field">
+            <div class="label-summary">
+                <label>${_('Review')}:</label>
+            </div>
+            <div class="input">
+              %if c.pull_request_review_status:
+                <div class="${'flag_status %s' % c.pull_request_review_status} tooltip pull-left"></div>
+                <span class="changeset-status-lbl tooltip">
+                  %if c.pull_request.is_closed():
+                      ${_('Closed')},
+                  %endif
+                  ${h.commit_status_lbl(c.pull_request_review_status)}
+                </span>
+                - ${ungettext('calculated based on %s reviewer vote', 'calculated based on %s reviewers votes', len(c.pull_request_reviewers)) % len(c.pull_request_reviewers)}
+              %endif
+            </div>
+           </div>
+           <div class="field">
+            <div class="pr-description-label label-summary">
+                <label>${_('Description')}:</label>
+            </div>
+            <div id="pr-desc" class="input">
+                <div class="pr-description">${h.urlify_commit_message(c.pull_request.description, c.repo_name)}</div>
+            </div>
+            <div id="pr-desc-edit" class="input textarea editor" style="display: none;">
+                <textarea id="pr-description-input" size="30">${c.pull_request.description}</textarea>
+            </div>
+           </div>
+           <div class="field">
+            <div class="label-summary">
+                <label>${_('Comments')}:</label>
+            </div>
+            <div class="input">
+                <div>
+                    <div class="comments-number">
+                        %if c.comments:
+                            <a href="#comments">${ungettext("%d Pull request comment", "%d Pull request comments", len(c.comments)) % len(c.comments)}</a>,
+                        %else:
+                            ${ungettext("%d Pull request comment", "%d Pull request comments", len(c.comments)) % len(c.comments)}
+                        %endif
+                        %if c.inline_cnt:
+                            ## this is replaced with a proper link to first comment via JS linkifyComments() func
+                            <a href="#inline-comments" id="inline-comments-counter">${ungettext("%d Inline Comment", "%d Inline Comments", c.inline_cnt) % c.inline_cnt}</a>
+                        %else:
+                            ${ungettext("%d Inline Comment", "%d Inline Comments", c.inline_cnt) % c.inline_cnt}
+                        %endif
+
+                        % if c.outdated_cnt:
+                          ,${ungettext("%d Outdated Comment", "%d Outdated Comments", c.outdated_cnt) % c.outdated_cnt} <span id="show-outdated-comments" class="btn btn-link">${_('(Show)')}</span>
+                        % endif
+                   </div>
+                </div>
+            </div>
+           </div>
+           <div id="pr-save" class="field" style="display: none;">
+            <div class="label-summary"></div>
+            <div class="input">
+              <span id="edit_pull_request" class="btn btn-small">${_('Save Changes')}</span>
+            </div>
+           </div>
+        </div>
+      </div>
+      <div>
+        ## AUTHOR
+        <div class="reviewers-title block-right">
+          <div class="pr-details-title">
+              ${_('Author')}
+          </div>
+        </div>
+        <div class="block-right pr-details-content reviewers">
+            <ul class="group_members">
+              <li>
+                ${self.gravatar_with_user(c.pull_request.author.email, 16)}
+              </li>
+            </ul>
+        </div>
+        ## REVIEWERS
+        <div class="reviewers-title block-right">
+          <div class="pr-details-title">
+              ${_('Pull request reviewers')}
+              %if c.allowed_to_update:
+                <span id="open_edit_reviewers" class="block-right action_button">${_('Edit')}</span>
+                <span id="close_edit_reviewers" class="block-right action_button" style="display: none;">${_('Close')}</span>
+              %endif
+          </div>
+        </div>
+        <div id="reviewers" class="block-right pr-details-content reviewers">
+          ## members goes here !
+            <ul id="review_members" class="group_members">
+            %for member,status in c.pull_request_reviewers:
+              <li id="reviewer_${member.user_id}">
+                <div class="reviewers_member">
+                    <div class="reviewer_status tooltip" title="${h.tooltip(h.commit_status_lbl(status[0][1].status if status else 'not_reviewed'))}">
+                      <div class="${'flag_status %s' % (status[0][1].status if status else 'not_reviewed')} pull-left reviewer_member_status"></div>
+                    </div>
+                  <span id="reviewer_${member.user_id}_name" class="reviewer_name">
+                    ${self.gravatar_with_user(member.email, 16)}
+                    (${_('owner') if c.pull_request.user_id == member.user_id else _('reviewer')})</span>
+                  <input id="reviewer_${member.user_id}_input" type="hidden" value="${member.user_id}" name="review_members" />
+                  %if c.allowed_to_update:
+                  <div class="reviewer_member_remove action_button" onclick="removeReviewMember(${member.user_id}, true)" style="visibility: hidden;">
+                      <i class="icon-remove-sign" ></i>
+                  </div>
+                  %endif
+                </div>
+              </li>
+            %endfor
+            </ul>
+          %if not c.pull_request.is_closed():
+          <div id="add_reviewer_input" class='ac' style="display: none;">
+            %if c.allowed_to_update:
+            <div class="reviewer_ac">
+               ${h.text('user', class_='ac-input', placeholder=_('Add reviewer'))}
+               <div id="reviewers_container"></div>
+            </div>
+            <div>
+             <span id="update_pull_request" class="btn btn-small">${_('Save Changes')}</span>
+            </div>
+            %endif
+          </div>
+          %endif
+        </div>
+      </div>
+  </div>
+  <div class="box">
+      ##DIFF
+      <div class="table" >
+          <div id="changeset_compare_view_content">
+              ##CS
+              % if c.missing_requirements:
+                <div class="box">
+                  <div class="alert alert-warning">
+                    <div>
+                      <strong>${_('Missing requirements:')}</strong>
+                      ${_('These commits cannot be displayed, because this repository uses the Mercurial largefiles extension, which was not enabled.')}
+                    </div>
+                  </div>
+                </div>
+              % elif c.missing_commits:
+                <div class="box">
+                  <div class="alert alert-warning">
+                    <div>
+                      <strong>${_('Missing commits')}:</strong>
+                        ${_('This pull request cannot be displayed, because one or more commits no longer exist in the source repository.')}
+                        ${_('Please update this pull request, push the commits back into the source repository, or consider closing this pull request.')}
+                    </div>
+                  </div>
+                </div>
+              % endif
+                <div class="compare_view_commits_title">
+                    % if c.allowed_to_update and not c.pull_request.is_closed():
+                      <button id="update_commits" class="btn btn-small">${_('Update commits')}</button>
+                    % endif
+                    % if len(c.commit_ranges):
+                      <h2>${ungettext('Compare View: %s commit','Compare View: %s commits', len(c.commit_ranges)) % len(c.commit_ranges)}</h2>
+                    % endif
+                </div>
+              % if not c.missing_commits:
+                <%include file="/compare/compare_commits.html" />
+                ## FILES
+                <div class="cs_files_title">
+                    <span class="cs_files_expand">
+                        <span id="expand_all_files">${_('Expand All')}</span> | <span id="collapse_all_files">${_('Collapse All')}</span>
+                    </span>
+                    <h2>
+                        ${diff_block.diff_summary_text(len(c.files), c.lines_added, c.lines_deleted, c.limited_diff)}
+                    </h2>
+                </div>
+              % endif
+              <div class="cs_files">
+              %if not c.files and not c.missing_commits:
+                  <span class="empty_data">${_('No files')}</span>
+              %endif
+              <table class="compare_view_files">
+              <%namespace name="diff_block" file="/changeset/diff_block.html"/>
+              %for FID, change, path, stats in c.files:
+                  <tr class="cs_${change} collapse_file" fid="${FID}">
+                      <td class="cs_icon_td">
+                          <span class="collapse_file_icon" fid="${FID}"></span>
+                      </td>
+                      <td class="cs_icon_td">
+                          <div class="flag_status not_reviewed hidden"></div>
+                      </td>
+                      <td class="cs_${change}" id="a_${FID}">
+                          <div class="node">
+                              <a href="#a_${FID}">
+                                  <i class="icon-file-${change.lower()}"></i>
+                                  ${h.safe_unicode(path)}
+                              </a>
+                          </div>
+                      </td>
+                      <td>
+                          <div class="changes pull-right">${h.fancy_file_stats(stats)}</div>
+                          <div class="comment-bubble pull-right" data-path="${path}">
+                            <i class="icon-comment"></i>
+                          </div>
+                      </td>
+                  </tr>
+                  <tr fid="${FID}" id="diff_${FID}" class="diff_links">
+                      <td></td>
+                      <td></td>
+                      <td class="cs_${change}">
+                          %if c.target_repo.repo_name == c.repo_name:
+                              ${diff_block.diff_menu(c.repo_name, h.safe_unicode(path), c.target_ref, c.source_ref, change)}
+                          %else:
+                              ## this is slightly different case later, since the other repo can have this
+                              ## file in other state than the origin repo
+                              ${diff_block.diff_menu(c.target_repo.repo_name, h.safe_unicode(path), c.target_ref, c.source_ref, change)}
+                          %endif
+                      </td>
+                      <td class="td-actions rc-form">
+                      </td>
+                  </tr>
+                  <tr id="tr_${FID}">
+                    <td></td>
+                    <td></td>
+                    <td class="injected_diff" colspan="2">
+                        ${diff_block.diff_block_simple([c.changes[FID]])}
+                    </td>
+                  </tr>
+
+                ## Loop through inline comments
+                  % if c.outdated_comments.get(path,False):
+                    <tr class="outdated">
+                      <td></td>
+                      <td></td>
+                      <td colspan="2">
+                        <p>${_('Outdated Inline Comments')}:</p>
+                      </td>
+                    </tr>
+                    <tr class="outdated">
+                      <td></td>
+                      <td></td>
+                      <td colspan="2" class="outdated_comment_block">
+                      % for line, comments in c.outdated_comments[path].iteritems():
+                          <div class="inline-comment-placeholder" path="${path}" target_id="${h.safeid(h.safe_unicode(path))}">
+                            % for co in comments:
+                              ${comment.comment_block_outdated(co)}
+                            % endfor
+                          </div>
+                      % endfor
+                      </td>
+                    </tr>
+                  % endif
+              %endfor
+              ## Loop through inline comments for deleted files
+              %for path in c.deleted_files:
+                <tr class="outdated deleted">
+                  <td></td>
+                  <td></td>
+                  <td>${path}</td>
+                </tr>
+                <tr class="outdated deleted">
+                  <td></td>
+                  <td></td>
+                  <td>(${_('Removed')})</td>
+                </tr>
+                % if path in c.outdated_comments:
+                  <tr class="outdated deleted">
+                    <td></td>
+                    <td></td>
+                    <td colspan="2">
+                      <p>${_('Outdated Inline Comments')}:</p>
+                    </td>
+                  </tr>
+                  <tr class="outdated">
+                    <td></td>
+                    <td></td>
+                    <td colspan="2" class="outdated_comment_block">
+                    % for line, comments in c.outdated_comments[path].iteritems():
+                        <div class="inline-comment-placeholder" path="${path}" target_id="${h.safeid(h.safe_unicode(path))}">
+                          % for co in comments:
+                            ${comment.comment_block_outdated(co)}
+                          % endfor
+                        </div>
+                    % endfor
+                    </td>
+                  </tr>
+                % endif
+              %endfor
+              </table>
+              </div>
+              % if c.limited_diff:
+              <h5>${_('Commit was too big and was cut off...')} <a href="${h.url.current(fulldiff=1, **request.GET.mixed())}" onclick="return confirm('${_("Showing a huge diff might take some time and resources")}')">${_('Show full diff')}</a></h5>
+              % endif
+          </div>
+      </div>
+
+      % if c.limited_diff:
+        <p>${_('Commit was too big and was cut off...')} <a href="${h.url.current(fulldiff=1, **request.GET.mixed())}" onclick="return confirm('${_("Showing a huge diff might take some time and resources")}')">${_('Show full diff')}</a></p>
+      % endif
+
+      ## template for inline comment form
+      <%namespace name="comment" file="/changeset/changeset_file_comment.html"/>
+      ${comment.comment_inline_form()}
+
+      ## render comments and inlines
+      ${comment.generate_comments(include_pull_request=True, is_pull_request=True)}
+
+      % if not c.pull_request.is_closed():
+        ## main comment form and it status
+        ${comment.comments(h.url('pullrequest_comment', repo_name=c.repo_name,
+                                  pull_request_id=c.pull_request.pull_request_id),
+                           c.pull_request_review_status,
+                           is_pull_request=True, change_status=c.allowed_to_change_status)}
+      %endif
+
+      <script type="text/javascript">
+        if (location.href.indexOf('#') != -1) {
+          var id = '#'+location.href.substring(location.href.indexOf('#') + 1).split('#');
+          var line = $('html').find(id);
+          offsetScroll(line, 70);
+        }
+        $(function(){
+            ReviewerAutoComplete('user');
+            // custom code mirror
+            var codeMirrorInstance = initPullRequestsCodeMirror('#pr-description-input');
+
+            var PRDetails = {
+              editButton: $('#open_edit_pullrequest'),
+              closeButton: $('#close_edit_pullrequest'),
+              viewFields: $('#pr-desc, #pr-title'),
+              editFields: $('#pr-desc-edit, #pr-title-edit, #pr-save'),
+
+              init: function() {
+                var that = this;
+                this.editButton.on('click', function(e) { that.edit(); });
+                this.closeButton.on('click', function(e) { that.view(); });
+              },
+
+              edit: function(event) {
+                this.viewFields.hide();
+                this.editButton.hide();
+                this.editFields.show();
+                codeMirrorInstance.refresh();
+              },
+
+              view: function(event) {
+                this.editFields.hide();
+                this.closeButton.hide();
+                this.viewFields.show();
+              }
+            };
+
+            var ReviewersPanel = {
+              editButton: $('#open_edit_reviewers'),
+              closeButton: $('#close_edit_reviewers'),
+              addButton: $('#add_reviewer_input'),
+              removeButtons: $('.reviewer_member_remove'),
+
+              init: function() {
+                var that = this;
+                this.editButton.on('click', function(e) { that.edit(); });
+                this.closeButton.on('click', function(e) { that.close(); });
+              },
+
+              edit: function(event) {
+                this.editButton.hide();
+                this.closeButton.show();
+                this.addButton.show();
+                this.removeButtons.css('visibility', 'visible');
+              },
+
+              close: function(event) {
+                this.editButton.show();
+                this.closeButton.hide();
+                this.addButton.hide();
+                this.removeButtons.css('visibility', 'hidden');
+              }
+            };
+
+            PRDetails.init();
+            ReviewersPanel.init();
+
+            $('#show-outdated-comments').on('click', function(e){
+                var button = $(this);
+                var outdated = $('.outdated');
+                if (button.html() === "(Show)") {
+                  button.html("(Hide)");
+                  outdated.show();
+                } else {
+                  button.html("(Show)");
+                  outdated.hide();
+                }
+            });
+
+            $('.show-inline-comments').on('change', function(e){
+                var show = 'none';
+                var target = e.currentTarget;
+                if(target.checked){
+                    show = ''
+                }
+                var boxid = $(target).attr('id_for');
+                var comments = $('#{0} .inline-comments'.format(boxid));
+                var fn_display = function(idx){
+                   $(this).css('display', show);
+                };
+                $(comments).each(fn_display);
+                var btns = $('#{0} .inline-comments-button'.format(boxid));
+                $(btns).each(fn_display);
+            });
+
+            // inject comments into their proper positions
+            var file_comments = $('.inline-comment-placeholder');
+            %if c.pull_request.is_closed():
+                renderInlineComments(file_comments, false);
+            %else:
+                renderInlineComments(file_comments, true);
+            %endif
+            var commentTotals = {};
+            $.each(file_comments, function(i, comment) {
+                var path = $(comment).attr('path');
+                var comms = $(comment).children().length;
+                if (path in commentTotals) {
+                    commentTotals[path] += comms;
+                } else {
+                    commentTotals[path] = comms;
+                }
+            });
+            $.each(commentTotals, function(path, total) {
+                var elem = $('.comment-bubble[data-path="'+ path +'"]');
+                elem.css('visibility', 'visible');
+                elem.html(elem.html() + ' ' + total );
+            });
+
+            $('#merge_pull_request_form').submit(function() {
+                if (!$('#merge_pull_request').attr('disabled')) {
+                    $('#merge_pull_request').attr('disabled', 'disabled');
+                }
+                return true;
+            });
+
+            $('#edit_pull_request').on('click', function(e){
+                var title = $('#pr-title-input').val();
+                var description = codeMirrorInstance.getValue();
+                editPullRequest(
+                    "${c.repo_name}", "${c.pull_request.pull_request_id}",
+                    title, description);
+            });
+
+            $('#update_pull_request').on('click', function(e){
+                updateReviewers(undefined, "${c.repo_name}", "${c.pull_request.pull_request_id}");
+            });
+
+            $('#update_commits').on('click', function(e){
+                var isDisabled = !$(e.currentTarget).attr('disabled');
+                $(e.currentTarget).text(_TM['Updating...']);
+                $(e.currentTarget).attr('disabled', 'disabled');
+                if(isDisabled){
+                    updateCommits("${c.repo_name}", "${c.pull_request.pull_request_id}");
+                }
+
+            });
+            // fixing issue with caches on firefox
+            $('#update_commits').removeAttr("disabled");
+
+            $('#close_pull_request').on('click', function(e){
+                closePullRequest("${c.repo_name}", "${c.pull_request.pull_request_id}");
+            });
+        })
+      </script>
+
+  </div>
+</div>
+
+</%def>

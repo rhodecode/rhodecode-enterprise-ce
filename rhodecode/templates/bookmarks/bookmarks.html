@@ -1,0 +1,103 @@
+## -*- coding: utf-8 -*-
+<%inherit file="/base/base.html"/>
+
+<%def name="title()">
+    ${_('%s Bookmarks') % c.repo_name}
+    %if c.rhodecode_name:
+        &middot; ${h.branding(c.rhodecode_name)}
+    %endif
+</%def>
+
+<%def name="breadcrumbs_links()">
+    <input class="q_filter_box" id="q_filter" size="15" type="text" name="filter" placeholder="${_('quick filter...')}" value=""/>
+    <span id="obj_count">0</span> ${_('bookmarks')}
+</%def>
+
+<%def name="menu_bar_nav()">
+    ${self.menu_items(active='repositories')}
+</%def>
+
+<%def name="menu_bar_subnav()">
+    ${self.repo_menu(active='summary')}
+</%def>
+
+<%def name="main()">
+    <div class="box">
+      <div class="title">
+        ${self.repo_page_title(c.rhodecode_db_repo)}
+        %if c.has_references:
+          <ul class="links">
+            <li>
+                <input type="submit" id="compare_action" class="btn" disabled="disabled" value="${_('Compare Selected Bookmarks')}">
+            </li>
+          </ul>
+        %endif
+        %if c.has_references:
+          ${self.breadcrumbs()}
+        %endif
+      </div>
+      <table id="obj_list_table" class="display"></table>
+    </div>
+
+
+<script type="text/javascript">
+$(document).ready(function() {
+
+    var get_datatable_count = function(){
+      var api = $('#obj_list_table').dataTable().api();
+      $('#obj_count').text(api.page.info().recordsDisplay);
+    };
+
+    // object list
+    $('#obj_list_table').DataTable({
+      data: ${c.data|n},
+      dom: 'rtp',
+      pageLength: ${c.visual.dashboard_items},
+      order: [[ 0, "asc" ]],
+      columns: [
+         { data: {"_": "name",
+                  "sort": "name_raw"}, title: "${_('Name')}", className: "td-tags" },
+         { data: {"_": "date",
+                  "sort": "date_raw"}, title: "${_('Date')}", className: "td-time" },
+         { data: {"_": "author",
+                  "sort": "author"}, title: "${_('Author')}", className: "td-user" },
+         { data: {"_": "commit",
+                  "sort": "commit_raw",
+                  "type": Number}, title: "${_('Commit')}", className: "td-hash" },
+         { data: {"_": "compare",
+                  "sort": "compare"}, title: "${_('Compare')}", className: "td-compare" }
+      ],
+      language: {
+            paginate: DEFAULT_GRID_PAGINATION
+      },
+      "initComplete": function(settings, json) {
+          get_datatable_count();
+          tooltip_activate();
+          timeagoActivate();
+          compare_radio_buttons("${c.repo_name}", 'book');
+      }
+    });
+
+    // update when things change
+    $('#obj_list_table').on('draw.dt', function() {
+        get_datatable_count();
+        tooltip_activate();
+        timeagoActivate();
+    });
+
+    // filter, filter both grids
+    $('#q_filter').on('keyup', function() {
+      var obj_api = $('#obj_list_table').dataTable().api();
+      obj_api
+        .columns(0)
+        .search(this.value)
+        .draw();
+    });
+
+    // refilter table if page load via back button
+    $("#q_filter").trigger('keyup');
+
+  });
+
+</script>
+</%def>

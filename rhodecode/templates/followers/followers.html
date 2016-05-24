@@ -1,0 +1,36 @@
+## -*- coding: utf-8 -*-
+<%inherit file="/base/base.html"/>
+
+<%def name="title()">
+    ${_('%s Followers') % c.repo_name}
+    %if c.rhodecode_name:
+        &middot; ${h.branding(c.rhodecode_name)}
+    %endif
+</%def>
+
+<%def name="breadcrumbs_links()">
+    ${_('Followers')}
+</%def>
+
+<%def name="menu_bar_nav()">
+    ${self.menu_items(active='repositories')}
+</%def>
+
+<%def name="menu_bar_subnav()">
+    ${self.repo_menu(active='summary')}
+</%def>
+
+<%def name="main()">
+<div class="box">
+    <div class="title">
+        <h1>
+            ${_('%s Followers') % c.repo_name}
+        </h1>
+    </div>
+    <div class="table">
+        <div id="forks">
+            ${c.followers_data}
+        </div>
+    </div>
+</div>
+</%def>

@@ -1,0 +1,72 @@
+## -*- coding: utf-8 -*-
+<%inherit file="base/root.html"/>
+<%namespace file="base/social_buttons.html" import="render_social_buttons"/>
+
+<%def name="title()">
+    ${_('Sign In')}
+    %if c.rhodecode_name:
+        &middot; ${h.branding(c.rhodecode_name)}
+    %endif
+</%def>
+
+<style>body{background-color:#eeeeee;}</style>
+<div class="loginbox">
+    <div class="header">
+        <div id="header-inner" class="title">
+            <div id="logo">
+                <div class="logo-wrapper">
+                    <a href="${h.url('home')}"><img src="${h.url('/images/rhodecode-logo-white-216x60.png')}" alt="RhodeCode"/></a>
+                </div>
+                %if c.rhodecode_name:
+                <div class="branding"> ${h.branding(c.rhodecode_name)}</div>
+                %endif
+            </div>
+        </div>
+    </div>
+
+    <div class="loginwrapper">
+        <div class="left-column">
+            <img class="sign-in-image" src="${h.url('/images/sign-in.png')}" alt="RhodeCode"/>
+        </div>
+        
+        <div id="login" class="right-column">
+            <%include file="/base/flash_msg.html"/>
+            <!-- login -->
+            <div class="sign-in-title">
+                <h1>${_('Sign In')}</h1>
+                %if h.HasPermissionAny('hg.admin', 'hg.register.auto_activate', 'hg.register.manual_activate')():
+                <h4>${h.link_to(_("Go to the registration page to create a new account."),h.url('register'))}</h4>
+                %endif
+            </div>
+            <div class="inner form">
+                ${h.form(h.url.current(**request.GET), needs_csrf_token=False)}
+                    <label for="username">${_('Username')}:</label>
+                    ${h.text('username',class_='focus')}
+                    <label for="password">${_('Password')}:</label>
+                    ${h.password('password',class_='focus')}
+                    <input type="checkbox" id="remember" name="remember" />
+                    <label class="checkbox" for="remember">${_('Remember me')}</label>
+                    <p class="links">
+                        ${h.link_to(_('Forgot your password?'),h.url('reset_password'))}
+                    </p> 
+                    ${h.submit('sign_in',_('Sign In'),class_="btn sign-in")}
+                ${h.end_form()}
+                <script type="text/javascript">
+                    $(document).ready(function(){
+                        $('#username').focus();
+                    })
+                </script>
+            </div>
+
+            % if c.social_plugins:
+            <p>${_('Sign In using one of external services')}:</p>
+
+            <p>
+                ${render_social_buttons(c.social_plugins, 'login')}
+            </p>
+            % endif
+
+            <!-- end login -->
+        </div>
+    </div>
+</div>

@@ -1,0 +1,225 @@
+## -*- coding: utf-8 -*-
+
+<%inherit file="/base/base.html"/>
+<%namespace name="diff_block" file="/changeset/diff_block.html"/>
+
+<%def name="js_extra()">
+<script type="text/javascript" src="${h.url('/js/mergerly.js')}"></script>
+</%def>
+
+<%def name="css_extra()">
+<link rel="stylesheet" type="text/css" href="${h.url('/css/mergerly.css')}"/>
+</%def>
+
+<%def name="title()">
+    ${_('%s File side-by-side diff') % c.repo_name}
+    %if c.rhodecode_name:
+        &middot; ${h.branding(c.rhodecode_name)}
+    %endif
+</%def>
+
+<%def name="breadcrumbs_links()">
+    r${c.commit_1.revision}:${h.short_id(c.commit_1.raw_id)} ... r${c.commit_2.revision}:${h.short_id(c.commit_2.raw_id)}
+</%def>
+
+<%def name="menu_bar_nav()">
+    ${self.menu_items(active='repositories')}
+</%def>
+
+<%def name="menu_bar_subnav()">
+    ${self.repo_menu(active='changelog')}
+</%def>
+
+<%def name="main()">
+<div class="box">
+    <div class="title">
+      ${self.repo_page_title(c.rhodecode_db_repo)}
+    </div>
+
+    <div class="breadcrumbs">
+         ${_('Side-by-side Diff')} r${c.commit_1.revision}:${h.short_id(c.commit_1.raw_id)} ... r${c.commit_2.revision}:${h.short_id(c.commit_2.raw_id)}
+    </div>
+    <div class="cs_files">
+        <table class="compare_view_files commit_diff">
+            <tr class="cs_${c.diff_data['operation']} collapse_file" fid="${c.FID}">
+              <td class="cs_icon_td">
+                  <span class="collapse_file_icon" fid="${c.FID}"></span>
+              </td>
+              <td class="cs_icon_td">
+                  <div class="flag_status not_reviewed hidden"></div>
+              </td>
+              <td class="cs_${c.diff_data['operation']}" id="a_${c.FID}">
+                <div class="node">
+                    <a href="#a_${c.FID}">
+                        <i class="icon-file-${c.diff_data['operation'].lower()}"></i>
+                        ${h.safe_unicode(c.node1.path)}
+                    </a>
+                </div>
+              </td>
+              <td>
+                <div class="changes pull-right">${h.fancy_file_stats(c.diff_data['stats'])}</div>
+                <div class="comment-bubble pull-right" data-path="${c.node1.path}">
+                  <i class="icon-comment"></i>
+                </div>
+              </td>
+            </tr>
+            <tr fid="${c.FID}" id="diff_${c.FID}" class="diff_links">
+              <td></td>
+              <td></td>
+              <td class="cs_${c.diff_data['operation']}">
+                ${diff_block.diff_menu(c.repo_name, h.safe_unicode(c.node1.path), c.commit_1.raw_id, c.commit_2.raw_id, c.diff_data['operation'])}
+              </td>
+              <td class="td-actions rc-form">
+                  <div id="ignorews" class="btn-link show-inline-comments">
+                    <span data-enabled=false class="toggle">${_('Ignore whitespace')}</span>
+                    <span data-enabled=true class="toggle" style="display: none">${_('Show whitespace')}</span>
+                  </div> |
+
+                  <div id="edit_mode" class="btn-link show-inline-comments">
+                    <span data-enabled=true class="toggle">${_('Enable editor mode')}</span>
+                    <span data-enabled=false class="toggle" style="display: none">${_('Disable editor mode')}</span>
+                  </div> |
+
+                  <div class="btn-link show-inline-comments">
+                    <span id="prev_change" title="${_('Previous change')}"><i class="icon-left"></i></span>
+                    <span id="next_change" title="${_('Next change')}"><i class="icon-right"></i></span>
+                  </div>
+
+              </td>
+            </tr>
+            <tr id="tr_${c.FID}">
+              <td></td>
+              <td></td>
+              <td class="injected_diff" colspan="2">
+                <div class="diff-container" id="${'diff-container-%s' % (id(c.diff_data['operation']))}">
+                  <div id="${c.FID}" class="diffblock margined comm">
+                    <div class="diff-container" >
+                        <div class="diffblock comm sidebyside">
+                            <div class="code-header">
+                                <div class="changeset_header">
+                                    ${_('mode')}: <span id="selected_mode">plain</span> |
+                                </div>
+                            </div>
+                            <div id="compare"></div>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+        </table>
+    </div>
+
+
+<script>
+var orig1_url = '${h.url('files_raw_home',repo_name=c.repo_name,f_path=h.safe_unicode(c.node1.path),revision=c.commit_1.raw_id)}';
+var orig2_url = '${h.url('files_raw_home',repo_name=c.repo_name,f_path=h.safe_unicode(c.node2.path),revision=c.commit_2.raw_id)}';
+$(document).ready(function () {
+
+
+    var editor = $('#compare');
+    editor.mergely({
+        autoupdate: true,
+        width: 'auto',
+        height: '600',
+        fgcolor: {a: '#ddffdd', c: '#cccccc', d: '#ffdddd'},
+        bgcolor: '#fff',
+        viewport: false,
+        cmsettings: {
+            mode: 'text/plain',
+            readOnly: true,
+            lineWrapping: false,
+            lineNumbers: true
+        }
+    });
+
+
+    var lhs = function(deferred) {
+        if ("${c.node1.is_binary}" == "True") {
+            deferred.resolve('Binary file');
+        }
+        else if ("${c.node1.commit.__class__.__name__}" == "EmptyCommit") {
+            deferred.resolve('');
+        }
+        else {
+            editor.mergely('lhs', 'loading diff...');
+            $.ajax(orig1_url, {
+                dataType: 'text',
+                success: function(data) {
+                    // call the complete function to let CodeMirror know
+                    deferred.resolve(data);
+                }
+            });
+        }
+    };
+
+    var rhs = function(deferred) {
+        if ("${c.node2.is_binary}" == "True") {
+            deferred.resolve('Binary file');
+        }
+        else if ("${c.node2.commit.__class__.__name__}" == "EmptyCommit") {
+            deferred.resolve('');
+        }
+        else {
+            editor.mergely('rhs', 'loading diff...');
+            $.ajax(orig2_url, {
+                dataType: 'text',
+                success: function(data) {
+                    // call the complete function to let CodeMirror know
+                    deferred.resolve(data);
+                }
+            });
+        }
+    };
+
+    var deferred_lhs = $.Deferred();
+    var deferred_rhs = $.Deferred();
+    $.when(
+        deferred_lhs, deferred_rhs
+    ).done(function(lhs_response, rhs_response) {
+        editor.mergely('lhs', lhs_response);
+        editor.mergely('rhs', rhs_response);
+
+        var detected_mode = detectCodeMirrorModeFromExt(
+                '${h.safe_unicode(c.node1.path.split("/")[-1])}', true);
+        if (detected_mode) {
+            setCodeMirrorMode(editor.mergely('cm', 'lhs'), detected_mode);
+            setCodeMirrorMode(editor.mergely('cm', 'rhs'), detected_mode);
+            $('#selected_mode').html(detected_mode);
+        }
+    });
+    // load via ajax, and use deferred signals to notify when finished.
+    lhs(deferred_lhs);
+    rhs(deferred_rhs);
+
+    $("#ignorews").click(function() {
+        $("#ignorews .toggle").toggle();
+        var val = $('#ignorews .toggle:visible').data()['enabled'];
+        editor.mergely('options', {ignorews: val});
+        editor.mergely('update');
+    });
+
+    $("#edit_mode").click(function() {
+        $("#edit_mode .toggle").toggle();
+        var val = $('#edit_mode .toggle:visible').data()['enabled'];
+        editor.mergely('cm', 'lhs').setOption('readOnly', val);
+        editor.mergely('cm', 'rhs').setOption('readOnly', val);
+        editor.mergely('update');
+    });
+
+    $('#prev_change').on('click', function() {
+        editor.mergely('scrollToDiff', 'prev');
+    });
+    $('#next_change').on('click', function() {
+        editor.mergely('scrollToDiff', 'next');
+    });
+
+    // extend content dynamically on this component for readability
+    $('#content').css({'max-width': '2000px'});
+    editor.mergely('resize');
+
+});
+</script>
+
+</div>
+</%def>

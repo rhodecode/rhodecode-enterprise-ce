@@ -1,0 +1,631 @@
+## -*- coding: utf-8 -*-
+<%inherit file="/debug_style/index.html"/>
+
+<%def name="breadcrumbs_links()">
+    ${h.link_to(_('Style'), h.url('debug_style_home'))}
+    &raquo;
+    ${c.active}
+</%def>
+
+
+<%def name="real_main()">
+<div class="box">
+    <div class="title">
+        ${self.breadcrumbs()}
+    </div>
+
+    <div class='sidebar-col-wrapper'>
+    ${self.sidebar()}
+
+    <div class="main-content">
+
+      <h2>Simple form elements (Depreciated)</h2>
+
+      <div class="bs-example">
+        <form method='post' action='none'>
+          <div class='form'>
+            <div class='fields'>
+
+              <div class='field'>
+                <div class='label'>
+                  <label for='example_input_ro'>Example input readonly:</label>
+                </div>
+                <div class='input'>
+                  <input id="example_input_ro" type="text" readonly="readonly" placeholder="Example input">
+                </div>
+              </div>
+
+              <div class='field'>
+                <div class='label'>
+                  <label for='example_input'>Example text:</label>
+                </div>
+                <div class='input'>
+                  <div class='text-as-placeholder'>
+                    http://something.example.com
+                    <span class="link" id="edit_clone_uri"><i class="icon-edit"></i>${_('edit')}</span>
+                  </div>
+                  <p class='help-block'>Help text in a paragraph.</p>
+                </div>
+              </div>
+
+              <div class='field'>
+                <div class='label'>
+                  <label for='example_select'>Example select input:</label>
+                </div>
+                <div class="select">
+                    <select id="example_select" >
+                        <option value="#">${_('Templates...')}</option>
+                        <option value="ga">Google Analytics</option>
+                        <option value="clicky">Clicky</option>
+                        <option value="server_announce">${_('Server Announcement')}</option>
+                    </select>
+                </div>
+              </div>
+              <script>
+              $(document).ready(function() {
+                  $('#example_select').select2({
+                      containerCssClass: 'drop-menu',
+                      dropdownCssClass: 'drop-menu-dropdown',
+                      dropdownAutoWidth: true,
+                      minimumResultsForSearch: -1
+                  });
+              });
+              </script>
+
+              <div class='field'>
+                <div class='label'>
+                  <label for='example_select'>Example select input:</label>
+                </div>
+                <div class="select">
+                    text before
+                    <select id="example_select2" >
+                        <option value="#">${_('Templates...')}</option>
+                        <option value="ga">Google Analytics</option>
+                        <option value="clicky">Clicky</option>
+                        <option value="server_announce">${_('Server Announcement')}</option>
+                    </select>
+                    text after
+                </div>
+              </div>
+              <script>
+              $(document).ready(function() {
+                  $('#example_select2').select2({
+                      containerCssClass: 'drop-menu',
+                      dropdownCssClass: 'drop-menu-dropdown',
+                      dropdownAutoWidth: true,
+                      minimumResultsForSearch: -1
+                  });
+              });
+              </script>
+
+              <div class='field'>
+                <div class='label'>
+                  <label for='example_select'>Example select input with submenus:</label>
+                </div>
+                <div class="select">
+                  <select id="example_select_sub" >
+                    <option value="#">${_('Default')}</option>
+                    <optgroup label="Group 1">
+                      <option>Option 1.1</option>
+                    </optgroup> 
+                    <optgroup label="Group 2">
+                      <option>Option 2.1</option>
+                      <option>Option 2.2</option>
+                    </optgroup>
+                    <optgroup label="Group 3" disabled>
+                      <option>Option 3.1</option>
+                      <option>Option 3.2</option>
+                      <option>Option 3.3</option>
+                    </optgroup>
+                  </select>
+                </div>
+              </div>
+              <script>
+              $(document).ready(function() {
+                  $('#example_select_sub').select2({
+                      containerCssClass: 'drop-menu',
+                      dropdownCssClass: 'drop-menu-dropdown',
+                      dropdownAutoWidth: true,
+                      minimumResultsForSearch: -1
+                  });
+              });
+              </script>
+
+              <div class='field'>
+                <div class='label'>
+                  <label for='example_checkbox'>Example checkbox:</label>
+                </div>
+                <div class="checkboxes">
+                  <div class="checkbox">
+                    <input id="example_checkbox" type="checkbox">
+                    <label for="example_checkbox">Label of the checkbox</label>
+                  </div>
+                </div>
+              </div>
+
+              <div class='field'>
+                <div class='label'>
+                  <label for='example_checkboxes'>Example multiple checkboxes:</label>
+                </div>
+                <div class="checkboxes">
+                  <div class="checkbox">
+                    <input id="example_checkboxes_01" type="checkbox">
+                    <label for="example_checkboxes_01">Label of the first checkbox</label>
+                  </div>
+                  <div class="checkbox">
+                    <input id="example_checkboxes_02" type="checkbox">
+                    <label for="example_checkboxes_02">Label of the first checkbox</label>
+                  </div>
+                  <div class="checkbox">
+                    <input id="example_checkboxes_03" type="checkbox">
+                    <label for="example_checkboxes_03">Label of the first checkbox</label>
+                  </div>
+                </div>
+              </div>
+
+
+              <div class='field'>
+                <div class='label'>
+                  <label for='example_checkboxes'>Example multiple checkboxes:</label>
+                </div>
+                ## TODO: johbo: This is off compared to the checkboxes
+                <div class="radios">
+                  <label><input type="radio" checked="checked" value="hg.create.repository" name="default_repo_create" id="default_repo_create_hgcreaterepository">Enabled</label>
+                  <label><input type="radio" value="hg.create.none" name="default_repo_create" id="default_repo_create_hgcreatenone">Disabled</label>
+                  <span class="help-block">
+                    Permission to allow repository creation. This includes ability to create
+                    repositories in root level. If this option is disabled admin of
+                    repository group can still create repositories inside that
+                    repository group.
+                  </span>
+                </div>
+              </div>
+
+              <div class="buttons">
+                <input type="submit" value="Save" id="example_save" class="btn">
+                <input type="reset" value="Reset" id="example_reset" class="btn">
+              </div>
+
+            </div>
+          </div>
+        </form>
+      </div>
+
+
+
+
+      <h2>Help text in form elements</h2>
+
+      <div class="bs-example">
+        <form method='post' action=''>
+          <div class='form'>
+            <div class='fields'>
+
+              <div class='field'>
+                <div class='label'>
+                  <label for='02_example_input'>Example input label:</label>
+                </div>
+                <div class='input'>
+                  <input id="02_example_input" type="text" placeholder="Placeholder text">
+                  <span class="help-block">
+                    Example help text for this input element. This help text
+                    will be shown under the input element itself. It can be
+                    so long that it will span multiple lines.
+                  </span>
+
+                </div>
+              </div>
+
+              <div class='field'>
+                <div class='label'>
+                  <label for='example_select_help'>Example select input:</label>
+                </div>
+                <div class="select">
+                  <select id="example_select_help" >
+                      <option value="#">${_('Templates...')}</option>
+                      <option value="ga">Google Analytics</option>
+                      <option value="clicky">Clicky</option>
+                      <option value="server_announce">${_('Server Announcement')}</option>
+                  </select>
+                  <span class="help-block">
+                    Example help text for this input element. This help text
+                    will be shown under the input element itself. It can be
+                    so long that it will span multiple lines.
+                  </span>
+                </div>
+              </div>
+              <script>
+              $(document).ready(function() {
+                  $('#example_select_help').select2({
+                      containerCssClass: 'drop-menu',
+                      dropdownCssClass: 'drop-menu-dropdown',
+                      dropdownAutoWidth: true,
+                      minimumResultsForSearch: -1
+                  });
+              });
+              </script>
+
+              <div class='field'>
+                <div class='label'>
+                  <label for='02_example_checkbox'>Example checkbox with help block:</label>
+                </div>
+                <div class="checkboxes">
+                  <div class="checkbox">
+                    <input id="02_example_checkbox" type="checkbox">
+                    <label for="02_example_checkbox">Label of the checkbox</label>
+                  </div>
+                  <span class="help-block">
+                    Example help text for this checkbox element. This help text
+                    will be shown under the checkbox element itself. It can be
+                    so long that it will span multiple lines.
+                  </span>
+                </div>
+              </div>
+
+
+              <div class='field'>
+                <div class='label'>
+                  <label>Multiple checkboxes:</label>
+                </div>
+                <div class="checkboxes">
+                  <div class="checkbox">
+                    <input id="02_example_checkboxes_01" type="checkbox">
+                    <label for="02_example_checkboxes_01">Label of the first checkbox</label>
+                  </div>
+                  <div class="checkbox">
+                    <input id="02_example_checkboxes_02" type="checkbox">
+                    <label for="02_example_checkboxes_02">Label of the first checkbox</label>
+                  </div>
+                  <div class="checkbox">
+                    <input id="02_example_checkboxes_03" type="checkbox">
+                    <label for="02_example_checkboxes_03">Label of the first checkbox</label>
+                  </div>
+                  <span class="help-block">
+                    Example help text for this checkbox element. This help text
+                    will be shown under the checkbox element itself. It can be
+                    so long that it will span multiple lines.
+                  </span>
+                </div>
+              </div>
+
+
+            </div>
+          </div>
+        </form>
+      </div>
+
+
+
+
+      <h2>Error messages</h2>
+
+      <div class="bs-example">
+        <form method='post' action=''>
+          <div class='form'>
+            <div class='fields'>
+
+              <div class='field'>
+                <div class='label'>
+                  <label for='04_example_input'>Example input label:</label>
+                </div>
+                <div class='input'>
+                  <input id="04_example_input" type="text" placeholder="Example input"/>
+                  <span class="error-message">
+                    If form validation fails, some input fields can show an
+                    error message close to the field.
+                  </span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </form>
+      </div>
+
+
+
+
+      <h2>Fields with buttons</h2>
+
+      <div class="bs-example">
+        <form method='post' action=''>
+          <div class='form'>
+            <div class='fields'>
+
+              <div class='field'>
+                <div class='label'>
+                  <label for='05_example_input'>Example input label:</label>
+                </div>
+                <div class='input'>
+                  <input id="05_example_input" type="text" readonly="readonly" placeholder="Example input">
+                  <span class="btn btn-x">
+                    <i class="icon-remove-sign"></i>
+                    delete
+                  </span>
+                  <button class='btn btn-primary'>Action</button>
+                  <span class="help-block">
+                    Used if there is a list of values and the user can remove
+                    single entries.
+                  </span>
+                </div>
+              </div>
+
+
+              <div class='field'>
+                <div class='label'>
+                  <label for='05_example_input'>Example input label:</label>
+                </div>
+                <div class='input'>
+                  <input id="05_example_input" type="text" readonly="readonly" placeholder="Example input">
+                  <span title="Click to unlock. You must restart RhodeCode in order to make this setting take effect."
+                        class="tooltip" id="path_unlock"
+                        tt_title="Click to unlock. You must restart RhodeCode in order to make this setting take effect.">
+                    <div class="btn btn-default">
+                      <span><i class="icon-lock" id="path_unlock_icon"></i></span>
+                    </div>
+                    <button class='btn btn-primary'>Action</button>
+                  </span>
+                  <span class="help-block">
+                    Used together with locked fields, the user has to first
+                    unlock and afterwards it is possible to change the value.
+                  </span>
+                </div>
+              </div>
+
+              <div class='field'>
+                <div class='label'>
+                  <label for='05_example_select'>Example input label:</label>
+                </div>
+                <div class="select">
+                    <select id="05_example_select" >
+                        <option value="#">${_('Templates...')}</option>
+                        <option value="ga">Google Analytics</option>
+                        <option value="clicky">Clicky</option>
+                        <option value="server_announce">${_('Server Announcement')}</option>
+                    </select>
+                    <button class='btn btn-primary'>Action</button>
+                </div>
+              </div>
+              <script>
+              $(document).ready(function() {
+                  $('#05_example_select').select2({
+                      containerCssClass: 'drop-menu',
+                      dropdownCssClass: 'drop-menu-dropdown',
+                      dropdownAutoWidth: true
+                  });
+              });
+              </script>
+
+              <div class='field'>
+                <div class='label'>
+                  <label for='05_example_select2'>Example input label:</label>
+                </div>
+                <div class="select">
+                    <span>Some text</span>
+                    before
+                    <select id="05_example_select2" >
+                        <option value="#">${_('Templates...')}</option>
+                        <option value="ga">Google Analytics</option>
+                        <option value="clicky">Clicky</option>
+                        <option value="server_announce">${_('Server Announcement')}</option>
+                    </select>
+                    after
+                    <button class='btn btn-primary'>Action</button>
+                    Some text
+                </div>
+              </div>
+              <script>
+              $(document).ready(function() {
+                  $('#05_example_select2').select2({
+                      containerCssClass: 'drop-menu',
+                      dropdownCssClass: 'drop-menu-dropdown',
+                      dropdownAutoWidth: true
+                  });
+              });
+              </script>
+
+
+            </div>
+          </div>
+        </form>
+      </div>
+
+
+
+      <h2>Definition lists together with forms</h2>
+
+      <p>Some pages list values in a definition list. These lists align
+         properly with form elements on the same page.</p>
+
+      <div class="bs-example">
+
+        <dl class="dl-horizontal">
+          <dt>RhodeCode version:</dt>
+          <dd title="">3.0.0</dd>
+          <dt>License token:</dt>
+          <dd title=""><pre>abra-cada-bra1-rce3</pre></dd>
+          <dt>License issued to:</dt>
+          <dd title="">RhodeCode Trial (RhodeCode GmbH)</dd>
+          <dt>License issued on:</dt>
+          <dd title="">Sun, 07 Dec 2014 16:34:10</dd>
+          <dt>License expires on:</dt>
+          <dd title="">Fri, 05 Jun 2015 17:34:10</dd>
+          <dt>License type:</dt>
+          <dd title="">trial</dd>
+          <dt>License users limit:</dt>
+          <dd title="">20</dd>
+        </dl>
+
+        <form method='post' action=''>
+          <div class='form'>
+            <div class='fields'>
+
+              <div class='field'>
+                <div class='label'>
+                  <label for='07_example_input'>Example input label:</label>
+                </div>
+                <div class='input'>
+                  <input id="07_example_input" type="text" placeholder="Example input">
+                </div>
+              </div>
+
+              <div class="buttons">
+                <input type="submit" value="Save" id="07_example_save" class="btn">
+                <input type="reset" value="Reset" id="07_example_reset" class="btn">
+              </div>
+            </div>
+          </div>
+        </form>
+
+      </div>
+
+
+
+
+
+      <h2>Multi select widget</h2>
+      
+      <p>This example shows two multi select widgets, one having no selects
+         currently. It is mixed up with other form elements to show the
+         magin effects.</p>
+
+      <div class="bs-example">
+
+        <form method='post' action=''>
+          <div class='form'>
+            <div class='fields'>
+
+              <div class='field'>
+                <div class='label'>
+                  <label for='example_input'>Example input label:</label>
+                </div>
+                <div class='input'>
+                  <input id="example_input" type="text" placeholder="Example input">
+                </div>
+              </div>
+
+              <div class="field">
+                  <div class="label">
+                      <label for="users_group_active">${_('Members')}:</label>
+                  </div>
+                  <div class="select side-by-side-selector">
+                      <div class="left-group">
+                          <label class="text" >${_('Chosen group members')}</label>
+                          <select id="users_group_members" multiple size='8'>
+                              <option value="#">${_('Templates...')}</option>
+                              <option value="ga">Google Analytics</option>
+                              <option value="clicky">Clicky</option>
+                              <option value="server_announce">${_('Server Announcement')}</option>
+                              <option value="#">${_('Templates...')}</option>
+                              <option value="ga">Google Analytics</option>
+                              <option value="clicky">Clicky</option>
+                              <option value="server_announce">${_('Server Announcement')}</option>
+                          </select>
+                         <div class="btn" id="remove_all_elements" >
+                             ${_('Remove all elements')}
+                             <i  class="icon-chevron-right"></i>
+                         </div>
+                      </div>
+                      <div class="middle-group">
+                          <i  id="add_element" class="icon-chevron-left"></i>
+                          <br />
+                          <i  id="remove_element" class="icon-chevron-right"></i>
+                      </div>
+                      <div class="right-group">
+                           <label class="text" >${_('Available members')}</label>
+                            <select id="available_members" multiple size='8'>
+                                <option value="#">${_('Templates...')}</option>
+                                <option value="ga">Google Analytics</option>
+                                <option value="clicky">Clicky</option>
+                                <option value="server_announce">${_('Server Announcement')}</option>
+                            </select>
+                           <div  class="btn" id="add_all_elements" >
+                               <i  class="icon-chevron-left"></i>${_('Add all elements')}
+                           </div>
+                      </div>
+                  </div>
+
+                <script>
+                    $(document).ready(function(){
+                        MultiSelectWidget('users_group_members','available_members','edit_users_group');
+                    })
+                </script>
+
+              </div>
+
+              <div class='field'>
+                <div class='label'>
+                  <label for='example_input'>Example input label:</label>
+                </div>
+                <div class='input'>
+                  <input id="example_input" type="text" placeholder="Example input">
+                </div>
+              </div>
+
+              <div class="field">
+                  <div class="label">
+                      <label for="users_group_active2">Members with one side empty:</label>
+                  </div>
+                  <div class="select side-by-side-selector">
+                      <div class="left-group">
+                          <label class="text" >${_('Chosen group members')}</label>
+                          <select id="users_group_members2" multiple size='8'>
+                          </select>
+                         <div class="btn" id="remove_all_elements2" >
+                             ${_('Remove all elements')}
+                             <i  class="icon-chevron-right"></i>
+                         </div>
+                      </div>
+                      <div class="middle-group">
+                          <i  id="add_element2" class="icon-chevron-left"></i>
+                          <br />
+                          <i  id="remove_element2" class="icon-chevron-right"></i>
+                      </div>
+                      <div class="right-group">
+                           <label class="text" >${_('Available members')}</label>
+                            <select id="available_members2" multiple size='8'>
+                                <option value="#">${_('Templates...')}</option>
+                                <option value="ga">Google Analytics</option>
+                                <option value="clicky">Clicky</option>
+                                <option value="server_announce">${_('Server Announcement')}</option>
+                            </select>
+                           <div  class="btn" id="add_all_elements2" >
+                               <i  class="icon-chevron-left"></i>${_('Add all elements')}
+                           </div>
+                      </div>
+                  </div>
+
+                <script>
+                    $(document).ready(function(){
+                        MultiSelectWidget('users_group_members2','available_members','edit_users_group');
+                    })
+                </script>
+
+              </div>
+
+              <div class='field'>
+                <div class='label'>
+                  <label for='example_input'>Example input label:</label>
+                </div>
+                <div class='input'>
+                  <input id="example_input" type="text" placeholder="Example input">
+                </div>
+              </div>
+
+              <div class="buttons">
+                <input type="submit" value="Save" id="07_example_save" class="btn">
+                <input type="reset" value="Reset" id="07_example_reset" class="btn">
+              </div>
+            </div>
+          </div>
+        </form>
+
+      </div>
+
+
+
+
+      </div>
+    </div>  <!-- .main-content  --> 
+  </div> <!-- .box -->
+</%def>

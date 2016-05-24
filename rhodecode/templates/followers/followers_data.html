@@ -1,0 +1,31 @@
+## -*- coding: utf-8 -*-
+<%namespace name="base" file="/base/base.html"/>
+<table class="rctable followers_data">
+    <tr>
+        <th>${_('Follower Name')}</th>
+        <th>${_('Following Since')}</th>
+    </tr>
+    % for f in c.followers_pager:
+            <tr>
+                <td class="td-user follower_user">
+                    ${base.gravatar_with_user(f.user.email, 16)}
+                </td>
+                <td class="td-time follower_date">
+                    ${h.age_component(f.follows_from)}
+                </td>
+            </tr>
+    % endfor
+</table>
+
+<div class="pagination-wh pagination-left">
+<script type="text/javascript">
+    $(document).pjax('#followers.pager_link','#followers');
+    $(document).on('pjax:success',function(){
+        show_more_event();
+        timeagoActivate();
+        tooltip_activate();
+        show_changeset_tooltip();
+    });
+</script>
+${c.followers_pager.pager('$link_previous ~2~ $link_next')}
+</div>

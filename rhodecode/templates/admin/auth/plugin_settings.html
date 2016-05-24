@@ -1,0 +1,118 @@
+## -*- coding: utf-8 -*-
+<%inherit file="/base/base.html"/>
+
+<%def name="title()">
+  ${_('Authentication Settings')}
+  %if c.rhodecode_name:
+    &middot; ${h.branding(c.rhodecode_name)}}
+  %endif
+</%def>
+
+<%def name="breadcrumbs_links()">
+  ${h.link_to(_('Admin'),h.url('admin_home'))}
+  &raquo;
+  ${h.link_to(_('Authentication Plugins'),request.resource_path(resource.__parent__, route_name='auth_home'))}
+  &raquo;
+  ${resource.display_name}
+</%def>
+
+<%def name="menu_bar_nav()">
+  ${self.menu_items(active='admin')}
+</%def>
+
+<%def name="main()">
+  <div class="box">
+    <div class="title">
+      ${self.breadcrumbs()}
+    </div>
+    <div class='sidebar-col-wrapper'>
+
+      ## TODO: This is repeated in the auth root template and should be merged
+      ##       into a single solution.
+      <div class="sidebar">
+        <ul class="nav nav-pills nav-stacked">
+          % for item in resource.get_root().get_nav_list():
+            <li ${'class=active' if item == resource else ''}>
+              <a href="${request.resource_path(item, route_name='auth_home')}">${item.display_name}</a>
+            </li>
+          % endfor
+        </ul>
+      </div>
+
+      <div class="main-content-full-width">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">${_('Plugin')}: ${resource.display_name}</h3>
+          </div>
+          <div class="panel-body">
+            <div class="plugin_form">
+              <div class="fields">
+                ${h.secure_form(request.resource_path(resource, route_name='auth_home'))}
+                <div class="form">
+                  %for node in plugin.get_settings_schema():
+                    <% label_cls = ("label-checkbox" if (node.widget == "bool") else "") %>
+                    <div class="field">
+                      <div class="label ${label_cls}"><label for="${node.name}">${node.title}</label></div>
+                      %if node.widget in ["string", "int", "unicode"]:
+                        <div class="input">
+                          ${h.text(node.name, class_="medium")}
+                          <p class="help-block">${node.description}</p>
+                        </div>
+                      %elif node.widget == "password":
+                        <div class="input">
+                          ${h.password(node.name, class_="medium")}
+                          <p class="help-block">${node.description}</p>
+                        </div>
+                      %elif node.widget == "bool":
+                        <div class="input">
+                          <div class="checkbox">${h.checkbox(node.name, True)}</div>
+                          <span class="help-block">${node.description}</span>
+                        </div>
+                      %elif node.widget == "select":
+                        <div class="select">
+                          ${h.select(node.name, node.default, node.validator.choices)}
+                          <p class="help-block">${node.description}</p>
+                        </div>
+                      %elif node.widget == "readonly":
+                        <div class="input">
+                          ${node.default}
+                          <p class="help-block">${node.description}</p>
+                        </div>
+                      %else:
+                        <div class="input">
+                          This field is of type ${node.typ}, which cannot be displayed. Must be one of [string|int|bool|select].
+                          <p class="help-block">${node.description}</p>
+                        </div>
+                      %endif
+                    </div>
+                  %endfor
+                  <div class="buttons">
+                    ${h.submit('save',_('Save'),class_="btn")}
+                  </div>
+                </div>
+                ${h.end_form()}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</%def>
+
+## TODO: Ugly hack to get ldap select elements to work.
+##       Find a solution to integrate this nicely.
+<script>
+$(document).ready(function() {
+  var select2Options = {
+        containerCssClass: 'drop-menu',
+        dropdownCssClass: 'drop-menu-dropdown',
+        dropdownAutoWidth: true,
+        minimumResultsForSearch: -1
+    };
+    $("#tls_kind").select2(select2Options);
+    $("#tls_reqcert").select2(select2Options);
+    $("#search_scope").select2(select2Options);
+});
+</script>

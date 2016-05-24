@@ -1,0 +1,545 @@
+## -*- coding: utf-8 -*-
+<%inherit file="/debug_style/index.html"/>
+
+<%def name="breadcrumbs_links()">
+    ${h.link_to(_('Style'), h.url('debug_style_home'))}
+    &raquo;
+    ${c.active}
+</%def>
+
+
+<%def name="real_main()">
+<div class="box">
+    <div class="title">
+        ${self.breadcrumbs()}
+    </div>
+
+    <div class='sidebar-col-wrapper'>
+      ##main
+      ${self.sidebar()}
+
+      <div class="main-content">
+
+      <div style="opacity:.5">
+
+        <h2>Simple tables</h2>
+
+        <p>These styles will be adjusted later to provide a baseline style
+            for all tables without classes added, whether part of the
+            application or not. Currently, some of the
+            application-specific styles are applied to this table.</p>
+        <p>This is a baseline style for all tables, whether part of the
+            application or not. It has no class applied for styling. Use
+            the "rctable" class as outlined before for tables which are
+            part of the RhodeCode application.</p>
+        <table>
+          <tbody>
+            <tr>
+              <th>Header A</th>
+              <th>Header B</th>
+              <th>Header C</th>
+              <th>Header D</th>
+            </tr>
+            <tr>
+              <td>Content of col A</td>
+              <td>Content of col B</td>
+              <td>Content of col C</td>
+              <td>Content of col D</td>
+            </tr>
+            <tr>
+              <td>Content of col A</td>
+              <td>Content of col B</td>
+              <td>Content of col C</td>
+              <td>Content of col D</td>
+            </tr>
+            <tr>
+              <td>Content of col A</td>
+              <td>Content of col B</td>
+              <td>Content of col C</td>
+              <td>Content of col D</td>
+            </tr>
+            <tr>
+              <td>Content of col A</td>
+              <td>Content of col B</td>
+              <td>Content of col C</td>
+              <td>Content of col D</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+
+
+
+      <h2>RC application table with examples</h2>
+
+      <p>This is a standard table which applies the rhodecode-specific styling to be used
+          throughout the application; it has <code>&lt;table class="rctable"&gt;</code>.
+          <br/>
+          By default, table data is not truncated, and wraps inside of the <code>&lt;td&gt
+          ;</code>. To prevent wrapping and contain data on one line, use the <code>&lt;
+          class="truncate-wrap"&gt;</code> on the <code>&lt;td&gt;</code>, and <code>span
+          class="truncate"</code> around the specific data to be truncated.
+      </p>
+      <p>
+          Ellipsis is added via CSS. Please always add a row of headers using <code>&lt;th
+          &gt;</code> to the top of a table.
+      </p>
+
+      ## TODO: johbo: in case we have more tables with examples, we should
+      ## create a generic class here.
+      <table class="rctable issuetracker">
+        <thead>
+          <tr>
+            <th>Header A</th>
+            <th>Header B</th>
+            <th>Header C</th>
+            <th>Header D</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="issue-tracker-example">
+              Example of col A
+            </td>
+            <td class="issue-tracker-example">
+              Example of col B
+            </td>
+            <td class="issue-tracker-example">
+              Example of col C
+            </td>
+            <td class="issue-tracker-example">
+              Example of col D
+            </td>
+          </tr>
+          <tr>
+            <td>Content of col A</td>
+            <td>Content of col B</td>
+            <td>Content of col C which is very long and will not be
+              truncated because sometimes people just want to write
+              really, really long commit messages which explain what
+              they did in excruciating detail and you really, really
+              want to read them.</td>
+            <td>Content of col D</td>
+          </tr>
+          <tr>
+            <td>Content of col A</td>
+            <td>Content of col B</td>
+            <td>Content of col C</td>
+            <td class="truncate-wrap"><span class="truncate">Truncated
+                content of column D truncate truncate truncatetruncate
+                truncate truncate</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>RC application table data classes</h2>
+
+      <p>The following tables contain documentation of all existing table data classes.
+         Please update when new classes are made.
+      </p>
+      <table class="rctable examples">
+        <thead>
+          <tr>
+            <th>Class</th>
+            <th>Description</th>
+            <th>Example</th>
+          </tr>
+        </thead>
+        <tbody>
+            <td>td-user</td>
+            <td>Any username/gravatar combination (see also Icons style).</td>
+            <td class="td-user author">
+              <img class="gravatar" alt="gravatar" src="https://secure.gravatar.com/avatar/0c9a7e6674b6f0b35d98dbe073e3f0ab?d=identicon&amp;s=32" height="16" width="16">
+              <span title="Oliver Strobel <oliver@rhodecode.com>" class="user">ostrobel (Oliver Strobel)</span>
+            </td>
+          </tr>
+          <tr>
+            <td>td-hash</td>
+            <td>Any hash; a commit, revision, etc. Use <code>&lt;pre&gt;</code> and header 'Commit'</td>
+            <td class="td-commit">
+              <pre><a href="/anothercpythonforkkkk/files/8d6b27837c6979983b037693fe975cdbb761b500/">r93699:8d6b27837c69</a></pre>
+            </td>
+          </tr>
+          <tr>
+            <td>td-rss</td>
+            <td>RSS feed link icon</td>
+            <td class="td-rss">
+              <a title="Subscribe to rss feed" href="/feed/rss"><i class="icon-rss-sign"></i></a>
+            </td>
+          </tr>
+          <tr>
+            <td>td-componentname</td>
+            <td>Any group, file, gist, or directory name.</td>
+            <td class="td-componentname">
+              <a href="/cpythonfork">
+                <span title="Mercurial repository"><i class="icon-hg"></i></span>
+                <i class="icon-unlock-alt" title="Public repository"></i>
+                rhodecode-dev-restyle-fork
+              </a>
+            </td>
+          </tr>
+          <tr>
+            <td>td-tags</td>
+            <td>Any cell containing tags, including branches and bookmarks.</td>
+            <td class="td-tags">
+              <span class="branchtag tag" title="Branch default">
+                <a href="/rhodecode-dev-restyle-  fork/changelog?branch=default"><i class="icon-code-fork"></i>default</a>
+             </span>
+            </td>
+          </tr>
+          <tr>
+            <td>tags-truncate</td>
+            <td>Used to truncate a cell containing tags; avoid if possible.</td>
+            <td class="td-tags truncate-wrap">
+              <div class="truncate tags-truncate">
+                <div class="autoexpand">
+                  <span class="tagtag tag" title="Tag tip">
+                    <a href="/rhodecode-dev-restyle-fork/files/e519d5a0e71466d27257ddff921c4a13c540408e/"><i class="icon-tag"></i>tip</a>
+                  </span>
+                  <span class="branchtag tag" title="Branch default">
+                   <a href="/rhodecode-dev-restyle-fork/changelog?branch=default"><i class="icon-code-fork"></i>default</a>
+                  </span>
+                  <span class="branchtag tag" title="Branch default">
+                   <a href="/rhodecode-dev-restyle-fork/changelog?branch=default"><i class="icon-code-fork"></i>default</a>
+                  </span>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>td-ip</td>
+            <td>Any ip address.</td>
+            <td class="td-ip">
+              172.16.115.168
+            </td>
+          </tr>
+          <tr>
+            <td>td-type</td>
+            <td>A state or an auth type.</td>
+            <td class="td-type">
+              rhodecode
+            </td>
+          </tr>
+          <tr>
+            <td>td-authtoken</td>
+            <td>For auth tokens. Use truncate classes for hover expand; see html.</td>
+            <td class="truncate-wrap td-authtoken">
+              <div class="truncate autoexpand">
+                <code>688df65b87d3ad16ae9f8fc6338a551d40f41c7a</code>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>td-action</td>
+            <td>Buttons which perform an action.</td>
+            <td class="td-action">
+              <div class="grid_edit">
+                <a href="/_admin/users/2/edit" title="edit">
+                  <i class="icon-pencil"></i>Edit</a>
+              </div>
+              <div class="grid_delete">
+              <form action="/_admin/users/2" method="post">
+                <i class="icon-remove-sign"></i>
+                <input class="btn btn-danger btn-link" id="remove_user_2" name="remove_"  type="submit" value="delete">
+              </form>
+             </div>
+            </td>
+          </tr>
+          <tr>
+            <td>td-radio</td>
+            <td>Radio buttons for a form. Centers element.</td>
+            <td class="td-radio">
+              <input type="radio" checked="checked" value="" name="1" id="read"></td>
+          </tr>
+          <tr>
+            <td>td-checkbox</td>
+            <td>Checkbox for a form. Centers element.</td>
+            <td class="td-checkbox">
+              <input type="checkbox" checked="checked" value="" name="1" id="read"></td>
+          </tr>
+          <tr>
+          <tr>
+            <td>td-buttons</td>
+            <td>Buttons.</td>
+            <td class="td-buttons">
+                <span class="btn btn-mini btn-primary">feed access</span>
+            </td>
+          </tr>
+          <tr>
+            <td>td-compare</td>
+            <td>Radio buttons to compare commits.</td>
+            <td class=" td-compare">
+                <input class="compare-radio-button" type="radio" name="compare_source" value="2.0">
+                <input class="compare-radio-button" type="radio" name="compare_target" value="2.0">
+            </td>
+          </tr>
+          <tr>
+            <td>td-comments</td>
+            <td>Comments indicator icon.</td>
+            <td>
+              <i class="icon-comment icon-comment-colored"></i> 0
+            </td>
+          </tr>
+          <tr>
+            <td>td-status</td>
+            <td>Status indicator icon.</td>
+            <td class="td-description">
+              <div class="flag_status under_review pull-left"></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <table class="dataTable rctable examples">
+        <tbody>
+          <tr>
+            <td>quick_repo_menu</td>
+            <td>Hidden menu generated by dataTable.</td>
+            <td class="quick_repo_menu">
+              <i class="pointer icon-more"></i>
+              <div class="menu_items_container" style="display: none;">
+                <ul class="menu_items">
+                  <li>
+                     <a title="Summary" href="/anothercpythonforkkkk-fork">
+                     <span>Summary</span>
+                     </a>
+                  </li>
+                  <li>
+                     <a title="Changelog" href="/anothercpythonforkkkk-fork/changelog">
+                     <span>Changelog</span>
+                     </a>
+                  </li>
+                  <li>
+                     <a title="Files" href="/anothercpythonforkkkk-fork/files/tip/">
+                     <span>Files</span>
+                     </a>
+                  </li>
+                  <li>
+                     <a title="Fork" href="/anothercpythonforkkkk-fork/fork">
+                     <span>Fork</span>
+                     </a>
+                  </li>
+                </ul>
+              </div>
+            </td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+      <script>quick_repo_menu();</script>
+      <table class="rctable examples">
+        <tbody>
+          <tr>
+            <td>td-description</td>
+            <td>Any description. They may be rather long, and using the expand_commit outlined below is recommended.</td>
+            <td class="td-description">
+              Ultrices mattis! Enim pellentesque lacus, sit magna natoque risus turpis ut, auctor ultrices facilisis dapibus odio? Parturient! Porta egestas nascetur, quis, elementum dolor, in magna ac dis sit etiam turpis, scelerisque! Integer tristique aliquam.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <table id="changesets" class="rctable examples end">
+        <tbody>
+          <tr>
+            <td>expand_commit</td>
+            <td>Expands a long message; see html+js.</td>
+            <td class="expand_commit" data-commit-id="2ffc6faabc7a9c790b1b452943a3f0c047b8b436" title="Expand commit message">
+                <div class="show_more_col">
+                <i class="show_more"></i>
+                </div>
+            </td>
+            <td class="mid td-description">
+                <div class="log-container truncate-wrap">
+                    <div id="c-2ffc6faabc7a9c790b1b452943a3f0c047b8b436" class="message truncate" data-message-raw="tests: Test echo method on the server object
+            
+            This only works for Pyro4 so far, have to extend it still for HTTP to work.">tests: Test echo method on the server object
+            
+            This only works for Pyro4 so far, have to extend it still for HTTP to work.</div>
+                </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+        <script type="text/javascript">
+            var cache = {}
+            $('.expand_commit').on('click',function(e){
+              var target_expand = $(this);
+              var cid = target_expand.data('commitId');
+            
+              if (target_expand.hasClass('open')){
+                $('#c-'+cid).css({'height': '1.5em', 'white-space': 'nowrap', 'text-overflow': 'ellipsis', 'overflow':'hidden'});
+                $('#t-'+cid).css({'height': '1.5em', 'max-height': '1.5em', 'text-overflow': 'ellipsis', 'overflow':'hidden', 'white-space':'nowrap'});
+                target_expand.removeClass('open');
+              }
+              else {
+                $('#c-'+cid).css({'height': 'auto', 'white-space': 'pre-line', 'text-overflow': 'initial', 'overflow':'visible'});
+                $('#t-'+cid).css({'height': 'auto', 'max-height': 'none', 'text-overflow': 'initial', 'overflow':'visible', 'white-space':'normal'});
+                target_expand.addClass('open');
+              }
+            });
+
+        </script>
+        <p>The following classes currently do not have unique styles applied.</p>
+        <table class="rctable examples end">
+          <tbody>
+            <tr>
+              <td>td-regex</td>
+              <td>Regex patterns</td>
+              <td class="td-regex">(?:#)(?P<issue_id>\d+)</td>
+            </tr>
+            <tr>
+              <td>td-url</td>
+              <td>Any URL.</td>
+              <td class="td-url">https://rhodecode.com</td>
+            </tr>
+            <tr>
+              <td>td-journalaction</td>
+              <td>Action listed in a journal</td>
+              <td class="td-journalaction">started following repository supervisor-fork-4</td>
+            </tr>
+            <tr>
+              <td>td-iprange</td>
+              <td>Any ip address.</td>
+              <td class="td-ip">127.0.0.1-127.0.0.10</td>
+            </tr>
+            <tr>
+              <td>td-exp</td>
+              <td>Expiration time.</td>
+              <td class="td-exp">never</td>
+            </tr>
+            <tr>
+              <td>td-prefix</td>
+              <td>Prefixes outlined in settings.</td>
+              <td class="td-prefix">ubuntu-92539</td>
+            </tr>
+            <tr>
+              <td>td-cachekey</td>
+              <td>Cache key value.</td>
+              <td class="td-cachekey">ubuntu-92539supervisor</td>
+            </tr>
+            <tr>
+              <td>td-email</td>
+              <td>Any email address.</td>
+              <td class="td-email">example@rhodecode.com</td>
+            </tr>
+            <tr>
+              <td>td-active</td>
+              <td>Shows active state with icon-true/icon-false.</td>
+              <td class="td-active"><i class="icon-false"></i></td>
+            </tr>
+            <tr>
+              <td>td-size</td>
+              <td>File, repo, or directory size.</td>
+              <td class="td-size">89 MB</td>
+            </tr>
+            <tr>
+              <td>td-number</td>
+              <td>Any numerical data.</td>
+              <td class="td-number">42</td>
+            </tr>
+            <tr>
+              <td>td-message</td>
+              <td>Any commit message. Often treated with the truncate class used for descriptions as well.</td>
+              <td class="td-message">Updated the files</td>
+            </tr>
+          </tbody>
+        </table>
+
+
+      <h2>Permissions table</h2>
+
+      <p>
+        This is a special-case table; it has
+        <code>table class="rctable permissions"</code>
+        where "rctable" applies the rhodecode styling as above, and
+        "permissions" adds an extra layer of customization specific to
+        permissions tables. Other special-case tables may exist or be
+        created if necessary.
+      </p>
+
+      <table class="rctable permissions">
+        <tr>
+          <th class="td-radio">none</th>
+          <th class="td-radio">read</th>
+          <th class="td-radio">write</th>
+          <th class="td-radio">admin</th>
+          <th>user/user group</th>
+          <th></th>
+        </tr>
+        <tr class="perm_admin_row">
+          <td class="td-radio"><input type="radio" value="repository.none"
+            name="admin_perm_2" id="admin_perm_2_repositorynone"
+            disabled="disabled"></td>
+          <td class="td-radio"><input type="radio" value="repository.read"
+            name="admin_perm_2" id="admin_perm_2_repositoryread"
+            disabled="disabled"></td>
+          <td class="td-radio"><input type="radio" value="repository.write"
+            name="admin_perm_2" id="admin_perm_2_repositorywrite"
+            disabled="disabled"></td>
+          <td class="td-radio"><input type="radio" value="repository.admin"
+            name="admin_perm_2" id="admin_perm_2_repositoryadmin"
+            disabled="disabled" checked="checked"></td>
+          <td>
+            <img class="gravatar" src="https://secure.gravatar.com/avatar/be9d18f611892a738e54f2a3a171e2f9?d=identicon&amp;s=32" height="16" width="16">
+            <span class="user">dev (super admin) (owner)</span>
+          </td>
+          <td></td>
+        </tr>
+        <tr>
+          <td colspan="4">
+              <span class="private_repo_msg">
+              private repository
+              </span>
+          </td>
+          <td class="private_repo_msg">
+              <i class="icon-user"></i>
+              default - only people explicitly added here will have access</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td class="td-radio"><input type="radio" value="repository.none"
+            name="u_perm_1" id="u_perm_1_repositorynone"></td>
+          <td class="td-radio"><input type="radio" checked="checked"
+            value="repository.read" name="u_perm_1"
+            id="u_perm_1_repositoryread"></td>
+          <td class="td-radio"><input type="radio" value="repository.write"
+            name="u_perm_1" id="u_perm_1_repositorywrite"></td>
+          <td class="td-radio"><input type="radio" value="repository.admin"
+            name="u_perm_1" id="u_perm_1_repositoryadmin"></td>
+          <td>
+            <img class="gravatar" src="/images/user30.png" height="16" width="16">
+            <span class="user">default</span>
+          </td>
+          <td></td>
+        </tr>
+        <tr>
+          <td class="td-radio"><input type="radio" value="repository.none"
+            name="u_perm_2" id="u_perm_2_repositorynone"></td>
+          <td class="td-radio"><input type="radio" checked="checked"
+            value="repository.read" name="u_perm_2"
+            id="u_perm_2_repositoryread"></td>
+          <td class="td-radio"><input type="radio" value="repository.write"
+            name="u_perm_2" id="u_perm_2_repositorywrite"></td>
+          <td class="td-radio"><input type="radio" value="repository.admin"
+            name="u_perm_2" id="u_perm_2_repositoryadmin"></td>
+          <td>
+            <img class="gravatar" src="https://secure.gravatar.com/avatar/be9d18f611892a738e54f2a3a171e2f9?d=identicon&amp;s=32" height="16" width="16">
+            <a class="user" href="/_admin/users/2/edit">dev</a>
+          </td>
+          <td>
+            <span member_type="user" member="2"
+                  class="btn action_button btn-link btn-danger">revoke</span>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+      <div class="link" id="add_perm">
+        Add new
+      </div>
+
+
+
+    </div>
+  </div>
+</div>
+</%def>

@@ -1,0 +1,356 @@
+// comments.less
+// For use in RhodeCode applications;
+// see style guide documentation for guidelines.
+
+
+// Comments
+.comments {
+    width: 100%;
+}
+
+tr.inline-comments div {
+    max-width: 100%;
+
+    p {
+        white-space: normal; 
+    }
+
+    code, pre, .code, dd {
+        overflow-x: auto;
+        width: 1062px;
+    }
+
+    dd {
+        width: auto;
+    }
+}
+
+#injected_page_comments {
+    .comment-previous-link,
+    .comment-next-link,
+    .comment-links-divider {
+        display: none;
+    }
+}
+
+.add-comment {
+    margin-bottom: 10px;
+}
+.hide-comment-button .add-comment {
+    display: none;
+}
+
+.comment-bubble {
+    color: @grey4;
+    margin-top: 4px;
+    margin-right: 30px;
+    visibility: hidden;
+}
+
+.comment {
+    margin: @padding 0;
+    padding: 4px 0 0 0;
+    line-height: 1em;
+
+    .meta {
+        position: relative;
+        width: 100%;
+        margin: 0 0 .5em 0;
+
+        &:hover .permalink {
+            visibility: visible;
+            color: @rcblue;
+        }
+    }
+
+    .author,
+    .date {
+        display: inline;
+        margin: 0 .5 0 0;
+        padding: 0 .5 0 0;
+
+        &:after {
+            content: ' | ';
+            color: @grey5;
+        }
+    }
+
+    .status-change,
+    .permalink,
+    .changeset-status-lbl {
+        display: inline;
+    }
+
+    .permalink {
+        visibility: hidden;
+    }
+
+    .comment-links-divider {
+        display: inline;
+    }
+
+    .comment-links-block {
+        float:right;
+        text-align: right;
+        min-width: 85px;
+
+        [class^="icon-"]:before,
+        [class*=" icon-"]:before {
+            margin-left: 0;
+            margin-right: 0;
+        }
+    }
+
+    .comment-previous-link {
+        display: inline-block;
+
+        .arrow_comment_link{
+            cursor: pointer;
+            i {
+                font-size:10px;
+            }
+        }
+        .arrow_comment_link.disabled {
+            cursor: default;
+            color: @grey5;
+        }
+    }
+
+    .comment-next-link {
+        display: inline-block;
+
+        .arrow_comment_link{
+            cursor: pointer;
+            i {
+                font-size:10px;
+            }
+        }
+        .arrow_comment_link.disabled {
+            cursor: default;
+            color: @grey5;
+        }
+    }
+
+    .flag_status {
+        display: inline-block;
+        margin: -2px .5em 0 .25em
+    }
+
+    .delete-comment {
+        display: inline-block;
+        color: @rcblue;
+        
+        &:hover {
+            cursor: pointer;
+        }
+    }
+
+
+    .text {
+        clear: both;
+        border: @border-thickness solid @grey5;
+        .border-radius(@border-radius);
+        .box-sizing(border-box);
+
+        .markdown-block p,
+        .rst-block p {
+            margin: .5em 0 !important;
+          // TODO: lisa: This is needed because of other rst !important rules :[
+        }
+    }
+}
+
+.show-outdated-comments {
+    display: inline;
+    color: @rcblue;
+}
+
+.outdated {
+    display: none;
+    opacity: 0.6;
+
+    .comment {
+        margin: 0 0 @padding;
+
+        .date:after {
+            content: none;
+        }
+    }
+    .outdated_comment_block {
+        padding: 0 0 @space 0;
+    }
+}
+
+// Comment Form
+div.comment-form {
+    margin-top: 20px;
+}
+
+.comment-form strong {
+    display: block;
+    margin-bottom: 15px;
+}
+
+.comment-form textarea {
+    width: 100%;
+    height: 100px;
+    font-family: 'Monaco', 'Courier', 'Courier New', monospace;
+}
+
+form.comment-form {
+    margin-top: 10px;
+    margin-left: 10px;
+}
+
+.comment-inline-form .comment-block-ta,
+.comment-form .comment-block-ta,
+.comment-form .preview-box {
+    border: @border-thickness solid @grey5;
+    .border-radius(@border-radius);
+    .box-sizing(border-box);
+    background-color: white;
+}
+
+.comment-form-submit {
+    margin-top: 5px;
+    margin-left: 525px;
+}
+
+.file-comments {
+    display: none;
+}
+
+.comment-form .preview-box.unloaded,
+.comment-inline-form .preview-box.unloaded {
+    height: 50px;
+    text-align: center;
+    padding: 20px;
+    background-color: white;
+}
+
+.comment-footer {
+    position: relative;
+    width: 100%;
+    min-height: 42px;
+    
+    .status_box,
+    .cancel-button {
+        float: left;
+        display: inline-block;
+    }
+    
+    .action-buttons {
+        float: right;
+        display: inline-block;
+    }
+}
+
+.comment-form {
+
+    .comment {
+        margin-left: 10px;
+    }
+
+    .comment-help {
+        color: @grey4;
+        padding: 5px 0 5px 0;
+    }
+
+    .comment-title {
+        padding: 5px 0 5px 0;
+    }
+
+    .comment-button {
+        display: inline-block;
+    }
+
+    .comment-button .comment-button-input {
+        margin-right: 0;
+    }
+
+    .comment-footer {
+        margin-bottom: 110px;
+    }
+}
+
+
+.comment-form-login {
+    .comment-help {
+        padding: 0.9em; //same as the button
+    }
+
+    div.clearfix { 
+        clear: both;
+        width: 100%;
+        display: block;
+    }
+}
+
+.preview-box {
+    padding: 10px;
+    min-height: 100px;
+    margin-bottom: 15px;
+    background-color: white;
+    border: @border-thickness solid #ccc;
+    .border-radius(@border-radius);
+    .box-sizing(border-box);
+}
+
+.add-another-button {
+    margin-left: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.comment .buttons {
+    float: right;
+    margin: -1px 0px 0px 0px;
+}
+
+// Inline Comment Form
+.injected_diff .comment-inline-form,
+.comment-inline-form {
+    background-color: @grey6;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.inline-form {
+    padding: 10px 7px;
+}
+
+.inline-form div {
+    max-width: 100%;
+}
+
+.overlay {
+    display: none;
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 16px;
+    background: none repeat scroll 0 0 white;
+
+    &.submitting {
+        display: block;
+        opacity: 0.5;
+        z-index: 100;
+    }
+}
+.comment-inline-form .overlay.submitting .overlay-text {
+    margin-top: 5%;
+}
+
+.comment-inline-form .clearfix,
+.comment-form .clearfix {
+    .border-radius(@border-radius);
+    margin: 0px;
+}
+
+.hide-inline-form-button {
+    margin-left: 5px;
+}
+.comment-button .hide-inline-form {
+    background: white;
+}

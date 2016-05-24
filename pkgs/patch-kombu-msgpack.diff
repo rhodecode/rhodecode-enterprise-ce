@@ -1,0 +1,12 @@
+diff -rup kombu-1.5.1-orig/kombu/serialization.py kombu-1.5.1/kombu/serialization.py
+--- kombu-1.5.1-orig/kombu/serialization.py	2016-03-09 15:11:34.000000000 +0100
++++ kombu-1.5.1/kombu/serialization.py	2016-03-09 15:19:20.000000000 +0100
+@@ -318,7 +318,7 @@ def register_msgpack():
+     """See http://msgpack.sourceforge.net/"""
+     try:
+         import msgpack
+-        registry.register('msgpack', msgpack.packs, msgpack.unpacks,
++        registry.register('msgpack', msgpack.packb, msgpack.unpackb,
+                 content_type='application/x-msgpack',
+                 content_encoding='binary')
+     except ImportError:

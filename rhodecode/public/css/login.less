@@ -1,0 +1,297 @@
+//LOGIN
+
+
+.loginbox {
+    max-width: 65%;
+    margin: @pagepadding auto;
+    font-family: @text-light;
+    border: @border-thickness solid @grey5;
+    box-sizing: border-box;
+
+    @media (max-width:1200px) {
+        max-width: 85%;
+    }
+
+    @media (max-width:768px) {
+        max-width: 100%;
+        width: 100%;
+        margin: 0;
+    }
+
+    .title {
+        float: none;
+    }
+
+    .header {
+        width: 100%;
+        padding: 0 35px;
+        box-sizing: border-box;
+
+        .title {
+            padding: 0;
+        }
+    }
+
+    .loginwrapper {
+        float: left;
+        height: 100%;
+        width: 100%;
+        padding: 35px 55px 35px 0;
+        background-color: white;
+        box-sizing: border-box;
+
+        @media (max-width:414px) {
+            padding: 35px;
+        }
+    }
+
+    .left-column {
+        float: left;
+        position: relative;
+        width: 50%;
+        height: 100%;
+
+        @media (max-width:414px) {
+            display:none;
+        }
+    }
+
+    .right-column {
+        float: right;
+        position: relative;
+        width: 50%;
+
+        @media (max-width:414px) {
+            width: 100%;
+        }
+    }
+
+    .sign-in-image {
+        display: block;
+        width: 65%;
+        margin: 5% auto;
+    }
+
+    .sign-in-title {
+        h1 {
+            margin: 0;
+        }
+
+        h4 {
+            margin: @padding*2 0;
+        }
+    }
+
+    .form {
+        label {
+            display: block;
+        }
+
+        input {
+            width: 100%;
+            margin: 0 10% @padding 0;
+            .box-sizing(border-box) ;
+
+            &[type="checkbox"] {
+                clear: both;
+                width: auto;
+                margin: 0 1em @padding 0;
+            }
+        }
+        
+        .checkbox {
+            display: inline;
+            width: auto;
+        }
+
+        .sign-in {
+            clear: both;
+            width: 100%;
+            margin: @padding 0;
+        }
+    }
+    .register_message,
+    .activation_msg {
+        padding: 0 0 @padding;
+    }
+
+    .buttons,
+    .links {
+        padding: 0;
+    }
+
+    .buttons {
+        input {
+            margin-right: 0;
+            .box-sizing(border-box);
+        }
+
+        #sign_up, #send {
+            width: 100%;
+        }
+    }
+
+    .fields {
+        .field.field-compact {
+            margin-bottom: 0px;
+        }
+
+        .buttons {
+            margin: 0;
+        }
+
+        .field {
+            margin-bottom: 15px;
+
+            input {
+                width: 100%;
+                .box-sizing(border-box);
+            }
+
+            .input {
+                margin-left: 0;
+            }
+
+            .label {
+                padding-top: 0;
+            }
+        }
+    }
+
+    .checkbox {
+        margin:  0 0 @textmargin 0;
+
+        input[type="checkbox"] {
+            width: auto;
+        }
+
+        label {
+            padding: 0;
+            min-height: 0;
+        }
+    }
+
+    .activation_msg {
+        padding: @padding 0 0;
+        color: @grey4;
+    }
+
+    .links {
+        float: right;
+        margin: 0;
+        padding: 0;
+        line-height: 1;
+
+        p {
+            float: right;
+            margin: 0;
+            line-height: 1.5em;
+        }
+    }
+}
+
+.user-menu.submenu {
+    right: 0; 
+    left: auto;
+}
+#quick_login {
+    left: auto;
+    right: 0;
+    padding: @menupadding;
+    z-index: 999;
+    overflow: hidden;
+    background-color: @grey6;
+    color: @grey2;
+
+    h4 {
+        margin-bottom: 12px;
+    }
+
+    .form {
+        width: auto;
+    }
+
+    label, .field {
+        margin-bottom: 0;
+    }
+
+    .label {
+        padding-top: 0;
+    }
+
+    input {
+        min-width: 215px;
+        margin: 8px 0 @padding;
+    }
+
+    input[type="submit"] {
+        &:extend(.btn-primary);
+        width:100%;
+        min-width: 0;
+    }
+
+    .forgot_password,
+    .buttons .register {
+        a {
+            color: @rcblue;
+    
+            &:hover {
+                color: @rcdarkblue;
+            }
+        }
+    }
+
+    .buttons {
+        margin: 0;
+    }
+
+    .buttons a {
+        padding: 8px 0;
+        line-height: 1.4em;
+        color: @grey4;
+
+        &:hover {
+            color: @grey2;
+        }
+    }
+
+    #sign_in {
+        margin-bottom: 0
+    }
+
+    .big_gravatar {
+        float: left;
+        display: block;
+        margin-top: .5em;
+    }
+
+    .full_name,
+    .email {
+        margin: 0 0 0 65px;
+    }
+
+    .email {
+        font-family: @text-light;
+    }
+
+    ol.links {
+        clear:both;
+        margin: 0;
+        padding: @padding 0 0 0;
+
+        li {
+            border-top: @border-thickness solid @grey5;
+
+            input {
+                margin: @padding 0 0 0;
+            }
+        }
+    }
+}
+.submenu #quick_login li:hover {
+    background-color: transparent;
+}
+
+#quick_login_link:hover + #quick_login {
+    display: block;
+}

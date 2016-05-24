@@ -1,0 +1,542 @@
+//
+// Typography
+// modified from Bootstrap
+// --------------------------------------------------
+
+// Base
+body {
+    font-size: @basefontsize;
+    font-family: @text-light;
+    letter-spacing: .02em;
+    color: @grey2;
+}
+
+#content, label{
+  font-size: @basefontsize;
+}
+
+label {
+  color: @grey2;
+}
+
+::selection { background: @rchighlightblue; }
+
+// Headings
+// -------------------------
+
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  margin: 0 0 @textmargin 0;
+  padding: 0;
+  line-height: 1.8em;
+  color: @text-color;
+  a {
+    color: @rcblue;
+  }
+}
+
+h1, .h1 { font-size: 1.54em; font-family: @text-bold; }
+h2, .h2 { font-size: 1.23em; font-family: @text-semibold; }
+h3, .h3 { font-size: 1.23em; font-family: @text-regular; }
+h4, .h4 { font-size: 1em;    font-family: @text-bold; }
+h5, .h5 { font-size: 1em;    font-family: @text-bold-italic; }
+h6, .h6 { font-size: 1em;    font-family: @text-bold-italic; }
+
+// Breadcrumbs
+.breadcrumbs {
+    &:extend(h1);
+    margin: 0;
+}
+
+.breadcrumbs_light {
+  float:left;
+  margin: @padding 0;
+}
+
+// Body text
+// -------------------------
+
+p {
+    margin: 0 0 @textmargin 0;
+    padding: 0;
+    line-height: 2em;
+}
+
+.lead {
+  margin-bottom: @textmargin;
+  font-weight: 300;
+  line-height: 1.4;
+
+  @media (min-width: @screen-sm-min) {
+    font-size: (@basefontsize * 1.5);
+  }
+}
+
+a,
+.link {
+    color: @rcblue;
+    text-decoration: none;
+    outline: none;
+    cursor: pointer;
+
+    &:focus {
+        outline: none;
+    }
+
+    &:hover {
+        color: @rcdarkblue;
+    }
+}
+
+img {
+    border: none;
+    outline: none;
+}
+
+strong {
+  font-family: @text-bold;
+}
+
+em {
+  font-family: @text-italic;
+}
+
+strong em,
+em strong {
+  font-family: @text-bold-italic;
+}
+
+//TODO: lisa: b and i are depreciated, but we are still using them in places.
+//            Should probably make some decision whether to keep or lose these.
+b {
+
+}
+
+i {
+    font-style: normal;
+}
+
+label {
+    color: @text-color;
+
+    input[type="checkbox"] {
+        margin-right: 1em;
+    }
+    input[type="radio"] {
+        margin-right: 1em;
+    }
+}
+
+code,
+.code {
+  font-size: .95em;
+  font-family: "Lucida Console", Monaco, monospace;
+  color: @grey3;
+
+  a {
+      color: lighten(@rcblue,10%)
+  }
+}
+
+pre {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    font-size: @basefontsize*.95;
+    line-height: 1.4em;
+    font-family: "Lucida Console", Monaco, monospace;
+    color: @grey3;
+}
+
+// Emphasis & misc
+// -------------------------
+
+small,
+.small {
+  font-size: 75%;
+  font-weight: normal;
+  line-height: 1em;
+}
+
+mark,
+.mark {
+  background-color: @rclightblue;
+  padding: .2em;
+}
+
+// Alignment
+.text-left           { text-align: left; }
+.text-right          { text-align: right; }
+.text-center         { text-align: center; }
+.text-justify        { text-align: justify; }
+.text-nowrap         { white-space: nowrap; }
+
+// Transformation
+.text-lowercase      { text-transform: lowercase; }
+.text-uppercase      { text-transform: uppercase; }
+.text-capitalize     { text-transform: capitalize; }
+
+// Contextual colors
+.text-muted {
+  color: @grey4;
+}
+.text-primary {
+  color: @rcblue;
+}
+.text-success {
+  color: @alert1;
+}
+.text-info {
+  color: @alert4;
+}
+.text-warning {
+  color: @alert3;
+}
+.text-danger {
+  color: @alert2;
+}
+
+// Contextual backgrounds
+.bg-primary {
+  background-color: white;
+}
+.bg-success {
+  background-color: @alert1;
+}
+.bg-info {
+  background-color: @alert4;
+}
+.bg-warning {
+  background-color: @alert3;
+}
+.bg-danger {
+  background-color: @alert2;
+}
+
+
+// Page header
+// -------------------------
+
+.page-header {
+  margin: @pagepadding 0 @textmargin;
+  border-bottom: @border-thickness solid @grey5;
+}
+
+.title {
+    clear: both;
+    float: left;
+    width: 100%;
+    margin: @pagepadding 0 @pagepadding;
+
+    .breadcrumbs{
+        float: left;
+        clear: both;
+        width: 700px;
+        margin: 0;
+
+        .q_filter_box {
+          margin-right: @padding;
+        }
+    }
+
+    h1 a {
+        color: @rcblue;
+    }
+
+    input{
+        margin-right: @padding;
+    }
+
+    h5, .h5 {
+        color: @grey1;
+        margin-bottom: @space;
+
+        span {
+            display: inline-block;
+        }
+    }
+
+    p {
+      margin-bottom: 0;
+    }
+
+    .links{
+        float: right;
+        display: inline;
+        margin: 0;
+        padding-left: 0;
+        list-style: none;
+        text-align: right;
+
+        li:before { content: none; }
+
+        a {
+            display: inline-block;
+            margin-left: @textmargin/2;
+        }
+    }
+
+    .title-content {
+      float: left;
+      margin: 0;
+      padding: 0;
+
+      & + .breadcrumbs {
+        margin-top: @padding;
+      }
+
+      & + .links {
+        margin-top: -@button-padding;
+
+        & + .breadcrumbs {
+          margin-top: @padding;
+        }
+      }
+    }
+
+    .title-main {
+      font-size: @repo-title-fontsize;
+    }
+
+    .title-description {
+      margin-top: .5em;
+    }
+
+    .q_filter_box {
+      width: 200px;
+    }
+
+}
+
+#readme .title {
+  text-transform: none;
+}
+
+// Lists
+// -------------------------
+
+// Unordered and Ordered lists
+ul,
+ol {
+  margin-top: 0;
+  margin-bottom: @textmargin;
+  ul,
+  ol {
+    margin-bottom: 0;
+  }
+}
+
+li {
+  line-height: 2em;
+}
+
+ul li {
+  position: relative;
+  display: block;
+  list-style-type: none;
+
+  &:before {
+    content: "\2014\00A0";
+    position: absolute;
+    top: 0;
+    left: -1.25em;
+  }
+
+  p:first-child {
+    display:inline;
+  }
+}
+
+// List options
+
+// Unstyled keeps list items block level, just removes default browser padding and list-style
+.list-unstyled {
+  padding-left: 0;
+  list-style: none;
+  li:before { content: none; }
+}
+
+// Inline turns list items into inline-block
+.list-inline {
+  .list-unstyled();
+  margin-left: -5px;
+
+  > li {
+    display: inline-block;
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+}
+
+// Description Lists
+
+dl {
+  margin-top: 0; // Remove browser default
+  margin-bottom: @textmargin;
+}
+
+dt,
+dd {
+  line-height: 1.4em;
+}
+
+dt {
+  margin: @textmargin 0 0 0;
+  font-family: @text-bold;
+}
+
+dd {
+  margin-left: 0; // Undo browser default
+}
+
+// Horizontal description lists
+// Defaults to being stacked without any of the below styles applied, until the
+// grid breakpoint is reached (default of ~768px).
+// These are used in forms as well; see style guide.
+// TODO: lisa: These should really not be used in forms.
+
+.dl-horizontal {
+
+    overflow: hidden;
+    margin-top: -5px;
+    margin-bottom: @space;
+
+    dt, dd {
+      float: left;
+      margin: 5px 0 5px 0;
+    }
+
+    dt {
+        clear: left;
+        width: @label-width - @form-vertical-margin;
+    }
+
+    dd {
+        &:extend(.clearfix all); // Clear the floated `dt` if an empty `dd` is  present
+        margin-left: @form-vertical-margin;
+        max-width: @form-max-width - (@label-width - @form-vertical-margin) - @form-vertical-margin;
+    }
+
+    pre {
+        margin: 0;
+    }
+
+    &.settings {
+      dt {
+        text-align: left;
+      }
+    }
+
+    @media (min-width: 768px) {
+      dt {
+        float: left;
+        width: 180px;
+        clear: left;
+        text-align: right;
+      }
+      dd {
+        margin-left: 20px;
+      }
+    }
+}
+
+
+// Misc
+// -------------------------
+
+// Abbreviations and acronyms
+abbr[title],
+abbr[data-original-title] {
+  cursor: help;
+  border-bottom: @border-thickness dotted @grey4;
+}
+.initialism {
+  font-size: 90%;
+  text-transform: uppercase;
+}
+
+// Blockquotes
+blockquote {
+  padding: 1em 2em;
+  margin: 0 0 2em;
+  font-size: @basefontsize;
+  border-left: 2px solid @grey6;
+
+  p,
+  ul,
+  ol {
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  footer,
+  small,
+  .small {
+    display: block;
+    font-size: 80%;
+
+    &:before {
+      content: '\2014 \00A0'; // em dash, nbsp
+    }
+  }
+}
+
+// Opposite alignment of blockquote
+//
+.blockquote-reverse,
+blockquote.pull-right {
+  padding-right: 15px;
+  padding-left: 0;
+  border-right: 5px solid @grey6;
+  border-left: 0;
+  text-align: right;
+
+  // Account for citation
+  footer,
+  small,
+  .small {
+    &:before { content: ''; }
+    &:after {
+      content: '\00A0 \2014'; // nbsp, em dash
+    }
+  }
+}
+
+// Addresses
+address {
+  margin-bottom: 2em;
+  font-style: normal;
+  line-height: 1.8em;
+}
+
+.error-message {
+    display: block;
+    margin: @padding/3 0;
+    color: @alert2;
+}
+
+.issue-tracker-link {
+    color: @rcblue;
+}
+
+.info_text{
+  font-size: @basefontsize;
+  color: @grey4;
+  font-family: @text-regular;
+}
+
+// help block text
+.help-block {
+  display: block;
+  margin: 0 0 @padding;
+  color: @grey4;
+  font-family: @text-light;
+}
+
+.error-message {
+  display: block;
+  margin: @padding/3 0;
+  color: @alert2;
+}

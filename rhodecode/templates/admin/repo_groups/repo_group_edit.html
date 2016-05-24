@@ -1,0 +1,56 @@
+## -*- coding: utf-8 -*-
+<%inherit file="/base/base.html"/>
+
+<%def name="title()">
+    ${_('%s repository group settings') % c.repo_group.name}
+    %if c.rhodecode_name:
+        &middot; ${h.branding(c.rhodecode_name)}
+    %endif
+</%def>
+
+<%def name="breadcrumbs_links()">
+    ${h.link_to(_('Admin'),h.url('admin_home'))}
+    &raquo;
+    ${h.link_to(_('Repository Groups'),h.url('repo_groups'))}
+    %if c.repo_group.parent_group:
+        &raquo; ${h.link_to(c.repo_group.parent_group.name,h.url('repo_group_home',group_name=c.repo_group.parent_group.group_name))}
+    %endif
+    &raquo; ${c.repo_group.name}
+</%def>
+
+<%def name="breadcrumbs_side_links()">
+    <ul class="links">
+      <li>
+          <a href="${h.url('new_repo_group', parent_group=c.repo_group.group_id)}" class="btn btn-small btn-success">${_(u'Add Child Group')}</a>
+      </li>
+    </ul>
+</%def>
+
+<%def name="menu_bar_nav()">
+    ${self.menu_items(active='admin')}
+</%def>
+
+<%def name="main()">
+<div class="box">
+  <div class="title">
+      ${self.breadcrumbs()}
+      ${self.breadcrumbs_side_links()}
+  </div>
+
+  <div class="sidebar-col-wrapper">
+    ##main
+    <div class="sidebar">
+        <ul class="nav nav-pills nav-stacked">
+          <li class="${'active' if c.active=='settings' else ''}"><a href="${h.url('edit_repo_group', group_name=c.repo_group.group_name)}">${_('Settings')}</a></li>
+          <li class="${'active' if c.active=='perms' else ''}"><a href="${h.url('edit_repo_group_perms', group_name=c.repo_group.group_name)}">${_('Permissions')}</a></li>
+          <li class="${'active' if c.active=='advanced' else ''}"><a href="${h.url('edit_repo_group_advanced', group_name=c.repo_group.group_name)}">${_('Advanced')}</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content-full-width">
+        <%include file="/admin/repo_groups/repo_group_edit_${c.active}.html"/>
+    </div>
+
+  </div>
+</div>
+</%def>

@@ -1,0 +1,2076 @@
+//Primary CSS
+
+//--- IMPORTS ------------------//
+
+@import 'helpers';
+@import 'mixins';
+@import 'rcicons';
+@import 'fonts';
+@import 'variables';
+@import 'bootstrap-variables';
+@import 'form-bootstrap';
+@import 'codemirror';
+@import 'legacy_code_styles';
+@import 'progress-bar';
+
+@import 'type';
+@import 'alerts';
+@import 'buttons';
+@import 'tags';
+@import 'code-block';
+@import 'examples';
+@import 'login';
+@import 'main-content';
+@import 'select2';
+@import 'comments';
+@import 'panels-bootstrap';
+@import 'panels';
+
+
+//--- BASE ------------------//
+.noscript-error {
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 101;
+    text-align: center;
+    font-family: @text-semibold;
+    font-size: 120%;
+    color: white;
+    background-color: @alert2;
+    padding: 5px 0 5px 0;
+}
+
+html {
+    display: table;
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    display: table-cell;
+    width: 100%;
+}
+
+//--- LAYOUT ------------------//
+
+.hidden{
+	display: none !important;
+}
+
+.box{
+	float: left;
+	width: 100%;
+}
+
+.browser-header {
+    clear: both;
+}
+.main {
+  clear: both;
+  padding:0 0 @pagepadding;
+  height: auto;
+
+	&:after { //clearfix
+		content:"";
+		clear:both;
+		width:100%;
+		display:block;
+	}
+}
+
+.action-link{
+	margin-left: @padding;
+	padding-left: @padding;
+	border-left: @border-thickness solid @border-default-color;
+}
+
+input + .action-link, .action-link.first{
+	border-left: none;
+}
+
+.action-link.last{
+	margin-right: @padding;
+	padding-right: @padding;
+}
+
+.action-link.active,
+.action-link.active a{
+	color: @grey4;
+}
+
+ul.simple-list{
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.main-content {
+	padding-bottom: @pagepadding;
+}
+
+.wrapper {
+	position: relative;
+	max-width: @wrapper-maxwidth;
+	margin: 0 auto;
+}
+
+#content {
+    clear: both;
+    padding: 0 @contentpadding;
+}
+
+.advanced-settings-fields{
+	input{
+		margin-left: @textmargin;
+		margin-right: @padding/2;
+	}
+}
+
+.cs_files_title {
+    margin: @pagepadding 0 0;
+}
+
+input.inline[type="file"] {
+	display: inline;
+}
+
+.error_page {
+    margin: 10% auto;
+
+    h1 {
+        color: @grey2;
+    }
+    
+    .error-branding {
+        font-family: @text-semibold;
+        color: @grey4;
+    }
+
+    .error_message {
+        font-family: @text-regular;
+    }
+
+    .sidebar {
+        min-height: 275px;
+        margin: 0;
+        padding: 0 0 @sidebarpadding @sidebarpadding;
+        border: none;
+    }
+
+    .main-content {
+        position: relative;
+        margin: 0 @sidebarpadding @sidebarpadding;
+        padding: 0 0 0 @sidebarpadding;
+        border-left: @border-thickness solid @grey5;
+
+        @media (max-width:767px) {
+            clear: both;
+            width: 100%;
+            margin: 0;
+            border: none;
+        }
+    }
+
+    .inner-column {
+        float: left;
+        width: 29.75%;
+        min-height: 150px;
+        margin: @sidebarpadding 2% 0 0;
+        padding: 0 2% 0 0;
+        border-right: @border-thickness solid @grey5;
+
+        @media (max-width:767px) {
+            clear: both;
+            width: 100%;
+            border: none;
+        }
+
+        ul {
+            padding-left: 1.25em;
+        }
+
+        &:last-child {
+            margin: @sidebarpadding 0 0;
+            border: none;
+        }
+
+        h4 {
+            margin: 0 0 @padding;
+            font-family: @text-semibold;
+        }
+    }
+}
+.error-page-logo {
+    width: 130px;
+    height: 160px;
+}
+
+// HEADER
+.header {
+
+    // TODO: johbo: Fix login pages, so that they work without a min-height
+    // for the header and then remove the min-height. I chose a smaller value
+    // intentionally here to avoid rendering issues in the main navigation.
+    min-height: 49px;
+
+	position: relative;
+	vertical-align: bottom;
+	padding: 0 @header-padding;
+	background-color: @grey2;
+	color: @grey5;
+
+	.title {
+		overflow: visible;
+	}
+
+	&:before,
+	&:after {
+		content: "";
+		clear: both;
+		width: 100%;
+	}
+
+	// TODO: johbo: Avoids breaking "Repositories" chooser
+	.select2-container .select2-choice .select2-arrow {
+	    display: none;
+	}
+}
+
+#header-inner {
+	&.title {
+		margin: 0;
+	}
+	&:before,
+	&:after {
+		content: "";
+		clear: both;
+	}
+}
+
+// Gists
+#files_data {
+    clear: both; //for firefox
+}
+#gistid {
+    margin-right: @padding;
+}
+
+// Global Settings Editor
+.textarea.editor {
+	float: left;
+	position: relative;
+	max-width: @texteditor-width;
+
+	select {
+		position: absolute;
+		top:10px;
+		right:0;
+	}
+
+	.CodeMirror {
+		margin: 0;
+	}
+
+	.help-block {
+		margin: 0 0 @padding;
+		padding:.5em;
+		background-color: @grey6;
+	}
+}
+
+ul.auth_plugins {
+	margin: @padding 0 @padding @legend-width;
+	padding: 0;
+
+	li {
+		margin-bottom: @padding;
+        line-height: 1em;
+		list-style-type: none;
+
+		.auth_buttons .btn {
+			margin-right: @padding;
+		}
+
+        &:before { content: none; }
+	}
+}
+
+// Pull Requests
+
+.pullrequestlist {
+	max-width: @pullrequest-width;
+	margin-bottom: @space;
+
+    // Tweaks for "My Account" / "Pull requests"
+    .prwrapper {
+        clear: left;
+
+        .pr {
+            margin: 0;
+            padding: 0;
+            border-bottom: none;
+        }
+
+        // TODO: johbo: Replace with something that makes up an inline form or
+        // similar.
+        .repolist_actions {
+            display: inline-block;
+        }
+    }
+
+}
+
+.pullrequests_section_head {
+	display: block;
+	clear: both;
+	margin: @padding 0;
+	font-family: @text-bold;
+}
+
+.pr-origininfo, .pr-targetinfo {
+    position: relative;
+
+    .tag {
+        display: inline-block;
+        margin: 0 1em .5em 0;
+    }
+
+    .clone-url {
+        display: inline-block;
+        margin: 0 0 .5em 0;
+        padding: 0;
+        line-height: 1.2em;
+    }
+}
+
+.pr-pullinfo {
+    clear: both;
+    margin: .5em 0;
+}
+
+#pr-title-input {
+    width: 72%;
+    font-size: 1em;
+    font-family: @text-bold;
+    margin: 0;
+    padding: 0 0 0 @padding/4;
+    line-height: 1.7em;
+    color: @text-color;
+    letter-spacing: .02em;
+}
+
+#pullrequest_title {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#pr_open_message {
+    border: @border-thickness solid #fff;
+    border-radius: @border-radius;
+    padding: @padding-large-vertical @padding-large-vertical @padding-large-vertical 0;
+    text-align: right;
+    overflow: hidden;
+}
+
+.pr-submit-button {
+    float: right;
+    margin: 0 0 0 5px;
+}
+
+.pr-spacing-container {
+    padding: 20px;
+    clear: both
+}
+
+#pr-description-input {
+    margin-bottom: 0;
+}
+
+.pr-description-label {
+    vertical-align: top;
+}
+
+.perms_section_head {
+    min-width: 625px;
+
+    h2 {
+        margin-bottom: 0;
+    }
+
+    .label-checkbox {
+        float: left;
+    }
+
+    &.field {
+        margin: @space 0 @padding;
+    }
+
+    &:first-child.field {
+        margin-top: 0;
+
+        .label {
+            margin-top: 0;
+            padding-top: 0;
+        }
+
+        .radios {
+            padding-top: 0;
+        }
+    }
+
+    .radios {
+	   float: right;
+        position: relative;
+        width: 405px;
+    }
+}
+
+//--- MODULES ------------------//
+
+
+// Fixed Sidebar Column
+.sidebar-col-wrapper {
+    padding-left: @sidebar-all-width;
+
+    .sidebar {
+        width: @sidebar-width;
+        margin-left: -@sidebar-all-width;
+    }
+}
+
+.sidebar-col-wrapper.scw-small {
+    padding-left: @sidebar-small-all-width;
+
+    .sidebar {
+        width: @sidebar-small-width;
+        margin-left: -@sidebar-small-all-width;
+    }
+}
+
+
+// FOOTER
+#footer {
+	padding: 0;
+	text-align: center;
+	vertical-align: middle;
+	color: @grey2;
+	background-color: @grey6;
+
+	p {
+		margin: 0;
+		padding: 1em;
+		line-height: 1em;
+	}
+
+	.server-instance { //server instance
+		display: none;
+	}
+
+	.title {
+		float: none;
+		margin: 0 auto;
+	}
+}
+
+button.close {
+	padding: 0;
+	cursor: pointer;
+	background: transparent;
+	border: 0;
+	.box-shadow(none);
+	-webkit-appearance: none;
+}
+
+.close {
+	float: right;
+	font-size: 21px;
+	font-family: @text-bootstrap;
+	line-height: 1em;
+	font-weight: bold;
+	color: @grey2;
+
+	&:hover,
+	&:focus {
+		color: @grey1;
+		text-decoration: none;
+		cursor: pointer;
+	}
+}
+
+// GRID
+.sorting,
+.sorting_desc,
+.sorting_asc {
+	cursor: pointer;
+}
+.sorting_desc:after {
+	content: "\00A0\25B2";
+	font-size: .75em;
+}
+.sorting_asc:after {
+	content: "\00A0\25BC";
+	font-size: .68em;
+}
+
+
+.user_auth_tokens {
+
+    &.truncate {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+	.fields .field .input {
+		margin: 0;
+	}
+
+	input#description {
+		width: 100px;
+		margin: 0;
+	}
+
+	.drop-menu {
+	    // TODO: johbo: Remove this, should work out of the box when
+	    // having multiple inputs inline
+		margin: 0 0 0 5px;
+	}
+}
+#user_list_table {
+  .closed {
+    background-color: @grey6;
+  }
+}
+
+
+input {
+	&.disabled {
+		opacity: .5;
+	}
+}
+
+// remove extra padding in firefox
+input::-moz-focus-inner { border:0; padding:0 }
+
+.adjacent input {
+	margin-bottom: @padding;
+}
+
+.permissions_boxes {
+	display: block;
+}
+
+//TODO: lisa: this should be in tables
+.show_more_col {
+    width: 20px;
+}
+
+//FORMS
+
+.medium-inline,
+input#description.medium-inline {
+	display: inline;
+	width: @medium-inline-input-width;
+	min-width: 100px;
+}
+
+select {
+	//reset
+	-webkit-appearance: none;
+	-moz-appearance: none;
+
+	display: inline-block;
+	height: 28px;
+	width: auto;
+	margin: 0 @padding @padding 0;
+	padding: 0 18px 0 8px;
+	line-height:1em;
+	font-size: @basefontsize;
+	border: @border-thickness solid @rcblue;
+	background:white url("../images/dt-arrow-dn.png") no-repeat 100% 50%;
+	color: @rcblue;
+
+	&:after {
+		content: "\00A0\25BE";
+	}
+
+	&:focus {
+		outline: none;
+	}
+}
+
+option {
+	&:focus {
+		outline: none;
+	}
+}
+
+input,
+textarea {
+	padding: @input-padding;
+	border: @input-border-thickness solid @border-highlight-color;
+	.border-radius (@border-radius);
+	font-family: @text-light;
+	font-size: @basefontsize;
+
+	&.input-sm {
+		padding: 5px;
+	}
+
+	&#description {
+		min-width: @input-description-minwidth;
+		min-height: 1em;
+		padding: 10px;
+	}
+}
+
+.field-sm {
+    input,
+    textarea {
+        padding: 5px;
+    }
+}
+
+textarea {
+	display: block;
+	clear: both;
+	width: 100%;
+	min-height: 100px;
+	margin-bottom: @padding;
+    .box-sizing(border-box);
+    overflow: auto;
+}
+
+label {
+	font-family: @text-light;
+}
+
+// GRAVATARS
+// centers gravatar on username to the right
+
+.gravatar {
+    display: inline;
+    min-width: 16px;
+    min-height: 16px;
+    margin: -5px 0;
+    padding: 0;
+    line-height: 1em;
+    border: 1px solid @grey4;
+
+    &.gravatar-large {
+        margin: -0.5em .25em -0.5em 0;
+    }
+
+    & + .user {
+        display: inline;
+        margin: 0;
+        padding: 0 0 0 .17em;
+        line-height: 1em;
+    }
+}
+
+.rc-user { // gravatar + user wrapper
+    position: relative;
+    min-width: 100px;
+    max-width: 200px;
+    min-height: (@gravatar-size + @border-thickness * 2); // account for border
+    display: block;
+    padding: 0 0 0 (@gravatar-size  + @basefontsize/2 + @border-thickness * 2);
+
+
+    .gravatar {
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        min-width:  @gravatar-size;
+        min-height: @gravatar-size;
+        margin: 0;
+    }
+
+    .user {
+        display: block;
+        max-width: 175px;
+        padding-top: 2px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+.gist-gravatar,
+.journal_container {
+    .gravatar-large {
+        margin: 0 .5em -10px 0;
+    }
+}
+
+
+// ADMIN SETTINGS
+
+// Tag Patterns
+.tag_patterns {
+	.tag_input {
+		margin-bottom: @padding;
+	}
+}
+
+.locked_input {
+    position: relative;
+
+    input {
+        display: inline;
+        margin-top: 3px;
+    }
+
+    br {
+        display: none;
+    }
+
+    .error-message {
+        float: left;
+        width: 100%;
+    }
+
+    .lock_input_button {
+        display: inline;
+    }
+
+    .help-block {
+        clear: both;
+    }
+}
+
+// Notifications
+
+.notifications_buttons {
+	margin: 0 0 @space 0;
+	padding: 0;
+
+	.btn {
+		display: inline-block;
+	}
+}
+
+.notification-list {
+
+	div {
+		display: inline-block;
+		vertical-align: middle;
+	}
+
+	.container {
+		display: block;
+		margin: 0 0 @padding 0;
+	}
+
+	.delete-notifications {
+		margin-left: @padding;
+		text-align: right;
+        cursor: pointer;
+	}
+
+	.read-notifications {
+		margin-left: @padding/2;
+		text-align: right;
+		width: 35px;
+        cursor: pointer;
+	}
+
+	.icon-minus-sign {
+		color: @alert2;
+	}
+
+	.icon-ok-sign {
+		color: @alert1;
+	}
+}
+
+.user_settings {
+	float: left;
+	clear: both;
+	display: block;
+	width: 100%;
+
+	.gravatar_box {
+		margin-bottom: @padding;
+
+		&:after {
+			content: " ";
+			clear: both;
+			width: 100%;
+		}
+	}
+
+	.fields .field {
+		clear: both;
+	}
+}
+
+.advanced_settings {
+	margin-bottom: @space;
+
+	.help-block {
+		margin-left: 0;
+	}
+
+	button + .help-block {
+		margin-top: @padding;
+	}
+}
+
+// admin settings radio buttons and labels
+.label-2 {
+	float: left;
+	width: @label2-width;
+
+	label {
+		color: @grey1;
+	}
+}
+.checkboxes {
+	float: left;
+	width: @checkboxes-width;
+	margin-bottom: @padding;
+
+	.checkbox {
+		width: 100%;
+
+		label {
+			margin: 0;
+			padding: 0;
+		}
+	}
+
+	.checkbox + .checkbox {
+		display: inline-block;
+	}
+
+	label {
+		margin-right: 1em;
+	}
+}
+
+// CHANGELOG
+.container_header {
+    float: left;
+	display: block;
+	width: 100%;
+	margin: @padding 0 @padding;
+
+    #filter_changelog {
+        float: left;
+        margin-right: @padding;
+    }
+
+    .breadcrumbs_light {
+        display: inline-block;
+    }
+}
+
+.info_box {
+	float: right;
+}
+
+
+#graph_nodes {
+    padding-top: 43px;
+}
+
+#graph_content{
+
+    // adjust for table headers so that graph renders properly
+    //           #graph_nodes padding - table cell padding
+    padding-top: (@space - (@basefontsize * 2.4));
+
+    &.graph_full_width {
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
+#graph {
+    .flag_status {
+        margin: 0;
+    }
+
+    .pagination-left {
+        float: left;
+        clear: both;
+    }
+
+    .log-container {
+        max-width: 345px;
+
+        .message{
+            max-width: 340px;
+        }
+    }
+
+    .graph-col-wrapper {
+        padding-left: 110px;
+
+        #graph_nodes {
+            width: 100px;
+            margin-left: -110px;
+            float: left;
+            clear: left;
+        }
+    }
+}
+
+#filter_changelog {
+    float: left;
+}
+
+
+//--- THEME ------------------//
+
+#logo {
+	float: left;
+	margin: 9px 0 0 0;
+
+    .header {
+    	background-color: transparent;
+    }
+
+    a {
+    	display: inline-block;
+    }
+
+    img {
+    	height:30px;
+    }
+}
+
+.logo-wrapper {
+	float:left;
+}
+
+.branding{
+	float: left;
+	padding: 9px 2px;
+	line-height: 1em;
+	font-size: @navigation-fontsize;
+}
+
+img {
+	border: none;
+	outline: none;
+}
+ user-profile-header
+label {
+
+    input[type="checkbox"] {
+        margin-right: 1em;
+    }
+    input[type="radio"] {
+        margin-right: 1em;
+    }
+}
+
+.flag_status {
+    margin: 2px 8px 6px 2px;
+    &.under_review {
+        .circle(5px, @alert3);
+    }
+    &.approved {
+        .circle(5px, @alert1);
+    }
+    &.rejected,
+    &.forced_closed{
+        .circle(5px, @alert2);
+    }
+    &.not_reviewed {
+        .circle(5px, @grey5);
+    }
+}
+
+.flag_status_comment_box {
+	margin: 5px 6px 0px 2px;
+}
+.test_pattern_preview {
+	margin: @space 0;
+
+	p {
+        margin-bottom: 0;
+		border-bottom: @border-thickness solid @border-default-color;
+		color: @grey3;
+	}
+
+	.btn {
+		margin-bottom: @padding;
+	}
+}
+#test_pattern_result {
+    display: none;
+    &:extend(pre);
+    padding: .9em;
+    color: @grey3;
+    background-color: @grey7;
+    border-right: @border-thickness solid @border-default-color; 
+    border-bottom: @border-thickness solid @border-default-color; 
+    border-left: @border-thickness solid @border-default-color; 
+}
+
+#repo_vcs_settings {
+    #inherit_overlay_vcs_default {
+        display: none;
+    }
+    #inherit_overlay_vcs_custom {
+        display: custom;
+    }
+    &.inherited {
+        #inherit_overlay_vcs_default {
+            display: block;
+        }
+        #inherit_overlay_vcs_custom {
+            display: none;
+        }
+    }
+}
+
+.issue-tracker-link {
+	color: @rcblue;
+}
+
+// Issue Tracker Table Show/Hide
+#repo_issue_tracker {
+    #inherit_overlay {
+        display: none;
+    }
+    #custom_overlay {
+        display: custom;
+    }
+    &.inherited {
+        #inherit_overlay {
+            display: block;
+        }
+        #custom_overlay {
+            display: none;
+        }
+    }
+}
+table.issuetracker {
+    &.readonly {
+        tr, td {
+            color: @grey3;
+        }
+    }
+    .edit {
+        display: none;
+    }
+    .editopen {
+        .edit {
+            display: inline;
+        }
+        .entry {
+            display: none;
+        }
+    }
+    tr td.td-action {
+        min-width: 117px;
+    }
+    td input {
+        max-width: none;
+        min-width: 30px;
+        width: 80%;
+    }
+    .issuetracker_pref input {
+        width: 40%;
+    }
+    input.edit_issuetracker_update {
+        margin-right: 0;
+        width: auto;
+    }
+}
+
+//Permissions Settings
+#add_perm {
+    margin: 0 0 @padding;
+	cursor: pointer;
+}
+
+.perm_ac {
+    input {
+        width: 95%;
+    }
+}
+
+.autocomplete-suggestions {
+    width: auto !important; // overrides autocomplete.js
+    margin: 0;
+    border: @border-thickness solid @rcblue;
+    border-radius: @border-radius;
+    color: @rcblue;
+    background-color: white;
+}
+.autocomplete-selected {
+    background: #F0F0F0;
+}
+.ac-container-wrap {
+	margin: 0;
+	padding: 8px;
+	border-bottom: @border-thickness solid @rclightblue;
+	list-style-type: none;
+	cursor: pointer;
+
+		&:hover {
+			background-color: @rclightblue;
+	}
+
+	img {
+		margin-right: 1em;
+	}
+
+	strong {
+		font-weight: normal;
+	}
+}
+
+// Settings Dropdown
+.user-menu .container {
+    padding: 0 4px;
+    margin: 0;
+}
+
+.user-menu .gravatar {
+    cursor: pointer;
+}
+
+.codeblock {
+	margin-bottom: @padding;
+    clear: both;
+
+    .stats{
+        overflow: hidden;
+    }
+
+    .message{
+        textarea{
+            margin: 0;
+        }
+    }
+
+    .code-header {
+    	.stats {
+            line-height: 2em;
+
+    		.revision_id {
+    			margin-left: 0;
+    		}
+			.buttons {
+                padding-right: 0;
+			}
+    	}
+
+        .item{
+            margin-right: 0.5em;
+        }
+    }
+
+    #editor_container{
+        position: relative;
+        margin: @padding;
+    }
+}
+
+#file_history_container {
+    display: none;
+}
+
+.file-history-inner {
+    margin-bottom: 10px;
+}
+
+// Pull Requests
+.summary-details {
+    width: 72%;
+}
+.pr-summary {
+    border-bottom: @border-thickness solid @grey5;
+    margin-bottom: @space;
+}
+.reviewers-title {
+    width: 25%;
+    min-width: 200px;
+}
+.reviewers {
+    width: 25%;
+    min-width: 200px;
+}
+.reviewers ul li {
+    position: relative;
+    width: 100%;
+    margin-bottom: 8px;
+}
+.reviewers_member {
+    width: 100%;
+    overflow: auto;
+}
+.reviewer_status {
+    display: inline-block;
+    vertical-align: top;
+    width: 7%;
+    min-width: 20px;
+    height: 1.2em;
+    margin-top: 3px;
+    line-height: 1em;
+}
+
+.reviewer_name {
+    display: inline-block;
+    max-width: 83%;
+    padding-right: 20px;
+    vertical-align: middle;
+}
+
+.reviewer_member_remove {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 16px;
+    margin-bottom: 10px;
+    padding: 0;
+    color: black;
+}
+.reviewer_member_status {
+    margin-top: 5px;
+}
+.pr-summary #summary{
+    width: 100%;
+}
+.pr-summary .action_button:hover {
+    border: 0;
+    cursor: pointer;
+}
+.pr-details-title {
+    padding-bottom: 8px;
+    border-bottom: @border-thickness solid @grey5;
+    .action_button {
+        color: @rcblue;
+    }
+}
+.pr-details-content {
+    margin-top: @textmargin;
+    margin-bottom: @textmargin/2;
+}
+.pr-description {
+    white-space:pre-wrap;
+}
+.group_members {
+    margin-top: 0;
+    padding: 0;
+    list-style: outside none none;
+}
+.reviewer_ac .ac-input {
+    width: 92%;
+    margin-bottom: 1em;
+}
+#update_commits {
+    float: right;
+}
+.compare_view_commits tr{
+    height: 20px;
+}
+.compare_view_commits td {
+    vertical-align: top;
+    padding-top: 10px;
+}
+.compare_view_commits .author {
+    margin-left: 5px;
+}
+
+.compare_view_files {
+    width: 100%;
+
+    td {
+        vertical-align: middle;
+    }
+}
+
+.compare_view_filepath {
+    color: @grey1;
+}
+
+.show_more {
+    display: inline-block;
+    position: relative;
+    vertical-align: middle;
+    width: 4px;
+    height: @basefontsize;
+
+    &:after {
+        content: "\00A0\25BE";
+        display: inline-block;
+        width:10px;
+        line-height: 5px;
+        font-size: 12px;
+        cursor: pointer;
+    }
+}
+
+.journal_more .show_more {
+    display: inline;
+
+    &:after {
+        content: none;
+    }
+}
+
+.open .show_more:after,
+.select2-dropdown-open .show_more:after {
+    .rotate(180deg);
+    margin-left: 4px;
+}
+
+
+.compare_view_commits .collapse_commit:after {
+    cursor: pointer;
+    content: "\00A0\25B4";
+    margin-left: -3px;
+    font-size: 17px;
+    color: @grey4;
+}
+
+.diff_links {
+    margin-left: 8px;
+}
+
+p.ancestor {
+    margin: @padding 0;
+}
+
+.cs_icon_td input[type="checkbox"] {
+    display: none;
+}
+
+.cs_icon_td .expand_file_icon:after {
+    cursor: pointer;
+    content: "\00A0\25B6";
+    font-size: 12px;
+    color: @grey4;
+}
+
+.cs_icon_td .collapse_file_icon:after {
+    cursor: pointer;
+    content: "\00A0\25BC";
+    font-size: 12px;
+    color: @grey4;
+}
+
+/*new binary
+NEW_FILENODE = 1
+DEL_FILENODE = 2
+MOD_FILENODE = 3
+RENAMED_FILENODE = 4
+COPIED_FILENODE = 5
+CHMOD_FILENODE = 6
+BIN_FILENODE = 7
+*/
+.cs_files_expand {
+    font-size: @basefontsize + 5px;
+    line-height: 1.8em;
+    float: right;
+}
+
+.cs_files_expand span{
+    color: @rcblue;
+    cursor: pointer;
+}
+.cs_files {
+    clear: both;
+	padding-bottom: @padding;
+
+    .cur_cs {
+        margin: 10px 2px;
+        font-weight: bold;
+    }
+
+    .node {
+        float: left;
+    }
+
+    .changes {
+        float: right;
+        color: white;
+        font-size: @basefontsize - 4px;
+        margin-top: 4px;
+        opacity: 0.6;
+        filter: Alpha(opacity=60); /* IE8 and earlier */
+
+        .added {
+            background-color: @alert1;
+            float: left;
+            text-align: center;
+        }
+
+        .deleted {
+            background-color: @alert2;
+            float: left;
+            text-align: center;
+        }
+
+        .bin {
+            background-color: @alert1;
+            text-align: center;
+        }
+
+        /*new binary*/
+        .bin.bin1 {
+            background-color: @alert1;
+            text-align: center;
+        }
+
+        /*deleted binary*/
+        .bin.bin2 {
+            background-color: @alert2;
+            text-align: center;
+        }
+
+        /*mod binary*/
+        .bin.bin3 {
+            background-color: @grey2;
+            text-align: center;
+        }
+
+        /*rename file*/
+        .bin.bin4 {
+            background-color: @alert4;
+            text-align: center;
+        }
+
+        /*copied file*/
+        .bin.bin5 {
+            background-color: @alert4;
+            text-align: center;
+        }
+
+        /*chmod file*/
+        .bin.bin6 {
+            background-color: @grey2;
+            text-align: center;
+        }
+    }
+}
+
+.cs_files .cs_added, .cs_files .cs_A,
+.cs_files .cs_added, .cs_files .cs_M,
+.cs_files .cs_added, .cs_files .cs_D {
+    height: 16px;
+    padding-right: 10px;
+    margin-top: 7px;
+    text-align: left;
+}
+
+.cs_icon_td {
+  min-width: 16px;
+  width: 16px;
+}
+
+.pull-request-merge {
+    padding: 10px 0;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.pull-request-merge .pull-request-wrap {
+    height: 25px;
+    padding: 5px 0;
+}
+
+.pull-request-merge span {
+    margin-right: 10px;
+}
+#close_pull_request {
+    margin-right: 0px;
+}
+
+.empty_data {
+    color: @grey4;
+}
+
+#changeset_compare_view_content {
+    margin-bottom: @space;
+    clear: both;
+    width: 100%;
+    box-sizing: border-box;
+    .border-radius(@border-radius);
+
+    .help-block {
+        margin: @padding 0;
+        color: @text-color;
+    }
+
+    .empty_data {
+        margin: @padding 0;
+    }
+
+    .alert {
+        margin-bottom: @space;
+    }
+}
+
+.table_disp {
+	.status {
+		width: auto;
+
+		.flag_status {
+			float: left;
+		}
+	}
+}
+
+.status_box_menu {
+    margin: 0;
+}
+
+.notification-table{
+	margin-bottom: @space;
+	display: table;
+	width: 100%;
+
+	.container{
+		display: table-row;
+
+		.notification-header{
+			border-bottom: @border-thickness solid @border-default-color;
+		}
+
+		.notification-subject{
+			display: table-cell;
+		}
+	}
+}
+
+// Notifications
+.notification-header{
+	display: table;
+	width: 100%;
+	padding: floor(@basefontsize/2) 0;
+    line-height: 1em;
+
+	.desc, .delete-notifications, .read-notifications{
+		display: table-cell;
+		text-align: left;
+	}
+
+	.desc{
+		width: 1163px;
+	}
+
+	.delete-notifications, .read-notifications{
+		width: 35px;
+		min-width: 35px; //fixes when only one button is displayed
+	}
+}
+
+.notification-body {
+    .markdown-block,
+	.rst-block {
+		padding: @padding 0;
+	}
+
+	.notification-subject {
+		padding: @textmargin 0;
+		border-bottom: @border-thickness solid @border-default-color;
+	}
+}
+
+
+.notifications_buttons{
+	float: right;
+}
+
+// Repositories
+
+#summary.fields{
+	display: table;
+
+	.field{
+		display: table-row;
+
+		.label-summary{
+			display: table-cell;
+			min-width: @label-summary-minwidth;
+			padding-top: @padding/2;
+			padding-bottom: @padding/2;
+			padding-right: @padding/2;
+		}
+
+		.input{
+			display: table-cell;
+			padding: @padding/2;
+
+			input{
+				min-width: 29em;
+				padding:  @padding/4;
+			}
+		}
+		.statistics, .downloads{
+			.disabled{
+				color: @grey4;
+			}
+		}
+	}
+}
+
+#summary{
+	width: 70%;
+}
+
+
+// Journal
+.journal.title {
+	h5 {
+		float: left;
+		margin: 0;
+		width: 70%;
+	}
+
+	ul {
+		float: right;
+		display: inline-block;
+		margin: 0;
+		width: 30%;
+		text-align: right;
+
+		li {
+			display: inline;
+			font-size: @journal-fontsize;
+            line-height: 1em;
+
+            &:before { content: none; }
+		}
+	}
+}
+
+.filterexample {
+    position: absolute;
+    top: 95px;
+    left: @contentpadding;
+    color: @rcblue;
+    font-size: 11px;
+    font-family: @text-regular;
+    cursor: help;
+
+    &:hover {
+        color: @rcdarkblue;
+    }
+
+    @media (max-width:768px) {
+        position: relative;
+        top: auto;
+        left: auto;
+        display: block;
+    }
+}
+
+
+#journal{
+	margin-bottom: @space;
+
+	.journal_day{
+		margin-bottom: @textmargin/2;
+		padding-bottom: @textmargin/2;
+		font-size: @journal-fontsize;
+		border-bottom: @border-thickness solid @border-default-color;
+	}
+
+	.journal_container{
+		margin-bottom: @space;
+
+		.journal_user{
+			display: inline-block;
+		}
+		.journal_action_container{
+			display: block;
+			margin-top: @textmargin;
+
+			div{
+				display: inline;
+			}
+
+			div.journal_action_params{
+				display: block;
+			}
+
+			div.journal_repo:after{
+				content: "\A";
+				white-space: pre;
+			}
+
+			div.date{
+				display: block;
+				margin-bottom: @textmargin;
+			}
+		}
+	}
+}
+
+// Files
+.edit-file-title {
+    border-bottom: @border-thickness solid @border-default-color;
+
+    .breadcrumbs {
+        margin-bottom: 0;
+    }
+}
+
+.edit-file-fieldset {
+    margin-top: @sidebarpadding;
+
+    .fieldset {
+        .left-label {
+            width: 13%;
+        }
+        .right-content {
+            width: 87%;
+            max-width: 100%;
+        }
+        .filename-label {
+            margin-top: 13px;
+        }
+        .commit-message-label {
+            margin-top: 4px;
+        }
+        .file-upload-input {
+            input {
+                display: none;
+            }
+        }
+        p {
+            margin-top: 5px;
+        }
+
+    }
+    .custom-path-link {
+        margin-left: 5px;
+    }
+    #commit {
+        resize: vertical;
+    }
+}
+
+.delete-file-preview {
+    max-height: 250px;
+}
+
+.new-file,
+#filter_activate,
+#filter_deactivate {
+    float: left;
+    margin: 0 0 0 15px;
+}
+
+h3.files_location{
+    line-height: 2.4em;
+}
+
+.browser-nav {
+	display: table;
+	margin-bottom: @space;
+
+
+	.info_box {
+		display: inline-table;
+		height: 2.5em;
+
+        .browser-cur-rev, .info_box_elem {
+			display: table-cell;
+			vertical-align: middle;
+		}
+
+		.info_box_elem {
+			border-top: @border-thickness solid @rcblue;
+			border-bottom: @border-thickness solid @rcblue;
+
+            #at_rev, a {
+                padding: 0.6em 0.9em;
+                margin: 0;
+                .box-shadow(none);
+                border: 0;
+                height: 12px;
+            }
+
+            input#at_rev {
+                max-width: 50px;
+                text-align: right;
+            }
+
+			&.previous {
+				border: @border-thickness solid @rcblue;
+                .disabled {
+                  color: @grey4;
+                  cursor: not-allowed;
+                }
+			}
+
+			&.next {
+				border: @border-thickness solid @rcblue;
+                .disabled {
+                  color: @grey4;
+                  cursor: not-allowed;
+                }
+			}
+		}
+
+		.browser-cur-rev {
+
+			span{
+                margin: 0;
+				color: @rcblue;
+                height: 12px;
+                display: inline-block;
+                padding:  0.7em 1em ;
+                border: @border-thickness solid @rcblue;
+                margin-right: @padding;
+			}
+		}
+	}
+
+	.search_activate {
+		display: table-cell;
+		vertical-align: middle;
+
+		input, label{
+			margin: 0;
+			padding: 0;
+		}
+
+		input{
+			margin-left: @textmargin;
+		}
+
+	}
+}
+
+.file_author{
+	margin-bottom: @padding;
+
+	div{
+		display: inline-block;
+		margin-right: 0.5em;
+	}
+}
+
+.browser-cur-rev{
+	margin-bottom: @textmargin;
+}
+
+#node_filter_box_loading{
+	.info_text;
+}
+
+.browser-search {
+	margin: -25px 0px 5px 0px;
+}
+
+.node-filter {
+  font-size: @repo-title-fontsize;
+  padding: 4px 0px 0px 0px;
+
+  .node-filter-path {
+      float: left;
+      color: @grey4;
+    }
+    .node-filter-input {
+        float: left;
+        margin: -2px 0px 0px 2px;
+        input {
+            padding: 2px;
+            border: none;
+            font-size: @repo-title-fontsize;
+        }
+    }
+}
+
+
+.browser-result{
+	td a{
+		margin-left: 0.5em;
+		display: inline-block;
+
+		em{
+			font-family: @text-bold;
+		}
+	}
+}
+
+.browser-highlight{
+	background-color: @grey5-alpha;
+}
+
+
+// Search
+
+.search-form{
+    #q {
+        width: @search-form-width;
+    }
+	.fields{
+		margin: 0 0 @space;
+	}
+
+	label{
+		display: inline-block;
+		margin-right: @textmargin;
+		padding-top: 0.25em;
+	}
+
+
+	.results{
+		clear: both;
+		margin: 0 0 @padding;
+	}
+}
+
+div.search-feedback-items {
+	display: inline-block;
+	padding:0px 0px 0px 96px;
+}
+
+div.search-code-body { 
+    background-color: #ffffff; padding: 5px 0 5px 10px;
+    pre {
+        .match { background-color: #faffa6;}
+        .break { display: block; width: 100%; background-color: #DDE7EF; color: #747474; }
+    }
+}
+
+.expand_commit.search {
+    .show_more.open {
+        height: auto;
+        max-height: none;
+    }
+}
+
+.search-results {
+
+    h2 {
+        margin-bottom: 0;
+    }
+    .codeblock {
+        border: none;
+        background: transparent;
+    }
+
+    .codeblock-header {
+        border: none;
+        background: transparent;
+    }
+
+    .code-body {
+        border: @border-thickness solid @border-default-color;
+        .border-radius(@border-radius);
+    }
+
+    .td-commit {
+        &:extend(pre);
+        border-bottom: @border-thickness solid @border-default-color;
+    }
+
+    .message {
+        height: auto;
+        max-width: 350px;
+        white-space: normal;
+        text-overflow: initial;
+        overflow: visible;
+
+        .match { background-color: #faffa6;}
+        .break { background-color: #DDE7EF; width: 100%; color: #747474; display: block; }
+    }
+
+}
+
+table.rctable td.td-search-results div {
+    max-width: 100%;
+}
+
+#tip-box, .tip-box{
+	padding: @menupadding/2;
+	display: block;
+	border: @border-thickness solid @border-highlight-color;
+	.border-radius(@border-radius);
+	background-color: white;
+    z-index: 99;
+    white-space: pre-wrap;
+}
+
+#linktt {
+    width: 79px;
+}
+
+#help_kb .modal-content{
+	max-width: 750px;
+	margin: 10% auto;
+
+	table{
+		td,th{
+			border-bottom: none;
+			line-height: 2.5em;
+		}
+		th{
+			padding-bottom: @textmargin/2;
+		}
+		td.keys{
+			text-align: center;
+		}
+	}
+
+	.block-left{
+		width: 45%;
+		margin-right: 5%;
+	}
+	.modal-footer{
+		clear: both;
+	}
+	.key.tag{
+		padding: 0.5em;
+		background-color: @rcblue;
+		color: white;
+		border-color: @rcblue;
+		.box-shadow(none);
+	}
+}
+
+
+
+//--- IMPORTS FOR REFACTORED STYLES ------------------//
+
+@import 'statistics-graph';
+@import 'tables';
+@import 'forms';
+@import 'diff';
+@import 'summary';
+@import 'navigation';
+
+//--- SHOW/HIDE SECTIONS --//
+
+.btn-collapse {
+    float: right;
+    text-align: right;
+    font-family: @text-light;
+    font-size: @basefontsize;
+    cursor: pointer;
+    border: none;
+    color: @rcblue;
+}
+
+table.rctable,
+table.dataTable {
+    .btn-collapse {
+        float: right;
+        text-align: right;
+    }
+}
+
+
+// TODO: johbo: Fix for IE10, this avoids that we see a border
+// and padding around checkboxes and radio boxes. Move to the right place,
+// or better: Remove this once we did the form refactoring.
+input[type=checkbox],
+input[type=radio] {
+    padding: 0;
+    border: none;
+}

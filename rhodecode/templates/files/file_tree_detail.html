@@ -1,0 +1,37 @@
+<%namespace name="file_base" file="/files/base.html"/>
+
+<div class="fieldset collapsable-content no-hide" data-toggle="summary-details">
+  <div class="left-label">
+    ${_('Description')}:
+  </div>
+  <div class="commit right-content truncate-wrap">${h.urlify_commit_message(h.chop_at_smart(c.commit.message, '\n', suffix_if_chopped='...'), c.repo_name)}</div>
+</div>
+
+<div class="fieldset collapsable-content" data-toggle="summary-details">
+  <div class="left-label">
+    ${_('Description')}:
+  </div>
+  <div class="commit right-content">${h.urlify_commit_message(c.commit.message,c.repo_name)}</div>
+</div>
+
+
+
+<div class="fieldset">
+  <div class="left-label">
+    ${_('References')}:
+  </div>
+  <div class="right-content">
+    <div class="tags">
+      <code>
+          <a href="${h.url('changeset_home',repo_name=c.repo_name,revision=c.commit.raw_id)}">${h.show_id(c.commit)}</a>
+      </code>
+
+      ${file_base.refs(c.commit)}
+    </div>
+  </div>
+</div>
+
+
+<script>
+  collapsableContent();
+</script>

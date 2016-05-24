@@ -1,0 +1,169 @@
+## -*- coding: utf-8 -*-
+<!DOCTYPE html>
+
+<%def name="get_template_context()" filter="n, trim">{
+
+    ## repo data
+    repo_name: "${getattr(c, 'repo_name', '')}",
+    % if hasattr(c, 'rhodecode_db_repo'):
+    repo_type: "${c.rhodecode_db_repo.repo_type}",
+    repo_landing_commit: "${c.rhodecode_db_repo.landing_rev[1]}",
+    % else:
+    repo_type: null,
+    repo_landing_commit: null,
+    % endif
+
+    ## user data
+    % if getattr(c, 'rhodecode_user', None) and c.rhodecode_user.user_id:
+    rhodecode_user: {
+        username: "${c.rhodecode_user.username}",
+        email: "${c.rhodecode_user.email}",
+    },
+    % else:
+    rhodecode_user: {
+        username: null,
+        email: null,
+    },
+    % endif
+
+    ## visual settings
+    visual: {
+        default_renderer: "${h.get_visual_attr(c, 'default_renderer')}"
+    },
+
+    ## current commit context, filled inside templates that expose that
+    commit_data: {
+        commit_id: null,
+    },
+
+    ## current pr context, filled inside templates that expose that
+    pull_request_data: {
+        pull_request_id: null,
+    },
+
+    ## timeago settings, can be overwritten by custom user settings later
+    timeago: {
+        refresh_time: ${120 * 1000},
+        cutoff_limit: ${1000*60*60*24*7}
+    }
+}
+
+</%def>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>${self.title()}</title>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+        <%def name="robots()">
+            <meta name="robots" content="index, nofollow"/>
+        </%def>
+        ${self.robots()}
+        <link rel="icon" href="${h.url('/images/favicon.ico', ver=c.rhodecode_version_hash)}" sizes="16x16 32x32" type="image/png" />
+
+        ## CSS definitions
+        <%def name="css()">
+            <link rel="stylesheet" type="text/css" href="${h.url('/css/style.css', ver=c.rhodecode_version_hash)}" media="screen"/>
+            <!--[if lt IE 9]>
+                <link rel="stylesheet" type="text/css" href="${h.url('/css/ie.css', ver=c.rhodecode_version_hash)}" media="screen"/>
+            <![endif]-->
+            ## EXTRA FOR CSS
+            ${self.css_extra()}
+        </%def>
+        ## CSS EXTRA - optionally inject some extra CSS stuff needed for specific websites
+        <%def name="css_extra()">
+        </%def>
+
+        ${self.css()}
+
+        ## JAVASCRIPT
+        <%def name="js()">
+            <script src="${h.url('/js/rhodecode/i18n/%s.js' % c.language, ver=c.rhodecode_version_hash)}"></script>
+            <script type="text/javascript">
+            // register templateContext to pass template variables to JS
+            var templateContext = ${get_template_context()};
+
+            var REPO_NAME = "${getattr(c, 'repo_name', '')}";
+            %if hasattr(c, 'rhodecode_db_repo'):
+            var REPO_LANDING_REV = '${c.rhodecode_db_repo.landing_rev[1]}';
+            var REPO_TYPE = '${c.rhodecode_db_repo.repo_type}';
+            %else:
+            var REPO_LANDING_REV = '';
+            var REPO_TYPE = '';
+            %endif
+            var APPLICATION_URL = "${h.url('home').rstrip('/')}";
+            var DEFAULT_RENDERER = "${h.get_visual_attr(c, 'default_renderer')}";
+            var CSRF_TOKEN = "${getattr(c, 'csrf_token', '')}";
+            % if getattr(c, 'rhodecode_user', None):
+            var USER = {name:'${c.rhodecode_user.username}'};
+            % else:
+            var USER = {name:null};
+            % endif
+
+            var APPENLIGHT = {
+              enabled: ${'true' if getattr(c, 'appenlight_enabled', False) else 'false'},
+              key: '${getattr(c, "appenlight_api_public_key", "")}',
+              serverUrl: '${getattr(c, "appenlight_server_url", "")}',
+              requestInfo: {
+              % if getattr(c, 'rhodecode_user', None):
+                  ip: '${c.rhodecode_user.ip_addr}',
+                  username: '${c.rhodecode_user.username}'
+              % endif
+              }
+            };
+            </script>
+
+            <!--[if lt IE 9]>
+            <script language="javascript" type="text/javascript" src="${h.url('/js/excanvas.min.js')}"></script>
+            <![endif]-->
+            <script language="javascript" type="text/javascript" src="${h.url('/js/scripts.js', ver=c.rhodecode_version_hash)}"></script>
+            <script>CodeMirror.modeURL = "${h.url('/js/mode/%N/%N.js')}";</script>
+
+            ## JAVASCRIPT EXTRA - optionally inject some extra JS for specificed templates
+            ${self.js_extra()}
+
+            <script type="text/javascript">
+            $(document).ready(function(){
+              tooltip_activate();
+              show_more_event();
+              show_changeset_tooltip();
+              timeagoActivate();
+            })
+            </script>
+
+        </%def>
+
+        ## JAVASCRIPT EXTRA - optionally inject some extra JS for specificed templates
+        <%def name="js_extra()"></%def>
+        ${self.js()}
+
+        <%def name="head_extra()"></%def>
+        ${self.head_extra()}
+
+        ## extra stuff
+        %if c.pre_code:
+            ${c.pre_code|n}
+        %endif
+    </head>
+    <body id="body">
+        <noscript>
+            <div class="noscript-error">
+                ${_('Please enable JavaScript to use RhodeCode Enterprise')}
+            </div>
+        </noscript>
+     ## IE hacks
+      <!--[if IE 7]>
+      <script>$(document.body).addClass('ie7')</script>
+      <![endif]-->
+      <!--[if IE 8]>
+      <script>$(document.body).addClass('ie8')</script>
+      <![endif]-->
+      <!--[if IE 9]>
+      <script>$(document.body).addClass('ie9')</script>
+      <![endif]-->
+
+      ${next.body()}
+      %if c.post_code:
+        ${c.post_code|n}
+      %endif
+    </body>
+</html>
