@@ -496,12 +496,6 @@ def make_map(config):
         m.connect('my_account_auth_tokens', '/my_account/auth_tokens',
                   action='my_account_auth_tokens_delete', conditions={'method': ['DELETE']})
 
-        m.connect('my_account_oauth', '/my_account/oauth',
-                  action='my_account_oauth', conditions={'method': ['GET']})
-        m.connect('my_account_oauth', '/my_account/oauth',
-                  action='my_account_oauth_delete',
-                  conditions={'method': ['DELETE']})
-
     # NOTIFICATION REST ROUTES
     with rmap.submapper(path_prefix=ADMIN_PREFIX,
                         controller='admin/notifications') as m:

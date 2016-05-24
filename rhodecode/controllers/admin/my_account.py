@@ -39,16 +39,15 @@ from rhodecode.lib.auth import (
 from rhodecode.lib.base import BaseController, render
 from rhodecode.lib.utils2 import safe_int, md5
 from rhodecode.lib.ext_json import json
-from rhodecode.model.db import (Repository, PullRequest, PullRequestReviewers,
-                                UserEmailMap, User, UserFollowing,
-                                ExternalIdentity)
+from rhodecode.model.db import (
+    Repository, PullRequest, PullRequestReviewers, UserEmailMap, User,
+    UserFollowing)
 from rhodecode.model.forms import UserForm, PasswordChangeForm
 from rhodecode.model.scm import RepoList
 from rhodecode.model.user import UserModel
 from rhodecode.model.repo import RepoModel
 from rhodecode.model.auth_token import AuthTokenModel
 from rhodecode.model.meta import Session
-from rhodecode.model.settings import SettingsModel
 
 log = logging.getLogger(__name__)
 
@@ -347,27 +346,3 @@ class MyAccountController(BaseController):
             h.flash(_("Auth token successfully deleted"), category='success')
 
         return redirect(url('my_account_auth_tokens'))
-
-    def my_account_oauth(self):
-        c.active = 'oauth'
-        self.__load_data()
-        c.user_oauth_tokens = ExternalIdentity().by_local_user_id(
-            c.rhodecode_user.user_id).all()
-        settings = SettingsModel().get_all_settings()
-        c.social_plugins = SettingsModel().list_enabled_social_plugins(
-            settings)
-        return render('admin/my_account/my_account.html')
-
-    @auth.CSRFRequired()
-    def my_account_oauth_delete(self):
-        token = ExternalIdentity.by_external_id_and_provider(
-            request.params.get('external_id'),
-            request.params.get('provider_name'),
-            local_user_id=c.rhodecode_user.user_id
-        )
-        if token:
-            Session().delete(token)
-            Session().commit()
-            h.flash(_("OAuth token successfully deleted"), category='success')
-
-        return redirect(url('my_account_oauth'))

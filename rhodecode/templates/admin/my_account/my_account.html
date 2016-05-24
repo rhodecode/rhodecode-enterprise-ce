@@ -29,7 +29,11 @@
           <li class="${'active' if c.active=='profile' or c.active=='profile_edit' else ''}"><a href="${h.url('my_account')}">${_('My Profile')}</a></li>
           <li class="${'active' if c.active=='password' else ''}"><a href="${h.url('my_account_password')}">${_('Password')}</a></li>
           <li class="${'active' if c.active=='auth_tokens' else ''}"><a href="${h.url('my_account_auth_tokens')}">${_('Auth Tokens')}</a></li>
-          <li class="${'active' if c.active=='oauth' else ''}"><a href="${h.url('my_account_oauth')}">${_('OAuth Identities')}</a></li>
+          ## TODO: Find a better integration of oauth views into navigation.
+          %try:
+            <li class="${'active' if c.active=='oauth' else ''}"><a href="${h.route_path('my_account_oauth')}">${_('OAuth Identities')}</a></li>
+          %except KeyError:
+          %endtry
           <li class="${'active' if c.active=='emails' else ''}"><a href="${h.url('my_account_emails')}">${_('My Emails')}</a></li>
           <li class="${'active' if c.active=='repos' else ''}"><a href="${h.url('my_account_repos')}">${_('My Repositories')}</a></li>
           <li class="${'active' if c.active=='watched' else ''}"><a href="${h.url('my_account_watched')}">${_('Watched')}</a></li>
