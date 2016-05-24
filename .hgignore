@@ -1,0 +1,58 @@
+syntax: glob
+*.egg
+*.egg-info
+*.idea
+*.orig
+*.pyc
+*.sqlite-journal
+*.swp
+*.tox
+*.DS_Store*
+
+syntax: regexp
+
+#.filename
+^\.settings$
+^\.project$
+^\.pydevproject$
+^\.coverage$
+^\.cache.*$
+^\.rhodecode$
+
+^rcextensions
+^_dev
+^._dev
+^build/
+^coverage\.xml$
+^data$
+^configs/data$
+^dev.ini$
+^acceptance_tests/dev.*\.ini$
+^dist/
+^fabfile.py
+^htmlcov
+^junit\.xml$
+^node_modules/
+^pylint.log$
+^rcextensions/
+^result$
+^rhodecode/public/css/style.css$
+^rhodecode/public/js/scripts.js$
+^rhodecode\.db$
+^rhodecode\.log$
+^rhodecode_dev\.log$
+^test\.db$
+
+# ac-tests
+^acceptance_tests/\.cache.*$
+^acceptance_tests/externals
+^acceptance_tests/ghostdriver.log$
+^acceptance_tests/local(_.+)?\.ini$
+
+# docs
+^docs/_build$
+^docs/result$
+^docs-internal/_build$
+
+# Cythonized things
+^rhodecode/.*\.(c|so)$
