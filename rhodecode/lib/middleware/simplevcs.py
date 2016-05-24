@@ -133,7 +133,8 @@ class SimpleVCS(object):
     def is_valid_and_existing_repo(self, repo_name, base_path, scm_type):
         db_repo = Repository.get_by_repo_name(repo_name)
         if not db_repo:
-            log.debug('Repository `%s` not found inside the database.')
+            log.debug('Repository `%s` not found inside the database.',
+                      repo_name)
             return False
 
         if db_repo.repo_type != scm_type:
