@@ -4,6 +4,7 @@
 % if c.forks_pager:
   <table class="rctable fork_summary">
     <tr>
+      <th>${_('Owner')}</th>
       <th>${_('Fork')}</th>
       <th>${_('Description')}</th>
       <th>${_('Forked')}</th>
@@ -13,7 +14,8 @@
         <tr>
             <td class="td-user fork_user">
               ${base.gravatar_with_user(f.user.email, 16)}
-               &frasl;
+            </td>
+            <td class="td-componentname">
               ${h.link_to(f.repo_name,h.url('summary_home',repo_name=f.repo_name))}
             </td>
             <td class="td-description">
