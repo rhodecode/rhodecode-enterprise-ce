@@ -36,7 +36,6 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from rhodecode.authentication.base import RhodeCodeExternalAuthPlugin
 from rhodecode.authentication.schema import AuthnPluginSettingsSchemaBase
 from rhodecode.authentication.routes import AuthnPluginResourceBase
-from rhodecode.lib.ext_json import formatted_json
 from rhodecode.lib.utils2 import safe_unicode
 from rhodecode.model.db import User
 
@@ -119,17 +118,15 @@ class RhodeCodeAuthPlugin(RhodeCodeExternalAuthPlugin):
             log.debug('Empty username or password skipping...')
             return None
 
-        log.debug("Jasig CAS settings: \n%s" % (formatted_json(settings)))
+        log.debug("Jasig CAS settings: %s", settings)
         params = urllib.urlencode({'username': username, 'password': password})
         headers = {"Content-type": "application/x-www-form-urlencoded",
                    "Accept": "text/plain",
                    "User-Agent": "RhodeCode-auth-%s" % rhodecode.__version__}
         url = settings["service_url"]
 
-        log.debug("Sent Jasig CAS: \n%s"
-                  % (formatted_json({"url": url,
-                                     "body": params,
-                                     "headers": headers})))
+        log.debug("Sent Jasig CAS: \n%s",
+                  {"url": url, "body": params, "headers": headers})
         request = urllib2.Request(url, params, headers)
         try:
             response = urllib2.urlopen(request)
