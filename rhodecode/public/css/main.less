@@ -671,6 +671,7 @@ label {
 }
 
 .rc-user { // gravatar + user wrapper
+    float: left;
     position: relative;
     min-width: 100px;
     max-width: 200px;
@@ -1223,6 +1224,16 @@ table.issuetracker {
     max-width: 83%;
     padding-right: 20px;
     vertical-align: middle;
+    line-height: 1;
+
+    .rc-user {
+        min-width: 0;
+        margin: -2px 1em 0 0;
+    }
+
+    .reviewer {
+        float: left;
+    }
 }
 
 .reviewer_member_remove {
@@ -1253,7 +1264,7 @@ table.issuetracker {
 }
 .pr-details-content {
     margin-top: @textmargin;
-    margin-bottom: @textmargin/2;
+    margin-bottom: @textmargin;
 }
 .pr-description {
     white-space:pre-wrap;

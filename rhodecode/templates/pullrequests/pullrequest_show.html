@@ -195,9 +195,9 @@
                     <div class="reviewer_status tooltip" title="${h.tooltip(h.commit_status_lbl(status[0][1].status if status else 'not_reviewed'))}">
                       <div class="${'flag_status %s' % (status[0][1].status if status else 'not_reviewed')} pull-left reviewer_member_status"></div>
                     </div>
-                  <span id="reviewer_${member.user_id}_name" class="reviewer_name">
-                    ${self.gravatar_with_user(member.email, 16)}
-                    (${_('owner') if c.pull_request.user_id == member.user_id else _('reviewer')})</span>
+                  <div id="reviewer_${member.user_id}_name" class="reviewer_name">
+                    ${self.gravatar_with_user(member.email, 16)} <div class="reviewer">(${_('owner') if c.pull_request.user_id == member.user_id else _('reviewer')})</div>
+                  </div>
                   <input id="reviewer_${member.user_id}_input" type="hidden" value="${member.user_id}" name="review_members" />
                   %if c.allowed_to_update:
                   <div class="reviewer_member_remove action_button" onclick="removeReviewMember(${member.user_id}, true)" style="visibility: hidden;">
