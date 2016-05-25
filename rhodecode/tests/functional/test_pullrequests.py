@@ -99,12 +99,13 @@ class TestPullrequestsController:
             in response) != pr_merge_enabled
 
     def test_close_status_visibility(self, pr_util, csrf_token):
+        from rhodecode.tests.functional.test_login import login_url, logut_url
         # Logout
         response = self.app.post(
-            url(controller='login', action='logout'),
+            logut_url,
             params={'csrf_token': csrf_token})
         # Login as regular user
-        response = self.app.post(url(controller='login', action='index'),
+        response = self.app.post(login_url,
                                  {'username': 'test_regular',
                                   'password': 'test12'})
 

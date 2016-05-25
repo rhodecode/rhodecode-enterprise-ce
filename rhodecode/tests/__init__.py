@@ -43,6 +43,7 @@ from nose.plugins.skip import SkipTest
 import pytest
 
 from rhodecode import is_windows
+from rhodecode.config.routing import ADMIN_PREFIX
 from rhodecode.model.meta import Session
 from rhodecode.model.db import User
 from rhodecode.lib import auth
@@ -177,10 +178,10 @@ class TestController(object):
 
 def login_user_session(
         app, username=TEST_USER_ADMIN_LOGIN, password=TEST_USER_ADMIN_PASS):
-    response = app.post(url(controller='login', action='index'),
-                        {'username': username,
-                         'password': password})
-
+    from rhodecode.tests.functional.test_login import login_url
+    response = app.post(
+        login_url,
+        {'username': username, 'password': password})
     if 'invalid user name' in response.body:
         pytest.fail('could not login using %s %s' % (username, password))
 
@@ -194,9 +195,8 @@ def login_user_session(
 
 
 def logout_user_session(app, csrf_token):
-    app.post(
-        url(controller='login', action='logout'),
-        {'csrf_token': csrf_token}, status=302)
+    from rhodecode.tests.functional.test_login import logut_url
+    app.post(logut_url, {'csrf_token': csrf_token}, status=302)
 
 
 def login_user(app, username=TEST_USER_ADMIN_LOGIN,

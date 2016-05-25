@@ -23,9 +23,11 @@ import urlparse
 import mock
 import pytest
 
+from rhodecode.config.routing import ADMIN_PREFIX
 from rhodecode.tests import (
     assert_session_flash, url, HG_REPO, TEST_USER_ADMIN_LOGIN)
 from rhodecode.tests.fixture import Fixture
+from rhodecode.tests.utils import AssertResponse, get_session_from_response
 from rhodecode.lib.auth import check_password, generate_auth_token
 from rhodecode.lib import helpers as h
 from rhodecode.model.auth_token import AuthTokenModel
@@ -34,6 +36,14 @@ from rhodecode.model.db import User, Notification
 from rhodecode.model.meta import Session
 
 fixture = Fixture()
+
+# Hardcode URLs because we don't have a request object to use
+# pyramids URL generation methods.
+login_url = ADMIN_PREFIX + '/login'
+logut_url = ADMIN_PREFIX + '/logout'
+register_url = ADMIN_PREFIX + '/register'
+pwd_reset_url = ADMIN_PREFIX + '/password_reset'
+pwd_reset_confirm_url = ADMIN_PREFIX + '/password_reset_confirmation'
 
 
 @pytest.mark.usefixtures('app')
@@ -52,37 +62,38 @@ class TestLoginController:
         assert Notification.query().all() == []
 
     def test_index(self):
-        response = self.app.get(url(controller='login', action='index'))
+        response = self.app.get(login_url)
         assert response.status == '200 OK'
         # Test response...
 
     def test_login_admin_ok(self):
-        response = self.app.post(url(controller='login', action='index'),
+        response = self.app.post(login_url,
                                  {'username': 'test_admin',
                                   'password': 'test12'})
         assert response.status == '302 Found'
-        username = response.session['rhodecode_user'].get('username')
+        session = get_session_from_response(response)
+        username = session['rhodecode_user'].get('username')
         assert username == 'test_admin'
         response = response.follow()
         response.mustcontain('/%s' % HG_REPO)
 
     def test_login_regular_ok(self):
-        response = self.app.post(url(controller='login', action='index'),
+        response = self.app.post(login_url,
                                  {'username': 'test_regular',
                                   'password': 'test12'})
 
         assert response.status == '302 Found'
-        username = response.session['rhodecode_user'].get('username')
+        session = get_session_from_response(response)
+        username = session['rhodecode_user'].get('username')
         assert username == 'test_regular'
         response = response.follow()
         response.mustcontain('/%s' % HG_REPO)
 
     def test_login_ok_came_from(self):
         test_came_from = '/_admin/users?branch=stable'
-        response = self.app.post(url(controller='login', action='index',
-                                     came_from=test_came_from),
-                                 {'username': 'test_admin',
-                                  'password': 'test12'})
+        _url = '{}?came_from={}'.format(login_url, test_came_from)
+        response = self.app.post(
+            _url, {'username': 'test_admin', 'password': 'test12'})
         assert response.status == '302 Found'
         assert 'branch=stable' in response.location
         response = response.follow()
@@ -100,33 +111,30 @@ class TestLoginController:
             assert 'branch=stable' in response_query[0][1]
 
     def test_login_form_with_get_args(self):
-        kwargs = {'branch': 'stable'}
-        response = self.app.get(
-            url(controller='login', action='index',
-                came_from='/_admin/users', **kwargs))
-        assert 'branch=stable' in response.form.action
+        _url = '{}?came_from=/_admin/users,branch=stable'.format(login_url)
+        response = self.app.get(_url)
+        assert 'branch%3Dstable' in response.form.action
 
     @pytest.mark.parametrize("url_came_from", [
-        ('data:text/html,<script>window.alert("xss")</script>',),
-        ('mailto:test@rhodecode.org',),
-        ('file:///etc/passwd',),
-        ('ftp://some.ftp.server',),
-        ('http://other.domain',),
-        ('/\r\nX-Forwarded-Host: http://example.org',),
+        'data:text/html,<script>window.alert("xss")</script>',
+        'mailto:test@rhodecode.org',
+        'file:///etc/passwd',
+        'ftp://some.ftp.server',
+        'http://other.domain',
+        '/\r\nX-Forwarded-Host: http://example.org',
     ])
     def test_login_bad_came_froms(self, url_came_from):
-        response = self.app.post(url(controller='login', action='index',
-                                     came_from=url_came_from),
-                                 {'username': 'test_admin',
-                                  'password': 'test12'})
+        _url = '{}?came_from={}'.format(login_url, url_came_from)
+        response = self.app.post(
+            _url,
+            {'username': 'test_admin', 'password': 'test12'})
         assert response.status == '302 Found'
-        assert response.tmpl_context.came_from == '/'
-
         response = response.follow()
         assert response.status == '200 OK'
+        assert response.request.path == '/'
 
     def test_login_short_password(self):
-        response = self.app.post(url(controller='login', action='index'),
+        response = self.app.post(login_url,
                                  {'username': 'test_admin',
                                   'password': 'as'})
         assert response.status == '200 OK'
@@ -135,7 +143,7 @@ class TestLoginController:
 
     def test_login_wrong_non_ascii_password(self, user_regular):
         response = self.app.post(
-            url(controller='login', action='index'),
+            login_url,
             {'username': user_regular.username,
              'password': u'invalid-non-asci\xe4'.encode('utf8')})
 
@@ -146,13 +154,13 @@ class TestLoginController:
         password = u'valid-non-ascii\xe4'
         user = user_util.create_user(password=password)
         response = self.app.post(
-            url(controller='login', action='index'),
+            login_url,
             {'username': user.username,
              'password': password.encode('utf-8')})
         assert response.status_code == 302
 
     def test_login_wrong_username_password(self):
-        response = self.app.post(url(controller='login', action='index'),
+        response = self.app.post(login_url,
                                  {'username': 'error',
                                   'password': 'test12'})
 
@@ -170,12 +178,13 @@ class TestLoginController:
         Session().add(user)
         Session().commit()
         self.destroy_users.add(temp_user)
-        response = self.app.post(url(controller='login', action='index'),
+        response = self.app.post(login_url,
                                  {'username': temp_user,
                                   'password': 'test123'})
 
         assert response.status == '302 Found'
-        username = response.session['rhodecode_user'].get('username')
+        session = get_session_from_response(response)
+        username = session['rhodecode_user'].get('username')
         assert username == temp_user
         response = response.follow()
         response.mustcontain('/%s' % HG_REPO)
@@ -186,13 +195,13 @@ class TestLoginController:
 
     # REGISTRATIONS
     def test_register(self):
-        response = self.app.get(url(controller='login', action='register'))
+        response = self.app.get(register_url)
         response.mustcontain('Create an Account')
 
     def test_register_err_same_username(self):
         uname = 'test_admin'
         response = self.app.post(
-            url(controller='login', action='register'),
+            register_url,
             {
                 'username': uname,
                 'password': 'test12',
@@ -203,13 +212,14 @@ class TestLoginController:
             }
         )
 
+        assertr = AssertResponse(response)
         msg = validators.ValidUsername()._messages['username_exists']
-        msg = h.html_escape(msg % {'username': uname})
-        response.mustcontain(msg)
+        msg = msg % {'username': uname}
+        assertr.element_contains('#username+.error-message', msg)
 
     def test_register_err_same_email(self):
         response = self.app.post(
-            url(controller='login', action='register'),
+            register_url,
             {
                 'username': 'test_admin_0',
                 'password': 'test12',
@@ -220,12 +230,13 @@ class TestLoginController:
             }
         )
 
+        assertr = AssertResponse(response)
         msg = validators.UniqSystemEmail()()._messages['email_taken']
-        response.mustcontain(msg)
+        assertr.element_contains('#email+.error-message', msg)
 
     def test_register_err_same_email_case_sensitive(self):
         response = self.app.post(
-            url(controller='login', action='register'),
+            register_url,
             {
                 'username': 'test_admin_1',
                 'password': 'test12',
@@ -235,12 +246,13 @@ class TestLoginController:
                 'lastname': 'test'
             }
         )
+        assertr = AssertResponse(response)
         msg = validators.UniqSystemEmail()()._messages['email_taken']
-        response.mustcontain(msg)
+        assertr.element_contains('#email+.error-message', msg)
 
     def test_register_err_wrong_data(self):
         response = self.app.post(
-            url(controller='login', action='register'),
+            register_url,
             {
                 'username': 'xs',
                 'password': 'test',
@@ -256,7 +268,7 @@ class TestLoginController:
 
     def test_register_err_username(self):
         response = self.app.post(
-            url(controller='login', action='register'),
+            register_url,
             {
                 'username': 'error user',
                 'password': 'test12',
@@ -277,7 +289,7 @@ class TestLoginController:
     def test_register_err_case_sensitive(self):
         usr = 'Test_Admin'
         response = self.app.post(
-            url(controller='login', action='register'),
+            register_url,
             {
                 'username': usr,
                 'password': 'test12',
@@ -288,14 +300,14 @@ class TestLoginController:
             }
         )
 
-        response.mustcontain('An email address must contain a single @')
+        assertr = AssertResponse(response)
         msg = validators.ValidUsername()._messages['username_exists']
-        msg = h.html_escape(msg % {'username': usr})
-        response.mustcontain(msg)
+        msg = msg % {'username': usr}
+        assertr.element_contains('#username+.error-message', msg)
 
     def test_register_special_chars(self):
         response = self.app.post(
-            url(controller='login', action='register'),
+            register_url,
             {
                 'username': 'xxxaxn',
                 'password': 'ąćźżąśśśś',
@@ -311,7 +323,7 @@ class TestLoginController:
 
     def test_register_password_mismatch(self):
         response = self.app.post(
-            url(controller='login', action='register'),
+            register_url,
             {
                 'username': 'xs',
                 'password': '123qwe',
@@ -332,7 +344,7 @@ class TestLoginController:
         lastname = 'testlastname'
 
         response = self.app.post(
-            url(controller='login', action='register'),
+            register_url,
             {
                 'username': username,
                 'password': password,
@@ -360,7 +372,7 @@ class TestLoginController:
     def test_forgot_password_wrong_mail(self):
         bad_email = 'marcin@wrongmail.org'
         response = self.app.post(
-            url(controller='login', action='password_reset'),
+            pwd_reset_url,
             {'email': bad_email, }
         )
 
@@ -369,8 +381,7 @@ class TestLoginController:
         response.mustcontain()
 
     def test_forgot_password(self):
-        response = self.app.get(url(controller='login',
-                                    action='password_reset'))
+        response = self.app.get(pwd_reset_url)
         assert response.status == '200 OK'
 
         username = 'test_password_reset_1'
@@ -389,8 +400,7 @@ class TestLoginController:
         Session().add(new)
         Session().commit()
 
-        response = self.app.post(url(controller='login',
-                                     action='password_reset'),
+        response = self.app.post(pwd_reset_url,
                                  {'email': email, })
 
         assert_session_flash(
@@ -401,20 +411,18 @@ class TestLoginController:
         # BAD KEY
 
         key = "bad"
-        response = self.app.get(url(controller='login',
-                                    action='password_reset_confirmation',
-                                    key=key))
+        confirm_url = '{}?key={}'.format(pwd_reset_confirm_url, key)
+        response = self.app.get(confirm_url)
         assert response.status == '302 Found'
-        assert response.location.endswith(url('reset_password'))
+        assert response.location.endswith(pwd_reset_url)
 
         # GOOD KEY
 
         key = User.get_by_username(username).api_key
-        response = self.app.get(url(controller='login',
-                                    action='password_reset_confirmation',
-                                    key=key))
+        confirm_url = '{}?key={}'.format(pwd_reset_confirm_url, key)
+        response = self.app.get(confirm_url)
         assert response.status == '302 Found'
-        assert response.location.endswith(url('login_home'))
+        assert response.location.endswith(login_url)
 
         assert_session_flash(
             response,
