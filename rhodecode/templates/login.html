@@ -34,21 +34,35 @@
             <div class="sign-in-title">
                 <h1>${_('Sign In')}</h1>
                 %if h.HasPermissionAny('hg.admin', 'hg.register.auto_activate', 'hg.register.manual_activate')():
-                <h4>${h.link_to(_("Go to the registration page to create a new account."),h.url('register'))}</h4>
+                <h4>${h.link_to(_("Go to the registration page to create a new account."), request.route_path('register'))}</h4>
                 %endif
             </div>
             <div class="inner form">
-                ${h.form(h.url.current(**request.GET), needs_csrf_token=False)}
+                ${h.form(request.route_path('login', _query={'came_from': came_from}), needs_csrf_token=False)}
+
                     <label for="username">${_('Username')}:</label>
-                    ${h.text('username',class_='focus')}
+                    ${h.text('username', class_='focus', value=defaults.get('username'))}
+                    %if 'username' in errors:
+                    <span class="error-message">${errors.get('username')}</span>
+                    <br />
+                    %endif
+
                     <label for="password">${_('Password')}:</label>
-                    ${h.password('password',class_='focus')}
-                    <input type="checkbox" id="remember" name="remember" />
+                    ${h.password('password', class_='focus')}
+                    %if 'password' in errors:
+                    <span class="error-message">${errors.get('password')}</span>
+                    <br />
+                    %endif
+
+                    ${h.checkbox('remember', value=True, checked=defaults.get('remember'))}
                     <label class="checkbox" for="remember">${_('Remember me')}</label>
+
                     <p class="links">
-                        ${h.link_to(_('Forgot your password?'),h.url('reset_password'))}
+                        ${h.link_to(_('Forgot your password?'), h.route_path('reset_password'))}
                     </p> 
-                    ${h.submit('sign_in',_('Sign In'),class_="btn sign-in")}
+
+                    ${h.submit('sign_in', _('Sign In'), class_="btn sign-in")}
+
                 ${h.end_form()}
                 <script type="text/javascript">
                     $(document).ready(function(){
@@ -57,6 +71,7 @@
                 </script>
             </div>
             <!-- end login -->
+            <%block name="below_login_button" />
         </div>
     </div>
 </div>
