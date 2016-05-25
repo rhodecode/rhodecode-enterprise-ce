@@ -198,28 +198,19 @@ class LoginView(object):
         renderer='rhodecode:templates/register.html',)
     def register(self):
         settings = SettingsModel().get_all_settings()
-
-        social_data = self.session.get('rhodecode.social_auth')
-        form_defaults = {}
-        if social_data:
-            password = str(uuid.uuid4())
-            form_defaults = {
-                'username': social_data['user'].get('user_name'),
-                'password': password,
-                'password_confirmation': password,
-                'email': social_data['user'].get('email'),
-            }
-
+        captcha_public_key = settings.get('rhodecode_captcha_public_key')
+        captcha_private_key = settings.get('rhodecode_captcha_private_key')
+        captcha_active = bool(captcha_private_key)
+        register_message = settings.get('rhodecode_register_message') or ''
         auto_active = 'hg.register.auto_activate' in User.get_default_user()\
             .AuthUser.permissions['global']
-        captcha_private_key = settings.get('rhodecode_captcha_private_key')
+
         render_ctx = self._get_template_context()
         render_ctx.update({
             'auto_active': auto_active,
-            'captcha_active': bool(captcha_private_key),
-            'captcha_public_key': settings.get('rhodecode_captcha_public_key'),
-            'defaults': form_defaults,
-            'register_message': settings.get('rhodecode_register_message') or '',
+            'captcha_active': captcha_active,
+            'captcha_public_key': captcha_public_key,
+            'register_message': register_message,
         })
         return render_ctx
 
@@ -227,13 +218,12 @@ class LoginView(object):
         route_name='register', request_method='POST',
         renderer='rhodecode:templates/register.html')
     def register_post(self):
-        social_data = self.session.get('rhodecode.social_auth')
         settings = SettingsModel().get_all_settings()
         captcha_private_key = settings.get('rhodecode_captcha_private_key')
         captcha_active = bool(captcha_private_key)
+        register_message = settings.get('rhodecode_register_message') or ''
         auto_active = 'hg.register.auto_activate' in User.get_default_user()\
             .AuthUser.permissions['global']
-        register_message = settings.get('rhodecode_register_message') or ''
 
         register_form = RegisterForm()()
         try:
@@ -253,15 +243,7 @@ class LoginView(object):
                     raise formencode.Invalid(_msg, _value, None,
                                              error_dict=error_dict)
 
-            new_user = UserModel().create_registration(form_result)
-            if social_data:
-                plugin_name = 'egg:rhodecode-enterprise-ee#{}'.format(
-                    social_data['credentials.provider']
-                )
-                auth_plugin = loadplugin(plugin_name)
-                if auth_plugin:
-                    auth_plugin.handle_social_data(
-                        self.session, new_user.user_id, social_data)
+            UserModel().create_registration(form_result)
             self.session.flash(
                 _('You have successfully registered with RhodeCode'),
                 queue='success')
