@@ -1099,6 +1099,7 @@ class LoginRequired(object):
         return get_cython_compat_decorator(self.__wrapper, func)
 
     def __wrapper(self, func, *fargs, **fkwargs):
+        from rhodecode.lib import helpers as h
         cls = fargs[0]
         user = cls._rhodecode_user
         loc = "%s:%s" % (cls.__class__.__name__, func.__name__)
@@ -1106,7 +1107,6 @@ class LoginRequired(object):
         # check if our IP is allowed
         ip_access_valid = True
         if not user.ip_allowed:
-            from rhodecode.lib import helpers as h
             h.flash(h.literal(_('IP %s not allowed' % (user.ip_addr,))),
                     category='warning')
             ip_access_valid = False
@@ -1158,7 +1158,7 @@ class LoginRequired(object):
 
             log.debug('redirecting to login page with %s' % (came_from,))
             return redirect(
-                url('login_home', came_from=came_from))
+                h.route_path('login', _query={'came_from': came_from}))
 
 
 class NotAnonymous(object):
@@ -1184,7 +1184,8 @@ class NotAnonymous(object):
             h.flash(_('You need to be a registered user to '
                       'perform this action'),
                     category='warning')
-            return redirect(url('login_home', came_from=came_from))
+            return redirect(
+                h.route_path('login', _query={'came_from': came_from}))
         else:
             return func(*fargs, **fkwargs)
 
@@ -1267,7 +1268,8 @@ class PermsDecorator(object):
                 import rhodecode.lib.helpers as h
                 h.flash(_('You need to be signed in to view this page'),
                         category='warning')
-                return redirect(url('login_home', came_from=came_from))
+                return redirect(
+                    h.route_path('login', _query={'came_from': came_from}))
 
             else:
                 # redirect with forbidden ret code
