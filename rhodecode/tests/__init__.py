@@ -49,6 +49,7 @@ from rhodecode.model.db import User
 from rhodecode.lib import auth
 from rhodecode.lib.helpers import flash, link_to
 from rhodecode.lib.utils2 import safe_unicode, safe_str
+from rhodecode.tests.utils import get_session_from_response
 
 # TODO: johbo: Solve time zone related issues and remove this tweak
 os.environ['TZ'] = 'UTC'
@@ -186,12 +187,16 @@ def login_user_session(
         pytest.fail('could not login using %s %s' % (username, password))
 
     assert response.status == '302 Found'
-    ses = response.session['rhodecode_user']
-    assert ses.get('username') == username
     response = response.follow()
-    assert ses.get('is_authenticated')
+    assert response.status == '200 OK'
 
-    return response.session
+    session = get_session_from_response(response)
+    assert 'rhodecode_user' in session
+    rc_user = session['rhodecode_user']
+    assert rc_user.get('username') == username
+    assert rc_user.get('is_authenticated')
+
+    return session
 
 
 def logout_user_session(app, csrf_token):

@@ -270,3 +270,13 @@ def is_url_reachable(url):
     except urllib2.URLError:
         return False
     return True
+
+
+def get_session_from_response(response):
+    """
+    This returns the session from a response object. Pylons has some magic
+    to make the session available as `response.session`. But pyramid
+    doesn't expose it.
+    """
+    # TODO: Try to look up the session key also.
+    return response.request.environ['beaker.session']
