@@ -592,27 +592,6 @@ def make_map(config):
                  conditions={'function': check_repo},
                  requirements=URL_NAME_REQUIREMENTS)
 
-    # LOGIN/LOGOUT/REGISTER/SIGN IN
-    rmap.connect('login_home', '%s/login' % (ADMIN_PREFIX,), controller='login',
-                 action='index')
-
-    rmap.connect('logout_home', '%s/logout' % (ADMIN_PREFIX,), controller='login',
-                 action='logout', conditions={'method': ['POST']})
-
-    rmap.connect('register', '%s/register' % (ADMIN_PREFIX,), controller='login',
-                 action='register')
-
-    rmap.connect('reset_password', '%s/password_reset' % (ADMIN_PREFIX,),
-                 controller='login', action='password_reset')
-
-    rmap.connect('reset_password_confirmation',
-                 '%s/password_reset_confirmation' % (ADMIN_PREFIX,),
-                 controller='login', action='password_reset_confirmation')
-
-    rmap.connect('social_auth',
-                 '%s/social_auth/{provider_name}' % (ADMIN_PREFIX,),
-                 controller='login', action='social_auth')
-
     # FEEDS
     rmap.connect('rss_feed_home', '/{repo_name}/feed/rss',
                  controller='feed', action='rss',
