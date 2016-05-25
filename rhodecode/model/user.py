@@ -493,7 +493,7 @@ class UserModel(BaseModel):
             log.error(traceback.format_exc())
             raise
 
-    def reset_password_link(self, data):
+    def reset_password_link(self, data, pwd_reset_url):
         from rhodecode.lib.celerylib import tasks, run_task
         from rhodecode.model.notification import EmailNotificationModel
         user_email = data['email']
@@ -502,12 +502,8 @@ class UserModel(BaseModel):
             if user:
                 log.debug('password reset user found %s', user)
 
-                password_reset_url = url(
-                    'reset_password_confirmation', key=user.api_key,
-                    qualified=True)
-
                 email_kwargs = {
-                    'password_reset_url': password_reset_url,
+                    'password_reset_url': pwd_reset_url,
                     'user': user,
                     'email': user_email,
                     'date': datetime.datetime.now()

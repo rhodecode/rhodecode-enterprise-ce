@@ -326,7 +326,17 @@ class LoginView(object):
                         error_dict = {'recaptcha_field': _msg}
                         raise formencode.Invalid(_msg, _value, None,
                                                  error_dict=error_dict)
-                UserModel().reset_password_link(form_result)
+
+                # Generate reset URL and send mail.
+                user_email = form_result['email']
+                user = User.get_by_email(user_email)
+                password_reset_url = self.request.route_url(
+                    'reset_password_confirmation',
+                    _query={'key': user.api_key})
+                UserModel().reset_password_link(
+                    form_result, password_reset_url)
+
+                # Display success message and redirect.
                 self.session.flash(
                     _('Your password reset link was sent'),
                     queue='success')
