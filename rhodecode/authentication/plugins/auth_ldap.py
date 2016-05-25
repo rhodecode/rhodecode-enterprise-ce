@@ -36,7 +36,6 @@ from rhodecode.authentication.routes import AuthnPluginResourceBase
 from rhodecode.lib.exceptions import (
     LdapConnectionError, LdapUsernameError, LdapPasswordError, LdapImportError
 )
-from rhodecode.lib.ext_json import formatted_json
 from rhodecode.lib.utils2 import safe_unicode, safe_str
 from rhodecode.model.db import User
 from rhodecode.model.validators import Missing
@@ -435,7 +434,7 @@ class RhodeCodeAuthPlugin(RhodeCodeExternalAuthPlugin):
                 'extern_name': user_dn,
                 'extern_type': extern_type,
             }
-            log.debug('ldap user: \n%s', formatted_json(user_attrs))
+            log.debug('ldap user: %s', user_attrs)
             log.info('user %s authenticated correctly', user_attrs['username'])
 
             return user_attrs

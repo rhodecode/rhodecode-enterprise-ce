@@ -35,7 +35,6 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from rhodecode.authentication.base import RhodeCodeExternalAuthPlugin
 from rhodecode.authentication.schema import AuthnPluginSettingsSchemaBase
 from rhodecode.authentication.routes import AuthnPluginResourceBase
-from rhodecode.lib.ext_json import formatted_json
 
 log = logging.getLogger(__name__)
 
@@ -151,6 +150,6 @@ class RhodeCodeAuthPlugin(RhodeCodeExternalAuthPlugin):
             log.warning("Cannot extract additional info for PAM user")
             pass
 
-        log.debug("pamuser: \n%s" % formatted_json(user_attrs))
+        log.debug("pamuser: %s", user_attrs)
         log.info('user %s authenticated correctly' % user_attrs['username'])
         return user_attrs

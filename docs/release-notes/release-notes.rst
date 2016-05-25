@@ -6,6 +6,7 @@ Release Notes
 |RCE| 4.x Versions
 ------------------
 
+   release-notes-4.0.1.rst
    release-notes-4.0.0.rst
 
 |RCE| 3.x Versions
