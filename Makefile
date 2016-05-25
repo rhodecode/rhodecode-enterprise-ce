@@ -5,10 +5,17 @@ NODE_PATH=./node_modules
 FLAKE8=flake8 setup.py pytest_pylons/ rhodecode/ --select=E124 --ignore=E711,E712,E510,E121,E122,E126,E127,E128,E501,F401 --max-line-length=100 --exclude=*rhodecode/lib/dbmigrate/*,*rhodecode/tests/*,*rhodecode/lib/vcs/utils/*
 CI_PREFIX=enterprise
 
-.PHONY: help clean test test-clean test-lint test-only
+.PHONY: docs docs-clean ci-docs clean test test-clean test-lint test-only
 
-help:
-	@echo "TODO: describe Makefile"
+
+docs:
+	(cd docs; nix-build default.nix -o result; make clean html)
+
+docs-clean:
+	(cd docs; make clean)
+
+ci-docs: docs;
+
 
 clean: test-clean
 	find . -type f \( -iname '*.c' -o -iname '*.pyc' -o -iname '*.so' \) -exec rm '{}' ';'
@@ -37,3 +44,4 @@ web-test:
 docs-bootstrap:
 	(cd docs; nix-build default.nix -o result)
 	@echo "Please go to docs folder and run make html"
+
