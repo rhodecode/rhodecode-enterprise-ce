@@ -197,7 +197,7 @@ class LoginView(object):
     @view_config(
         route_name='register', request_method='GET',
         renderer='rhodecode:templates/register.html',)
-    def register(self):
+    def register(self, defaults={}, errors={}):
         settings = SettingsModel().get_all_settings()
         captcha_public_key = settings.get('rhodecode_captcha_public_key')
         captcha_private_key = settings.get('rhodecode_captcha_private_key')
@@ -208,6 +208,8 @@ class LoginView(object):
 
         render_ctx = self._get_template_context()
         render_ctx.update({
+            'defaults': defaults,
+            'errors': errors,
             'auto_active': auto_active,
             'captcha_active': captcha_active,
             'captcha_public_key': captcha_public_key,
@@ -219,10 +221,9 @@ class LoginView(object):
         route_name='register', request_method='POST',
         renderer='rhodecode:templates/register.html')
     def register_post(self):
-        settings = SettingsModel().get_all_settings()
-        captcha_private_key = settings.get('rhodecode_captcha_private_key')
+        captcha_private_key = SettingsModel().get_setting_by_name(
+            'rhodecode_captcha_private_key')
         captcha_active = bool(captcha_private_key)
-        register_message = settings.get('rhodecode_register_message') or ''
         auto_active = 'hg.register.auto_activate' in User.get_default_user()\
             .AuthUser.permissions['global']
 
@@ -258,13 +259,8 @@ class LoginView(object):
         except formencode.Invalid as errors:
             del errors.value['password']
             del errors.value['password_confirmation']
-            render_ctx = self._get_template_context()
-            render_ctx.update({
-                'errors': errors.error_dict,
-                'defaults': errors.value,
-                'register_message': register_message,
-            })
-            return render_ctx
+            return self.register(
+                defaults=errors.value, errors=errors.error_dict)
 
         except UserCreationError as e:
             # container auth or other auth functions that create users on
@@ -272,11 +268,7 @@ class LoginView(object):
             # with user creation, explanation should be provided in
             # Exception itself
             self.session.flash(e, queue='error')
-            render_ctx = self._get_template_context()
-            render_ctx.update({
-                'register_message': register_message,
-            })
-            return render_ctx
+            return self.register()
 
     @view_config(
         route_name='reset_password', request_method=('GET', 'POST'),
