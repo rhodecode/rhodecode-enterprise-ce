@@ -31,6 +31,7 @@ from pyramid.view import view_config
 from recaptcha.client.captcha import submit
 
 from rhodecode.authentication.base import loadplugin
+from rhodecode.events import UserRegistered
 from rhodecode.lib.auth import (
     AuthUser, HasPermissionAnyDecorator, CSRFRequired)
 from rhodecode.lib.base import get_ip_addr
@@ -243,7 +244,9 @@ class LoginView(object):
                     raise formencode.Invalid(_msg, _value, None,
                                              error_dict=error_dict)
 
-            UserModel().create_registration(form_result)
+            new_user = UserModel().create_registration(form_result)
+            event = UserRegistered(user=new_user, session=self.session)
+            self.request.registry.notify(event)
             self.session.flash(
                 _('You have successfully registered with RhodeCode'),
                 queue='success')
