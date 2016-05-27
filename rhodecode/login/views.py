@@ -76,6 +76,26 @@ def _store_user_in_session(session, username, remember=False):
     return headers
 
 
+def get_came_from(request):
+    came_from = safe_str(request.GET.get('came_from', ''))
+    parsed = urlparse.urlparse(came_from)
+    allowed_schemes = ['http', 'https']
+    if parsed.scheme and parsed.scheme not in allowed_schemes:
+        log.error('Suspicious URL scheme detected %s for url %s' %
+                  (parsed.scheme, parsed))
+        came_from = url('home')
+    elif parsed.netloc and request.host != parsed.netloc:
+        log.error('Suspicious NETLOC detected %s for url %s server url '
+                  'is: %s' % (parsed.netloc, parsed, request.host))
+        came_from = url('home')
+    elif any(bad_str in parsed.path for bad_str in ('\r', '\n')):
+        log.error('Header injection detected `%s` for url %s server url ' %
+                  (parsed.path, parsed))
+        came_from = url('home')
+
+    return came_from
+
+
 class LoginView(object):
 
     def __init__(self, context, request):
@@ -84,35 +104,9 @@ class LoginView(object):
         self.session = request.session
         self._rhodecode_user = request.user
 
-    def _validate_came_from(self, came_from):
-        if not came_from:
-            return came_from
-
-        parsed = urlparse.urlparse(came_from)
-        allowed_schemes = ['http', 'https']
-        if parsed.scheme and parsed.scheme not in allowed_schemes:
-            log.error('Suspicious URL scheme detected %s for url %s' %
-                      (parsed.scheme, parsed))
-            came_from = url('home')
-        elif parsed.netloc and self.request.host != parsed.netloc:
-            log.error('Suspicious NETLOC detected %s for url %s server url '
-                      'is: %s' % (parsed.netloc, parsed, self.request.host))
-            came_from = url('home')
-        if any(bad_str in parsed.path for bad_str in ('\r', '\n')):
-            log.error('Header injection detected `%s` for url %s server url ' %
-                      (parsed.path, parsed))
-            came_from = url('home')
-        return came_from
-
-    def _get_came_from(self):
-        _default_came_from = url('home')
-        came_from = self._validate_came_from(
-            safe_str(self.request.GET.get('came_from', '')))
-        return came_from or _default_came_from
-
     def _get_template_context(self):
         return {
-            'came_from': self._get_came_from(),
+            'came_from': get_came_from(self.request),
             'defaults': {},
             'errors': {},
         }
@@ -125,7 +119,7 @@ class LoginView(object):
 
         # redirect if already logged in
         if user.is_authenticated and not user.is_default and user.ip_allowed:
-            raise HTTPFound(self._get_came_from())
+            raise HTTPFound(get_came_from(self.request))
 
         return self._get_template_context()
 
@@ -133,7 +127,7 @@ class LoginView(object):
         route_name='login', request_method='POST',
         renderer='rhodecode:templates/login.html')
     def login_post(self):
-        came_from = self._get_came_from()
+        came_from = get_came_from(self.request)
         session = self.request.session
         login_form = LoginForm()()
 
