@@ -22,15 +22,12 @@ import datetime
 import formencode
 import logging
 import urlparse
-import uuid
 
 from pylons import url
 from pyramid.httpexceptions import HTTPFound
-from pyramid.i18n import TranslationStringFactory
 from pyramid.view import view_config
 from recaptcha.client.captcha import submit
 
-from rhodecode.authentication.base import loadplugin
 from rhodecode.events import UserRegistered
 from rhodecode.lib.auth import (
     AuthUser, HasPermissionAnyDecorator, CSRFRequired)
@@ -43,9 +40,8 @@ from rhodecode.model.login_session import LoginSession
 from rhodecode.model.meta import Session
 from rhodecode.model.settings import SettingsModel
 from rhodecode.model.user import UserModel
+from rhodecode.translation import _
 
-
-_ = TranslationStringFactory('rhodecode-enterprise')
 
 log = logging.getLogger(__name__)
 

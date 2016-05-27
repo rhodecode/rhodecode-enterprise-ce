@@ -20,10 +20,11 @@
 
 
 import pylons
-from pyramid.i18n import get_localizer, TranslationStringFactory
+
+from pyramid.i18n import get_localizer
 from pyramid.threadlocal import get_current_request
 
-tsf = TranslationStringFactory('rc_root')
+from rhodecode.translation import _ as tsf
 
 
 def add_renderer_globals(event):

@@ -21,12 +21,11 @@
 import logging
 
 from pyramid.exceptions import ConfigurationError
-from pyramid.i18n import TranslationStringFactory
 
 from rhodecode.lib.utils2 import safe_str
 from rhodecode.model.settings import SettingsModel
+from rhodecode.translation import _
 
-_ = TranslationStringFactory('rhodecode-enterprise')
 
 log = logging.getLogger(__name__)
 

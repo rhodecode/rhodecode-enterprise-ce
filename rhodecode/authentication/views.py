@@ -23,7 +23,6 @@ import formencode.htmlfill
 import logging
 
 from pyramid.httpexceptions import HTTPFound
-from pyramid.i18n import TranslationStringFactory
 from pyramid.renderers import render
 from pyramid.response import Response
 
@@ -34,10 +33,9 @@ from rhodecode.lib.auth import LoginRequired, HasPermissionAllDecorator
 from rhodecode.model.forms import AuthSettingsForm
 from rhodecode.model.meta import Session
 from rhodecode.model.settings import SettingsModel
+from rhodecode.translation import _
 
 log = logging.getLogger(__name__)
-
-_ = TranslationStringFactory('rhodecode-enterprise')
 
 
 class AuthnPluginViewBase(object):
