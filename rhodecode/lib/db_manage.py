@@ -537,7 +537,6 @@ class DbManage(object):
             ('clone_uri_tmpl', Repository.DEFAULT_CLONE_URI, 'unicode'),
             ('support_url', '', 'unicode'),
             ('update_url', RhodeCodeSetting.DEFAULT_UPDATE_URL, 'unicode'),
-            ('license_key', '', 'unicode'),
             ('show_revision_number', True, 'bool'),
             ('show_sha_length', 12, 'int'),
         ]
