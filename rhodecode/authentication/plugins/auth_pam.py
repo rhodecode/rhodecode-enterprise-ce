@@ -35,6 +35,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from rhodecode.authentication.base import RhodeCodeExternalAuthPlugin
 from rhodecode.authentication.schema import AuthnPluginSettingsSchemaBase
 from rhodecode.authentication.routes import AuthnPluginResourceBase
+from rhodecode.lib.colander_utils import strip_whitespace
 
 log = logging.getLogger(__name__)
 
@@ -57,6 +58,7 @@ class PamSettingsSchema(AuthnPluginSettingsSchemaBase):
         colander.String(),
         default='login',
         description=_('PAM service name to use for authentication.'),
+        preparer=strip_whitespace,
         title=_('PAM service name'),
         widget='string')
     gecos = colander.SchemaNode(
@@ -64,6 +66,7 @@ class PamSettingsSchema(AuthnPluginSettingsSchemaBase):
         default='(?P<last_name>.+),\s*(?P<first_name>\w+)',
         description=_('Regular expression for extracting user name/email etc. '
                       'from Unix userinfo.'),
+        preparer=strip_whitespace,
         title=_('Gecos Regex'),
         widget='string')
 

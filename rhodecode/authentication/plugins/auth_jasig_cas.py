@@ -36,6 +36,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from rhodecode.authentication.base import RhodeCodeExternalAuthPlugin
 from rhodecode.authentication.schema import AuthnPluginSettingsSchemaBase
 from rhodecode.authentication.routes import AuthnPluginResourceBase
+from rhodecode.lib.colander_utils import strip_whitespace
 from rhodecode.lib.utils2 import safe_unicode
 from rhodecode.model.db import User
 
@@ -60,6 +61,7 @@ class JasigCasSettingsSchema(AuthnPluginSettingsSchemaBase):
         colander.String(),
         default='https://domain.com/cas/v1/tickets',
         description=_('The url of the Jasig CAS REST service'),
+        preparer=strip_whitespace,
         title=_('URL'),
         widget='string')
 

@@ -26,6 +26,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from rhodecode.authentication.base import RhodeCodeExternalAuthPlugin
 from rhodecode.authentication.schema import AuthnPluginSettingsSchemaBase
 from rhodecode.authentication.routes import AuthnPluginResourceBase
+from rhodecode.lib.colander_utils import strip_whitespace
 from rhodecode.lib.utils2 import str2bool, safe_unicode
 from rhodecode.model.db import User
 from rhodecode.translation import _
@@ -52,12 +53,14 @@ class ContainerSettingsSchema(AuthnPluginSettingsSchemaBase):
         colander.String(),
         default='REMOTE_USER',
         description=_('Header to extract the user from'),
+        preparer=strip_whitespace,
         title=_('Header'),
         widget='string')
     fallback_header = colander.SchemaNode(
         colander.String(),
         default='HTTP_X_FORWARDED_USER',
         description=_('Header to extract the user from when main one fails'),
+        preparer=strip_whitespace,
         title=_('Fallback header'),
         widget='string')
     clean_username = colander.SchemaNode(
