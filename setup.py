@@ -213,6 +213,7 @@ setup(
     paster_plugins=['PasteScript', 'Pylons'],
     entry_points={
         'enterprise.plugins1': [
+            'container=rhodecode.authentication.plugins.auth_container:plugin_factory',
             'crowd=rhodecode.authentication.plugins.auth_crowd:plugin_factory',
             'jasig_cas=rhodecode.authentication.plugins.auth_jasig_cas:plugin_factory',
             'ldap=rhodecode.authentication.plugins.auth_ldap:plugin_factory',
