@@ -56,7 +56,7 @@ def includeme(config):
     config.set_authentication_policy(authn_policy)
 
     # Create authentication plugin registry and add it to the pyramid registry.
-    authn_registry = AuthenticationPluginRegistry()
+    authn_registry = AuthenticationPluginRegistry(config.get_settings())
     config.add_directive('add_authn_plugin', authn_registry.add_authn_plugin)
     config.registry.registerUtility(authn_registry)
 

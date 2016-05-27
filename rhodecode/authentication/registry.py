@@ -31,8 +31,13 @@ log = logging.getLogger(__name__)
 
 @implementer(IAuthnPluginRegistry)
 class AuthenticationPluginRegistry(object):
-    def __init__(self):
+
+    # INI settings key to set a fallback authentication plugin.
+    fallback_plugin_key = 'rhodecode.auth_plugin_fallback'
+
+    def __init__(self, settings):
         self._plugins = {}
+        self._fallback_plugin = settings.get(self.fallback_plugin_key, None)
 
     def add_authn_plugin(self, config, plugin):
         plugin_id = plugin.get_id()
@@ -51,3 +56,23 @@ class AuthenticationPluginRegistry(object):
 
     def get_plugin(self, plugin_id):
         return self._plugins.get(plugin_id, None)
+
+    def get_plugins_for_authentication(self):
+        """
+        Returns a list of plugins which should be consulted when authenticating
+        a user. It only returns plugins which are enabled and active.
+        Additionally it includes the fallback plugin from the INI file, if
+        `rhodecode.auth_plugin_fallback` is set to a plugin ID.
+        """
+        plugins = []
+        for plugin in self.get_plugins():
+            if (self._fallback_plugin and
+                    plugin.get_id() == self._fallback_plugin):
+                log.warn(
+                    'Using fallback authentication plugin from INI file: "%s"',
+                    plugin.get_id())
+                plugins.append(plugin)
+            elif plugin.is_enabled() and plugin.is_active():
+                plugins.append(plugin)
+
+        return plugins

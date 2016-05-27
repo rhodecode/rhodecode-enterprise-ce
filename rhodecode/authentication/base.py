@@ -26,23 +26,16 @@ import logging
 import time
 import traceback
 
-from authomatic import Authomatic
-from authomatic.adapters import WebObAdapter
-from authomatic.providers import oauth2, oauth1
-from pylons import url
-from pylons.controllers.util import Response
-from pylons.i18n.translation import _
 from pyramid.threadlocal import get_current_registry
 from sqlalchemy.ext.hybrid import hybrid_property
 
-import rhodecode.lib.helpers as h
 from rhodecode.authentication.interface import IAuthnPluginRegistry
 from rhodecode.authentication.schema import AuthnPluginSettingsSchemaBase
 from rhodecode.lib import caches
 from rhodecode.lib.auth import PasswordGenerator, _RhodeCodeCryptoBCrypt
 from rhodecode.lib.utils2 import md5_safe, safe_int
 from rhodecode.lib.utils2 import safe_str
-from rhodecode.model.db import User, ExternalIdentity
+from rhodecode.model.db import User
 from rhodecode.model.meta import Session
 from rhodecode.model.settings import SettingsModel
 from rhodecode.model.user import UserModel
@@ -518,50 +511,40 @@ def authenticate(username, password, environ=None, auth_type=None,
         raise ValueError('auth type must be on of http, vcs got "%s" instead'
                          % auth_type)
     container_only = environ and not (username and password)
-    auth_plugins = SettingsModel().get_auth_plugins()
-    for plugin_id in auth_plugins:
-        plugin = loadplugin(plugin_id)
 
-        if plugin is None:
-            log.warning('Authentication plugin missing: "{}"'.format(
-                plugin_id))
-            continue
-
-        if not plugin.is_active():
-            log.info('Authentication plugin is inactive: "{}"'.format(
-                plugin_id))
-            continue
-
+    authn_registry = get_current_registry().getUtility(IAuthnPluginRegistry)
+    for plugin in authn_registry.get_plugins_for_authentication():
         plugin.set_auth_type(auth_type)
         user = plugin.get_user(username)
         display_user = user.username if user else username
 
         if container_only and not plugin.is_container_auth:
             log.debug('Auth type is for container only and plugin `%s` is not '
-                      'container plugin, skipping...', plugin_id)
+                      'container plugin, skipping...', plugin.get_id())
             continue
 
         # load plugin settings from RhodeCode database
         plugin_settings = plugin.get_settings()
         log.debug('Plugin settings:%s', plugin_settings)
 
-        log.debug('Trying authentication using ** %s **', plugin_id)
+        log.debug('Trying authentication using ** %s **', plugin.get_id())
         # use plugin's method of user extraction.
         user = plugin.get_user(username, environ=environ,
                                settings=plugin_settings)
         display_user = user.username if user else username
-        log.debug('Plugin %s extracted user is `%s`', plugin_id, display_user)
+        log.debug(
+            'Plugin %s extracted user is `%s`', plugin.get_id(), display_user)
 
         if not plugin.allows_authentication_from(user):
             log.debug('Plugin %s does not accept user `%s` for authentication',
-                      plugin_id, display_user)
+                      plugin.get_id(), display_user)
             continue
         else:
             log.debug('Plugin %s accepted user `%s` for authentication',
-                      plugin_id, display_user)
+                      plugin.get_id(), display_user)
 
         log.info('Authenticating user `%s` using %s plugin',
-                 display_user, plugin_id)
+                 display_user, plugin.get_id())
 
         _cache_ttl = 0
 
@@ -576,7 +559,7 @@ def authenticate(username, password, environ=None, auth_type=None,
         # get instance of cache manager configured for a namespace
         cache_manager = get_auth_cache_manager(custom_ttl=_cache_ttl)
 
-        log.debug('Cache for plugin `%s` active: %s', plugin_id,
+        log.debug('Cache for plugin `%s` active: %s', plugin.get_id(),
                   plugin_cache_active)
 
         # for environ based password can be empty, but then the validation is
@@ -591,7 +574,7 @@ def authenticate(username, password, environ=None, auth_type=None,
         # then auth is correct.
         start = time.time()
         log.debug('Running plugin `%s` _authenticate method',
-                  plugin_id)
+                  plugin.get_id())
 
         def auth_func():
             """
@@ -611,7 +594,7 @@ def authenticate(username, password, environ=None, auth_type=None,
         auth_time = time.time() - start
         log.debug('Authentication for plugin `%s` completed in %.3fs, '
                   'expiration time of fetched cache %.1fs.',
-                  plugin_id, auth_time, _cache_ttl)
+                  plugin.get_id(), auth_time, _cache_ttl)
 
         log.debug('PLUGIN USER DATA: %s', plugin_user)
 
@@ -620,5 +603,5 @@ def authenticate(username, password, environ=None, auth_type=None,
             return plugin_user
         # we failed to Auth because .auth() method didn't return proper user
         log.debug("User `%s` failed to authenticate against %s",
-                  display_user, plugin_id)
+                  display_user, plugin.get_id())
     return None

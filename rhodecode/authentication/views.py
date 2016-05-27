@@ -151,8 +151,7 @@ class AuthSettingsView(object):
     @HasPermissionAllDecorator('hg.admin')
     def index(self, defaults={}, errors=None, prefix_error=False):
         authn_registry = self.request.registry.getUtility(IAuthnPluginRegistry)
-        default_plugins = ['egg:rhodecode-enterprise-ce#rhodecode']
-        enabled_plugins = SettingsModel().get_auth_plugins() or default_plugins
+        enabled_plugins = SettingsModel().get_auth_plugins()
 
         # Create template context and render it.
         template_context = {
