@@ -17,7 +17,8 @@
 # and proprietary license terms, please see https://rhodecode.com/licenses/
 
 from zope.interface import implementer
-from rhodecode.interfaces import IUserRegistered
+from rhodecode.interfaces import (
+    IUserRegistered, IUserPreCreate, IUserPreUpdate)
 
 
 @implementer(IUserRegistered)
@@ -29,3 +30,24 @@ class UserRegistered(object):
     def __init__(self, user, session):
         self.user = user
         self.session = session
+
+
+@implementer(IUserPreCreate)
+class UserPreCreate(object):
+    """
+    An instance of this class is emitted as an :term:`event` before a new user
+    object is created.
+    """
+    def __init__(self, active):
+        self.active = active
+
+
+@implementer(IUserPreUpdate)
+class UserPreUpdate(object):
+    """
+    An instance of this class is emitted as an :term:`event` before a user
+    object is updated.
+    """
+    def __init__(self, user, active):
+        self.user = user
+        self.active = active
