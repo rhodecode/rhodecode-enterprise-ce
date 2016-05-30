@@ -216,6 +216,8 @@ class UsersController(BaseController):
                 prefix_error=False,
                 encoding="UTF-8",
                 force_defaults=False)
+        except UserCreationError as e:
+            h.flash(e, 'error')
         except Exception:
             log.exception("Exception updating user")
             h.flash(_('Error occurred during update of user %s')
