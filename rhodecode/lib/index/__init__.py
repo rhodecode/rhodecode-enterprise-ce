@@ -42,7 +42,6 @@ class BaseSearch(object):
     def search(self, query, document_type, search_user, repo_name=None):
         raise Exception('NotImplemented')
 
-
 def searcher_from_config(config, prefix='search.'):
     _config = {}
     for key in config.keys():

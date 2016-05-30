@@ -25,6 +25,7 @@ Index schema for RhodeCode
 from __future__ import absolute_import
 import logging
 import os
+import re
 
 from pylons.i18n.translation import _
 
@@ -59,6 +60,7 @@ FRAGMENTER = ContextFragmenter(200)
 log = logging.getLogger(__name__)
 
 
+
 class Search(BaseSearch):
 
     name = 'whoosh'
@@ -90,8 +92,19 @@ class Search(BaseSearch):
         if self.searcher:
             self.searcher.close()
 
+    def _extend_query(self, query):
+        hashes = re.compile('([0-9a-f]{5,40})').findall(query)
+        if hashes:
+            hashes_or_query = ' OR '.join('commit_id:%s*' % h for h in hashes)
+            query = u'(%s) OR %s' % (query, hashes_or_query)
+        return query
+
     def search(self, query, document_type, search_user, repo_name=None,
         requested_page=1, page_limit=10):
+
+        original_query = query
+        query = self._extend_query(query)
+
         log.debug(u'QUERY: %s on %s', query, document_type)
         result = {
             'results': [],

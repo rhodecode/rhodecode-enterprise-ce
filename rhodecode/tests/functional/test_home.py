@@ -181,19 +181,25 @@ class TestUserAutocompleteData(TestController):
 def assert_and_get_content(result):
     repos = []
     groups = []
+    commits = []
     for data in result:
         for data_item in data['children']:
             assert data_item['id']
             assert data_item['text']
+            assert data_item['url']
             if data_item['type'] == 'repo':
                 repos.append(data_item)
-            else:
+            elif data_item['type'] == 'group':
                 groups.append(data_item)
+            elif data_item['type'] == 'commit':
+                commits.append(data_item)
+            else:
+                raise Exception('invalid type %s' % data_item['type'])
 
-    return repos, groups
+    return repos, groups, commits
 
 
-class TestRepoSwitcherData(TestController):
+class TestGotoSwitcherData(TestController):
     required_repos_with_groups = [
         'abc',
         'abc-fork',
@@ -253,39 +259,41 @@ class TestRepoSwitcherData(TestController):
         self.log_user()
 
         response = self.app.get(
-            url(controller='home', action='repo_switcher_data'),
+            url(controller='home', action='goto_switcher_data'),
             headers={'X-REQUESTED-WITH': 'XMLHttpRequest', }, status=200)
         result = json.loads(response.body)['results']
 
-        repos, groups = assert_and_get_content(result)
+        repos, groups, commits = assert_and_get_content(result)
 
         assert len(repos) == len(Repository.get_all())
         assert len(groups) == len(RepoGroup.get_all())
+        assert len(commits) == 0
 
     def test_returns_list_of_repos_and_groups_filtered(self):
         self.log_user()
 
         response = self.app.get(
-            url(controller='home', action='repo_switcher_data'),
+            url(controller='home', action='goto_switcher_data'),
             headers={'X-REQUESTED-WITH': 'XMLHttpRequest', },
             params={'query': 'abc'}, status=200)
         result = json.loads(response.body)['results']
 
-        repos, groups = assert_and_get_content(result)
+        repos, groups, commits = assert_and_get_content(result)
 
         assert len(repos) == 13
         assert len(groups) == 5
+        assert len(commits) == 0
 
     def test_returns_list_of_properly_sorted_and_filtered(self):
         self.log_user()
 
         response = self.app.get(
-            url(controller='home', action='repo_switcher_data'),
+            url(controller='home', action='goto_switcher_data'),
             headers={'X-REQUESTED-WITH': 'XMLHttpRequest', },
             params={'query': 'abc'}, status=200)
         result = json.loads(response.body)['results']
 
-        repos, groups = assert_and_get_content(result)
+        repos, groups, commits = assert_and_get_content(result)
 
         test_repos = [x['text'] for x in repos[:4]]
         assert ['abc', 'abcd', 'a/abc', 'abcde'] == test_repos
@@ -300,54 +308,58 @@ class TestRepoListData(TestController):
         self.log_user()
 
         response = self.app.get(
-            url(controller='home', action='repo_switcher_data'),
+            url(controller='home', action='repo_list_data'),
             headers={'X-REQUESTED-WITH': 'XMLHttpRequest', }, status=200)
         result = json.loads(response.body)['results']
 
-        repos, groups = assert_and_get_content(result)
+        repos, groups, commits = assert_and_get_content(result)
 
         assert len(repos) == len(Repository.get_all())
         assert len(groups) == 0
+        assert len(commits) == 0
 
     def test_returns_list_of_repos_and_groups_filtered(self):
         self.log_user()
 
         response = self.app.get(
-            url(controller='home', action='repo_switcher_data'),
+            url(controller='home', action='repo_list_data'),
             headers={'X-REQUESTED-WITH': 'XMLHttpRequest', },
             params={'query': 'vcs_test_git'}, status=200)
         result = json.loads(response.body)['results']
 
-        repos, groups = assert_and_get_content(result)
+        repos, groups, commits = assert_and_get_content(result)
 
         assert len(repos) == len(Repository.query().filter(
             Repository.repo_name.ilike('%vcs_test_git%')).all())
         assert len(groups) == 0
+        assert len(commits) == 0
 
     def test_returns_list_of_repos_and_groups_filtered_with_type(self):
         self.log_user()
 
         response = self.app.get(
-            url(controller='home', action='repo_switcher_data'),
+            url(controller='home', action='repo_list_data'),
             headers={'X-REQUESTED-WITH': 'XMLHttpRequest', },
             params={'query': 'vcs_test_git', 'repo_type': 'git'}, status=200)
         result = json.loads(response.body)['results']
 
-        repos, groups = assert_and_get_content(result)
+        repos, groups, commits = assert_and_get_content(result)
 
         assert len(repos) == len(Repository.query().filter(
             Repository.repo_name.ilike('%vcs_test_git%')).all())
         assert len(groups) == 0
+        assert len(commits) == 0
 
     def test_returns_list_of_repos_non_ascii_query(self):
         self.log_user()
         response = self.app.get(
-            url(controller='home', action='repo_switcher_data'),
+            url(controller='home', action='repo_list_data'),
             headers={'X-REQUESTED-WITH': 'XMLHttpRequest', },
             params={'query': 'ć_vcs_test_ą', 'repo_type': 'git'}, status=200)
         result = json.loads(response.body)['results']
 
-        repos, groups = assert_and_get_content(result)
+        repos, groups, commits = assert_and_get_content(result)
 
         assert len(repos) == 0
         assert len(groups) == 0
+        assert len(commits) == 0

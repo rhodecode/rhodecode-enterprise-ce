@@ -125,8 +125,8 @@ def make_map(config):
 
     # MAIN PAGE
     rmap.connect('home', '/', controller='home', action='index')
-    rmap.connect('repo_switcher_data', '/_repos_and_groups', controller='home',
-                 action='repo_switcher_data')
+    rmap.connect('goto_switcher_data', '/_goto_data', controller='home',
+                 action='goto_switcher_data')
     rmap.connect('repo_list_data', '/_repos', controller='home',
                  action='repo_list_data')
 

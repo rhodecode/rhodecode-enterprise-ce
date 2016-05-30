@@ -455,8 +455,11 @@
                     tmpl += '<i class="icon-unlock-alt"></i> ';
                 }
             }
+            if(obj_dict && state.type == 'commit') {
+                tmpl += '<i class="icon-tag"></i>';
+            }
             if(obj_dict && state.type == 'group'){
-                    tmpl += '<i class="icon-folder-close"></i> ';
+                tmpl += '<i class="icon-folder-close"></i> ';
             }
             tmpl += escapeMarkup(state.text);
             return tmpl;
@@ -496,7 +499,7 @@
                     query.callback({results: cachedData.results});
                 } else {
                     $.ajax({
-                        url: "${h.url('repo_switcher_data')}",
+                        url: "${h.url('goto_switcher_data')}",
                         data: {'query': query.term},
                         dataType: 'json',
                         type: 'GET',
@@ -514,7 +517,7 @@
 
         $("#repo_switcher").on('select2-selecting', function(e){
             e.preventDefault();
-            window.location = pyroutes.url('summary_home', {'repo_name': e.val});
+            window.location = e.choice.url;
         });
 
         ## Global mouse bindings ##

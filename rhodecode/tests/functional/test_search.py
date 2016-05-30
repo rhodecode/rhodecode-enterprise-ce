@@ -129,6 +129,10 @@ class TestSearchController(TestController):
         ('author:marcin@python-blog.com '
          'commit_id:b986218ba1c9b0d6a259fac9b050b1724ed8e545', 1, [
              ('hg', 'b986218ba1c9b0d6a259fac9b050b1724ed8e545')]),
+        ('b986218ba1c9b0d6a259fac9b050b1724ed8e545', 1, [
+             ('hg', 'b986218ba1c9b0d6a259fac9b050b1724ed8e545')]),
+        ('b986218b', 1, [
+             ('hg', 'b986218ba1c9b0d6a259fac9b050b1724ed8e545')]),
     ])
     def test_search_commit_messages(
             self, query, expected_hits, expected_commits, enabled_backends):
