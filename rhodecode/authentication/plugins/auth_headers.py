@@ -44,11 +44,11 @@ def plugin_factory(plugin_id, *args, **kwds):
     return plugin
 
 
-class ContainerAuthnResource(AuthnPluginResourceBase):
+class HeadersAuthnResource(AuthnPluginResourceBase):
     pass
 
 
-class ContainerSettingsSchema(AuthnPluginSettingsSchemaBase):
+class HeadersSettingsSchema(AuthnPluginSettingsSchemaBase):
     header = colander.SchemaNode(
         colander.String(),
         default='REMOTE_USER',
@@ -79,29 +79,29 @@ class RhodeCodeAuthPlugin(RhodeCodeExternalAuthPlugin):
 
     def includeme(self, config):
         config.add_authn_plugin(self)
-        config.add_authn_resource(self.get_id(), ContainerAuthnResource(self))
+        config.add_authn_resource(self.get_id(), HeadersAuthnResource(self))
         config.add_view(
             'rhodecode.authentication.views.AuthnPluginViewBase',
             attr='settings_get',
             request_method='GET',
             route_name='auth_home',
-            context=ContainerAuthnResource)
+            context=HeadersAuthnResource)
         config.add_view(
             'rhodecode.authentication.views.AuthnPluginViewBase',
             attr='settings_post',
             request_method='POST',
             route_name='auth_home',
-            context=ContainerAuthnResource)
+            context=HeadersAuthnResource)
 
     def get_display_name(self):
-        return _('Container')
+        return _('Headers')
 
     def get_settings_schema(self):
-        return ContainerSettingsSchema()
+        return HeadersSettingsSchema()
 
     @hybrid_property
     def name(self):
-        return "container"
+        return 'headers'
 
     @hybrid_property
     def is_container_auth(self):
@@ -139,7 +139,7 @@ class RhodeCodeAuthPlugin(RhodeCodeExternalAuthPlugin):
             log.debug('extracted %s:%s' % (header, username))
 
         if username and str2bool(settings.get('clean_username')):
-            log.debug('Received username `%s` from container' % username)
+            log.debug('Received username `%s` from headers' % username)
             username = self._clean_username(username)
             log.debug('New cleanup user is:%s' % username)
         return username
@@ -148,7 +148,7 @@ class RhodeCodeAuthPlugin(RhodeCodeExternalAuthPlugin):
         """
         Helper method for user fetching in plugins, by default it's using
         simple fetch by username, but this method can be custimized in plugins
-        eg. container auth plugin to fetch user by environ params
+        eg. headers auth plugin to fetch user by environ params
         :param username: username if given to fetch
         :param kwargs: extra arguments needed for user fetching.
         """
@@ -160,7 +160,7 @@ class RhodeCodeAuthPlugin(RhodeCodeExternalAuthPlugin):
 
     def auth(self, userobj, username, password, settings, **kwargs):
         """
-        Get's the container_auth username (or email). It tries to get username
+        Get's the headers_auth username (or email). It tries to get username
         from REMOTE_USER if this plugin is enabled, if that fails
         it tries to get username from HTTP_X_FORWARDED_USER if fallback header
         is set. clean_username extracts the username from this data if it's
@@ -183,7 +183,7 @@ class RhodeCodeAuthPlugin(RhodeCodeExternalAuthPlugin):
         if not userobj:
             userobj = self.get_user('', environ=environ, settings=settings)
 
-        # we don't care passed username/password for container auth plugins.
+        # we don't care passed username/password for headers auth plugins.
         # only way to log in is using environ
         username = None
         if userobj:
