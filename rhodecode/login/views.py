@@ -93,7 +93,7 @@ def get_came_from(request):
                   (parsed.path, parsed))
         came_from = url('home')
 
-    return came_from
+    return came_from or url('home')
 
 
 class LoginView(object):
