@@ -79,7 +79,8 @@ class SearchController(BaseRepoController):
 
             try:
                 search_result = searcher.search(
-                    search_query, search_type, c.perm_user, repo_name)
+                    search_query, search_type, c.perm_user, repo_name,
+                    requested_page, page_limit)
 
                 formatted_results = Page(
                     search_result['results'], page=requested_page,

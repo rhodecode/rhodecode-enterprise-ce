@@ -90,7 +90,8 @@ class Search(BaseSearch):
         if self.searcher:
             self.searcher.close()
 
-    def search(self, query, document_type, search_user, repo_name=None):
+    def search(self, query, document_type, search_user, repo_name=None,
+        requested_page=1, page_limit=10):
         log.debug(u'QUERY: %s on %s', query, document_type)
         result = {
             'results': [],

@@ -36,11 +36,14 @@ import urlparse
 import time
 import string
 import hashlib
+import pygments
 
 from datetime import datetime
 from functools import partial
 from pygments.formatters.html import HtmlFormatter
 from pygments import highlight as code_highlight
+from pygments.lexers import (
+    get_lexer_by_name, get_lexer_for_filename, get_lexer_for_mimetype)
 from pylons import url
 from pylons.i18n.translation import _, ungettext
 from pyramid.threadlocal import get_current_request
@@ -305,6 +308,176 @@ class CodeHtmlFormatter(HtmlFormatter):
                       ls + '</pre></div></td><td id="hlcode" class="code">')
         yield 0, dummyoutfile.getvalue()
         yield 0, '</td></tr></table>'
+
+
+class SearchContentCodeHtmlFormatter(CodeHtmlFormatter):
+    def __init__(self, **kw):
+        # only show these line numbers if set
+        self.only_lines = kw.pop('only_line_numbers', [])
+        self.query_terms = kw.pop('query_terms', [])
+        self.max_lines = kw.pop('max_lines', 5)
+        self.line_context = kw.pop('line_context', 3)
+        self.url = kw.pop('url', None)
+
+        super(CodeHtmlFormatter, self).__init__(**kw)
+
+    def _wrap_code(self, source):
+        for cnt, it in enumerate(source):
+            i, t = it
+            t = '<pre>%s</pre>' % t
+            yield i, t
+
+    def _wrap_tablelinenos(self, inner):
+        yield 0, '<table class="code-highlight %stable">' % self.cssclass
+
+        last_shown_line_number = 0
+        current_line_number = 1
+
+        for t, line in inner:
+            if not t:
+                yield t, line
+                continue
+
+            if current_line_number in self.only_lines:
+                if last_shown_line_number + 1 != current_line_number:
+                    yield 0, '<tr>'
+                    yield 0, '<td class="line">...</td>'
+                    yield 0, '<td id="hlcode" class="code"></td>'
+                    yield 0, '</tr>'
+
+                yield 0, '<tr>'
+                if self.url:
+                    yield 0, '<td class="line"><a href="%s#L%i">%i</a></td>' % (
+                        self.url, current_line_number, current_line_number)
+                else:
+                    yield 0, '<td class="line"><a href="">%i</a></td>' % (
+                        current_line_number)
+                yield 0, '<td id="hlcode" class="code">' + line + '</td>'
+                yield 0, '</tr>'
+
+                last_shown_line_number = current_line_number
+
+            current_line_number += 1
+
+
+        yield 0, '</table>'
+
+
+def extract_phrases(text_query):
+    """
+    Extracts phrases from search term string making sure phrases
+    contained in double quotes are kept together - and discarding empty values
+    or fully whitespace values eg.
+
+    'some   text "a phrase" more' => ['some', 'text', 'a phrase', 'more']
+
+    """
+
+    in_phrase = False
+    buf = ''
+    phrases = []
+    for char in text_query:
+        if in_phrase:
+            if char == '"': # end phrase
+                phrases.append(buf)
+                buf = ''
+                in_phrase = False
+                continue
+            else:
+                buf += char
+                continue
+        else:
+            if char == '"': # start phrase
+                in_phrase = True
+                phrases.append(buf)
+                buf = ''
+                continue
+            elif char == ' ':
+                phrases.append(buf)
+                buf = ''
+                continue
+            else:
+                buf += char
+
+    phrases.append(buf)
+    phrases = [phrase.strip() for phrase in phrases if phrase.strip()]
+    return phrases
+
+
+def get_matching_offsets(text, phrases):
+    """
+    Returns a list of string offsets in `text` that the list of `terms` match
+
+    >>> get_matching_offsets('some text here', ['some', 'here'])
+    [(0, 4), (10, 14)]
+
+    """
+    offsets = []
+    for phrase in phrases:
+        for match in re.finditer(phrase, text):
+            offsets.append((match.start(), match.end()))
+
+    return offsets
+
+
+def normalize_text_for_matching(x):
+    """
+    Replaces all non alnum characters to spaces and lower cases the string,
+    useful for comparing two text strings without punctuation
+    """
+    return re.sub(r'[^\w]', ' ', x.lower())
+
+
+def get_matching_line_offsets(lines, terms):
+    """ Return a set of `lines` indices (starting from 1) matching a
+    text search query, along with `context` lines above/below matching lines
+
+    :param lines: list of strings representing lines
+    :param terms: search term string to match in lines eg. 'some text'
+    :param context: number of lines above/below a matching line to add to result
+    :param max_lines: cut off for lines of interest
+     eg.
+
+    >>> get_matching_line_offsets('''
+words words words
+words words words
+some text some
+words words words
+words words words
+text here what
+''', 'text', context=1)
+    {3: [(5, 9)], 6: [(0, 4)]]
+    """
+    matching_lines = {}
+    phrases = [normalize_text_for_matching(phrase)
+               for phrase in extract_phrases(terms)]
+
+    for line_index, line in enumerate(lines, start=1):
+        match_offsets = get_matching_offsets(
+            normalize_text_for_matching(line), phrases)
+        if match_offsets:
+            matching_lines[line_index] = match_offsets
+
+    return matching_lines
+
+def get_lexer_safe(mimetype=None, filepath=None):
+    """
+    Tries to return a relevant pygments lexer using mimetype/filepath name,
+    defaulting to plain text if none could be found
+    """
+    lexer = None
+    try:
+        if mimetype:
+            lexer = get_lexer_for_mimetype(mimetype)
+        if not lexer:
+            lexer = get_lexer_for_filename(path)
+    except pygments.util.ClassNotFound:
+        pass
+
+    if not lexer:
+        lexer = get_lexer_by_name('text')
+
+    return lexer
 
 
 def pygmentize(filenode, **kwargs):

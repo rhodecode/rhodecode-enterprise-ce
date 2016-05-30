@@ -33,7 +33,7 @@
                     </div>
                 </td>
                 <td data-commit-id="${h.md5_safe(entry['repository'])+entry['commit_id']}" id="c-${h.md5_safe(entry['repository'])+entry['commit_id']}" class="message td-description open">
-                    %if entry['message_hl']:
+                    %if entry.get('message_hl'):
                         ${h.literal(entry['message_hl'])}
                     %else:
                         ${h.urlify_commit_message(entry['message'], entry['repository'])}

@@ -18,6 +18,7 @@ module.exports = function(grunt) {
           '<%= dirs.js.src %>/bootstrap.js',
           '<%= dirs.js.src %>/mousetrap.js',
           '<%= dirs.js.src %>/moment.js',
+          '<%= dirs.js.src %>/moment.js',
           '<%= dirs.js.src %>/appenlight-client-0.4.1.min.js',
 
           // Plugins
@@ -27,12 +28,13 @@ module.exports = function(grunt) {
           '<%= dirs.js.src %>/plugins/jquery.auto-grow-input.js',
           '<%= dirs.js.src %>/plugins/jquery.autocomplete.js',
           '<%= dirs.js.src %>/plugins/jquery.debounce.js',
+          '<%= dirs.js.src %>/plugins/jquery.mark.js',
           '<%= dirs.js.src %>/plugins/jquery.timeago.js',
           '<%= dirs.js.src %>/plugins/jquery.timeago-extension.js',
 
           // Select2
           '<%= dirs.js.src %>/select2/select2.js',
-          
+
           // Code-mirror
           '<%= dirs.js.src %>/codemirror/codemirror.js',
           '<%= dirs.js.src %>/codemirror/codemirror_loadmode.js',
