@@ -669,7 +669,8 @@ class MercurialRepository(BaseRepository):
         try:
             source_repo._validate_pull_reference(source_ref)
             shadow_repo._local_pull(source_repo.path, source_ref)
-        except CommitDoesNotExistError:
+        except CommitDoesNotExistError as e:
+            log.exception('Failure when doing local pull on hg shadow repo')
             return MergeResponse(
                 False, False, None, MergeFailureReason.MISSING_COMMIT)
 
@@ -681,7 +682,8 @@ class MercurialRepository(BaseRepository):
                 target_ref, merge_message, merger_name, merger_email,
                 source_ref)
             merge_possible = True
-        except RepositoryError:
+        except RepositoryError as e:
+            log.exception('Failure when doing local merge on hg shadow repo')
             merge_possible = False
             merge_failure_reason = MergeFailureReason.MERGE_FAILED
 
@@ -705,7 +707,9 @@ class MercurialRepository(BaseRepository):
                         merge_commit_id, self.path, push_branches=True,
                         enable_hooks=True)
                     merge_succeeded = True
-                except RepositoryError:
+                except RepositoryError as e:
+                    log.exception(
+                        'Failure when doing local push on hg shadow repo')
                     merge_succeeded = False
                     merge_failure_reason = MergeFailureReason.PUSH_FAILED
             else:
