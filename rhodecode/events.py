@@ -38,8 +38,8 @@ class UserPreCreate(object):
     An instance of this class is emitted as an :term:`event` before a new user
     object is created.
     """
-    def __init__(self, active):
-        self.active = active
+    def __init__(self, user_data):
+        self.user_data = user_data
 
 
 @implementer(IUserPreUpdate)
@@ -48,6 +48,6 @@ class UserPreUpdate(object):
     An instance of this class is emitted as an :term:`event` before a user
     object is updated.
     """
-    def __init__(self, user, active):
+    def __init__(self, user, user_data):
         self.user = user
-        self.active = active
+        self.user_data = user_data
