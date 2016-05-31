@@ -323,7 +323,7 @@ def get_repo_changeset(request, apiuser, repoid, revision,
 def get_repo_changesets(request, apiuser, repoid, start_rev, limit,
                         details=Optional('basic')):
     """
-    Returns a set of changesets limited by the number of commits starting
+    Returns a set of commits limited by the number starting
     from the `start_rev` option.
 
     Additional parameters define the amount of details returned by this
@@ -338,7 +338,7 @@ def get_repo_changesets(request, apiuser, repoid, start_rev, limit,
     :type repoid: str or int
     :param start_rev: The starting revision from where to get changesets.
     :type start_rev: str
-    :param limit: Limit the number of changesets to this amount
+    :param limit: Limit the number of commits to this amount
     :type limit: str or int
     :param details: Set the level of detail returned. Valid option are:
         ``basic``, ``extended`` and ``full``.
@@ -370,14 +370,17 @@ def get_repo_changesets(request, apiuser, repoid, start_rev, limit,
 
     vcs_repo = repo.scm_instance()
     # SVN needs a special case to distinguish its index and commit id
-    if vcs_repo.alias == 'svn' and (start_rev == '0'):
+    if vcs_repo and vcs_repo.alias == 'svn' and (start_rev == '0'):
         start_rev = vcs_repo.commit_ids[0]
 
     try:
-        commits = repo.scm_instance().get_commits(
+        commits = vcs_repo.get_commits(
             start_id=start_rev, pre_load=pre_load)
     except TypeError as e:
         raise JSONRPCError(e.message)
+    except Exception:
+        log.exception('Fetching of commits failed')
+        raise JSONRPCError('Error occurred during commit fetching')
 
     ret = []
     for cnt, commit in enumerate(commits):
