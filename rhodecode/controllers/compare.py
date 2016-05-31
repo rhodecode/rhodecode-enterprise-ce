@@ -198,7 +198,9 @@ class CompareController(BaseRepoController):
         c.statuses = c.rhodecode_db_repo.statuses(
             [x.raw_id for x in c.commit_ranges])
 
-        if partial:
+        if partial: # for PR ajax commits loader
+            if not c.ancestor:
+                return '' # cannot merge if there is no ancestor
             return render('compare/compare_commits.html')
 
         if c.ancestor:
