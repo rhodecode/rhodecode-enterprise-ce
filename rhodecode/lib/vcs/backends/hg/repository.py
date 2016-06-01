@@ -22,6 +22,7 @@
 HG repository module
 """
 
+import logging
 import binascii
 import os
 import re
@@ -49,6 +50,8 @@ from rhodecode.lib.vcs.exceptions import (
 
 hexlify = binascii.hexlify
 nullid = "\0" * 20
+
+log = logging.getLogger(__name__)
 
 
 class MercurialRepository(BaseRepository):
