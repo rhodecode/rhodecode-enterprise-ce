@@ -24,67 +24,84 @@ import pytest
 from rhodecode.model.repo import RepoModel
 from rhodecode.tests import TEST_USER_ADMIN_LOGIN, TEST_USER_REGULAR_LOGIN
 from rhodecode.api.tests.utils import (
-    build_data, api_call, assert_error, assert_ok, crash)
+    build_data, api_call, assert_error, assert_ok, crash, jsonify)
 from rhodecode.tests.fixture import Fixture
 
 
 fixture = Fixture()
 
+UPDATE_REPO_NAME = 'api_update_me'
+
+class SAME_AS_UPDATES(object): """ Constant used for tests below """
 
 @pytest.mark.usefixtures("testuser_api", "app")
 class TestApiUpdateRepo(object):
-    @pytest.mark.parametrize("changing_attr, updates", [
-        ('owner', {'owner': TEST_USER_REGULAR_LOGIN}),
-        ('description', {'description': 'new description'}),
-        ('active', {'active': True}),
-        ('active', {'active': False}),
-        ('clone_uri', {'clone_uri': 'http://foo.com/repo'}),
-        ('clone_uri', {'clone_uri': None}),
-        ('landing_rev', {'landing_rev': 'branch:master'}),
-        ('enable_statistics', {'enable_statistics': True}),
-        ('enable_locking', {'enable_locking': True}),
-        ('enable_downloads', {'enable_downloads': True}),
-        ('name', {'name': 'new_repo_name'}),
-        ('repo_group', {'group': 'test_group_for_update'}),
+
+    @pytest.mark.parametrize("changing_attr, updates, expected", [
+        ('owner', {'owner': TEST_USER_REGULAR_LOGIN}, SAME_AS_UPDATES),
+        ('description', {'description': 'new description'}, SAME_AS_UPDATES),
+        ('clone_uri', {'clone_uri': 'http://foo.com/repo'}, SAME_AS_UPDATES),
+        ('clone_uri', {'clone_uri': None}, {'clone_uri': ''}),
+        ('clone_uri', {'clone_uri': ''}, {'clone_uri': ''}),
+        ('landing_rev', {'landing_rev': 'branch:master'},
+                        {'landing_rev': ['branch', 'master']}),
+        ('enable_statistics', {'enable_statistics': True}, SAME_AS_UPDATES),
+        ('enable_locking', {'enable_locking': True}, SAME_AS_UPDATES),
+        ('enable_downloads', {'enable_downloads': True}, SAME_AS_UPDATES),
+        ('name', {'name': 'new_repo_name'},
+                 {'repo_name': 'new_repo_name'}),
+        ('repo_group',
+            {'group': 'test_group_for_update'},
+            {'repo_name': 'test_group_for_update/%s' % UPDATE_REPO_NAME}),
     ])
-    def test_api_update_repo(self, changing_attr, updates, backend):
-        repo_name = 'api_update_me'
+    def test_api_update_repo(self, changing_attr, updates, expected, backend):
+        repo_name = UPDATE_REPO_NAME
         repo = fixture.create_repo(repo_name, repo_type=backend.alias)
         if changing_attr == 'repo_group':
             fixture.create_repo_group(updates['group'])
 
+        expected_api_data = repo.get_api_data(include_secrets=True)
+        if expected is SAME_AS_UPDATES:
+            expected_api_data.update(updates)
+        else:
+            expected_api_data.update(expected)
+
+
         id_, params = build_data(
             self.apikey, 'update_repo', repoid=repo_name, **updates)
         response = api_call(self.app, params)
+
         if changing_attr == 'name':
             repo_name = updates['name']
         if changing_attr == 'repo_group':
             repo_name = '/'.join([updates['group'], repo_name])
+
         try:
             expected = {
                 'msg': 'updated repo ID:%s %s' % (repo.repo_id, repo_name),
-                'repository': repo.get_api_data(include_secrets=True)
+                'repository': jsonify(expected_api_data)
             }
             assert_ok(id_, expected, given=response.body)
         finally:
             fixture.destroy_repo(repo_name)
             if changing_attr == 'repo_group':
-
                 fixture.destroy_repo_group(updates['group'])
 
     def test_api_update_repo_fork_of_field(self, backend):
         master_repo = backend.create_repo()
         repo = backend.create_repo()
-
         updates = {
             'fork_of': master_repo.repo_name
         }
+        expected_api_data = repo.get_api_data(include_secrets=True)
+        expected_api_data.update(updates)
+
         id_, params = build_data(
             self.apikey, 'update_repo', repoid=repo.repo_name, **updates)
         response = api_call(self.app, params)
         expected = {
             'msg': 'updated repo ID:%s %s' % (repo.repo_id, repo.repo_name),
-            'repository': repo.get_api_data(include_secrets=True)
+            'repository': jsonify(expected_api_data)
         }
         assert_ok(id_, expected, given=response.body)
         result = response.json['result']['repository']
@@ -131,7 +148,7 @@ class TestApiUpdateRepo(object):
 
     @mock.patch.object(RepoModel, 'update', crash)
     def test_api_update_repo_exception_occurred(self, backend):
-        repo_name = 'api_update_me'
+        repo_name = UPDATE_REPO_NAME
         fixture.create_repo(repo_name, repo_type=backend.alias)
         id_, params = build_data(
             self.apikey, 'update_repo', repoid=repo_name,
