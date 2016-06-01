@@ -37,27 +37,24 @@ class SAME_AS_UPDATES(object): """ Constant used for tests below """
 @pytest.mark.usefixtures("testuser_api", "app")
 class TestApiUpdateRepo(object):
 
-    @pytest.mark.parametrize("changing_attr, updates, expected", [
-        ('owner', {'owner': TEST_USER_REGULAR_LOGIN}, SAME_AS_UPDATES),
-        ('description', {'description': 'new description'}, SAME_AS_UPDATES),
-        ('clone_uri', {'clone_uri': 'http://foo.com/repo'}, SAME_AS_UPDATES),
-        ('clone_uri', {'clone_uri': None}, {'clone_uri': ''}),
-        ('clone_uri', {'clone_uri': ''}, {'clone_uri': ''}),
-        ('landing_rev', {'landing_rev': 'branch:master'},
-                        {'landing_rev': ['branch', 'master']}),
-        ('enable_statistics', {'enable_statistics': True}, SAME_AS_UPDATES),
-        ('enable_locking', {'enable_locking': True}, SAME_AS_UPDATES),
-        ('enable_downloads', {'enable_downloads': True}, SAME_AS_UPDATES),
-        ('name', {'name': 'new_repo_name'},
-                 {'repo_name': 'new_repo_name'}),
-        ('repo_group',
-            {'group': 'test_group_for_update'},
+    @pytest.mark.parametrize("updates, expected", [
+        ({'owner': TEST_USER_REGULAR_LOGIN}, SAME_AS_UPDATES),
+        ({'description': 'new description'}, SAME_AS_UPDATES),
+        ({'clone_uri': 'http://foo.com/repo'}, SAME_AS_UPDATES),
+        ({'clone_uri': None}, {'clone_uri': ''}),
+        ({'clone_uri': ''}, {'clone_uri': ''}),
+        ({'landing_rev': 'branch:master'}, {'landing_rev': ['branch','master']}),
+        ({'enable_statistics': True}, SAME_AS_UPDATES),
+        ({'enable_locking': True}, SAME_AS_UPDATES),
+        ({'enable_downloads': True}, SAME_AS_UPDATES),
+        ({'name': 'new_repo_name'}, {'repo_name': 'new_repo_name'}),
+        ({'group': 'test_group_for_update'},
             {'repo_name': 'test_group_for_update/%s' % UPDATE_REPO_NAME}),
     ])
-    def test_api_update_repo(self, changing_attr, updates, expected, backend):
+    def test_api_update_repo(self, updates, expected, backend):
         repo_name = UPDATE_REPO_NAME
         repo = fixture.create_repo(repo_name, repo_type=backend.alias)
-        if changing_attr == 'repo_group':
+        if updates.get('group'):
             fixture.create_repo_group(updates['group'])
 
         expected_api_data = repo.get_api_data(include_secrets=True)
@@ -71,9 +68,9 @@ class TestApiUpdateRepo(object):
             self.apikey, 'update_repo', repoid=repo_name, **updates)
         response = api_call(self.app, params)
 
-        if changing_attr == 'name':
+        if updates.get('name'):
             repo_name = updates['name']
-        if changing_attr == 'repo_group':
+        if updates.get('group'):
             repo_name = '/'.join([updates['group'], repo_name])
 
         try:
@@ -84,7 +81,7 @@ class TestApiUpdateRepo(object):
             assert_ok(id_, expected, given=response.body)
         finally:
             fixture.destroy_repo(repo_name)
-            if changing_attr == 'repo_group':
+            if updates.get('group'):
                 fixture.destroy_repo_group(updates['group'])
 
     def test_api_update_repo_fork_of_field(self, backend):
