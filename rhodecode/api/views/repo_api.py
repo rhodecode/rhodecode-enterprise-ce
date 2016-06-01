@@ -799,7 +799,6 @@ def remove_field_from_repo(request, apiuser, repoid, key):
 def update_repo(request, apiuser, repoid, name=Optional(None),
                 owner=Optional(OAttr('apiuser')),
                 group=Optional(None),
-                active=Optional(True),
                 fork_of=Optional(None),
                 description=Optional(''), private=Optional(False),
                 clone_uri=Optional(None), landing_rev=Optional('rev:tip'),
@@ -874,7 +873,6 @@ def update_repo(request, apiuser, repoid, name=Optional(None),
         store_update(updates, repo_group, 'repo_group')
         store_update(updates, repo_fork_of, 'fork_id')
         store_update(updates, owner, 'user')
-        store_update(updates, active, 'active')
         store_update(updates, description, 'repo_description')
         store_update(updates, private, 'repo_private')
         store_update(updates, clone_uri, 'clone_uri')
