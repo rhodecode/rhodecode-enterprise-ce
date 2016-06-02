@@ -119,7 +119,9 @@ let
       # TODO: johbo: Make a nicer way to expose the parts. Maybe
       # pkgs/default.nix?
       passthru = {
-        inherit myPythonPackagesUnfix;
+        inherit
+          pythonLocalOverrides
+          myPythonPackagesUnfix;
         pythonPackages = self;
       };
 
