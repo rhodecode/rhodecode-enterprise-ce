@@ -449,7 +449,7 @@ class ScmModel(BaseModel):
         return tip
 
     def _sanitize_path(self, f_path):
-        if f_path.startswith('/') or f_path.startswith('.') or '../' in f_path:
+        if f_path.startswith('/') or f_path.startswith('./') or '../' in f_path:
             raise NonRelativePathError('%s is not an relative path' % f_path)
         if f_path:
             f_path = os.path.normpath(f_path)
