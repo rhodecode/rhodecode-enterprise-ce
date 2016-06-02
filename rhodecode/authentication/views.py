@@ -66,30 +66,25 @@ class AuthnPluginViewBase(object):
 
         return html
 
-    def settings_get(self):
+    def settings_get(self, errors={}):
         """
         View that displays the plugin settings as a form.
         """
-        form_defaults = {}
-        validation_errors = None
         schema = self.plugin.get_settings_schema()
 
         # Get default values for the form.
         for node in schema.children:
-            value = self.plugin.get_setting_by_name(node.name) or node.default
-            form_defaults[node.name] = value
+            value = self.plugin.get_setting_by_name(node.name)
+            if value:
+                node.default = value
 
         template_context = {
+            'errors': errors,
+            'plugin': self.context.plugin,
             'resource': self.context,
-            'plugin': self.context.plugin
         }
 
-        return Response(self._render_and_fill(
-            'rhodecode:templates/admin/auth/plugin_settings.html',
-            template_context,
-            self.request,
-            form_defaults,
-            validation_errors))
+        return template_context
 
     def settings_post(self):
         """
@@ -100,24 +95,11 @@ class AuthnPluginViewBase(object):
             valid_data = schema.deserialize(self.request.params)
         except colander.Invalid, e:
             # Display error message and display form again.
-            form_defaults = self.request.params
-            validation_errors = e.asdict()
             self.request.session.flash(
                 _('Errors exist when saving plugin settings. '
-                    'Please check the form inputs.'),
+                  'Please check the form inputs.'),
                 queue='error')
-
-            template_context = {
-                'resource': self.context,
-                'plugin': self.context.plugin
-            }
-
-            return Response(self._render_and_fill(
-                'rhodecode:templates/admin/auth/plugin_settings.html',
-                template_context,
-                self.request,
-                form_defaults,
-                validation_errors))
+            return self.settings_get(errors=e.asdict())
 
         # Store validated data.
         for name, value in valid_data.items():
