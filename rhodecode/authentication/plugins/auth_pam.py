@@ -82,12 +82,14 @@ class RhodeCodeAuthPlugin(RhodeCodeExternalAuthPlugin):
         config.add_view(
             'rhodecode.authentication.views.AuthnPluginViewBase',
             attr='settings_get',
+            renderer='rhodecode:templates/admin/auth/plugin_settings.html',
             request_method='GET',
             route_name='auth_home',
             context=PamAuthnResource)
         config.add_view(
             'rhodecode.authentication.views.AuthnPluginViewBase',
             attr='settings_post',
+            renderer='rhodecode:templates/admin/auth/plugin_settings.html',
             request_method='POST',
             route_name='auth_home',
             context=PamAuthnResource)
