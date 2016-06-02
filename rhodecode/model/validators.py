@@ -437,8 +437,7 @@ def ValidAuth():
             password = value['password']
             username = value['username']
 
-            if not authenticate(username, password, '',
-                                HTTP_TYPE,
+            if not authenticate(username, password, '', HTTP_TYPE,
                                 skip_missing=True):
                 user = User.get_by_username(username)
                 if user and not user.active:
@@ -448,7 +447,7 @@ def ValidAuth():
                         msg, value, state, error_dict={'username': msg}
                     )
                 else:
-                    log.warning('user %s failed to authenticate', username)
+                    log.warning('user `%s` failed to authenticate', username)
                     msg = M(self, 'invalid_username', state)
                     msg2 = M(self, 'invalid_password', state)
                     raise formencode.Invalid(
