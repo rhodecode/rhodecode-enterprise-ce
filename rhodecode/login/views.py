@@ -187,7 +187,10 @@ class LoginView(object):
     @view_config(
         route_name='register', request_method='GET',
         renderer='rhodecode:templates/register.html',)
-    def register(self, defaults={}, errors={}):
+    def register(self, defaults=None, errors=None):
+        defaults = defaults or {}
+        errors = errors or {}
+
         settings = SettingsModel().get_all_settings()
         captcha_public_key = settings.get('rhodecode_captcha_public_key')
         captcha_private_key = settings.get('rhodecode_captcha_private_key')
