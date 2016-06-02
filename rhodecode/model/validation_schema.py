@@ -51,6 +51,11 @@ class SearchParamsSchema(colander.MappingSchema):
         colander.String(),
         missing='content',
         validator=colander.OneOf(['content', 'path', 'commit', 'repository']))
+    search_sort = colander.SchemaNode(
+        colander.String(),
+        missing='newfirst',
+        validator=colander.OneOf(
+            ['oldfirst', 'newfirst']))
     page_limit = colander.SchemaNode(
         colander.Integer(),
         missing=10,

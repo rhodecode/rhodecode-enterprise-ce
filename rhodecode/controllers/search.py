@@ -56,23 +56,25 @@ class SearchController(BaseRepoController):
             search_params = schema.deserialize(
                 dict(search_query=request.GET.get('q'),
                      search_type=request.GET.get('type'),
+                     search_sort=request.GET.get('sort'),
                      page_limit=request.GET.get('page_limit'),
                      requested_page=request.GET.get('page'))
             )
         except validation_schema.Invalid as e:
             errors = e.children
 
+        def url_generator(**kw):
+            q = urllib.quote(safe_str(search_query))
+            return update_params(
+                "?q=%s&type=%s" % (q, safe_str(search_type)), **kw)
+
         search_query = search_params.get('search_query')
         search_type = search_params.get('search_type')
-
+        search_sort = search_params.get('search_sort')
         if search_params.get('search_query'):
             page_limit = search_params['page_limit']
             requested_page = search_params['requested_page']
 
-            def url_generator(**kw):
-                q = urllib.quote(safe_str(search_query))
-                return update_params(
-                    "?q=%s&type=%s" % (q, safe_str(search_type)), **kw)
 
             c.perm_user = AuthUser(user_id=c.rhodecode_user.user_id,
                                    ip_addr=self.ip_addr)
@@ -80,7 +82,7 @@ class SearchController(BaseRepoController):
             try:
                 search_result = searcher.search(
                     search_query, search_type, c.perm_user, repo_name,
-                    requested_page, page_limit)
+                    requested_page, page_limit, search_sort)
 
                 formatted_results = Page(
                     search_result['results'], page=requested_page,
@@ -98,6 +100,8 @@ class SearchController(BaseRepoController):
                 errors = [
                     validation_schema.Invalid(node, search_result['error'])]
 
+        c.sort = search_sort
+        c.url_generator = url_generator
         c.errors = errors
         c.formatted_results = formatted_results
         c.runtime = execution_time

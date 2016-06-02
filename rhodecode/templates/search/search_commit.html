@@ -6,7 +6,13 @@
         <th>${_('Commit')}</th>
         <th></th>
         <th>${_('Commit message')}</th>
-        <th>${_('Age')}</th>
+        <th>
+        %if c.sort == 'newfirst':
+            <a href="${c.url_generator(sort='oldfirst')}">${_('Age (new first)')}</a>
+        %else:
+            <a href="${c.url_generator(sort='newfirst')}">${_('Age (old first)')}</a>
+        %endif
+        </th>
         <th>${_('Author')}</th>
     </tr>
     %for entry in c.formatted_results:

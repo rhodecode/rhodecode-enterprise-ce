@@ -100,7 +100,7 @@ class Search(BaseSearch):
         return query
 
     def search(self, query, document_type, search_user, repo_name=None,
-        requested_page=1, page_limit=10):
+        requested_page=1, page_limit=10, sort=None):
 
         original_query = query
         query = self._extend_query(query)
@@ -123,13 +123,18 @@ class Search(BaseSearch):
                 query = qp.parse(unicode(query))
                 log.debug('query: %s (%s)' % (query, repr(query)))
 
-                sortedby = None
+                reverse, sortedby = False, None
                 if search_type == 'message':
-                    sortedby = sorting.FieldFacet('commit_idx', reverse=True)
+                    if sort == 'oldfirst':
+                        sortedby = 'date'
+                        reverse = False
+                    elif sort == 'newfirst':
+                        sortedby = 'date'
+                        reverse = True
 
                 whoosh_results = self.searcher.search(
                     query, filter=allowed_repos_filter, limit=None,
-                    sortedby=sortedby,)
+                    sortedby=sortedby, reverse=reverse)
 
                 # fixes for 32k limit that whoosh uses for highlight
                 whoosh_results.fragmenter.charlimit = None
