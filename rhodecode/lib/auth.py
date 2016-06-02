@@ -799,7 +799,7 @@ class AuthUser(object):
             log.debug('No data in %s that could been used to log in' % self)
 
         if not is_user_loaded:
-            log.debug('Failed to load user. Fallback to default user')
+            log.debug('Failed to load user %s. Fallback to default user', self)
             # if we cannot authenticate user try anonymous
             if anon_user.active:
                 user_model.fill_data(self, user_id=anon_user.user_id)
