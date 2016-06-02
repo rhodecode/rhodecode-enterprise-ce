@@ -14,6 +14,7 @@ function registerRCRoutes() {
     pyroutes.register('files_home', '/%(repo_name)s/files/%(revision)s/%(f_path)s', ['repo_name', 'revision', 'f_path']);
     pyroutes.register('edit_repo', '/%(repo_name)s/settings', ['repo_name']);
     pyroutes.register('edit_repo_perms', '/%(repo_name)s/settings/permissions', ['repo_name']);
+    pyroutes.register('edit_user_group_members', '/_admin/user_groups/%(user_group_id)s/edit/members', ['user_group_id']);
     pyroutes.register('pullrequest_home', '/%(repo_name)s/pull-request/new', ['repo_name']);
     pyroutes.register('user_autocomplete_data', '/_users', []);
     pyroutes.register('toggle_following', '/_admin/toggle_following', []);

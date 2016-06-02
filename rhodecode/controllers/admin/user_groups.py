@@ -36,6 +36,7 @@ from rhodecode.lib import auth
 from rhodecode.lib import helpers as h
 from rhodecode.lib.exceptions import UserGroupAssignedException,\
     RepoGroupAssignmentError
+from rhodecode.lib.utils import jsonify, action_logger
 from rhodecode.lib.utils2 import safe_unicode, str2bool, safe_int
 from rhodecode.lib.auth import (
     LoginRequired, NotAnonymous, HasUserGroupPermissionAnyDecorator,
@@ -181,7 +182,8 @@ class UserGroupsController(BaseController):
             h.flash(_('Error occurred during creation of user group %s') \
                     % request.POST.get('users_group_name'), category='error')
 
-        return redirect(url('users_groups'))
+        return redirect(
+            url('edit_users_group', user_group_id=user_group.users_group_id))
 
     @HasPermissionAnyDecorator('hg.admin', 'hg.usergroup.create.true')
     def new(self):
@@ -467,5 +469,12 @@ class UserGroupsController(BaseController):
         c.group_members_obj = sorted((x.user for x in c.user_group.members),
                                      key=lambda u: u.username.lower())
 
-        c.group_members = [(x.user_id, x.username) for x in c.group_members_obj]
+        group_members = [(x.user_id, x.username) for x in c.group_members_obj]
+
+        if request.is_xhr:
+            return jsonify(lambda *a, **k: {
+                'members': group_members
+            })
+
+        c.group_members = group_members
         return render('admin/user_groups/user_group_edit.html')
