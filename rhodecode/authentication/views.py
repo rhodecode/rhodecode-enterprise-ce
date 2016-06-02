@@ -45,27 +45,6 @@ class AuthnPluginViewBase(object):
         self.context = context
         self.plugin = context.plugin
 
-    # TODO: Think about replacing the htmlfill stuff.
-    def _render_and_fill(self, template, template_context, request,
-                         form_defaults, validation_errors):
-        """
-        Helper to render a template and fill the HTML form fields with
-        defaults. Also displays the form errors.
-        """
-        # Render template to string.
-        html = render(template, template_context, request=request)
-
-        # Fill the HTML form fields with default values and add error messages.
-        html = formencode.htmlfill.render(
-            html,
-            defaults=form_defaults,
-            errors=validation_errors,
-            prefix_error=False,
-            encoding="UTF-8",
-            force_defaults=False)
-
-        return html
-
     def settings_get(self, errors={}):
         """
         View that displays the plugin settings as a form.
