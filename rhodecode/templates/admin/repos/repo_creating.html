@@ -50,19 +50,19 @@
         if (resp.status == 200) {
             var jsonResponse = resp.responseJSON;
 
-            if (jsonResponse === undefined){
-                setTimeout(function(){
+            if (jsonResponse === undefined) {
+                setTimeout(function () {
                     // we might have a backend problem, try dashboard again
                     window.location = "${h.url('summary_home', repo_name = c.repo)}";
-                }, 1000);
-            }
-
-            if (skipCheck || jsonResponse.result === true) {
-                // success, means go to dashboard
-                window.location = "${h.url('summary_home', repo_name = c.repo)}";
+                }, 3000);
             } else {
-                // Schedule the next request when the current one's complete
-                setTimeout(worker, 1000);
+                if (skipCheck || jsonResponse.result === true) {
+                    // success, means go to dashboard
+                    window.location = "${h.url('summary_home', repo_name = c.repo)}";
+                } else {
+                    // Schedule the next request when the current one's complete
+                    setTimeout(worker, 1000);
+                }
             }
         }
         else {
