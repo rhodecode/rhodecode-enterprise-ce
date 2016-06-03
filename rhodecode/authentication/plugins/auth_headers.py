@@ -190,8 +190,8 @@ class RhodeCodeAuthPlugin(RhodeCodeExternalAuthPlugin):
             username = getattr(userobj, 'username')
 
         if not username:
-            # we don't have any objects in DB user doesn't exist extrac username
-            # from environ based on the settings
+            # we don't have any objects in DB user doesn't exist extract
+            # username from environ based on the settings
             username = self._get_username(environ, settings)
 
         # if cannot fetch username, it's a no-go for this plugin to proceed
