@@ -51,14 +51,14 @@ URL_NAME_REQUIREMENTS = {
 }
 
 
-class JSRoutesAwareMapper(Mapper):
+class JSRoutesMapper(Mapper):
     """
     Wrapper for routes.Mapper to make pyroutes compatible url definitions
     """
     _named_route_regex = re.compile(r'^[a-z-_0-9A-Z]+$')
     _argument_prog = re.compile('\{(.*?)\}|:\((.*)\)')
     def __init__(self, *args, **kw):
-        super(JSRoutesAwareMapper, self).__init__(*args, **kw)
+        super(JSRoutesMapper, self).__init__(*args, **kw)
         self._jsroutes = []
 
     def connect(self, *args, **kw):
@@ -73,7 +73,7 @@ class JSRoutesAwareMapper(Mapper):
                 raise Exception('only named routes can be added to pyroutes')
             self._jsroutes.append(args[0])
 
-        super(JSRoutesAwareMapper, self).connect(*args, **kw)
+        super(JSRoutesMapper, self).connect(*args, **kw)
 
     def _extract_route_information(self, route):
         """
@@ -105,7 +105,7 @@ class JSRoutesAwareMapper(Mapper):
 
 def make_map(config):
     """Create, configure and return the routes Mapper"""
-    rmap = JSRoutesAwareMapper(directory=config['pylons.paths']['controllers'],
+    rmap = JSRoutesMapper(directory=config['pylons.paths']['controllers'],
                   always_scan=config['debug'])
     rmap.minimization = False
     rmap.explicit = False
