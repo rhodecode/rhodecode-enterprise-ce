@@ -69,7 +69,6 @@ class JSRoutesMapper(Mapper):
         """
         if kw.pop('jsroute', False):
             if not self._named_route_regex.match(args[0]):
-                # import pdb;pdb.set_trace()
                 raise Exception('only named routes can be added to pyroutes')
             self._jsroutes.append(args[0])
 
@@ -1139,7 +1138,6 @@ def make_map(config):
         conditions={'function': check_repo},
         requirements=URL_NAME_REQUIREMENTS)
 
-    rmap.jsroutes()
     return rmap
 
 
