@@ -25,6 +25,7 @@ from zope.interface import implementer
 
 from rhodecode.authentication.interface import IAuthnPluginRegistry
 from rhodecode.lib.utils2 import safe_str
+from rhodecode.model.settings import SettingsModel
 
 log = logging.getLogger(__name__)
 
@@ -65,14 +66,18 @@ class AuthenticationPluginRegistry(object):
         `rhodecode.auth_plugin_fallback` is set to a plugin ID.
         """
         plugins = []
-        for plugin in self.get_plugins():
-            if (self._fallback_plugin and
-                    plugin.get_id() == self._fallback_plugin):
-                log.warn(
-                    'Using fallback authentication plugin from INI file: "%s"',
-                    plugin.get_id())
+
+        # Add all enabled and active plugins to the list. We iterate over the
+        # auth_plugins setting from DB beacuse it also represents the ordering.
+        enabled_plugins = SettingsModel().get_auth_plugins()
+        for plugin_id in enabled_plugins:
+            plugin = self.get_plugin(plugin_id)
+            if plugin is not None and plugin.is_active():
                 plugins.append(plugin)
-            elif plugin.is_enabled() and plugin.is_active():
-                plugins.append(plugin)
+
+        # Add the fallback plugin from ini file.
+        plugin = self.get_plugin(self._fallback_plugin)
+        if plugin is not None and plugin not in plugins:
+            plugins.append(plugin)
 
         return plugins
