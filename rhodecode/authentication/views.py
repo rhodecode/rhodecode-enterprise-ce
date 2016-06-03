@@ -45,19 +45,21 @@ class AuthnPluginViewBase(object):
         self.context = context
         self.plugin = context.plugin
 
-    def settings_get(self, errors={}):
+    def settings_get(self, defaults=None, errors=None):
         """
         View that displays the plugin settings as a form.
         """
+        defaults = defaults or {}
+        errors = errors or {}
         schema = self.plugin.get_settings_schema()
 
         # Get default values for the form.
-        for node in schema.children:
-            value = self.plugin.get_setting_by_name(node.name)
-            if value:
-                node.default = value
+        for node in schema:
+            db_value = self.plugin.get_setting_by_name(node.name)
+            defaults.setdefault(node.name, db_value)
 
         template_context = {
+            'defaults': defaults,
             'errors': errors,
             'plugin': self.context.plugin,
             'resource': self.context,
@@ -78,7 +80,8 @@ class AuthnPluginViewBase(object):
                 _('Errors exist when saving plugin settings. '
                   'Please check the form inputs.'),
                 queue='error')
-            return self.settings_get(errors=e.asdict())
+            defaults = schema.flatten(self.request.params)
+            return self.settings_get(errors=e.asdict(), defaults=defaults)
 
         # Store validated data.
         for name, value in valid_data.items():
@@ -110,7 +113,8 @@ class AuthSettingsView(object):
 
     @LoginRequired()
     @HasPermissionAllDecorator('hg.admin')
-    def index(self, defaults={}, errors=None, prefix_error=False):
+    def index(self, defaults=None, errors=None, prefix_error=False):
+        defaults = defaults or {}
         authn_registry = self.request.registry.getUtility(IAuthnPluginRegistry)
         enabled_plugins = SettingsModel().get_auth_plugins()
 

@@ -56,13 +56,13 @@
                       <div class="label ${label_css_class}"><label for="${node.name}">${node.title}</label></div>
                       <div class="input">
                         %if node.widget in ["string", "int", "unicode"]:
-                          ${h.text(node.name, node.default, class_="medium")}
+                          ${h.text(node.name, defaults.get(node.name), class_="medium")}
                         %elif node.widget == "password":
-                          ${h.password(node.name, node.default, class_="medium")}
+                          ${h.password(node.name, defaults.get(node.name), class_="medium")}
                         %elif node.widget == "bool":
-                          <div class="checkbox">${h.checkbox(node.name, node.default)}</div>
+                          <div class="checkbox">${h.checkbox(node.name, True, checked=defaults.get(node.name))}</div>
                         %elif node.widget == "select":
-                          ${h.select(node.name, node.default, node.validator.choices)}
+                          ${h.select(node.name, defaults.get(node.name), node.validator.choices)}
                         %elif node.widget == "readonly":
                           ${node.default}
                         %else:
