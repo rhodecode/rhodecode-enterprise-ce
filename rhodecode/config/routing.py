@@ -580,6 +580,8 @@ def make_map(config):
                   action='index', conditions={'method': ['GET']})
         m.connect('new_gist', '/gists/new', jsroute=True,
                   action='new', conditions={'method': ['GET']})
+        m.connect('gists', '/gists', jsroute=True,
+                  action='index', conditions={'method': ['GET']})
 
         m.connect('/gists/{gist_id}',
                   action='delete', conditions={'method': ['DELETE']})

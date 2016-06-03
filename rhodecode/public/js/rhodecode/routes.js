@@ -1,3 +1,4 @@
+
 /******************************************************************************
  *                                                                            *
  *                      DO NOT CHANGE THIS FILE MANUALLY                      *
@@ -16,6 +17,7 @@ function registerRCRoutes() {
     pyroutes.register('edit_user_group_members', '/_admin/user_groups/%(user_group_id)s/edit/members', ['user_group_id']);
     pyroutes.register('gists', '/_admin/gists', []);
     pyroutes.register('new_gist', '/_admin/gists/new', []);
+    pyroutes.register('gists', '/_admin/gists', []);
     pyroutes.register('toggle_following', '/_admin/toggle_following', []);
     pyroutes.register('repo_stats', '/%(repo_name)s/repo_stats/%(commit_id)s', ['repo_name', 'commit_id']);
     pyroutes.register('repo_refs_data', '/%(repo_name)s/refs-data', ['repo_name']);
