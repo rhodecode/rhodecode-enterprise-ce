@@ -28,6 +28,7 @@ from pyramid.httpexceptions import HTTPFound
 from pyramid.view import view_config
 from recaptcha.client.captcha import submit
 
+from rhodecode.authentication.base import authenticate, HTTP_TYPE
 from rhodecode.events import UserRegistered
 from rhodecode.lib.auth import (
     AuthUser, HasPermissionAnyDecorator, CSRFRequired)
@@ -115,11 +116,25 @@ class LoginView(object):
         route_name='login', request_method='GET',
         renderer='rhodecode:templates/login.html')
     def login(self):
+        came_from = get_came_from(self.request)
         user = self.request.user
 
         # redirect if already logged in
         if user.is_authenticated and not user.is_default and user.ip_allowed:
-            raise HTTPFound(get_came_from(self.request))
+            raise HTTPFound(came_from)
+
+        # check if we use container plugin, and try to login using it.
+        try:
+            log.debug('Running PRE-AUTH for container based authentication')
+            auth_info = authenticate(
+                '', '', self.request.environ, HTTP_TYPE, skip_missing=True)
+            if auth_info:
+                headers = _store_user_in_session(
+                    self.session, auth_info.get('username'))
+                raise HTTPFound(came_from, headers=headers)
+        except UserCreationError as e:
+            log.error(e)
+            self.session.flash(e, queue='error')
 
         return self._get_template_context()
 
@@ -157,24 +172,7 @@ class LoginView(object):
             # with user creation, explanation should be provided in
             # Exception itself
             session.flash(e, queue='error')
-
-        # check if we use container plugin, and try to login using it.
-        from rhodecode.authentication.base import authenticate, HTTP_TYPE
-        try:
-            log.debug('Running PRE-AUTH for container based authentication')
-            auth_info = authenticate(
-                '', '', self.request.environ, HTTP_TYPE, skip_missing=True)
-        except UserCreationError as e:
-            log.error(e)
-            session.flash(e, queue='error')
-            # render login, with flash message about limit
             return self._get_template_context()
-
-        if auth_info:
-            headers = _store_user_in_session(auth_info.get('username'))
-            raise HTTPFound(came_from, headers=headers)
-
-        return self._get_template_context()
 
     @CSRFRequired()
     @view_config(route_name='logout', request_method='POST')
