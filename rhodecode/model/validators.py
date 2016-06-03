@@ -995,18 +995,19 @@ def ValidAuthPlugins():
             from rhodecode.authentication.base import loadplugin
             module_list = value
             unique_names = {}
-            try:
-                for module in module_list:
-                    plugin = loadplugin(module)
-                    plugin_name = plugin.name
-                    if plugin_name in unique_names:
-                        msg = M(self, 'import_duplicate', state,
-                                loaded=unique_names[plugin_name],
-                                next_to_load=plugin_name)
-                        raise formencode.Invalid(msg, value, state)
-                    unique_names[plugin_name] = plugin
-            except (KeyError, AttributeError, TypeError) as e:
-                raise formencode.Invalid(str(e), value, state)
+            for module in module_list:
+                plugin = loadplugin(module)
+                if plugin is None:
+                    raise formencode.Invalid(
+                        _("Can't find plugin with id '{}'".format(module)),
+                        value, state)
+                plugin_name = plugin.name
+                if plugin_name in unique_names:
+                    msg = M(self, 'import_duplicate', state,
+                            loaded=unique_names[plugin_name],
+                            next_to_load=plugin_name)
+                    raise formencode.Invalid(msg, value, state)
+                unique_names[plugin_name] = plugin
 
     return _validator
 

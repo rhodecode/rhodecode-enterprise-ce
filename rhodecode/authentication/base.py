@@ -474,12 +474,7 @@ def loadplugin(plugin_id):
     """
     Loads and returns an instantiated authentication plugin.
     Returns the RhodeCodeAuthPluginBase subclass on success,
-    raises exceptions on failure.
-
-    raises:
-        KeyError -- if no plugin available with given name
-        TypeError -- if the RhodeCodeAuthPlugin is not a subclass of
-                     ours RhodeCodeAuthPluginBase
+    or None on failure.
     """
     # TODO: Disusing pyramids thread locals to retrieve the registry.
     authn_registry = get_current_registry().getUtility(IAuthnPluginRegistry)
