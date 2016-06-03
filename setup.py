@@ -219,6 +219,7 @@ setup(
             'ldap=rhodecode.authentication.plugins.auth_ldap:plugin_factory',
             'pam=rhodecode.authentication.plugins.auth_pam:plugin_factory',
             'rhodecode=rhodecode.authentication.plugins.auth_rhodecode:plugin_factory',
+            'token=rhodecode.authentication.plugins.auth_token:plugin_factory',
         ],
         'paste.app_factory': [
             'main=rhodecode.config.middleware:make_pyramid_app',
