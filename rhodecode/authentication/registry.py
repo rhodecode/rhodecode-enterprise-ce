@@ -76,8 +76,12 @@ class AuthenticationPluginRegistry(object):
                 plugins.append(plugin)
 
         # Add the fallback plugin from ini file.
-        plugin = self.get_plugin(self._fallback_plugin)
-        if plugin is not None and plugin not in plugins:
-            plugins.append(plugin)
+        if self._fallback_plugin:
+            log.warn(
+                'Using fallback authentication plugin from INI file: "%s"',
+                plugin.get_id())
+            plugin = self.get_plugin(self._fallback_plugin)
+            if plugin is not None and plugin not in plugins:
+                plugins.append(plugin)
 
         return plugins
