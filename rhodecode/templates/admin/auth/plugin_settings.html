@@ -49,6 +49,7 @@
               <div class="fields">
                 ${h.secure_form(request.resource_path(resource, route_name='auth_home'))}
                 <div class="form">
+
                   %for node in plugin.get_settings_schema():
                     <% label_css_class = ("label-checkbox" if (node.widget == "bool") else "") %>
                     <div class="field">
@@ -75,9 +76,17 @@
                       </div>
                     </div>
                   %endfor
+
+                  ## Allow derived templates to add something below the form
+                  ## input fields
+                  %if hasattr(next, 'below_form_fields'):
+                    ${next.below_form_fields()}
+                  %endif
+
                   <div class="buttons">
                     ${h.submit('save',_('Save'),class_="btn")}
                   </div>
+
                 </div>
                 ${h.end_form()}
               </div>
