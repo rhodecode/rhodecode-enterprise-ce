@@ -60,7 +60,7 @@ module.exports = function(grunt) {
           '<%= dirs.js.src %>/rhodecode/widgets/multiselect.js',
 
           // Rhodecode components
-          '<%= dirs.js.src %>/rhodecode/pyroutes.js',
+          '<%= dirs.js.src %>/rhodecode/init.js',
           '<%= dirs.js.src %>/rhodecode/codemirror.js',
           '<%= dirs.js.src %>/rhodecode/comments.js',
           '<%= dirs.js.src %>/rhodecode/constants.js',
