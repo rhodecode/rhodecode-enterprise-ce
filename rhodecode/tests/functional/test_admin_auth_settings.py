@@ -20,7 +20,8 @@
 
 import pytest
 
-from rhodecode.tests import assert_session_flash, url
+from rhodecode.tests import assert_session_flash
+from rhodecode.tests.utils import AssertResponse
 from rhodecode.model.db import Session
 from rhodecode.model.settings import SettingsModel
 
@@ -150,12 +151,14 @@ class TestAuthSettingsController(object):
             'egg:rhodecode-enterprise-ce#rhodecode,'
             'egg:rhodecode-enterprise-ce#ldap',
             csrf_token)
+        invalid_port_value = 'invalid-port-number'
         response = self._post_ldap_settings(params, override={
-            'port': 'invalid-port-number',
+            'port': invalid_port_value,
         })
-        response.mustcontain(
-            '<span class="error-message">&quot;invalid-port-number&quot;'
-            ' is not a number</span>')
+        assertr = AssertResponse(response)
+        assertr.element_contains(
+            '.form .field #port ~ .error-message',
+            invalid_port_value)
 
     def test_ldap_error_form(self, csrf_token):
         params = self._enable_plugins(
