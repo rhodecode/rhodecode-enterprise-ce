@@ -46,7 +46,7 @@ legacy_plugin_prefix = 'py:'
 # discover, load and include phases.
 def _discover_plugins(config, entry_point='enterprise.plugins1'):
     for ep in iter_entry_points(entry_point):
-        plugin_id = '{}:{}#{}'.format(
+        plugin_id = '{}{}#{}'.format(
             plugin_prefix, ep.dist.project_name, ep.name)
         log.debug('Plugin discovered: "%s"', plugin_id)
         try:
