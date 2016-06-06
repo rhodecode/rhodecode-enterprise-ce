@@ -33,7 +33,8 @@ from rhodecode.model.settings import SettingsModel
 
 log = logging.getLogger(__name__)
 
-# Legacy plugins are stored with this prefix in 'auth_plugins'.
+# Plugin ID prefixes to distinct between normal and legacy plugins.
+plugin_prefix = 'egg:'
 legacy_plugin_prefix = 'py:'
 
 
@@ -44,16 +45,24 @@ legacy_plugin_prefix = 'py:'
 # TODO: When refactoring this think about splitting it up into distinct
 # discover, load and include phases.
 def _discover_plugins(config, entry_point='enterprise.plugins1'):
-    _discovered_plugins = {}
-
     for ep in iter_entry_points(entry_point):
-        plugin_id = 'egg:{}#{}'.format(ep.dist.project_name, ep.name)
+        plugin_id = '{}:{}#{}'.format(
+            plugin_prefix, ep.dist.project_name, ep.name)
         log.debug('Plugin discovered: "%s"', plugin_id)
-        module = ep.load()
-        plugin = module(plugin_id=plugin_id)
-        config.include(plugin.includeme)
+        try:
+            module = ep.load()
+            plugin = module(plugin_id=plugin_id)
+            config.include(plugin.includeme)
+        except Exception as e:
+            log.exception(
+                'Exception while loading authentication plugin '
+                '"{}": {}'.format(plugin_id, e.message))
 
-    return _discovered_plugins
+
+def _import_legacy_plugin(plugin_id):
+    module_name = plugin_id.split(legacy_plugin_prefix, 1)[-1]
+    module = importlib.import_module(module_name)
+    return module.plugin_factory(plugin_id=plugin_id)
 
 
 def _discover_legacy_plugins(config, prefix=legacy_plugin_prefix):
@@ -66,22 +75,14 @@ def _discover_legacy_plugins(config, prefix=legacy_plugin_prefix):
     enabled_plugins = auth_plugins.app_settings_value
     legacy_plugins = [id_ for id_ in enabled_plugins if id_.startswith(prefix)]
 
-    log.debug('Importing these legacy authentication plugins {}'.format(
-        legacy_plugins))
-
     for plugin_id in legacy_plugins:
-        module_name = plugin_id.split(prefix, 1)[-1]
+        log.debug('Legacy plugin discovered: "%s"', plugin_id)
         try:
-            module = importlib.import_module(module_name)
-            plugin = module.plugin_factory(plugin_id=plugin_id)
+            plugin = _import_legacy_plugin(plugin_id)
             config.include(plugin.includeme)
-        except ImportError as e:
-            log.error(
-                'ImportError while importing legacy authentication plugin '
-                '"{}": {}'.format(plugin_id, e.message))
         except Exception as e:
-            log.error(
-                'Exception while importing legacy authentication plugin '
+            log.exception(
+                'Exception while loading legacy authentication plugin '
                 '"{}": {}'.format(plugin_id, e.message))
 
 
