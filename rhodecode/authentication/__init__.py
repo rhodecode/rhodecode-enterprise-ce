@@ -27,6 +27,7 @@ from rhodecode.authentication.registry import AuthenticationPluginRegistry
 from rhodecode.authentication.routes import root_factory
 from rhodecode.authentication.routes import AuthnRootResource
 from rhodecode.config.routing import ADMIN_PREFIX
+from rhodecode.model.settings import SettingsModel
 
 log = logging.getLogger(__name__)
 
@@ -48,6 +49,15 @@ def _discover_plugins(config, entry_point='enterprise.plugins1'):
         config.include(plugin.includeme)
 
     return _discovered_plugins
+
+
+def _discover_legacy_plugins(config, prefix='py:'):
+    auth_plugins = SettingsModel().get_setting_by_name('auth_plugins')
+    enabled_plugins = auth_plugins.app_settings_value
+    legacy_plugins = [id_ for id_ in enabled_plugins if id_.startswith(prefix)]
+
+    log.debug('Trying to load these legacy authentication plugins {}'.format(
+        legacy_plugins))
 
 
 def includeme(config):
@@ -83,3 +93,4 @@ def includeme(config):
 
     # Auto discover authentication plugins and include their configuration.
     _discover_plugins(config)
+    _discover_legacy_plugins(config)
