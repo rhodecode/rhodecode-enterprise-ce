@@ -72,13 +72,16 @@ def _discover_legacy_plugins(config, prefix=legacy_plugin_prefix):
     for plugin_id in legacy_plugins:
         module_name = plugin_id.split(prefix, 1)[-1]
         try:
-            log.debug('Import %s', module_name)
             module = importlib.import_module(module_name)
             plugin = module.plugin_factory(plugin_id=plugin_id)
             config.include(plugin.includeme)
         except ImportError as e:
             log.error(
-                'Error while importing legacy authentication plugin '
+                'ImportError while importing legacy authentication plugin '
+                '"{}": {}'.format(plugin_id, e.message))
+        except Exception as e:
+            log.error(
+                'Exception while importing legacy authentication plugin '
                 '"{}": {}'.format(plugin_id, e.message))
 
 
