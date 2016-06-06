@@ -222,12 +222,8 @@ class RhodeCodeAuthPluginBase(object):
     @hybrid_property
     def is_container_auth(self):
         """
-        Returns bool if this module uses container auth.
-
-        This property will trigger an automatic call to authenticate on
-        a visit to the website or during a push/pull.
-
-        :returns: bool
+        Deprecated method that indicates if this authentication plugin uses
+        HTTP headers as authentication method.
         """
         return False
 
@@ -292,7 +288,7 @@ class RhodeCodeAuthPluginBase(object):
         """
         Helper method for user fetching in plugins, by default it's using
         simple fetch by username, but this method can be custimized in plugins
-        eg. container auth plugin to fetch user by environ params
+        eg. headers auth plugin to fetch user by environ params
 
         :param username: username if given to fetch from database
         :param kwargs: extra arguments needed for user fetching.
@@ -495,9 +491,9 @@ def authenticate(username, password, environ=None, auth_type=None,
     Authentication function used for access control,
     It tries to authenticate based on enabled authentication modules.
 
-    :param username: username can be empty for container auth
-    :param password: password can be empty for container auth
-    :param environ: environ headers passed for container auth
+    :param username: username can be empty for headers auth
+    :param password: password can be empty for headers auth
+    :param environ: environ headers passed for headers auth
     :param auth_type: type of authentication, either `HTTP_TYPE` or `VCS_TYPE`
     :param skip_missing: ignores plugins that are in db but not in environment
     :returns: None if auth failed, plugin_user dict if auth is correct
@@ -505,7 +501,7 @@ def authenticate(username, password, environ=None, auth_type=None,
     if not auth_type or auth_type not in [HTTP_TYPE, VCS_TYPE]:
         raise ValueError('auth type must be on of http, vcs got "%s" instead'
                          % auth_type)
-    container_only = environ and not (username and password)
+    headers_only = environ and not (username and password)
 
     authn_registry = get_current_registry().getUtility(IAuthnPluginRegistry)
     for plugin in authn_registry.get_plugins_for_authentication():
@@ -513,9 +509,9 @@ def authenticate(username, password, environ=None, auth_type=None,
         user = plugin.get_user(username)
         display_user = user.username if user else username
 
-        if container_only and not plugin.is_container_auth:
-            log.debug('Auth type is for container only and plugin `%s` is not '
-                      'container plugin, skipping...', plugin.get_id())
+        if headers_only and not plugin.is_headers_auth:
+            log.debug('Auth type is for headers only and plugin `%s` is not '
+                      'headers plugin, skipping...', plugin.get_id())
             continue
 
         # load plugin settings from RhodeCode database

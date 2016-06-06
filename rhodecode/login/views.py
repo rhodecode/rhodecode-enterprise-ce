@@ -123,9 +123,9 @@ class LoginView(object):
         if user.is_authenticated and not user.is_default and user.ip_allowed:
             raise HTTPFound(came_from)
 
-        # check if we use container plugin, and try to login using it.
+        # check if we use headers plugin, and try to login using it.
         try:
-            log.debug('Running PRE-AUTH for container based authentication')
+            log.debug('Running PRE-AUTH for headers based authentication')
             auth_info = authenticate(
                 '', '', self.request.environ, HTTP_TYPE, skip_missing=True)
             if auth_info:
@@ -167,7 +167,7 @@ class LoginView(object):
             return render_ctx
 
         except UserCreationError as e:
-            # container auth or other auth functions that create users on
+            # headers auth or other auth functions that create users on
             # the fly can throw this exception signaling that there's issue
             # with user creation, explanation should be provided in
             # Exception itself
