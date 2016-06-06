@@ -105,8 +105,8 @@ class RhodeCodeAuthPlugin(RhodeCodeExternalAuthPlugin):
     def name(self):
         return 'headers'
 
-    @hybrid_property
-    def is_container_auth(self):
+    @property
+    def is_headers_auth(self):
         return True
 
     def use_fake_password(self):

@@ -96,8 +96,8 @@ class RhodeCodeAuthPlugin(RhodeCodeExternalAuthPlugin):
     def name(self):
         return "jasig-cas"
 
-    @hybrid_property
-    def is_container_auth(self):
+    @property
+    def is_headers_auth(self):
         return True
 
     def use_fake_password(self):

@@ -220,6 +220,7 @@ class RhodeCodeAuthPluginBase(object):
         """
         raise NotImplementedError("Not implemented in base class")
 
+    @property
     def is_headers_auth(self):
         """
         Returns True if this authentication plugin uses HTTP headers as
