@@ -32,6 +32,36 @@ from rhodecode.model.user import UserModel
 from rhodecode.model.user_group import UserGroupModel
 
 
+def test_perm_origin_dict():
+    pod = auth.PermOriginDict()
+    pod['thing'] = 'read', 'default'
+    assert pod['thing'] == 'read'
+
+    assert pod.perm_origin_stack == {
+        'thing': [('read', 'default')]}
+
+    pod['thing'] = 'write', 'admin'
+    assert pod['thing'] == 'write'
+
+    assert pod.perm_origin_stack == {
+        'thing': [('read', 'default'), ('write', 'admin')]}
+
+    pod['other'] = 'write', 'default'
+
+    assert pod.perm_origin_stack == {
+        'other': [('write', 'default')],
+        'thing': [('read', 'default'), ('write', 'admin')]}
+
+    pod['other'] = 'none', 'override'
+
+    assert pod.perm_origin_stack == {
+        'other': [('write', 'default'), ('none', 'override')],
+        'thing': [('read', 'default'), ('write', 'admin')]}
+
+    with pytest.raises(ValueError):
+        pod['thing'] = 'read'
+
+
 def test_cached_perms_data(user_regular, backend_random):
     permissions = get_permissions(user_regular)
     repo_name = backend_random.repo.repo_name

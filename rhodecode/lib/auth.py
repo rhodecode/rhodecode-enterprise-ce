@@ -299,6 +299,54 @@ def _cached_perms_data(user_id, scope, user_is_admin,
         explicit, algo)
     return permissions.calculate()
 
+class PermOrigin:
+    ADMIN = 'superadmin'
+
+    REPO_USER = 'user:%s'
+    REPO_USERGROUP = 'usergroup:%s'
+    REPO_OWNER = 'repo.owner'
+    REPO_DEFAULT = 'repo.default'
+    REPO_PRIVATE = 'repo.private'
+
+    REPOGROUP_USER = 'user:%s'
+    REPOGROUP_USERGROUP = 'usergroup:%s'
+    REPOGROUP_OWNER = 'group.owner'
+    REPOGROUP_DEFAULT = 'group.default'
+
+    USERGROUP_USER = 'user:%s'
+    USERGROUP_USERGROUP = 'usergroup:%s'
+    USERGROUP_OWNER = 'usergroup.owner'
+    USERGROUP_DEFAULT = 'usergroup.default'
+
+
+class PermOriginDict(dict):
+    """
+    A special dict used for tracking permissions along with their origins.
+
+    `__setitem__` has been overridden to expect a tuple(perm, origin)
+    `__getitem__` will return only the perm
+    `.perm_origin_stack` will return the stack of (perm, origin) set per key
+
+    >>> perms = PermOriginDict()
+    >>> perms['resource'] = 'read', 'default'
+    >>> perms['resource']
+    'read'
+    >>> perms['resource'] = 'write', 'admin'
+    >>> perms['resource']
+    'write'
+    >>> perms.perm_origin_stack
+    {'resource': [('read', 'default'), ('write', 'admin')]}
+    """
+
+
+    def __init__(self, *args, **kw):
+        dict.__init__(self, *args, **kw)
+        self.perm_origin_stack = {}
+
+    def __setitem__(self, key, (perm, origin)):
+        self.perm_origin_stack.setdefault(key, []).append((perm, origin))
+        dict.__setitem__(self, key, perm)
+
 
 class PermissionCalculator(object):
 
@@ -318,9 +366,9 @@ class PermissionCalculator(object):
 
         self.default_user_id = User.get_default_user(cache=True).user_id
 
-        self.permissions_repositories = {}
-        self.permissions_repository_groups = {}
-        self.permissions_user_groups = {}
+        self.permissions_repositories = PermOriginDict()
+        self.permissions_repository_groups = PermOriginDict()
+        self.permissions_user_groups = PermOriginDict()
         self.permissions_global = set()
 
         self.default_repo_perms = Permission.get_default_repo_perms(
@@ -355,19 +403,19 @@ class PermissionCalculator(object):
         for perm in self.default_repo_perms:
             r_k = perm.UserRepoToPerm.repository.repo_name
             p = 'repository.admin'
-            self.permissions_repositories[r_k] = p
+            self.permissions_repositories[r_k] = p, PermOrigin.ADMIN
 
         # repository groups
         for perm in self.default_repo_groups_perms:
             rg_k = perm.UserRepoGroupToPerm.group.group_name
             p = 'group.admin'
-            self.permissions_repository_groups[rg_k] = p
+            self.permissions_repository_groups[rg_k] = p, PermOrigin.ADMIN
 
         # user groups
         for perm in self.default_user_group_perms:
             u_k = perm.UserUserGroupToPerm.user_group.users_group_name
             p = 'usergroup.admin'
-            self.permissions_user_groups[u_k] = p
+            self.permissions_user_groups[u_k] = p, PermOrigin.ADMIN
 
         return self._permission_structure()
 
@@ -438,8 +486,7 @@ class PermissionCalculator(object):
                 self.permissions_global = self.permissions_global.difference(
                     _configurable)
                 for perm in perms:
-                    self.permissions_global.add(
-                        perm.permission.permission_name)
+                    self.permissions_global.add(perm.permission.permission_name)
 
         # user explicit global permissions
         user_perms = Session().query(UserToPerm)\
@@ -478,13 +525,16 @@ class PermissionCalculator(object):
         # on given repo
         for perm in self.default_repo_perms:
             r_k = perm.UserRepoToPerm.repository.repo_name
+            o = PermOrigin.REPO_DEFAULT
             if perm.Repository.private and not (
                     perm.Repository.user_id == self.user_id):
                 # disable defaults for private repos,
                 p = 'repository.none'
+                o = PermOrigin.REPO_PRIVATE
             elif perm.Repository.user_id == self.user_id:
                 # set admin if owner
                 p = 'repository.admin'
+                o = PermOrigin.REPO_OWNER
             else:
                 p = perm.Permission.permission_name
                 # if we decide this user isn't inheriting permissions from
@@ -492,15 +542,17 @@ class PermissionCalculator(object):
                 # permissions work
                 if not user_inherit_object_permissions:
                     p = 'repository.none'
-            self.permissions_repositories[r_k] = p
+            self.permissions_repositories[r_k] = p, o
 
         # defaults for repository groups taken from `default` user permission
         # on given group
         for perm in self.default_repo_groups_perms:
             rg_k = perm.UserRepoGroupToPerm.group.group_name
+            o = PermOrigin.REPOGROUP_DEFAULT
             if perm.RepoGroup.user_id == self.user_id:
                 # set admin if owner
                 p = 'group.admin'
+                o = PermOrigin.REPOGROUP_OWNER
             else:
                 p = perm.Permission.permission_name
 
@@ -508,18 +560,19 @@ class PermissionCalculator(object):
             # user we set him to .none so only explicit permissions work
             if not user_inherit_object_permissions:
                 p = 'group.none'
-            self.permissions_repository_groups[rg_k] = p
+            self.permissions_repository_groups[rg_k] = p, o
 
         # defaults for user groups taken from `default` user permission
         # on given user group
         for perm in self.default_user_group_perms:
             u_k = perm.UserUserGroupToPerm.user_group.users_group_name
             p = perm.Permission.permission_name
+            o = PermOrigin.USERGROUP_DEFAULT
             # if we decide this user isn't inheriting permissions from default
             # user we set him to .none so only explicit permissions work
             if not user_inherit_object_permissions:
                 p = 'usergroup.none'
-            self.permissions_user_groups[u_k] = p
+            self.permissions_user_groups[u_k] = p, o
 
     def _calculate_repository_permissions(self):
         """
@@ -538,17 +591,20 @@ class PermissionCalculator(object):
         multiple_counter = collections.defaultdict(int)
         for perm in user_repo_perms_from_user_group:
             r_k = perm.UserGroupRepoToPerm.repository.repo_name
+            ug_k = perm.UserGroupRepoToPerm.users_group.users_group_name
             multiple_counter[r_k] += 1
             p = perm.Permission.permission_name
+            o = PermOrigin.REPO_USERGROUP % ug_k
 
             if perm.Repository.user_id == self.user_id:
                 # set admin if owner
                 p = 'repository.admin'
+                o = PermOrigin.REPO_OWNER
             else:
                 if multiple_counter[r_k] > 1:
                     cur_perm = self.permissions_repositories[r_k]
                     p = self._choose_permission(p, cur_perm)
-            self.permissions_repositories[r_k] = p
+            self.permissions_repositories[r_k] = p, o
 
         # user explicit permissions for repositories, overrides any specified
         # by the group permission
@@ -556,16 +612,18 @@ class PermissionCalculator(object):
             self.user_id, self.scope_repo_id)
         for perm in user_repo_perms:
             r_k = perm.UserRepoToPerm.repository.repo_name
+            o = PermOrigin.REPO_USER % perm.UserRepoToPerm.user.username
             # set admin if owner
             if perm.Repository.user_id == self.user_id:
                 p = 'repository.admin'
+                o = PermOrigin.REPO_OWNER
             else:
                 p = perm.Permission.permission_name
                 if not self.explicit:
                     cur_perm = self.permissions_repositories.get(
                         r_k, 'repository.none')
                     p = self._choose_permission(p, cur_perm)
-            self.permissions_repositories[r_k] = p
+            self.permissions_repositories[r_k] = p, o
 
     def _calculate_repository_group_permissions(self):
         """
@@ -583,32 +641,39 @@ class PermissionCalculator(object):
         multiple_counter = collections.defaultdict(int)
         for perm in user_repo_group_perms_from_user_group:
             g_k = perm.UserGroupRepoGroupToPerm.group.group_name
+            ug_k = perm.UserGroupRepoGroupToPerm.users_group.users_group_name
+            o = PermOrigin.REPOGROUP_USERGROUP % ug_k
             multiple_counter[g_k] += 1
             p = perm.Permission.permission_name
             if perm.RepoGroup.user_id == self.user_id:
                 # set admin if owner
                 p = 'group.admin'
+                o = PermOrigin.REPOGROUP_OWNER
             else:
                 if multiple_counter[g_k] > 1:
                     cur_perm = self.permissions_repository_groups[g_k]
                     p = self._choose_permission(p, cur_perm)
-            self.permissions_repository_groups[g_k] = p
+            self.permissions_repository_groups[g_k] = p, o
 
         # user explicit permissions for repository groups
         user_repo_groups_perms = Permission.get_default_group_perms(
             self.user_id, self.scope_repo_group_id)
         for perm in user_repo_groups_perms:
             rg_k = perm.UserRepoGroupToPerm.group.group_name
+            u_k = perm.UserRepoGroupToPerm.user.username
+            o = PermOrigin.REPOGROUP_USER % u_k
+
             if perm.RepoGroup.user_id == self.user_id:
                 # set admin if owner
                 p = 'group.admin'
+                o = PermOrigin.REPOGROUP_OWNER
             else:
                 p = perm.Permission.permission_name
                 if not self.explicit:
                     cur_perm = self.permissions_repository_groups.get(
                         rg_k, 'group.none')
                     p = self._choose_permission(p, cur_perm)
-            self.permissions_repository_groups[rg_k] = p
+            self.permissions_repository_groups[rg_k] = p, o
 
     def _calculate_user_group_permissions(self):
         """
@@ -623,24 +688,29 @@ class PermissionCalculator(object):
         for perm in user_group_from_user_group:
             g_k = perm.UserGroupUserGroupToPerm\
                 .target_user_group.users_group_name
+            u_k = perm.UserGroupUserGroupToPerm\
+                .user_group.users_group_name
+            o = PermOrigin.USERGROUP_USERGROUP % u_k
             multiple_counter[g_k] += 1
             p = perm.Permission.permission_name
             if multiple_counter[g_k] > 1:
                 cur_perm = self.permissions_user_groups[g_k]
                 p = self._choose_permission(p, cur_perm)
-            self.permissions_user_groups[g_k] = p
+            self.permissions_user_groups[g_k] = p, o
 
         # user explicit permission for user groups
         user_user_groups_perms = Permission.get_default_user_group_perms(
             self.user_id, self.scope_user_group_id)
         for perm in user_user_groups_perms:
-            u_k = perm.UserUserGroupToPerm.user_group.users_group_name
+            ug_k = perm.UserUserGroupToPerm.user_group.users_group_name
+            u_k = perm.UserUserGroupToPerm.user.username
             p = perm.Permission.permission_name
+            o = PermOrigin.USERGROUP_USER % u_k
             if not self.explicit:
                 cur_perm = self.permissions_user_groups.get(
-                    u_k, 'usergroup.none')
+                    ug_k, 'usergroup.none')
                 p = self._choose_permission(p, cur_perm)
-            self.permissions_user_groups[u_k] = p
+            self.permissions_user_groups[ug_k] = p, o
 
     def _choose_permission(self, new_perm, cur_perm):
         new_perm_val = Permission.PERM_WEIGHTS[new_perm]
@@ -799,7 +869,7 @@ class AuthUser(object):
             log.debug('No data in %s that could been used to log in' % self)
 
         if not is_user_loaded:
-            log.debug('Failed to load user %s. Fallback to default user', self)
+            log.debug('Failed to load user. Fallback to default user')
             # if we cannot authenticate user try anonymous
             if anon_user.active:
                 user_model.fill_data(self, user_id=anon_user.user_id)
