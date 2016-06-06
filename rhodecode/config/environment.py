@@ -145,10 +145,6 @@ def load_environment(global_conf, app_conf, initial=False,
                          protocol=utils.get_vcs_server_protocol(config),
                          log_level=config['vcs.server.log_level'])
 
-    # MULTIPLE DB configs
-    # Setup the SQLAlchemy database engine
-    utils.initialize_database(config)
-
     set_available_permissions(config)
     db_cfg = make_db_config(clear_session=True)
 

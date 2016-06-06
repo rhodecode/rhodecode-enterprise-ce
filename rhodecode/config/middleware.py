@@ -36,7 +36,7 @@ from routes.middleware import RoutesMiddleware
 import routes.util
 
 import rhodecode
-from rhodecode.config import patches
+from rhodecode.config import patches, utils
 from rhodecode.config.environment import load_environment
 from rhodecode.lib.middleware import csrf
 from rhodecode.lib.middleware.appenlight import wrap_in_appenlight_if_enabled
@@ -156,6 +156,11 @@ def make_pyramid_app(global_config, **settings):
     # sure that we keep an unmodified copy. This avoids unintentional change of
     # behavior in the old application.
     settings_pylons = settings.copy()
+
+    # TODO: Remove this by refactoring the init DB function.
+    # Put debug flag into settings for DB setup.
+    settings['debug'] = global_config.get('debug', False)
+    utils.initialize_database(settings)
 
     sanitize_settings_and_apply_defaults(settings)
     config = Configurator(settings=settings)
