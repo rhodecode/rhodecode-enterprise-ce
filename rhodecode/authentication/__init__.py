@@ -30,7 +30,11 @@ from rhodecode.authentication.routes import AuthnRootResource
 from rhodecode.config.routing import ADMIN_PREFIX
 from rhodecode.model.settings import SettingsModel
 
+
 log = logging.getLogger(__name__)
+
+# Legacy plugins are stored with this prefix in 'auth_plugins'.
+legacy_plugin_prefix = 'py:'
 
 
 # TODO: Currently this is only used to discover the authentication plugins.
@@ -52,7 +56,7 @@ def _discover_plugins(config, entry_point='enterprise.plugins1'):
     return _discovered_plugins
 
 
-def _discover_legacy_plugins(config, prefix='py:'):
+def _discover_legacy_plugins(config, prefix=legacy_plugin_prefix):
     """
     Function that imports the legacy plugins stored in the 'auth_plugins'
     setting in database which are using the specified prefix. Normally 'py:' is
