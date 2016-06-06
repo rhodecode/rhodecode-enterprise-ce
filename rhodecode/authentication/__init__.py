@@ -19,6 +19,7 @@
 # and proprietary license terms, please see https://rhodecode.com/licenses/
 
 import logging
+import importlib
 
 from pkg_resources import iter_entry_points
 from pyramid.authentication import SessionAuthenticationPolicy
@@ -56,8 +57,20 @@ def _discover_legacy_plugins(config, prefix='py:'):
     enabled_plugins = auth_plugins.app_settings_value
     legacy_plugins = [id_ for id_ in enabled_plugins if id_.startswith(prefix)]
 
-    log.debug('Trying to load these legacy authentication plugins {}'.format(
+    log.debug('Importing these legacy authentication plugins {}'.format(
         legacy_plugins))
+
+    for plugin_id in legacy_plugins:
+        module_name = plugin_id.split(prefix, 1)[-1]
+        try:
+            log.debug('Import %s', module_name)
+            module = importlib.import_module(module_name)
+            plugin = module.plugin_factory(plugin_id=plugin_id)
+            config.include(plugin.includeme)
+        except ImportError as e:
+            log.error(
+                'Error while importing legacy authentication plugin '
+                '"{}": {}'.format(plugin_id, e.message))
 
 
 def includeme(config):
