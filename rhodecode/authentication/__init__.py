@@ -53,6 +53,11 @@ def _discover_plugins(config, entry_point='enterprise.plugins1'):
 
 
 def _discover_legacy_plugins(config, prefix='py:'):
+    """
+    Function that imports the legacy plugins stored in the 'auth_plugins'
+    setting in database which are using the specified prefix. Normally 'py:' is
+    used for the legacy plugins.
+    """
     auth_plugins = SettingsModel().get_setting_by_name('auth_plugins')
     enabled_plugins = auth_plugins.app_settings_value
     legacy_plugins = [id_ for id_ in enabled_plugins if id_.startswith(prefix)]
