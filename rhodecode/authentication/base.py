@@ -25,6 +25,7 @@ Authentication modules
 import logging
 import time
 import traceback
+import warnings
 
 from pyramid.threadlocal import get_current_registry
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -219,13 +220,22 @@ class RhodeCodeAuthPluginBase(object):
         """
         raise NotImplementedError("Not implemented in base class")
 
+    def is_headers_auth(self):
+        """
+        Returns True if this authentication plugin uses HTTP headers as
+        authentication method.
+        """
+        return False
+
     @hybrid_property
     def is_container_auth(self):
         """
         Deprecated method that indicates if this authentication plugin uses
         HTTP headers as authentication method.
         """
-        return False
+        warnings.warn(
+            'Use is_headers_auth instead.', category=DeprecationWarning)
+        return self.is_headers_auth
 
     @hybrid_property
     def allows_creating_users(self):
