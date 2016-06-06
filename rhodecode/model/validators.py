@@ -38,9 +38,9 @@ from sqlalchemy.sql.expression import true
 from sqlalchemy.util import OrderedSet
 from webhelpers.pylonslib.secure_form import authentication_token
 
+from rhodecode.authentication import legacy_plugin_prefix
 from rhodecode.config.routing import ADMIN_PREFIX
 from rhodecode.lib.auth import HasRepoGroupPermissionAny, HasPermissionAny
-from rhodecode.lib.exceptions import LdapImportError
 from rhodecode.lib.utils import repo_name_slug, make_db_config
 from rhodecode.lib.utils2 import safe_int, str2bool, aslist, md5
 from rhodecode.lib.vcs.backends.git.repository import GitRepository
@@ -995,19 +995,20 @@ def ValidAuthPlugins():
             from rhodecode.authentication.base import loadplugin
             module_list = value
             unique_names = {}
-            for module in module_list:
-                plugin = loadplugin(module)
-                if plugin is None:
-                    raise formencode.Invalid(
-                        _("Can't find plugin with id '{}'".format(module)),
-                        value, state)
-                plugin_name = plugin.name
-                if plugin_name in unique_names:
-                    msg = M(self, 'import_duplicate', state,
-                            loaded=unique_names[plugin_name],
-                            next_to_load=plugin_name)
-                    raise formencode.Invalid(msg, value, state)
-                unique_names[plugin_name] = plugin
+            try:
+                for module in module_list:
+                    if module.startswith(legacy_plugin_prefix):
+                        continue
+                    plugin = loadplugin(module)
+                    plugin_name = plugin.name
+                    if plugin_name in unique_names:
+                        msg = M(self, 'import_duplicate', state,
+                                loaded=unique_names[plugin_name],
+                                next_to_load=plugin_name)
+                        raise formencode.Invalid(msg, value, state)
+                    unique_names[plugin_name] = plugin
+            except (KeyError, AttributeError, TypeError) as e:
+                raise formencode.Invalid(str(e), value, state)
 
     return _validator
 
