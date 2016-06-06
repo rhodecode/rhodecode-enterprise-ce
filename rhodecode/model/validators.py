@@ -38,7 +38,9 @@ from sqlalchemy.sql.expression import true
 from sqlalchemy.util import OrderedSet
 from webhelpers.pylonslib.secure_form import authentication_token
 
-from rhodecode.authentication import legacy_plugin_prefix
+from rhodecode.authentication import (
+    legacy_plugin_prefix, _import_legacy_plugin)
+from rhodecode.authentication.base import loadplugin
 from rhodecode.config.routing import ADMIN_PREFIX
 from rhodecode.lib.auth import HasRepoGroupPermissionAny, HasPermissionAny
 from rhodecode.lib.utils import repo_name_slug, make_db_config
@@ -985,30 +987,71 @@ def ValidAuthPlugins():
             'import_duplicate': _(
                 u'Plugins %(loaded)s and %(next_to_load)s '
                 u'both export the same name'),
+            'missing_includeme': _(
+                u'The plugin "%(plugin_id)s" is missing an includeme '
+                u'function.'),
+            'import_error': _(
+                u'Can not load plugin "%(plugin_id)s"'),
+            'no_plugin': _(
+                u'No plugin available with ID "%(plugin_id)s"'),
         }
 
         def _to_python(self, value, state):
             # filter empty values
             return filter(lambda s: s not in [None, ''], value)
 
-        def validate_python(self, value, state):
-            from rhodecode.authentication.base import loadplugin
-            module_list = value
-            unique_names = {}
+        def _validate_legacy_plugin_id(self, plugin_id, value, state):
+            """
+            Validates that the plugin import works. It also checks that the
+            plugin has an includeme attribute.
+            """
             try:
-                for module in module_list:
-                    if module.startswith(legacy_plugin_prefix):
-                        continue
-                    plugin = loadplugin(module)
-                    plugin_name = plugin.name
-                    if plugin_name in unique_names:
-                        msg = M(self, 'import_duplicate', state,
-                                loaded=unique_names[plugin_name],
-                                next_to_load=plugin_name)
-                        raise formencode.Invalid(msg, value, state)
-                    unique_names[plugin_name] = plugin
-            except (KeyError, AttributeError, TypeError) as e:
-                raise formencode.Invalid(str(e), value, state)
+                plugin = _import_legacy_plugin(plugin_id)
+            except Exception as e:
+                log.exception(
+                    'Exception during import of auth legacy plugin "{}"'
+                    .format(plugin_id))
+                msg = M(self, 'import_error', plugin_id=plugin_id)
+                raise formencode.Invalid(msg, value, state)
+
+            if not hasattr(plugin, 'includeme'):
+                msg = M(self, 'missing_includeme', plugin_id=plugin_id)
+                raise formencode.Invalid(msg, value, state)
+
+            return plugin
+
+        def _validate_plugin_id(self, plugin_id, value, state):
+            """
+            Plugins are already imported during app start up. Therefore this
+            validation only retrieves the plugin from the plugin registry and
+            if it returns something not None everything is OK.
+            """
+            plugin = loadplugin(plugin_id)
+
+            if plugin is None:
+                msg = M(self, 'no_plugin', plugin_id=plugin_id)
+                raise formencode.Invalid(msg, value, state)
+
+            return plugin
+
+        def validate_python(self, value, state):
+            unique_names = {}
+            for plugin_id in value:
+
+                # Validate legacy or normal plugin.
+                if plugin_id.startswith(legacy_plugin_prefix):
+                    plugin = self._validate_legacy_plugin_id(
+                        plugin_id, value, state)
+                else:
+                    plugin = self._validate_plugin_id(plugin_id, value, state)
+
+                # Only allow unique plugin names.
+                if plugin.name in unique_names:
+                    msg = M(self, 'import_duplicate', state,
+                            loaded=unique_names[plugin.name],
+                            next_to_load=plugin)
+                    raise formencode.Invalid(msg, value, state)
+                unique_names[plugin.name] = plugin
 
     return _validator
 
