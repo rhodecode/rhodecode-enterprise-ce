@@ -79,7 +79,7 @@ class AuthenticationPluginRegistry(object):
         if self._fallback_plugin:
             log.warn(
                 'Using fallback authentication plugin from INI file: "%s"',
-                plugin.get_id())
+                self._fallback_plugin)
             plugin = self.get_plugin(self._fallback_plugin)
             if plugin is not None and plugin not in plugins:
                 plugins.append(plugin)
