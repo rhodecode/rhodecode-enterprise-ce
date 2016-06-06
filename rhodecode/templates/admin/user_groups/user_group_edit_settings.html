@@ -43,14 +43,14 @@
                      </div>
                     <div class="field">
                         <div class="label">
-                            <label for="users_group_active">${_('Members')}:</label>
+                            <label for="users_group_active">${_('Search')}:</label>
                                ${h.text('from_user_group',
-                                        placeholder="select only users",
+                                        placeholder="user/usergroup",
                                         class_="medium")}
                         </div>
                         <div class="select side-by-side-selector">
                             <div class="left-group">
-                                <label class="text" >${_('Chosen group members')}</label>
+                                <label class="text"><strong>${_('Chosen group members')}</strong></label>
                                 ${h.select('users_group_members',[x[0] for x in c.group_members],c.group_members,multiple=True,size=8,)}
                                <div class="btn" id="remove_all_elements" >
                                    ${_('Remove all elements')}
@@ -63,7 +63,7 @@
                                 <i  id="remove_element" class="icon-chevron-right"></i>
                             </div>
                             <div class="right-group">
-                                 <label class="text" >${_('Available members')}
+                                 <label class="text" >${_('Available users')}
                                  </label>
                                  ${h.select('available_members',[],c.available_members,multiple=True,size=8,)}
                                  <div  class="btn" id="add_all_elements" >
