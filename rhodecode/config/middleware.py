@@ -168,7 +168,6 @@ def make_pyramid_app(global_config, **settings):
     # If this is a test run we prepare the test environment like
     # creating a test database, test search index and test repositories.
     # This has to be done before the database connection is initialized.
-    # if settings['is_test']:
     if settings['is_test']:
         rhodecode.is_test = True
         utils.initialize_test_environment(settings_merged)
