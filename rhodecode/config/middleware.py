@@ -36,8 +36,9 @@ from routes.middleware import RoutesMiddleware
 import routes.util
 
 import rhodecode
-from rhodecode.config import patches, utils
-from rhodecode.config.environment import load_environment
+from rhodecode.config import patches
+from rhodecode.config.environment import (
+    load_environment, load_pyramid_environment)
 from rhodecode.lib.middleware import csrf
 from rhodecode.lib.middleware.appenlight import wrap_in_appenlight_if_enabled
 from rhodecode.lib.middleware.disable_vcs import DisableVCSPagesWrapper
@@ -157,23 +158,11 @@ def make_pyramid_app(global_config, **settings):
     # behavior in the old application.
     settings_pylons = settings.copy()
 
-    # Some parts of the code expect a merge of global and app settings.
-    settings_merged = global_config.copy()
-    settings_merged.update(settings)
-
     sanitize_settings_and_apply_defaults(settings)
     config = Configurator(settings=settings)
     add_pylons_compat_data(config.registry, global_config, settings_pylons)
 
-    # If this is a test run we prepare the test environment like
-    # creating a test database, test search index and test repositories.
-    # This has to be done before the database connection is initialized.
-    if settings['is_test']:
-        rhodecode.is_test = True
-        utils.initialize_test_environment(settings_merged)
-
-    # Initialize the database connection.
-    utils.initialize_database(settings_merged)
+    load_pyramid_environment(global_config, settings)
 
     includeme(config)
     includeme_last(config)

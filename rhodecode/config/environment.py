@@ -174,3 +174,19 @@ def _use_direct_hook_calls(config):
 def _get_vcs_hooks_protocol(config):
     protocol = config.get('vcs.hooks.protocol', 'pyro4').lower()
     return protocol
+
+
+def load_pyramid_environment(global_config, settings):
+    # Some parts of the code expect a merge of global and app settings.
+    settings_merged = global_config.copy()
+    settings_merged.update(settings)
+
+    # If this is a test run we prepare the test environment like
+    # creating a test database, test search index and test repositories.
+    # This has to be done before the database connection is initialized.
+    if settings['is_test']:
+        rhodecode.is_test = True
+        utils.initialize_test_environment(settings_merged)
+
+    # Initialize the database connection.
+    utils.initialize_database(settings_merged)
