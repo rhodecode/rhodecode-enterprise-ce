@@ -62,7 +62,6 @@ def load_environment(global_conf, app_conf, initial=False,
     """
     config = PylonsConfig()
 
-    rhodecode.is_test = str2bool(app_conf.get('is_test', 'False'))
 
     # Pylons paths
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
