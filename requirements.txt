@@ -69,13 +69,14 @@ flake8==2.4.1
 future==0.14.3
 futures==3.0.2
 gprof2dot==2015.12.1
-greenlet==0.4.7
+greenlet==0.4.9
 gunicorn==19.6.0
 
 # TODO: Needs subvertpy and blows up without Subversion headers,
 # actually we should not need this for Enterprise at all.
 # hgsubversion==1.8.2
 
+gnureadline==6.3.3
 infrae.cache==1.0.1
 invoke==0.11.1
 ipdb==0.8
@@ -123,7 +124,7 @@ pyzmq==14.6.0
 # TODO: This is not available in public
 # rc-testdata==0.2.0
 
-https://code.rhodecode.com/rhodecode-tools-ce/archive/v0.7.1.zip#md5=91daea803aaa264ce7a8213bc2220d4c
+https://code.rhodecode.com/rhodecode-tools-ce/archive/v0.8.0.zip#md5=b7f960c70962d83cd9c2c761086d4b23
 
 
 recaptcha-client==1.0.6

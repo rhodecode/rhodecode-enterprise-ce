@@ -359,16 +359,6 @@
       md5 = "898bc87e54f278055b561316ba73e222";
     };
   };
-  certifi = super.buildPythonPackage {
-    name = "certifi-2016.2.28";
-    buildInputs = with self; [];
-    doCheck = false;
-    propagatedBuildInputs = with self; [];
-    src = fetchurl {
-      url = "https://pypi.python.org/packages/5c/f8/f6c54727c74579c6bbe5926f5deb9677c5810a33e11da58d1a4e2d09d041/certifi-2016.2.28.tar.gz";
-      md5 = "5d672aa766e1f773c75cfeccd02d3650";
-    };
-  };
   click = super.buildPythonPackage {
     name = "click-5.1";
     buildInputs = with self; [];
@@ -490,13 +480,23 @@
     };
   };
   elasticsearch = super.buildPythonPackage {
-    name = "elasticsearch-1.9.0";
+    name = "elasticsearch-2.3.0";
     buildInputs = with self; [];
     doCheck = false;
     propagatedBuildInputs = with self; [urllib3];
     src = fetchurl {
-      url = "https://pypi.python.org/packages/13/9b/540e311b31a10c2a904acfb08030c656047e5c7ba479d35df2799e5dccfe/elasticsearch-1.9.0.tar.gz";
-      md5 = "3550390baea1639479f79758d66ab032";
+      url = "https://pypi.python.org/packages/10/35/5fd52c5f0b0ee405ed4b5195e8bce44c5e041787680dc7b94b8071cac600/elasticsearch-2.3.0.tar.gz";
+      md5 = "2550f3b51629cf1ef9636608af92c340";
+    };
+  };
+  elasticsearch-dsl = super.buildPythonPackage {
+    name = "elasticsearch-dsl-2.0.0";
+    buildInputs = with self; [];
+    doCheck = false;
+    propagatedBuildInputs = with self; [six python-dateutil elasticsearch];
+    src = fetchurl {
+      url = "https://pypi.python.org/packages/4e/5d/e788ae8dbe2ff4d13426db0a027533386a5c276c77a2654dc0e2007ce04a/elasticsearch-dsl-2.0.0.tar.gz";
+      md5 = "4cdfec81bb35383dd3b7d02d7dc5ee68";
     };
   };
   flake8 = super.buildPythonPackage {
@@ -550,13 +550,13 @@
     };
   };
   greenlet = super.buildPythonPackage {
-    name = "greenlet-0.4.7";
+    name = "greenlet-0.4.9";
     buildInputs = with self; [];
     doCheck = false;
     propagatedBuildInputs = with self; [];
     src = fetchurl {
-      url = "https://pypi.python.org/packages/7a/9f/a1a0d9bdf3203ae1502c5a8434fe89d323599d78a106985bc327351a69d4/greenlet-0.4.7.zip";
-      md5 = "c2333a8ff30fa75c5d5ec0e67b461086";
+      url = "https://pypi.python.org/packages/4e/3d/9d421539b74e33608b245092870156b2e171fb49f2b51390aa4641eecb4a/greenlet-0.4.9.zip";
+      md5 = "c6659cdb2a5e591723e629d2eef22e82";
     };
   };
   gunicorn = super.buildPythonPackage {
@@ -1040,20 +1040,20 @@
     };
   };
   rhodecode-enterprise-ce = super.buildPythonPackage {
-    name = "rhodecode-enterprise-ce-4.0.1";
+    name = "rhodecode-enterprise-ce-4.1.0";
     buildInputs = with self; [WebTest configobj cssselect flake8 lxml mock pytest pytest-cov pytest-runner];
     doCheck = true;
     propagatedBuildInputs = with self; [Babel Beaker FormEncode Mako Markdown MarkupSafe MySQL-python Paste PasteDeploy PasteScript Pygments Pylons Pyro4 Routes SQLAlchemy Tempita URLObject WebError WebHelpers WebHelpers2 WebOb WebTest Whoosh alembic amqplib anyjson appenlight-client authomatic backport-ipaddress celery colander decorator docutils gunicorn infrae.cache ipython iso8601 kombu msgpack-python packaging psycopg2 pycrypto pycurl pyparsing pyramid pyramid-debugtoolbar pyramid-mako pyramid-beaker pysqlite python-dateutil python-ldap python-memcached python-pam recaptcha-client repoze.lru requests simplejson waitress zope.cachedescriptors psutil py-bcrypt];
     src = ./.;
   };
   rhodecode-tools = super.buildPythonPackage {
-    name = "rhodecode-tools-0.7.1";
+    name = "rhodecode-tools-0.8.0";
     buildInputs = with self; [];
     doCheck = false;
-    propagatedBuildInputs = with self; [click future six Mako MarkupSafe requests Whoosh];
+    propagatedBuildInputs = with self; [click future six Mako MarkupSafe requests Whoosh elasticsearch elasticsearch-dsl];
     src = fetchurl {
-      url = "https://code.rhodecode.com/rhodecode-tools-ce/archive/v0.7.1.zip";
-      md5 = "91daea803aaa264ce7a8213bc2220d4c";
+      url = "https://code.rhodecode.com/rhodecode-tools-ce/archive/v0.8.0.zip";
+      md5 = "b7f960c70962d83cd9c2c761086d4b23";
     };
   };
   serpent = super.buildPythonPackage {
@@ -1259,5 +1259,5 @@
 
 ### Test requirements
 
-
+  
 }
