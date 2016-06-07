@@ -165,13 +165,14 @@ def make_pyramid_app(global_config, **settings):
     config = Configurator(settings=settings)
     add_pylons_compat_data(config.registry, global_config, settings_pylons)
 
-    # Initialize the database connection.
-    utils.initialize_database(settings_merged)
-
     # If this is a test run we prepare the test environment like
     # creating a test database, test search index and test repositories.
+    # This has to be done before the database connection is initialized.
     if settings['is_test']:
         utils.initialize_test_environment(settings_merged)
+
+    # Initialize the database connection.
+    utils.initialize_database(settings_merged)
 
     includeme(config)
     includeme_last(config)
