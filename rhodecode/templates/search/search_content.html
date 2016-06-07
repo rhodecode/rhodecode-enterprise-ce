@@ -11,7 +11,7 @@ for line_number in matching_lines:
     if len(lines_of_interest) < max_lines:
         lines_of_interest |= set(range(
             max(line_number - line_context, 0),
-            min(line_number + line_context, len(lines))))
+            min(line_number + line_context, len(lines) + 1)))
         shown_matching_lines += 1
 
 %>
