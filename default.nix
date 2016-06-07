@@ -99,9 +99,11 @@ let
         '';
       in super.rhodecode-enterprise-ce.override (attrs: {
 
-      inherit doCheck;
+      inherit
+        doCheck
+        version;
       name = "rhodecode-enterprise-ce-${version}";
-      version = version;
+      releaseName = "RhodeCodeEnterpriseCE-${version}";
       src = rhodecode-enterprise-ce-src;
 
       buildInputs =
