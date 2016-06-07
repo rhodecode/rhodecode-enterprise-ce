@@ -64,6 +64,14 @@ performance is more important than CPU performance. In a corporate production
 environment handling 1000s of users and |repos| you should deploy on a 12+
 core 64GB RAM server. In short, the more RAM the better.
 
+
+For example:
+
+ - for team of 1 - 5 active users you can run on 1GB RAM machine with 1CPU
+ - above 250 active users, |RCM| needs at least 8GB of memory.
+   Number of CPUs is less important, but recommended to have at least 2-3 CPUs
+
+
 .. _config-rce-files:
 
 Configuration Files
