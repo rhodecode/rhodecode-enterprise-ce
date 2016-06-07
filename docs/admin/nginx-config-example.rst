@@ -7,11 +7,11 @@ Use the following example to configure Nginx as a your web server.
 
     upstream rc {
 
-        server 127.0.0.1:5000;
+        server 127.0.0.1:10002;
 
         # add more instances for load balancing
-        # server 127.0.0.1:5001;
-        # server 127.0.0.1:5002;
+        # server 127.0.0.1:10003;
+        # server 127.0.0.1:10004;
     }
 
     ## gist alias
@@ -58,14 +58,15 @@ Use the following example to configure Nginx as a your web server.
 
         ## uncomment root directive if you want to serve static files by nginx
         ## requires static_files = false in .ini file
-        # root /path/to/installation/rhodecode/public;
+        # root /path/to/rhodecode/installation/public;
 
         include         /etc/nginx/proxy.conf;
-            location / {
-                try_files $uri @rhode;
-            }
+
+        location / {
+            try_files $uri @rhode;
+        }
 
        location @rhode {
-            proxy_pass      http://rc;
-            }
+           proxy_pass      http://rc;
+       }
     }
