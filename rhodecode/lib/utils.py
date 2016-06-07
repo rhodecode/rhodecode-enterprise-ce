@@ -755,10 +755,10 @@ def create_test_env(repos_test_path, config):
     # PART TWO make test repo
     log.debug('making test vcs repositories')
 
-    idx_path = config['app_conf']['search.location']
-    data_path = config['app_conf']['cache_dir']
+    idx_path = config['search.location']
+    data_path = config['cache_dir']
 
-    #clean index and data
+    # clean index and data
     if idx_path and os.path.exists(idx_path):
         log.debug('remove %s', idx_path)
         shutil.rmtree(idx_path)
@@ -767,7 +767,7 @@ def create_test_env(repos_test_path, config):
         log.debug('remove %s', data_path)
         shutil.rmtree(data_path)
 
-    #CREATE DEFAULT TEST REPOS
+    # CREATE DEFAULT TEST REPOS
     cur_dir = dn(dn(abspath(__file__)))
     with tarfile.open(jn(cur_dir, 'tests', 'fixtures',
                          'vcs_test_hg.tar.gz')) as tar:
@@ -785,7 +785,6 @@ def create_test_env(repos_test_path, config):
     svn_repo_path = rc_testdata.get_svn_repo_archive()
     with tarfile.open(svn_repo_path) as tar:
         tar.extractall(jn(TESTS_TMP_PATH, SVN_REPO))
-
 
 
 #==============================================================================

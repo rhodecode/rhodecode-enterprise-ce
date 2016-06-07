@@ -157,14 +157,22 @@ def make_pyramid_app(global_config, **settings):
     # behavior in the old application.
     settings_pylons = settings.copy()
 
-    # TODO: Remove this by refactoring the init DB function.
-    # Put debug flag into settings for DB setup.
-    settings['debug'] = global_config.get('debug', False)
-    utils.initialize_database(settings)
+    # Some parts of the code expect a merge of global and app settings.
+    settings_merged = global_config.copy()
+    settings_merged.update(settings)
 
     sanitize_settings_and_apply_defaults(settings)
     config = Configurator(settings=settings)
     add_pylons_compat_data(config.registry, global_config, settings_pylons)
+
+    # Initialize the database connection.
+    utils.initialize_database(settings_merged)
+
+    # If this is a test run we prepare the test environment like
+    # creating a test database, test search index and test repositories.
+    if settings['is_test']:
+        utils.initialize_test_environment(settings_merged)
+
     includeme(config)
     includeme_last(config)
     pyramid_app = config.make_wsgi_app()

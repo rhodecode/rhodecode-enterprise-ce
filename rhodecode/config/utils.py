@@ -73,6 +73,18 @@ def initialize_database(config):
     init_model(engine, encryption_key=config['beaker.session.secret'])
 
 
+def initialize_test_environment(settings, test_env=None):
+    if test_env is None:
+        test_env = not int(os.environ.get('RC_NO_TMP_PATH', 0))
+
+    from rhodecode.lib.utils import create_test_env, create_test_index
+    from rhodecode.tests import TESTS_TMP_PATH
+    # test repos
+    if test_env:
+        create_test_env(TESTS_TMP_PATH, settings)
+        create_test_index(TESTS_TMP_PATH, settings, True)
+
+
 def get_vcs_server_protocol(config):
     protocol = config.get('vcs.server.protocol', 'pyro4')
     return protocol

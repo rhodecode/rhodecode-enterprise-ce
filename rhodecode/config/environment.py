@@ -112,18 +112,6 @@ def load_environment(global_conf, app_conf, initial=False,
 
     # sets the c attribute access when don't existing attribute are accessed
     config['pylons.strict_tmpl_context'] = True
-    config_file_name = os.path.split(config['__file__'])[-1]
-    test = re.match('^test[\w_]*\.ini$', config_file_name) is not None
-    if test:
-        if test_env is None:
-            test_env = not int(os.environ.get('RC_NO_TMP_PATH', 0))
-
-        from rhodecode.lib.utils import create_test_env, create_test_index
-        from rhodecode.tests import TESTS_TMP_PATH
-        # test repos
-        if test_env:
-            create_test_env(TESTS_TMP_PATH, config)
-            create_test_index(TESTS_TMP_PATH, config, True)
 
     # Limit backends to "vcs.backends" from configuration
     backends = config['vcs.backends'] = aslist(
