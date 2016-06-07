@@ -799,16 +799,6 @@
       md5 = "47b4eac84118e2606658122104e62072";
     };
   };
-  pyelasticsearch = super.buildPythonPackage {
-    name = "pyelasticsearch-1.4";
-    buildInputs = with self; [];
-    doCheck = false;
-    propagatedBuildInputs = with self; [certifi elasticsearch urllib3 simplejson six];
-    src = fetchurl {
-      url = "https://pypi.python.org/packages/2f/3a/7643cfcfc4cbdbb20ada800bbd54ac9705d0c047d7b8f8d5eeeb3047b4eb/pyelasticsearch-1.4.tar.gz";
-      md5 = "ed61ebb7b253364e55b4923d11e17049";
-    };
-  };
   pyflakes = super.buildPythonPackage {
     name = "pyflakes-0.8.1";
     buildInputs = with self; [];
@@ -1060,7 +1050,7 @@
     name = "rhodecode-tools-0.7.1";
     buildInputs = with self; [];
     doCheck = false;
-    propagatedBuildInputs = with self; [click future six Mako MarkupSafe requests Whoosh pyelasticsearch];
+    propagatedBuildInputs = with self; [click future six Mako MarkupSafe requests Whoosh];
     src = fetchurl {
       url = "https://code.rhodecode.com/rhodecode-tools-ce/archive/v0.7.1.zip";
       md5 = "91daea803aaa264ce7a8213bc2220d4c";
@@ -1269,5 +1259,5 @@
 
 ### Test requirements
 
-  
+
 }
