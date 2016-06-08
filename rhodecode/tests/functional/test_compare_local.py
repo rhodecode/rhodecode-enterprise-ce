@@ -77,7 +77,7 @@ class TestCompareController:
             'hg': {
                 'tag': 'v0.2.0',
                 'branch': 'default',
-                'response': (147, 5700, 10176)
+                'response': (147, 5701, 10177)
             },
             'git': {
                 'tag': 'v0.2.2',
