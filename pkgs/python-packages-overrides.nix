@@ -21,6 +21,14 @@ self: super: {
     '';
   });
 
+  gunicorn = super.gunicorn.override (attrs: {
+    propagatedBuildInputs = attrs.propagatedBuildInputs ++ [
+      # johbo: futures is needed as long as we are on Python 2, otherwise
+      # gunicorn explodes if used with multiple threads per worker.
+      self.futures
+    ];
+  });
+
   kombu = super.kombu.override (attrs: {
     # The current version of kombu needs some patching to work with the
     # other libs. Should be removed once we update celery and kombu.
