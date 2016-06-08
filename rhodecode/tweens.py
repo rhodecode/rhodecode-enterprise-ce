@@ -26,7 +26,6 @@ import rhodecode
 from pylons.i18n.translation import _get_translator
 from pylons.util import ContextObj
 from routes.util import URLGenerator
-from pyramid.httpexceptions import HTTPInternalServerError, HTTPError, HTTPServiceUnavailable
 
 from rhodecode.lib.base import attach_context_attributes, get_auth_user
 from rhodecode.model import meta
@@ -70,8 +69,7 @@ def pylons_compatibility_tween_factory(handler, registry):
             context.rhodecode_user = auth_user
             attach_context_attributes(context)
             pylons.tmpl_context._push_object(context)
-            response = handler(request)
-            return response
+            return handler(request)
         finally:
             # Dispose current database session and rollback uncommitted
             # transactions.
