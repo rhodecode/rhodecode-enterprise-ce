@@ -85,7 +85,7 @@ let
   pythonLocalOverrides = self: super: {
     rhodecode-enterprise-ce =
       let
-        version = "${builtins.readFile ./rhodecode/VERSION}";
+        version = builtins.readFile ./rhodecode/VERSION;
         linkNodeModules = ''
           echo "Link node packages"
           # TODO: check if this adds stuff as a dependency, closure size
