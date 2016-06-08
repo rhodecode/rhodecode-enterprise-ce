@@ -645,6 +645,8 @@ class MercurialRepository(BaseRepository):
         shadow_repository_path = self._get_shadow_repository_path(workspace_id)
         if not os.path.exists(shadow_repository_path):
             self._local_clone(shadow_repository_path)
+            log.debug(
+                'Prepared shadow repository in %s', shadow_repository_path)
 
         return shadow_repository_path
 
@@ -667,9 +669,11 @@ class MercurialRepository(BaseRepository):
 
         shadow_repo = self._get_shadow_instance(shadow_repository_path)
 
+        log.debug('Pulling in target reference %s', target_ref)
         self._validate_pull_reference(target_ref)
         shadow_repo._local_pull(self.path, target_ref)
         try:
+            log.debug('Pulling in source reference %s', source_ref)
             source_repo._validate_pull_reference(source_ref)
             shadow_repo._local_pull(source_repo.path, source_ref)
         except CommitDoesNotExistError as e:
