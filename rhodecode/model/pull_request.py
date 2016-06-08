@@ -907,15 +907,20 @@ class PullRequestModel(BaseModel):
         """
         Try to merge the pull request and return the merge status.
         """
+        log.debug(
+            "Trying out if the pull request %s can be merged.",
+            pull_request.pull_request_id)
         target_vcs = pull_request.target_repo.scm_instance()
         target_ref = self._refresh_reference(
             pull_request.target_ref_parts, target_vcs)
 
         target_locked = pull_request.target_repo.locked
         if target_locked and target_locked[0]:
+            log.debug("The target repository is locked.")
             merge_state = MergeResponse(
                 False, False, None, MergeFailureReason.TARGET_IS_LOCKED)
         elif self._needs_merge_state_refresh(pull_request, target_ref):
+            log.debug("Refreshing the merge status of the repository.")
             merge_state = self._refresh_merge_state(
                 pull_request, target_vcs, target_ref)
         else:
@@ -923,6 +928,7 @@ class PullRequestModel(BaseModel):
                 _last_merge_status == MergeFailureReason.NONE
             merge_state = MergeResponse(
                 possible, False, None, pull_request._last_merge_status)
+        log.debug("Merge response: %s", merge_state)
         return merge_state
 
     def _refresh_reference(self, reference, vcs_repository):
