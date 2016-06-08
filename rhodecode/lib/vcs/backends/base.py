@@ -409,7 +409,9 @@ class BaseRepository(object):
                 shadow_repository_path, target_ref, source_repo,
                 source_ref, message, user_name, user_email, dry_run=dry_run)
         except RepositoryError:
-            log.exception('Unexpected failure when running merge')
+            log.exception(
+                'Unexpected failure when running merge, dry-run=%s',
+                dry_run)
             return MergeResponse(
                 False, False, None, MergeFailureReason.UNKNOWN)
 
