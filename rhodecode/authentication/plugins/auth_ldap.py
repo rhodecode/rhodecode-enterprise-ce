@@ -46,8 +46,9 @@ log = logging.getLogger(__name__)
 try:
     import ldap
 except ImportError:
-    # means that python-ldap is not installed
-    ldap = Missing()
+    # means that python-ldap is not installed, we use Missing object to mark
+    # ldap lib is Missing
+    ldap = Missing
 
 
 def plugin_factory(plugin_id, *args, **kwds):
@@ -182,7 +183,7 @@ class AuthLdap(object):
                  tls_kind='PLAIN', tls_reqcert='DEMAND', ldap_version=3,
                  search_scope='SUBTREE', attr_login='uid',
                  ldap_filter='(&(objectClass=user)(!(objectClass=computer)))'):
-        if isinstance(ldap, Missing):
+        if ldap == Missing:
             raise LdapImportError("Missing or incompatible ldap library")
 
         self.ldap_version = ldap_version
