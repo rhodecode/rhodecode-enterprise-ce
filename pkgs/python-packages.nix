@@ -1047,13 +1047,13 @@
     src = ./.;
   };
   rhodecode-tools = super.buildPythonPackage {
-    name = "rhodecode-tools-0.8.0";
+    name = "rhodecode-tools-0.8.1";
     buildInputs = with self; [];
     doCheck = false;
     propagatedBuildInputs = with self; [click future six Mako MarkupSafe requests Whoosh elasticsearch elasticsearch-dsl];
     src = fetchurl {
-      url = "https://code.rhodecode.com/rhodecode-tools-ce/archive/v0.8.0.zip";
-      md5 = "b7f960c70962d83cd9c2c761086d4b23";
+      url = "https://code.rhodecode.com/rhodecode-tools-ce/archive/v0.8.1.zip";
+      md5 = "f411826759cc4fab8dd35b40d7e19f78";
     };
   };
   serpent = super.buildPythonPackage {
