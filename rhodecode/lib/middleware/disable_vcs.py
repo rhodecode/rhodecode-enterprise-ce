@@ -24,15 +24,21 @@ Disable VCS pages when VCS Server is not available
 
 import logging
 import re
-
+from pyramid.httpexceptions import HTTPBadGateway
 
 log = logging.getLogger(__name__)
 
 
+class VCSServerUnavailable(HTTPBadGateway):
+    """ HTTP Exception class for when VCS Server is unavailable """
+    code = 502
+    title = 'VCS Server Required'
+    explanation = 'A VCS Server is required for this action. There is currently no VCS Server configured.'
+
 class DisableVCSPagesWrapper(object):
     """
-    Wrapper to disable all pages that require VCS Server to be running,
-    avoiding that errors explode to the user.
+    Pyramid view wrapper to disable all pages that require VCS Server to be
+    running, avoiding that errors explode to the user.
 
     This Wrapper should be enabled only in case VCS Server is not available
     for the instance.
@@ -60,11 +66,11 @@ class DisableVCSPagesWrapper(object):
         log.debug('accessing: `%s` with VCS Server disabled', path_info)
         return False
 
-    def __init__(self, app):
-        self.application = app
+    def __init__(self, handler):
+        self.handler = handler
 
-    def __call__(self, environ, start_response):
-        if not self._check_vcs_requirement(environ['PATH_INFO']):
-            environ['PATH_INFO'] = '/error/vcs_unavailable'
+    def __call__(self, context, request):
+        if not self._check_vcs_requirement(request.environ['PATH_INFO']):
+            raise VCSServerUnavailable('VCS Server is not available')
 
-        return self.application(environ, start_response)
+        return self.handler(context, request)

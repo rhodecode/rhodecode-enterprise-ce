@@ -166,10 +166,6 @@ def make_map(config):
     def check_int(environ, match_dict):
         return match_dict.get('id').isdigit()
 
-    # The ErrorController route (handles 404/500 error pages); it should
-    # likely stay at the top, ensuring it can always be resolved
-    rmap.connect('/error/{action}', controller='error')
-    rmap.connect('/error/{action}/{id}', controller='error')
 
     #==========================================================================
     # CUSTOM ROUTES HERE
