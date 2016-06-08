@@ -714,7 +714,7 @@ class MercurialRepository(BaseRepository):
                         merge_commit_id, self.path, push_branches=True,
                         enable_hooks=True)
                     merge_succeeded = True
-                except RepositoryError as e:
+                except RepositoryError:
                     log.exception(
                         'Failure when doing local push on hg shadow repo')
                     merge_succeeded = False
