@@ -716,7 +716,8 @@ class MercurialRepository(BaseRepository):
                     merge_succeeded = True
                 except RepositoryError:
                     log.exception(
-                        'Failure when doing local push on hg shadow repo')
+                        'Failure when doing local from the shadow repository '
+                        'to the target repository.')
                     merge_succeeded = False
                     merge_failure_reason = MergeFailureReason.PUSH_FAILED
             else:
