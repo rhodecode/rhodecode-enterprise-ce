@@ -5,12 +5,12 @@ Make Database Changes
 
 .. important::
 
-   If you do change the |repo| database that |RCM| uses, then you will need to
+   If you do change the |repo| database that |RCEE| uses, then you will need to
    upgrade the database, and also remap and rescan the |repos|. More detailed
    information is available in the
    :ref:`Alternative upgrade documentation <control:install-port>`.
 
-If you need to change database connection details for a |RCM| instance,
+If you need to change database connection details for a |RCEE| instance,
 use the following steps:
 
 1. Open the :file:`rhodecode.ini` file for the instance you wish to edit. The
