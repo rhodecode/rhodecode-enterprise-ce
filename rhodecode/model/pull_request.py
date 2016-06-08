@@ -396,10 +396,15 @@ class PullRequestModel(BaseModel):
         return commit_ids
 
     def merge(self, pull_request, user, extras):
+        log.debug("Merging pull request %s", pull_request.pull_request_id)
         merge_state = self._merge_pull_request(pull_request, user, extras)
         if merge_state.executed:
+            log.debug(
+                "Merge was successful, updating the pull request comments.")
             self._comment_and_close_pr(pull_request, user, merge_state)
             self._log_action('user_merged_pull_request', user, pull_request)
+        else:
+            log.warn("Merge failed, not updating the pull request.")
         return merge_state
 
     def _merge_pull_request(self, pull_request, user, extras):
