@@ -37,6 +37,10 @@ New Features
   Github, Twitter, Bitbucket and Google. It's possible now to use your
   Google account to log in to RhodeCode and take advantage of things like 2FA.
 
+- Search: full text search now properly orders commits by date, and shows line
+  numbers for file content search.
+
+
 Security
 ^^^^^^^^
 
@@ -46,8 +50,10 @@ Security
 Performance
 ^^^^^^^^^^^
 
-- Optimized admin pannels to faster load large ammount of data
+- Optimized admin panels to faster load large amount of data
 - Improved file tree loading speed
+- New HTTP backend is ~10% faster, and doesn't require so many threads
+  for vcsserver
 
 
 Fixes
