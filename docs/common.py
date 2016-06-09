@@ -23,8 +23,8 @@ rst_epilog = '''
 .. |RCV| replace:: RhodeCode Enterprise
 .. |RCM| replace:: RhodeCode Enterprise
 .. |RCE| replace:: RhodeCode Enterprise
-.. |RCCE| replace:: RhodeCode Enterprise
-.. |RCEE| replace:: RhodeCode Community
+.. |RCCE| replace:: RhodeCode Community
+.. |RCEE| replace:: RhodeCode Enterprise
 .. |RCX| replace:: RhodeCode Extensions
 .. |RCT| replace:: RhodeCode Tools
 .. |RCEBOLD| replace:: **RhodeCode Enterprise**
