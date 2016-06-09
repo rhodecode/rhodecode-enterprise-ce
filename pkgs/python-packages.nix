@@ -540,7 +540,7 @@
     };
   };
   gprof2dot = super.buildPythonPackage {
-    name = "gprof2dot-2015.12.1";
+    name = "gprof2dot-2015.12.01";
     buildInputs = with self; [];
     doCheck = false;
     propagatedBuildInputs = with self; [];
@@ -603,7 +603,7 @@
     name = "ipython-3.1.0";
     buildInputs = with self; [];
     doCheck = false;
-    propagatedBuildInputs = with self; [gnureadline];
+    propagatedBuildInputs = with self; [];
     src = fetchurl {
       url = "https://pypi.python.org/packages/06/91/120c0835254c120af89f066afaabf81289bc2726c1fc3ca0555df6882f58/ipython-3.1.0.tar.gz";
       md5 = "a749d90c16068687b0ec45a27e72ef8f";

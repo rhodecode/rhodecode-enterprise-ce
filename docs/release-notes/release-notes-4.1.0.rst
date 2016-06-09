@@ -15,6 +15,8 @@ General
 - ini: Add fallback authentication plugin setting. In case only one
   authentication backend is enabled users can now enable fallback auth if
   they cannot log-in due to external servers being down
+- Bumped Mercurial to 3.8.3 version
+- Bumped RhodeCode Tools to 0.8.2 version
 
 New Features
 ^^^^^^^^^^^^
@@ -45,3 +47,9 @@ Fixes
   from filesystem.
 - logging: log the original error when a merge failure occurs
 - #3965 Cannot change the owner of a user's group by using the API
+- database is now initialized inside pyramid context
+- fixed wrong check on LDAP plugin about missing ldap server
+- Bring back multi-threaded workers to gunicorn for backward compatibility with
+  previous RhodeCode versions
+- Commit dates are now properly handled as UTC. This fixes some issues
+  with displaying age of commits
