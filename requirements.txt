@@ -124,7 +124,7 @@ pyzmq==14.6.0
 # TODO: This is not available in public
 # rc-testdata==0.2.0
 
-https://code.rhodecode.com/rhodecode-tools-ce/archive/v0.8.2.zip#md5=4b65116ad471c7e8ed10aea4e323bd14
+https://code.rhodecode.com/rhodecode-tools-ce/archive/v0.8.3.zip#md5=9acdfd71b8ddf4056057065f37ab9ccb
 
 
 recaptcha-client==1.0.6

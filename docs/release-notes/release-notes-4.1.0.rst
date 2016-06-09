@@ -16,7 +16,7 @@ General
   authentication backend is enabled users can now enable fallback auth if
   they cannot log-in due to external servers being down
 - Bumped Mercurial to 3.8.3 version
-- Bumped RhodeCode Tools to 0.8.2 version
+- Bumped RhodeCode Tools to 0.8.3 version
 
 New Features
 ^^^^^^^^^^^^
