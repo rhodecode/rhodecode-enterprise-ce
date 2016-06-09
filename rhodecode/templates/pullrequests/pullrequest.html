@@ -271,7 +271,8 @@ $(function(){
           'source_ref_type': 'rev',
           'target_ref': sourceRef[2],
           'target_ref_type': 'rev',
-          'merge': true
+          'merge': true,
+          '_': Date.now() // bypass browser caching
       }; // gather the source/target ref and repo here
 
       if (sourceRef.length !== 3 || targetRef.length !== 3) {
