@@ -34,9 +34,6 @@ let
   # figure it out without calling into nix-store.
   enterprise = import ./default.nix {
     doCheck = false;
-    with_vcsserver = false;
-    with_pyramid = false;
-    cythonize = false;
   };
 
   # For a given derivation, return the list of all dependencies
