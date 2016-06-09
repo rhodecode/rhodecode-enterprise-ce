@@ -608,6 +608,16 @@ def time_to_datetime(tm):
         return datetime.datetime.fromtimestamp(tm)
 
 
+def time_to_utcdatetime(tm):
+    if tm:
+        if isinstance(tm, basestring):
+            try:
+                tm = float(tm)
+            except ValueError:
+                return
+        return datetime.datetime.utcfromtimestamp(tm)
+
+
 MENTIONS_REGEX = re.compile(
     # ^@ or @ without any special chars in front
     r'(?:^@|[^a-zA-Z0-9\-\_\.]@)'

@@ -11,7 +11,7 @@
                     ${base.gravatar_with_user(f.user.email, 16)}
                 </td>
                 <td class="td-time follower_date">
-                    ${h.age_component(f.follows_from)}
+                    ${h.age_component(f.follows_from, time_is_local=True)}
                 </td>
             </tr>
     % endfor

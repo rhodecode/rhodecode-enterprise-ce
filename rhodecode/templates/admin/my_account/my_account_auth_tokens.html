@@ -42,9 +42,9 @@
                       ${_('expires')}: ${_('never')}
                      %else:
                         %if auth_token.expired:
-                            ${_('expired')}: ${h.age_component(h.time_to_datetime(auth_token.expires))}
+                            ${_('expired')}: ${h.age_component(h.time_to_utcdatetime(auth_token.expires))}
                         %else:
-                            ${_('expires')}: ${h.age_component(h.time_to_datetime(auth_token.expires))}
+                            ${_('expires')}: ${h.age_component(h.time_to_utcdatetime(auth_token.expires))}
                         %endif
                      %endif
                 </td>

@@ -46,7 +46,7 @@
                     %endif
                 </td>
                 <td class="td-time">
-                    ${h.age_component(h.time_to_datetime(entry['date']))}
+                    ${h.age_component(h.time_to_utcdatetime(entry['date']))}
                 </td>
 
                 <td class="td-user author">

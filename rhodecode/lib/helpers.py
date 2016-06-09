@@ -71,8 +71,8 @@ from rhodecode.lib.annotate import annotate_highlight
 from rhodecode.lib.action_parser import action_parser
 from rhodecode.lib.utils import repo_name_slug, get_custom_lexer
 from rhodecode.lib.utils2 import str2bool, safe_unicode, safe_str, \
-    get_commit_safe, datetime_to_time, time_to_datetime, AttributeDict, \
-    safe_int, md5, md5_safe
+    get_commit_safe, datetime_to_time, time_to_datetime, time_to_utcdatetime, \
+    AttributeDict, safe_int, md5, md5_safe
 from rhodecode.lib.markup_renderer import MarkupRenderer
 from rhodecode.lib.vcs.exceptions import CommitDoesNotExistError
 from rhodecode.lib.vcs.backends.base import BaseChangeset, EmptyCommit
@@ -649,12 +649,19 @@ short_id = lambda x: x[:12]
 hide_credentials = lambda x: ''.join(credentials_filter(x))
 
 
-def age_component(datetime_iso, value=None):
+def age_component(datetime_iso, value=None, time_is_local=False):
     title = value or format_date(datetime_iso)
 
-    # detect if we have a timezone info, if not assume UTC
+    # detect if we have a timezone info, otherwise, add it
     if isinstance(datetime_iso, datetime) and not datetime_iso.tzinfo:
         tzinfo = '+00:00'
+
+        if time_is_local:
+            tzinfo = time.strftime("+%H:%M",
+                time.gmtime(
+                    (datetime.now() - datetime.utcnow()).seconds + 1
+                )
+            )
 
     return literal(
         '<time class="timeago tooltip" '
