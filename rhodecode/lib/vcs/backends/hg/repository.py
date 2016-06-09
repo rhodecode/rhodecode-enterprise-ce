@@ -32,7 +32,7 @@ import urllib
 from zope.cachedescriptors.property import Lazy as LazyProperty
 
 from rhodecode.lib.compat import OrderedDict
-from rhodecode.lib.datelib import (
+from rhodecode.lib.datelib import (date_to_timestamp_plus_offset,
     utcdate_fromtimestamp, makedate, date_astimestamp)
 from rhodecode.lib.utils import safe_unicode, safe_str
 from rhodecode.lib.vcs import connection
