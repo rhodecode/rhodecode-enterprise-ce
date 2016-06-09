@@ -26,7 +26,7 @@ import os
 
 from zope.cachedescriptors.property import Lazy as LazyProperty
 
-from rhodecode.lib.datelib import date_fromtimestamp
+from rhodecode.lib.datelib import utcdate_fromtimestamp
 from rhodecode.lib.utils import safe_str, safe_unicode
 from rhodecode.lib.vcs import path as vcspath
 from rhodecode.lib.vcs.backends import base
@@ -78,7 +78,7 @@ class MercurialCommit(base.BaseCommit):
             elif attr == "affected_files":
                 value = map(safe_unicode, value)
             elif attr == "date":
-                value = date_fromtimestamp(*value)
+                value = utcdate_fromtimestamp(*value)
             elif attr in ["children", "parents"]:
                 value = self._make_commits(value)
             self.__dict__[attr] = value
@@ -114,7 +114,7 @@ class MercurialCommit(base.BaseCommit):
 
     @LazyProperty
     def date(self):
-        return date_fromtimestamp(*self._remote.ctx_date(self.idx))
+        return utcdate_fromtimestamp(*self._remote.ctx_date(self.idx))
 
     @LazyProperty
     def status(self):

@@ -31,7 +31,7 @@ import time
 from zope.cachedescriptors.property import Lazy as LazyProperty
 
 from rhodecode.lib.compat import OrderedDict
-from rhodecode.lib.datelib import makedate, date_fromtimestamp
+from rhodecode.lib.datelib import makedate, utcdate_fromtimestamp
 from rhodecode.lib.utils import safe_unicode, safe_str
 from rhodecode.lib.vcs import connection, path as vcspath
 from rhodecode.lib.vcs.backends.base import (
@@ -269,7 +269,7 @@ class GitRepository(BaseRepository):
         Returns last change made on this repository as
         `datetime.datetime` object.
         """
-        return date_fromtimestamp(self._get_mtime(), makedate()[1])
+        return utcdate_fromtimestamp(self._get_mtime(), makedate()[1])
 
     def _get_mtime(self):
         try:
