@@ -607,6 +607,10 @@ class MercurialRepository(BaseRepository):
                 self._update(bookmark_name)
                 return self._identify(), True
             except RepositoryError:
+                # The rebase-abort may raise another exception which 'hides'
+                # the original one, therefore we log it here.
+                log.exception('Error while rebasing shadow repo during merge.')
+
                 # Cleanup any rebase leftovers
                 self._remote.rebase(abort=True)
                 self._remote.update(clean=True)
@@ -715,8 +719,8 @@ class MercurialRepository(BaseRepository):
                     merge_succeeded = True
                 except RepositoryError:
                     log.exception(
-                        'Failure when doing local from the shadow repository '
-                        'to the target repository.')
+                        'Failure when doing local push from the shadow '
+                        'repository to the target repository.')
                     merge_succeeded = False
                     merge_failure_reason = MergeFailureReason.PUSH_FAILED
             else:

@@ -2794,7 +2794,9 @@ class CacheKey(Base, BaseModel):
 
             Session().commit()
         except Exception:
-            log.error(traceback.format_exc())
+            log.exception(
+                'Cache key invalidation failed for repository %s',
+                safe_str(repo_name))
             Session().rollback()
 
     @classmethod
