@@ -29,6 +29,12 @@ self: super: {
     ];
   });
 
+  ipython = super.ipython.override (attrs: {
+    propagatedBuildInputs = attrs.propagatedBuildInputs ++ [
+      self.gnureadline
+    ];
+  });
+
   kombu = super.kombu.override (attrs: {
     # The current version of kombu needs some patching to work with the
     # other libs. Should be removed once we update celery and kombu.
