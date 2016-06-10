@@ -590,6 +590,8 @@ class PullrequestsController(BaseRepoController):
             PullRequestModel().close_pull_request(
                 pull_request.pull_request_id, user)
             Session().commit()
+            msg = _('Pull request was successfully merged and closed.')
+            h.flash(msg, category='success')
         else:
             log.debug(
                 "The merge was not successful. Merge response: %s",
