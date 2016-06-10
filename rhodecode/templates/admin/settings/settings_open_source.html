@@ -20,6 +20,7 @@
                     <td>
                         ${h.literal(', '.join([
                         '<a href="%(link)s" title="%(name)s">%(name)s</a>' % {'link':link, 'name':name}
+                        if link else name
                         for name,link in licenses.items()]))}
                     </td>
                 </tr>
