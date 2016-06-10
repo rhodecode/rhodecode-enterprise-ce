@@ -158,6 +158,16 @@ self: super: {
     ];
   });
 
+  URLObject = super.URLObject.override (attrs: {
+    meta = {
+      license = {
+        spdxId = "Unlicense";
+        fullName = "The Unlicense";
+        url = http://unlicense.org/;
+      };
+    };
+  });
+
   # Avoid that setuptools is replaced, this leads to trouble
   # with buildPythonPackage.
   setuptools = basePythonPackages.setuptools;
