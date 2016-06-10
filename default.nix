@@ -162,6 +162,7 @@ let
         ln -s ${self.supervisor}/bin/supervisor* $out/bin/
         ln -s ${self.gunicorn}/bin/gunicorn $out/bin/
         ln -s ${self.PasteScript}/bin/paster $out/bin/
+        ln -s ${self.pyramid}/bin/* $out/bin/  #*/
 
         # rhodecode-tools
         # TODO: johbo: re-think this. Do the tools import anything from enterprise?
@@ -171,6 +172,7 @@ let
         for file in $out/bin/*; do  #*/
           wrapProgram $file \
               --prefix PYTHONPATH : $PYTHONPATH \
+              --prefix PATH : $PATH \
               --set PYTHONHASHSEED random
         done
 
