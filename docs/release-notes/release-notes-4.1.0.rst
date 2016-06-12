@@ -4,27 +4,29 @@
 Release Date
 ^^^^^^^^^^^^
 
-- 2016-06-XX
+- 2016-06-12
 
 General
 ^^^^^^^
 
-- Migrated more views to Pyramid. Those now include login, social plugins, search
-- Started Implementing Pyramid Events system in exchange to rcextensions callbacks
-- JS routes assets are now generated in development mode automatically
+- Migrated more views to Pyramid. Those now include login, social auth plugins,
+  full text search.
+- Started implementing Pyramid Events system in exchange to rcextensions callbacks.
+- JS routes assets are now generated in development mode automatically.
 - ini: Add fallback authentication plugin setting. In case only one
   authentication backend is enabled users can now enable fallback auth if
-  they cannot log-in due to external servers being down
-- Bumped Mercurial to 3.8.3 version
-- Bumped RhodeCode Tools to 0.8.3 version
+  they cannot log-in due to external servers being down.
+- Bumped Mercurial to 3.8.3 version.
+- Bumped RhodeCode Tools to 0.8.3 version.
 
 New Features
 ^^^^^^^^^^^^
 
-- search: add syntax highlighting, line numbers and line context to file
-  content search results
-- Go To switcher now searches commit hashes as well
-- Token based authentication is now in CE edition as well
+- Search: add syntax highlighting, line numbers and line context to file
+  content search results.
+- Enabled new Elastic Search based engine.
+- Go To switcher now searches commit hashes as well.
+- RhodeCode Auth-Token based authentication is now in CE edition.
 - User groups: added autocomplete widget to be able to select members of
   other group as part of current group.
 
