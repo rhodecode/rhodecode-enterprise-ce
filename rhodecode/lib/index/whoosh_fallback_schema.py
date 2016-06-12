@@ -63,7 +63,7 @@ COMMIT_SCHEMA = Schema(
     repository_id=NUMERIC(unique=True, stored=True),
     commit_idx=NUMERIC(stored=True, sortable=True),
     commit_idx_sort=ID(),
-    date=NUMERIC(stored=True),
+    date=NUMERIC(stored=True, sortable=True),
     owner=TEXT(stored=True),
     author=TEXT(stored=True),
     message=FieldType(format=Characters(), analyzer=ANALYZER,

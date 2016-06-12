@@ -25,24 +25,18 @@ Authentication modules
 import logging
 import time
 import traceback
+import warnings
 
-from authomatic import Authomatic
-from authomatic.adapters import WebObAdapter
-from authomatic.providers import oauth2, oauth1
-from pylons import url
-from pylons.controllers.util import Response
-from pylons.i18n.translation import _
 from pyramid.threadlocal import get_current_registry
 from sqlalchemy.ext.hybrid import hybrid_property
 
-import rhodecode.lib.helpers as h
 from rhodecode.authentication.interface import IAuthnPluginRegistry
 from rhodecode.authentication.schema import AuthnPluginSettingsSchemaBase
 from rhodecode.lib import caches
 from rhodecode.lib.auth import PasswordGenerator, _RhodeCodeCryptoBCrypt
 from rhodecode.lib.utils2 import md5_safe, safe_int
 from rhodecode.lib.utils2 import safe_str
-from rhodecode.model.db import User, ExternalIdentity
+from rhodecode.model.db import User
 from rhodecode.model.meta import Session
 from rhodecode.model.settings import SettingsModel
 from rhodecode.model.user import UserModel
@@ -226,17 +220,23 @@ class RhodeCodeAuthPluginBase(object):
         """
         raise NotImplementedError("Not implemented in base class")
 
+    @property
+    def is_headers_auth(self):
+        """
+        Returns True if this authentication plugin uses HTTP headers as
+        authentication method.
+        """
+        return False
+
     @hybrid_property
     def is_container_auth(self):
         """
-        Returns bool if this module uses container auth.
-
-        This property will trigger an automatic call to authenticate on
-        a visit to the website or during a push/pull.
-
-        :returns: bool
+        Deprecated method that indicates if this authentication plugin uses
+        HTTP headers as authentication method.
         """
-        return False
+        warnings.warn(
+            'Use is_headers_auth instead.', category=DeprecationWarning)
+        return self.is_headers_auth
 
     @hybrid_property
     def allows_creating_users(self):
@@ -299,7 +299,7 @@ class RhodeCodeAuthPluginBase(object):
         """
         Helper method for user fetching in plugins, by default it's using
         simple fetch by username, but this method can be custimized in plugins
-        eg. container auth plugin to fetch user by environ params
+        eg. headers auth plugin to fetch user by environ params
 
         :param username: username if given to fetch from database
         :param kwargs: extra arguments needed for user fetching.
@@ -477,131 +477,11 @@ class RhodeCodeExternalAuthPlugin(RhodeCodeAuthPluginBase):
         return auth
 
 
-class AuthomaticBase(RhodeCodeExternalAuthPlugin):
-
-    # TODO: Think about how to create and store this secret string.
-    # We need the secret for the authomatic library. It needs to be the same
-    # across requests.
-    def _get_authomatic_secret(self, length=40):
-        secret = self.get_setting_by_name('secret')
-        if secret is None or secret == 'None' or secret == '':
-            from Crypto import Random, Hash
-            secret_bytes = Random.new().read(length)
-            secret_hash = Hash.SHA256.new()
-            secret_hash.update(secret_bytes)
-            secret = secret_hash.hexdigest()
-            self.create_or_update_setting('secret', secret)
-            Session.commit()
-            secret = self.get_setting_by_name('secret')
-        return secret
-
-    def get_authomatic(self):
-        scope = []
-        if self.name == 'bitbucket':
-            provider_class = oauth1.Bitbucket
-            scope = ['account', 'email', 'repository', 'issue', 'issue:write']
-        elif self.name == 'github':
-            provider_class = oauth2.GitHub
-            scope = ['repo', 'public_repo', 'user:email']
-        elif self.name == 'google':
-            provider_class = oauth2.Google
-            scope = ['profile', 'email']
-        elif self.name == 'twitter':
-            provider_class = oauth1.Twitter
-
-        authomatic_conf = {
-            self.name: {
-                'class_': provider_class,
-                'consumer_key': self.get_setting_by_name('consumer_key'),
-                'consumer_secret': self.get_setting_by_name('consumer_secret'),
-                'scope': scope,
-                'access_headers': {'User-Agent': 'TestAppAgent'},
-            }
-        }
-        secret = self._get_authomatic_secret()
-        return Authomatic(config=authomatic_conf,
-                          secret=secret)
-
-    def get_provider_result(self, request):
-        """
-        Provides `authomatic.core.LoginResult` for provider and request
-
-        :param provider_name:
-        :param request:
-        :param config:
-        :return:
-        """
-        response = Response()
-        adapter = WebObAdapter(request, response)
-        authomatic_inst = self.get_authomatic()
-        return authomatic_inst.login(adapter, self.name), response
-
-    def handle_social_data(self, session, user_id, social_data):
-        """
-        Updates user tokens in database whenever necessary
-        :param request:
-        :param user:
-        :param social_data:
-        :return:
-        """
-        if not self.is_active():
-            h.flash(_('This provider is currently disabled'),
-                    category='warning')
-            return False
-
-        social_data = social_data
-        update_identity = False
-
-        existing_row = ExternalIdentity.by_external_id_and_provider(
-            social_data['user']['id'],
-            social_data['credentials.provider']
-        )
-
-        if existing_row:
-            Session().delete(existing_row)
-            update_identity = True
-
-        if not existing_row or update_identity:
-            if not update_identity:
-                h.flash(_('Your external identity is now '
-                          'connected with your account'), category='success')
-
-            if not social_data['user']['id']:
-                h.flash(_('No external user id found? Perhaps permissions'
-                          'for authentication are set incorrectly'),
-                        category='error')
-                return False
-
-            ex_identity = ExternalIdentity()
-            ex_identity.external_id = social_data['user']['id']
-            ex_identity.external_username = social_data['user']['user_name']
-            ex_identity.provider_name = social_data['credentials.provider']
-            ex_identity.access_token = social_data['credentials.token']
-            ex_identity.token_secret = social_data['credentials.token_secret']
-            ex_identity.alt_token = social_data['credentials.refresh_token']
-            ex_identity.local_user_id = user_id
-            Session().add(ex_identity)
-            session.pop('rhodecode.social_auth', None)
-            return ex_identity
-
-    def callback_url(self):
-        try:
-            return url('social_auth', provider_name=self.name, qualified=True)
-        except TypeError:
-            pass
-        return ''
-
-
 def loadplugin(plugin_id):
     """
     Loads and returns an instantiated authentication plugin.
     Returns the RhodeCodeAuthPluginBase subclass on success,
-    raises exceptions on failure.
-
-    raises:
-        KeyError -- if no plugin available with given name
-        TypeError -- if the RhodeCodeAuthPlugin is not a subclass of
-                     ours RhodeCodeAuthPluginBase
+    or None on failure.
     """
     # TODO: Disusing pyramids thread locals to retrieve the registry.
     authn_registry = get_current_registry().getUtility(IAuthnPluginRegistry)
@@ -622,9 +502,9 @@ def authenticate(username, password, environ=None, auth_type=None,
     Authentication function used for access control,
     It tries to authenticate based on enabled authentication modules.
 
-    :param username: username can be empty for container auth
-    :param password: password can be empty for container auth
-    :param environ: environ headers passed for container auth
+    :param username: username can be empty for headers auth
+    :param password: password can be empty for headers auth
+    :param environ: environ headers passed for headers auth
     :param auth_type: type of authentication, either `HTTP_TYPE` or `VCS_TYPE`
     :param skip_missing: ignores plugins that are in db but not in environment
     :returns: None if auth failed, plugin_user dict if auth is correct
@@ -632,51 +512,41 @@ def authenticate(username, password, environ=None, auth_type=None,
     if not auth_type or auth_type not in [HTTP_TYPE, VCS_TYPE]:
         raise ValueError('auth type must be on of http, vcs got "%s" instead'
                          % auth_type)
-    container_only = environ and not (username and password)
-    auth_plugins = SettingsModel().get_auth_plugins()
-    for plugin_id in auth_plugins:
-        plugin = loadplugin(plugin_id)
+    headers_only = environ and not (username and password)
 
-        if plugin is None:
-            log.warning('Authentication plugin missing: "{}"'.format(
-                plugin_id))
-            continue
-
-        if not plugin.is_active():
-            log.info('Authentication plugin is inactive: "{}"'.format(
-                plugin_id))
-            continue
-
+    authn_registry = get_current_registry().getUtility(IAuthnPluginRegistry)
+    for plugin in authn_registry.get_plugins_for_authentication():
         plugin.set_auth_type(auth_type)
         user = plugin.get_user(username)
         display_user = user.username if user else username
 
-        if container_only and not plugin.is_container_auth:
-            log.debug('Auth type is for container only and plugin `%s` is not '
-                      'container plugin, skipping...', plugin_id)
+        if headers_only and not plugin.is_headers_auth:
+            log.debug('Auth type is for headers only and plugin `%s` is not '
+                      'headers plugin, skipping...', plugin.get_id())
             continue
 
         # load plugin settings from RhodeCode database
         plugin_settings = plugin.get_settings()
         log.debug('Plugin settings:%s', plugin_settings)
 
-        log.debug('Trying authentication using ** %s **', plugin_id)
+        log.debug('Trying authentication using ** %s **', plugin.get_id())
         # use plugin's method of user extraction.
         user = plugin.get_user(username, environ=environ,
                                settings=plugin_settings)
         display_user = user.username if user else username
-        log.debug('Plugin %s extracted user is `%s`', plugin_id, display_user)
+        log.debug(
+            'Plugin %s extracted user is `%s`', plugin.get_id(), display_user)
 
         if not plugin.allows_authentication_from(user):
             log.debug('Plugin %s does not accept user `%s` for authentication',
-                      plugin_id, display_user)
+                      plugin.get_id(), display_user)
             continue
         else:
             log.debug('Plugin %s accepted user `%s` for authentication',
-                      plugin_id, display_user)
+                      plugin.get_id(), display_user)
 
         log.info('Authenticating user `%s` using %s plugin',
-                 display_user, plugin_id)
+                 display_user, plugin.get_id())
 
         _cache_ttl = 0
 
@@ -691,7 +561,7 @@ def authenticate(username, password, environ=None, auth_type=None,
         # get instance of cache manager configured for a namespace
         cache_manager = get_auth_cache_manager(custom_ttl=_cache_ttl)
 
-        log.debug('Cache for plugin `%s` active: %s', plugin_id,
+        log.debug('Cache for plugin `%s` active: %s', plugin.get_id(),
                   plugin_cache_active)
 
         # for environ based password can be empty, but then the validation is
@@ -706,7 +576,7 @@ def authenticate(username, password, environ=None, auth_type=None,
         # then auth is correct.
         start = time.time()
         log.debug('Running plugin `%s` _authenticate method',
-                  plugin_id)
+                  plugin.get_id())
 
         def auth_func():
             """
@@ -726,7 +596,7 @@ def authenticate(username, password, environ=None, auth_type=None,
         auth_time = time.time() - start
         log.debug('Authentication for plugin `%s` completed in %.3fs, '
                   'expiration time of fetched cache %.1fs.',
-                  plugin_id, auth_time, _cache_ttl)
+                  plugin.get_id(), auth_time, _cache_ttl)
 
         log.debug('PLUGIN USER DATA: %s', plugin_user)
 
@@ -735,5 +605,5 @@ def authenticate(username, password, environ=None, auth_type=None,
             return plugin_user
         # we failed to Auth because .auth() method didn't return proper user
         log.debug("User `%s` failed to authenticate against %s",
-                  display_user, plugin_id)
+                  display_user, plugin.get_id())
     return None

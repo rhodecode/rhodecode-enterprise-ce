@@ -297,7 +297,7 @@
       <div id="quick_login">
         %if c.rhodecode_user.username == h.DEFAULT_USER:
             <h4>${_('Sign in to your account')}</h4>
-            ${h.form(h.url('login_home',came_from=h.url.current()), needs_csrf_token=False)}
+            ${h.form(h.route_path('login', _query={'came_from': h.url.current()}), needs_csrf_token=False)}
             <div class="form form-vertical">
                 <div class="fields">
                     <div class="field">
@@ -312,7 +312,7 @@
                     <div class="field">
                         <div class="label">
                             <label for="password">${_('Password')}:</label>
-                            <span class="forgot_password">${h.link_to(_('(Forgot password?)'),h.url('reset_password'))}</span>
+                            <span class="forgot_password">${h.link_to(_('(Forgot password?)'),h.route_path('reset_password'))}</span>
                         </div>
                         <div class="input">
                             ${h.password('password',class_='focus',tabindex=2)}
@@ -321,7 +321,7 @@
                     <div class="buttons">
                         <div class="register">
                         %if h.HasPermissionAny('hg.admin', 'hg.register.auto_activate', 'hg.register.manual_activate')():
-                         ${h.link_to(_("Don't have an account ?"),h.url('register'))}
+                         ${h.link_to(_("Don't have an account ?"),h.route_path('register'))}
                         %endif
                         </div>
                         <div class="submit">
@@ -341,7 +341,7 @@
             <ol class="links">
               <li>${h.link_to(_(u'My account'),h.url('my_account'))}</li>
               <li class="logout">
-              ${h.secure_form(h.url('logout_home'))}
+              ${h.secure_form(h.route_path('logout'))}
                   ${h.submit('log_out', _(u'Sign Out'),class_="btn btn-primary")}
               ${h.end_form()}
               </li>
@@ -455,8 +455,11 @@
                     tmpl += '<i class="icon-unlock-alt"></i> ';
                 }
             }
+            if(obj_dict && state.type == 'commit') {
+                tmpl += '<i class="icon-tag"></i>';
+            }
             if(obj_dict && state.type == 'group'){
-                    tmpl += '<i class="icon-folder-close"></i> ';
+                tmpl += '<i class="icon-folder-close"></i> ';
             }
             tmpl += escapeMarkup(state.text);
             return tmpl;
@@ -496,7 +499,7 @@
                     query.callback({results: cachedData.results});
                 } else {
                     $.ajax({
-                        url: "${h.url('repo_switcher_data')}",
+                        url: "${h.url('goto_switcher_data')}",
                         data: {'query': query.term},
                         dataType: 'json',
                         type: 'GET',
@@ -514,7 +517,7 @@
 
         $("#repo_switcher").on('select2-selecting', function(e){
             e.preventDefault();
-            window.location = pyroutes.url('summary_home', {'repo_name': e.val});
+            window.location = e.choice.url;
         });
 
         ## Global mouse bindings ##

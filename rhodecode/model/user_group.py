@@ -216,7 +216,13 @@ class UserGroupModel(BaseModel):
         if 'user' in form_data:
             owner = form_data['user']
             if isinstance(owner, basestring):
-                user_group.user = User.get_by_username(form_data['user'])
+                owner = User.get_by_username(form_data['user'])
+
+            if not isinstance(owner, User):
+                raise ValueError(
+                    'invalid owner for user group: %s' % form_data['user'])
+
+            user_group.user = owner
 
         if 'users_group_members' in form_data:
             members_id_list = self._clean_members_data(

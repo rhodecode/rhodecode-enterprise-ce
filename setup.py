@@ -214,10 +214,12 @@ setup(
     entry_points={
         'enterprise.plugins1': [
             'crowd=rhodecode.authentication.plugins.auth_crowd:plugin_factory',
+            'headers=rhodecode.authentication.plugins.auth_headers:plugin_factory',
             'jasig_cas=rhodecode.authentication.plugins.auth_jasig_cas:plugin_factory',
             'ldap=rhodecode.authentication.plugins.auth_ldap:plugin_factory',
             'pam=rhodecode.authentication.plugins.auth_pam:plugin_factory',
             'rhodecode=rhodecode.authentication.plugins.auth_rhodecode:plugin_factory',
+            'token=rhodecode.authentication.plugins.auth_token:plugin_factory',
         ],
         'paste.app_factory': [
             'main=rhodecode.config.middleware:make_pyramid_app',

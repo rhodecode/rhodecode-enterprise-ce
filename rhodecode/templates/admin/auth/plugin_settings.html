@@ -49,46 +49,44 @@
               <div class="fields">
                 ${h.secure_form(request.resource_path(resource, route_name='auth_home'))}
                 <div class="form">
+
                   %for node in plugin.get_settings_schema():
-                    <% label_cls = ("label-checkbox" if (node.widget == "bool") else "") %>
+                    <% label_css_class = ("label-checkbox" if (node.widget == "bool") else "") %>
                     <div class="field">
-                      <div class="label ${label_cls}"><label for="${node.name}">${node.title}</label></div>
-                      %if node.widget in ["string", "int", "unicode"]:
-                        <div class="input">
-                          ${h.text(node.name, class_="medium")}
-                          <p class="help-block">${node.description}</p>
-                        </div>
-                      %elif node.widget == "password":
-                        <div class="input">
-                          ${h.password(node.name, class_="medium")}
-                          <p class="help-block">${node.description}</p>
-                        </div>
-                      %elif node.widget == "bool":
-                        <div class="input">
-                          <div class="checkbox">${h.checkbox(node.name, True)}</div>
-                          <span class="help-block">${node.description}</span>
-                        </div>
-                      %elif node.widget == "select":
-                        <div class="select">
-                          ${h.select(node.name, node.default, node.validator.choices)}
-                          <p class="help-block">${node.description}</p>
-                        </div>
-                      %elif node.widget == "readonly":
-                        <div class="input">
+                      <div class="label ${label_css_class}"><label for="${node.name}">${node.title}</label></div>
+                      <div class="input">
+                        %if node.widget in ["string", "int", "unicode"]:
+                          ${h.text(node.name, defaults.get(node.name), class_="medium")}
+                        %elif node.widget == "password":
+                          ${h.password(node.name, defaults.get(node.name), class_="medium")}
+                        %elif node.widget == "bool":
+                          <div class="checkbox">${h.checkbox(node.name, True, checked=defaults.get(node.name))}</div>
+                        %elif node.widget == "select":
+                          ${h.select(node.name, defaults.get(node.name), node.validator.choices)}
+                        %elif node.widget == "readonly":
                           ${node.default}
-                          <p class="help-block">${node.description}</p>
-                        </div>
-                      %else:
-                        <div class="input">
+                        %else:
                           This field is of type ${node.typ}, which cannot be displayed. Must be one of [string|int|bool|select].
-                          <p class="help-block">${node.description}</p>
-                        </div>
-                      %endif
+                        %endif
+                        %if node.name in errors:
+                          <span class="error-message">${errors.get(node.name)}</span>
+                          <br />
+                        %endif
+                        <p class="help-block">${node.description}</p>
+                      </div>
                     </div>
                   %endfor
+
+                  ## Allow derived templates to add something below the form
+                  ## input fields
+                  %if hasattr(next, 'below_form_fields'):
+                    ${next.below_form_fields()}
+                  %endif
+
                   <div class="buttons">
                     ${h.submit('save',_('Save'),class_="btn")}
                   </div>
+
                 </div>
                 ${h.end_form()}
               </div>

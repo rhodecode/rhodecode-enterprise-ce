@@ -12,7 +12,7 @@
               ${base.gravatar_with_user(comment.author.email, 16)}
           </div>
           <div class="date">
-              ${h.age_component(comment.modified_at)}
+              ${h.age_component(comment.modified_at, time_is_local=True)}
           </div>
           <div class="status-change">
               %if comment.pull_request:
@@ -80,7 +80,7 @@
           ${base.gravatar_with_user(comment.author.email, 16)}
         </div>
         <div class="date">
-            ${h.age_component(comment.modified_at)}
+            ${h.age_component(comment.modified_at, time_is_local=True)}
         </div>
          %if comment.status_change:
            <span class="changeset-status-container">

@@ -35,7 +35,7 @@ def makedate():
     return time.mktime(lt), tz
 
 
-def date_fromtimestamp(unixts, tzoffset=0):
+def utcdate_fromtimestamp(unixts, tzoffset=0):
     """
     Makes a local datetime object out of unix timestamp
 
@@ -43,7 +43,7 @@ def date_fromtimestamp(unixts, tzoffset=0):
     :param tzoffset:
     """
 
-    return datetime.datetime.fromtimestamp(float(unixts))
+    return datetime.datetime.utcfromtimestamp(float(unixts))
 
 
 def date_astimestamp(value):

@@ -155,3 +155,29 @@ class TestRhodeCodeAuthPlugin(object):
         self.password_generator_mock = password_generator_patch.start()
         self.password_generator_mock.return_value = 'new-password'
         self.finalizers.append(password_generator_patch.stop)
+
+
+def test_missing_ldap():
+    from rhodecode.model.validators import Missing
+
+    try:
+        import ldap_not_existing
+    except ImportError:
+        # means that python-ldap is not installed
+        ldap_not_existing = Missing
+
+    # missing is singleton
+    assert ldap_not_existing == Missing
+
+
+def test_import_ldap():
+    from rhodecode.model.validators import Missing
+
+    try:
+        import ldap
+    except ImportError:
+        # means that python-ldap is not installed
+        ldap = Missing
+
+    # missing is singleton
+    assert False is (ldap == Missing)

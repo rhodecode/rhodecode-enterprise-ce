@@ -35,7 +35,8 @@ class TestAdminUsersGroupsController(TestController):
 
     def test_index(self):
         self.log_user()
-        self.app.get(url('users_groups'))
+        response = self.app.get(url('users_groups'))
+        response.status_int == 200
 
     def test_create(self):
         self.log_user()
@@ -148,7 +149,19 @@ class TestAdminUsersGroupsController(TestController):
         fixture.destroy_user_group(users_group_name)
 
     def test_edit(self):
-        self.app.get(url('edit_users_group', user_group_id=1))
+        self.log_user()
+        ug = fixture.create_user_group(TEST_USER_GROUP, skip_if_exists=True)
+        response = self.app.get(
+            url('edit_users_group', user_group_id=ug.users_group_id))
+        fixture.destroy_user_group(TEST_USER_GROUP)
+
+    def test_edit_user_group_members(self):
+        self.log_user()
+        ug = fixture.create_user_group(TEST_USER_GROUP, skip_if_exists=True)
+        response = self.app.get(
+            url('edit_user_group_members', user_group_id=ug.users_group_id))
+        response.mustcontain('No members yet')
+        fixture.destroy_user_group(TEST_USER_GROUP)
 
     def test_usergroup_escape(self):
         user = User.get_by_username('test_admin')

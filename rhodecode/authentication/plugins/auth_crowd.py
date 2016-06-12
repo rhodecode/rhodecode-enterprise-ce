@@ -34,6 +34,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from rhodecode.authentication.base import RhodeCodeExternalAuthPlugin
 from rhodecode.authentication.schema import AuthnPluginSettingsSchemaBase
 from rhodecode.authentication.routes import AuthnPluginResourceBase
+from rhodecode.lib.colander_utils import strip_whitespace
 from rhodecode.lib.ext_json import json, formatted_json
 from rhodecode.model.db import User
 
@@ -58,12 +59,14 @@ class CrowdSettingsSchema(AuthnPluginSettingsSchemaBase):
         colander.String(),
         default='127.0.0.1',
         description=_('The FQDN or IP of the Atlassian CROWD Server'),
+        preparer=strip_whitespace,
         title=_('Host'),
         widget='string')
     port = colander.SchemaNode(
         colander.Int(),
         default=8095,
         description=_('The Port in use by the Atlassian CROWD Server'),
+        preparer=strip_whitespace,
         title=_('Port'),
         validator=colander.Range(min=0, max=65536),
         widget='int')
@@ -71,12 +74,14 @@ class CrowdSettingsSchema(AuthnPluginSettingsSchemaBase):
         colander.String(),
         default='',
         description=_('The Application Name to authenticate to CROWD'),
+        preparer=strip_whitespace,
         title=_('Application Name'),
         widget='string')
     app_password = colander.SchemaNode(
         colander.String(),
         default='',
         description=_('The password to authenticate to CROWD'),
+        preparer=strip_whitespace,
         title=_('Application Password'),
         widget='password')
     admin_groups = colander.SchemaNode(
@@ -85,6 +90,7 @@ class CrowdSettingsSchema(AuthnPluginSettingsSchemaBase):
         description=_('A comma separated list of group names that identify '
                       'users as RhodeCode Administrators'),
         missing='',
+        preparer=strip_whitespace,
         title=_('Admin Groups'),
         widget='string')
 
@@ -191,12 +197,14 @@ class RhodeCodeAuthPlugin(RhodeCodeExternalAuthPlugin):
         config.add_view(
             'rhodecode.authentication.views.AuthnPluginViewBase',
             attr='settings_get',
+            renderer='rhodecode:templates/admin/auth/plugin_settings.html',
             request_method='GET',
             route_name='auth_home',
             context=CrowdAuthnResource)
         config.add_view(
             'rhodecode.authentication.views.AuthnPluginViewBase',
             attr='settings_post',
+            renderer='rhodecode:templates/admin/auth/plugin_settings.html',
             request_method='POST',
             route_name='auth_home',
             context=CrowdAuthnResource)

@@ -37,7 +37,8 @@ import routes.util
 
 import rhodecode
 from rhodecode.config import patches
-from rhodecode.config.environment import load_environment
+from rhodecode.config.environment import (
+    load_environment, load_pyramid_environment)
 from rhodecode.lib.middleware import csrf
 from rhodecode.lib.middleware.appenlight import wrap_in_appenlight_if_enabled
 from rhodecode.lib.middleware.disable_vcs import DisableVCSPagesWrapper
@@ -160,6 +161,9 @@ def make_pyramid_app(global_config, **settings):
     sanitize_settings_and_apply_defaults(settings)
     config = Configurator(settings=settings)
     add_pylons_compat_data(config.registry, global_config, settings_pylons)
+
+    load_pyramid_environment(global_config, settings)
+
     includeme(config)
     includeme_last(config)
     pyramid_app = config.make_wsgi_app()
@@ -182,6 +186,7 @@ def includeme(config):
     config.include('pyramid_mako')
     config.include('pyramid_beaker')
     config.include('rhodecode.authentication')
+    config.include('rhodecode.login')
     config.include('rhodecode.tweens')
     config.include('rhodecode.api')
 
@@ -301,6 +306,7 @@ def sanitize_settings_and_apply_defaults(settings):
 
     _bool_setting(settings, 'vcs.server.enable', 'true')
     _bool_setting(settings, 'static_files', 'true')
+    _bool_setting(settings, 'is_test', 'false')
 
     return settings
 

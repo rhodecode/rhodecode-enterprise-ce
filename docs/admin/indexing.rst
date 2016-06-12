@@ -3,7 +3,15 @@
 Full-text Search
 ----------------
 
-By default |RCM| uses `Whoosh`_ to index |repos| and provide full-text search.
+By default |RC| is configured to use `Whoosh`_ to index |repos| and
+provide full-text search.
+
+|RCE| also provides support for `Elasticsearch`_ as a backend for scalable
+search. See :ref:`enable-elasticsearch` for details.
+
+Indexing
+^^^^^^^^
+
 To run the indexer you need to use an |authtoken| with admin rights to all
 |repos|.
 
@@ -232,4 +240,33 @@ use the following example :file:`mapping.ini` file.
     max_filesize = 800MB
     commit_parse_limit = 20000
 
+.. _enable-elasticsearch:
+
+Enabling Elasticsearch
+^^^^^^^^^^^^^^^^^^^^^^
+
+1. Open the :file:`rhodecode.ini` file for the instance you wish to edit. The
+   default location is
+   :file:`home/{user}/.rccontrol/{instance-id}/rhodecode.ini`
+2. Find the search configuration section:
+
+.. code-block:: ini
+
+    ###################################
+    ## SEARCH INDEXING CONFIGURATION ##
+    ###################################
+
+    search.module = rhodecode.lib.index.whoosh
+    search.location = %(here)s/data/index
+
+and change it to:
+
+.. code-block:: ini
+
+    search.module = rc_elasticsearch
+    search.location = http://localhost:9200/
+
+where ``search.location`` points to the elasticsearch server.
+
 .. _Whoosh: https://pypi.python.org/pypi/Whoosh/
+.. _Elasticsearch: https://www.elastic.co/

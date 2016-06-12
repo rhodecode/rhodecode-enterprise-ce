@@ -1234,6 +1234,13 @@ table.issuetracker {
     .reviewer {
         float: left;
     }
+
+    &.to-delete {
+        .user,
+        .reviewer {
+            text-decoration: line-through;
+        }
+    }
 }
 
 .reviewer_member_remove {

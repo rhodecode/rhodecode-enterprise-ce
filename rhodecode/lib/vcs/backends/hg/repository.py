@@ -22,6 +22,7 @@
 HG repository module
 """
 
+import logging
 import binascii
 import os
 import re
@@ -31,9 +32,8 @@ import urllib
 from zope.cachedescriptors.property import Lazy as LazyProperty
 
 from rhodecode.lib.compat import OrderedDict
-from rhodecode.lib.datelib import (
-    date_fromtimestamp, makedate, date_to_timestamp_plus_offset,
-    date_astimestamp)
+from rhodecode.lib.datelib import (date_to_timestamp_plus_offset,
+    utcdate_fromtimestamp, makedate, date_astimestamp)
 from rhodecode.lib.utils import safe_unicode, safe_str
 from rhodecode.lib.vcs import connection
 from rhodecode.lib.vcs.backends.base import (
@@ -49,6 +49,8 @@ from rhodecode.lib.vcs.exceptions import (
 
 hexlify = binascii.hexlify
 nullid = "\0" * 20
+
+log = logging.getLogger(__name__)
 
 
 class MercurialRepository(BaseRepository):
@@ -365,7 +367,7 @@ class MercurialRepository(BaseRepository):
         Returns last change made on this repository as
         `datetime.datetime` object
         """
-        return date_fromtimestamp(self._get_mtime(), makedate()[1])
+        return utcdate_fromtimestamp(self._get_mtime(), makedate()[1])
 
     def _get_mtime(self):
         try:
@@ -605,6 +607,10 @@ class MercurialRepository(BaseRepository):
                 self._update(bookmark_name)
                 return self._identify(), True
             except RepositoryError:
+                # The rebase-abort may raise another exception which 'hides'
+                # the original one, therefore we log it here.
+                log.exception('Error while rebasing shadow repo during merge.')
+
                 # Cleanup any rebase leftovers
                 self._remote.rebase(abort=True)
                 self._remote.update(clean=True)
@@ -642,6 +648,8 @@ class MercurialRepository(BaseRepository):
         shadow_repository_path = self._get_shadow_repository_path(workspace_id)
         if not os.path.exists(shadow_repository_path):
             self._local_clone(shadow_repository_path)
+            log.debug(
+                'Prepared shadow repository in %s', shadow_repository_path)
 
         return shadow_repository_path
 
@@ -664,12 +672,15 @@ class MercurialRepository(BaseRepository):
 
         shadow_repo = self._get_shadow_instance(shadow_repository_path)
 
+        log.debug('Pulling in target reference %s', target_ref)
         self._validate_pull_reference(target_ref)
         shadow_repo._local_pull(self.path, target_ref)
         try:
+            log.debug('Pulling in source reference %s', source_ref)
             source_repo._validate_pull_reference(source_ref)
             shadow_repo._local_pull(source_repo.path, source_ref)
-        except CommitDoesNotExistError:
+        except CommitDoesNotExistError as e:
+            log.exception('Failure when doing local pull on hg shadow repo')
             return MergeResponse(
                 False, False, None, MergeFailureReason.MISSING_COMMIT)
 
@@ -681,7 +692,8 @@ class MercurialRepository(BaseRepository):
                 target_ref, merge_message, merger_name, merger_email,
                 source_ref)
             merge_possible = True
-        except RepositoryError:
+        except RepositoryError as e:
+            log.exception('Failure when doing local merge on hg shadow repo')
             merge_possible = False
             merge_failure_reason = MergeFailureReason.MERGE_FAILED
 
@@ -706,6 +718,9 @@ class MercurialRepository(BaseRepository):
                         enable_hooks=True)
                     merge_succeeded = True
                 except RepositoryError:
+                    log.exception(
+                        'Failure when doing local push from the shadow '
+                        'repository to the target repository.')
                     merge_succeeded = False
                     merge_failure_reason = MergeFailureReason.PUSH_FAILED
             else:

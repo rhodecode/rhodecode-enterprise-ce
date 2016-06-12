@@ -190,7 +190,7 @@ var AgeModule = (function () {
 
 },
     createTimeComponent: function(dateTime, text) {
-      return '<time class="timeago tooltip" title="{1}" datetime="{0}">{1}</time>'.format(dateTime, text);
+      return '<time class="timeago tooltip" title="{1}" datetime="{0}+0000">{1}</time>'.format(dateTime, text);
     }
   }
 })();

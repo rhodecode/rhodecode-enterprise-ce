@@ -396,10 +396,15 @@ class PullRequestModel(BaseModel):
         return commit_ids
 
     def merge(self, pull_request, user, extras):
+        log.debug("Merging pull request %s", pull_request.pull_request_id)
         merge_state = self._merge_pull_request(pull_request, user, extras)
         if merge_state.executed:
+            log.debug(
+                "Merge was successful, updating the pull request comments.")
             self._comment_and_close_pr(pull_request, user, merge_state)
             self._log_action('user_merged_pull_request', user, pull_request)
+        else:
+            log.warn("Merge failed, not updating the pull request.")
         return merge_state
 
     def _merge_pull_request(self, pull_request, user, extras):
@@ -907,15 +912,20 @@ class PullRequestModel(BaseModel):
         """
         Try to merge the pull request and return the merge status.
         """
+        log.debug(
+            "Trying out if the pull request %s can be merged.",
+            pull_request.pull_request_id)
         target_vcs = pull_request.target_repo.scm_instance()
         target_ref = self._refresh_reference(
             pull_request.target_ref_parts, target_vcs)
 
         target_locked = pull_request.target_repo.locked
         if target_locked and target_locked[0]:
+            log.debug("The target repository is locked.")
             merge_state = MergeResponse(
                 False, False, None, MergeFailureReason.TARGET_IS_LOCKED)
         elif self._needs_merge_state_refresh(pull_request, target_ref):
+            log.debug("Refreshing the merge status of the repository.")
             merge_state = self._refresh_merge_state(
                 pull_request, target_vcs, target_ref)
         else:
@@ -923,6 +933,7 @@ class PullRequestModel(BaseModel):
                 _last_merge_status == MergeFailureReason.NONE
             merge_state = MergeResponse(
                 possible, False, None, pull_request._last_merge_status)
+        log.debug("Merge response: %s", merge_state)
         return merge_state
 
     def _refresh_reference(self, reference, vcs_repository):

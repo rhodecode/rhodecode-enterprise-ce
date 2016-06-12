@@ -6,7 +6,13 @@
         <th>${_('Commit')}</th>
         <th></th>
         <th>${_('Commit message')}</th>
-        <th>${_('Age')}</th>
+        <th>
+        %if c.sort == 'newfirst':
+            <a href="${c.url_generator(sort='oldfirst')}">${_('Age (new first)')}</a>
+        %else:
+            <a href="${c.url_generator(sort='newfirst')}">${_('Age (old first)')}</a>
+        %endif
+        </th>
         <th>${_('Author')}</th>
     </tr>
     %for entry in c.formatted_results:
@@ -33,14 +39,14 @@
                     </div>
                 </td>
                 <td data-commit-id="${h.md5_safe(entry['repository'])+entry['commit_id']}" id="c-${h.md5_safe(entry['repository'])+entry['commit_id']}" class="message td-description open">
-                    %if entry['message_hl']:
+                    %if entry.get('message_hl'):
                         ${h.literal(entry['message_hl'])}
                     %else:
                         ${h.urlify_commit_message(entry['message'], entry['repository'])}
                     %endif
                 </td>
                 <td class="td-time">
-                    ${h.age_component(h.time_to_datetime(entry['date']))}
+                    ${h.age_component(h.time_to_utcdatetime(entry['date']))}
                 </td>
 
                 <td class="td-user author">

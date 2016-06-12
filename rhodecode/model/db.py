@@ -1593,7 +1593,7 @@ class Repository(Base, BaseModel):
             'repo_id': repo.repo_id,
             'repo_name': repo.repo_name,
             'repo_type': repo.repo_type,
-            'clone_uri': repo.clone_uri,
+            'clone_uri': repo.clone_uri or '',
             'private': repo.private,
             'created_on': repo.created_on,
             'description': repo.description,
@@ -2794,7 +2794,9 @@ class CacheKey(Base, BaseModel):
 
             Session().commit()
         except Exception:
-            log.error(traceback.format_exc())
+            log.exception(
+                'Cache key invalidation failed for repository %s',
+                safe_str(repo_name))
             Session().rollback()
 
     @classmethod

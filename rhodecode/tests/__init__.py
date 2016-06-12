@@ -43,11 +43,13 @@ from nose.plugins.skip import SkipTest
 import pytest
 
 from rhodecode import is_windows
+from rhodecode.config.routing import ADMIN_PREFIX
 from rhodecode.model.meta import Session
 from rhodecode.model.db import User
 from rhodecode.lib import auth
 from rhodecode.lib.helpers import flash, link_to
 from rhodecode.lib.utils2 import safe_unicode, safe_str
+from rhodecode.tests.utils import get_session_from_response
 
 # TODO: johbo: Solve time zone related issues and remove this tweak
 os.environ['TZ'] = 'UTC'
@@ -177,26 +179,29 @@ class TestController(object):
 
 def login_user_session(
         app, username=TEST_USER_ADMIN_LOGIN, password=TEST_USER_ADMIN_PASS):
-    response = app.post(url(controller='login', action='index'),
-                        {'username': username,
-                         'password': password})
-
+    from rhodecode.tests.functional.test_login import login_url
+    response = app.post(
+        login_url,
+        {'username': username, 'password': password})
     if 'invalid user name' in response.body:
         pytest.fail('could not login using %s %s' % (username, password))
 
     assert response.status == '302 Found'
-    ses = response.session['rhodecode_user']
-    assert ses.get('username') == username
     response = response.follow()
-    assert ses.get('is_authenticated')
+    assert response.status == '200 OK'
 
-    return response.session
+    session = get_session_from_response(response)
+    assert 'rhodecode_user' in session
+    rc_user = session['rhodecode_user']
+    assert rc_user.get('username') == username
+    assert rc_user.get('is_authenticated')
+
+    return session
 
 
 def logout_user_session(app, csrf_token):
-    app.post(
-        url(controller='login', action='logout'),
-        {'csrf_token': csrf_token}, status=302)
+    from rhodecode.tests.functional.test_login import logut_url
+    app.post(logut_url, {'csrf_token': csrf_token}, status=302)
 
 
 def login_user(app, username=TEST_USER_ADMIN_LOGIN,

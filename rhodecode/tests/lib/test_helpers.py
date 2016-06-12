@@ -155,3 +155,42 @@ def test_get_visual_attr(pylonsapp):
 def test_chop_at(test_text, inclusive, expected_text):
     assert helpers.chop_at_smart(
         test_text, '\n', inclusive, '...') == expected_text
+
+
+@pytest.mark.parametrize('test_text, expected_output', [
+    ('some text', ['some', 'text']),
+    ('some    text', ['some', 'text']),
+    ('some text "with  a phrase"', ['some', 'text', 'with  a phrase']),
+    ('"a phrase" "another phrase"', ['a phrase', 'another phrase']),
+    ('"justphrase"', ['justphrase']),
+    ('""', []),
+    ('', []),
+    ('  ', []),
+    ('"   "', []),
+])
+def test_extract_phrases(test_text, expected_output):
+    assert helpers.extract_phrases(test_text) == expected_output
+
+
+@pytest.mark.parametrize('test_text, text_phrases, expected_output', [
+    ('some text here', ['some', 'here'], [(0, 4), (10, 14)]),
+    ('here here there', ['here'], [(0, 4), (5, 9), (11, 15)]),
+    ('irrelevant', ['not found'], []),
+    ('irrelevant', ['not found'], []),
+])
+def test_get_matching_offsets(test_text, text_phrases, expected_output):
+    assert helpers.get_matching_offsets(
+        test_text, text_phrases) == expected_output
+
+def test_normalize_text_for_matching():
+    assert helpers.normalize_text_for_matching(
+        'OJjfe)*#$*@)$JF*)3r2f80h') == 'ojjfe        jf  3r2f80h'
+
+def test_get_matching_line_offsets():
+    assert helpers.get_matching_line_offsets([
+        'words words words',
+        'words words words',
+        'some text some',
+        'words words words',
+        'words words words',
+        'text here what'], 'text') == {3: [(5, 9)], 6: [(0, 4)]}

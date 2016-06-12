@@ -85,7 +85,7 @@ let
   pythonLocalOverrides = self: super: {
     rhodecode-enterprise-ce =
       let
-        version = "${builtins.readFile ./rhodecode/VERSION}";
+        version = builtins.readFile ./rhodecode/VERSION;
         linkNodeModules = ''
           echo "Link node packages"
           # TODO: check if this adds stuff as a dependency, closure size
@@ -119,7 +119,9 @@ let
       # TODO: johbo: Make a nicer way to expose the parts. Maybe
       # pkgs/default.nix?
       passthru = {
-        inherit myPythonPackagesUnfix;
+        inherit
+          pythonLocalOverrides
+          myPythonPackagesUnfix;
         pythonPackages = self;
       };
 
@@ -160,6 +162,7 @@ let
         ln -s ${self.supervisor}/bin/supervisor* $out/bin/
         ln -s ${self.gunicorn}/bin/gunicorn $out/bin/
         ln -s ${self.PasteScript}/bin/paster $out/bin/
+        ln -s ${self.pyramid}/bin/* $out/bin/  #*/
 
         # rhodecode-tools
         # TODO: johbo: re-think this. Do the tools import anything from enterprise?
@@ -169,6 +172,7 @@ let
         for file in $out/bin/*; do  #*/
           wrapProgram $file \
               --prefix PYTHONPATH : $PYTHONPATH \
+              --prefix PATH : $PATH \
               --set PYTHONHASHSEED random
         done
 

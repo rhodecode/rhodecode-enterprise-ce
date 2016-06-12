@@ -27,12 +27,13 @@ module.exports = function(grunt) {
           '<%= dirs.js.src %>/plugins/jquery.auto-grow-input.js',
           '<%= dirs.js.src %>/plugins/jquery.autocomplete.js',
           '<%= dirs.js.src %>/plugins/jquery.debounce.js',
+          '<%= dirs.js.src %>/plugins/jquery.mark.js',
           '<%= dirs.js.src %>/plugins/jquery.timeago.js',
           '<%= dirs.js.src %>/plugins/jquery.timeago-extension.js',
 
           // Select2
           '<%= dirs.js.src %>/select2/select2.js',
-          
+
           // Code-mirror
           '<%= dirs.js.src %>/codemirror/codemirror.js',
           '<%= dirs.js.src %>/codemirror/codemirror_loadmode.js',
@@ -59,7 +60,7 @@ module.exports = function(grunt) {
           '<%= dirs.js.src %>/rhodecode/widgets/multiselect.js',
 
           // Rhodecode components
-          '<%= dirs.js.src %>/rhodecode/pyroutes.js',
+          '<%= dirs.js.src %>/rhodecode/init.js',
           '<%= dirs.js.src %>/rhodecode/codemirror.js',
           '<%= dirs.js.src %>/rhodecode/comments.js',
           '<%= dirs.js.src %>/rhodecode/constants.js',

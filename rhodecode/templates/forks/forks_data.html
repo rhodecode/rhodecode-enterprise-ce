@@ -22,7 +22,7 @@
                 <div class="truncate">${f.description}</div>
             </td>
             <td class="td-time follower_date">
-                ${h.age_component(f.created_on)}
+                ${h.age_component(f.created_on, time_is_local=True)}
             </td>
             <td class="td-compare">
                 <a title="${_('Compare fork with %s' % c.repo_name)}"

@@ -31,7 +31,7 @@ import time
 from zope.cachedescriptors.property import Lazy as LazyProperty
 
 from rhodecode.lib.compat import OrderedDict
-from rhodecode.lib.datelib import makedate, date_fromtimestamp
+from rhodecode.lib.datelib import makedate, utcdate_fromtimestamp
 from rhodecode.lib.utils import safe_unicode, safe_str
 from rhodecode.lib.vcs import connection, path as vcspath
 from rhodecode.lib.vcs.backends.base import (
@@ -269,7 +269,7 @@ class GitRepository(BaseRepository):
         Returns last change made on this repository as
         `datetime.datetime` object.
         """
-        return date_fromtimestamp(self._get_mtime(), makedate()[1])
+        return utcdate_fromtimestamp(self._get_mtime(), makedate()[1])
 
     def _get_mtime(self):
         try:
@@ -853,7 +853,8 @@ class GitRepository(BaseRepository):
         shadow_repo._checkout(pr_branch, create=True)
         try:
             shadow_repo._local_fetch(source_repo.path, source_ref.name)
-        except RepositoryError:
+        except RepositoryError as e:
+            log.exception('Failure when doing local fetch on git shadow repo')
             return MergeResponse(
                 False, False, None, MergeFailureReason.MISSING_COMMIT)
 
@@ -863,7 +864,8 @@ class GitRepository(BaseRepository):
             shadow_repo._local_merge(merge_message, merger_name, merger_email,
                                      [source_ref.commit_id])
             merge_possible = True
-        except RepositoryError:
+        except RepositoryError as e:
+            log.exception('Failure when doing local merge on git shadow repo')
             merge_possible = False
             merge_failure_reason = MergeFailureReason.MERGE_FAILED
 
@@ -877,7 +879,9 @@ class GitRepository(BaseRepository):
                 # cannot retrieve the merge commit.
                 shadow_repo = GitRepository(shadow_repository_path)
                 merge_commit_id = shadow_repo.branches[pr_branch]
-            except RepositoryError:
+            except RepositoryError as e:
+                log.exception(
+                    'Failure when doing local push on git shadow repo')
                 merge_succeeded = False
                 merge_failure_reason = MergeFailureReason.PUSH_FAILED
         else:

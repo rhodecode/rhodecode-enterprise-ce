@@ -19,6 +19,7 @@
 # and proprietary license terms, please see https://rhodecode.com/licenses/
 
 import logging
+import importlib
 
 from pkg_resources import iter_entry_points
 from pyramid.authentication import SessionAuthenticationPolicy
@@ -27,8 +28,14 @@ from rhodecode.authentication.registry import AuthenticationPluginRegistry
 from rhodecode.authentication.routes import root_factory
 from rhodecode.authentication.routes import AuthnRootResource
 from rhodecode.config.routing import ADMIN_PREFIX
+from rhodecode.model.settings import SettingsModel
+
 
 log = logging.getLogger(__name__)
+
+# Plugin ID prefixes to distinct between normal and legacy plugins.
+plugin_prefix = 'egg:'
+legacy_plugin_prefix = 'py:'
 
 
 # TODO: Currently this is only used to discover the authentication plugins.
@@ -38,16 +45,45 @@ log = logging.getLogger(__name__)
 # TODO: When refactoring this think about splitting it up into distinct
 # discover, load and include phases.
 def _discover_plugins(config, entry_point='enterprise.plugins1'):
-    _discovered_plugins = {}
-
     for ep in iter_entry_points(entry_point):
-        plugin_id = 'egg:{}#{}'.format(ep.dist.project_name, ep.name)
+        plugin_id = '{}{}#{}'.format(
+            plugin_prefix, ep.dist.project_name, ep.name)
         log.debug('Plugin discovered: "%s"', plugin_id)
-        module = ep.load()
-        plugin = module(plugin_id=plugin_id)
-        config.include(plugin.includeme)
+        try:
+            module = ep.load()
+            plugin = module(plugin_id=plugin_id)
+            config.include(plugin.includeme)
+        except Exception as e:
+            log.exception(
+                'Exception while loading authentication plugin '
+                '"{}": {}'.format(plugin_id, e.message))
 
-    return _discovered_plugins
+
+def _import_legacy_plugin(plugin_id):
+    module_name = plugin_id.split(legacy_plugin_prefix, 1)[-1]
+    module = importlib.import_module(module_name)
+    return module.plugin_factory(plugin_id=plugin_id)
+
+
+def _discover_legacy_plugins(config, prefix=legacy_plugin_prefix):
+    """
+    Function that imports the legacy plugins stored in the 'auth_plugins'
+    setting in database which are using the specified prefix. Normally 'py:' is
+    used for the legacy plugins.
+    """
+    auth_plugins = SettingsModel().get_setting_by_name('auth_plugins')
+    enabled_plugins = auth_plugins.app_settings_value
+    legacy_plugins = [id_ for id_ in enabled_plugins if id_.startswith(prefix)]
+
+    for plugin_id in legacy_plugins:
+        log.debug('Legacy plugin discovered: "%s"', plugin_id)
+        try:
+            plugin = _import_legacy_plugin(plugin_id)
+            config.include(plugin.includeme)
+        except Exception as e:
+            log.exception(
+                'Exception while loading legacy authentication plugin '
+                '"{}": {}'.format(plugin_id, e.message))
 
 
 def includeme(config):
@@ -56,7 +92,7 @@ def includeme(config):
     config.set_authentication_policy(authn_policy)
 
     # Create authentication plugin registry and add it to the pyramid registry.
-    authn_registry = AuthenticationPluginRegistry()
+    authn_registry = AuthenticationPluginRegistry(config.get_settings())
     config.add_directive('add_authn_plugin', authn_registry.add_authn_plugin)
     config.registry.registerUtility(authn_registry)
 
@@ -83,3 +119,4 @@ def includeme(config):
 
     # Auto discover authentication plugins and include their configuration.
     _discover_plugins(config)
+    _discover_legacy_plugins(config)

@@ -6,6 +6,10 @@ Release Notes
 |RCE| 4.x Versions
 ------------------
 
+.. toctree::
+   :maxdepth: 1
+
+   release-notes-4.1.0.rst
    release-notes-4.0.1.rst
    release-notes-4.0.0.rst
 

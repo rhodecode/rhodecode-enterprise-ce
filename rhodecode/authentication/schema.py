@@ -20,9 +20,7 @@
 
 import colander
 
-from pyramid.i18n import TranslationStringFactory
-
-_ = TranslationStringFactory('rhodecode-enterprise')
+from rhodecode.translation import _
 
 
 class AuthnPluginSettingsSchemaBase(colander.MappingSchema):

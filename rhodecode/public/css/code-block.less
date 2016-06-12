@@ -514,6 +514,26 @@ div.search-code-body {
         .match { background-color: #faffa6;}
         .break { display: block; width: 100%; background-color: #DDE7EF; color: #747474; }
     }
+    .code-highlighttable {
+        border-collapse: collapse;
+
+        tr:hover {
+            background: #fafafa;
+        }
+        td.code {
+          padding-left: 10px;
+        }
+        td.line {
+            border-right: 1px solid #ccc !important;
+            padding-right: 10px;
+            text-align: right;
+            font-family: "Lucida Console",Monaco,monospace;
+            span {
+                white-space: pre-wrap;
+                color: #666666;
+            }
+        }
+    }
 }
 
 div.annotatediv { margin-left: 2px; margin-right: 4px; }

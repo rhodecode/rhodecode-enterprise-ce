@@ -36,6 +36,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from rhodecode.authentication.base import RhodeCodeExternalAuthPlugin
 from rhodecode.authentication.schema import AuthnPluginSettingsSchemaBase
 from rhodecode.authentication.routes import AuthnPluginResourceBase
+from rhodecode.lib.colander_utils import strip_whitespace
 from rhodecode.lib.utils2 import safe_unicode
 from rhodecode.model.db import User
 
@@ -60,6 +61,7 @@ class JasigCasSettingsSchema(AuthnPluginSettingsSchemaBase):
         colander.String(),
         default='https://domain.com/cas/v1/tickets',
         description=_('The url of the Jasig CAS REST service'),
+        preparer=strip_whitespace,
         title=_('URL'),
         widget='string')
 
@@ -72,12 +74,14 @@ class RhodeCodeAuthPlugin(RhodeCodeExternalAuthPlugin):
         config.add_view(
             'rhodecode.authentication.views.AuthnPluginViewBase',
             attr='settings_get',
+            renderer='rhodecode:templates/admin/auth/plugin_settings.html',
             request_method='GET',
             route_name='auth_home',
             context=JasigCasAuthnResource)
         config.add_view(
             'rhodecode.authentication.views.AuthnPluginViewBase',
             attr='settings_post',
+            renderer='rhodecode:templates/admin/auth/plugin_settings.html',
             request_method='POST',
             route_name='auth_home',
             context=JasigCasAuthnResource)
@@ -92,8 +96,8 @@ class RhodeCodeAuthPlugin(RhodeCodeExternalAuthPlugin):
     def name(self):
         return "jasig-cas"
 
-    @hybrid_property
-    def is_container_auth(self):
+    @property
+    def is_headers_auth(self):
         return True
 
     def use_fake_password(self):

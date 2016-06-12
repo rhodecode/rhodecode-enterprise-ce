@@ -27,10 +27,12 @@ import logging
 import rhodecode
 import platform
 import re
+import io
 
 from mako.lookup import TemplateLookup
 from pylons.configuration import PylonsConfig
 from pylons.error import handle_mako_error
+from pyramid.settings import asbool
 
 # don't remove this import it does magic for celery
 from rhodecode.lib import celerypylons  # noqa
@@ -39,6 +41,7 @@ import rhodecode.lib.app_globals as app_globals
 
 from rhodecode.config import utils
 from rhodecode.config.routing import make_map
+from rhodecode.config.jsroutes import generate_jsroutes_content
 
 from rhodecode.lib import helpers
 from rhodecode.lib.auth import set_available_permissions
@@ -51,7 +54,6 @@ from rhodecode.model.scm import ScmModel
 
 log = logging.getLogger(__name__)
 
-
 def load_environment(global_conf, app_conf, initial=False,
                      test_env=None, test_index=None):
     """
@@ -60,7 +62,6 @@ def load_environment(global_conf, app_conf, initial=False,
     """
     config = PylonsConfig()
 
-    rhodecode.is_test = str2bool(app_conf.get('is_test', 'False'))
 
     # Pylons paths
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -80,6 +81,16 @@ def load_environment(global_conf, app_conf, initial=False,
         config['app_conf'].get('celery.always.eager'))
 
     config['routes.map'] = make_map(config)
+
+    if asbool(config['debug']):
+        jsroutes = config['routes.map'].jsroutes()
+        jsroutes_file_content = generate_jsroutes_content(jsroutes)
+        jsroutes_file_path = os.path.join(
+            paths['static_files'], 'js', 'rhodecode', 'routes.js')
+
+        with io.open(jsroutes_file_path, 'w', encoding='utf-8') as f:
+            f.write(jsroutes_file_content)
+
     config['pylons.app_globals'] = app_globals.Globals(config)
     config['pylons.h'] = helpers
     rhodecode.CONFIG = config
@@ -100,18 +111,6 @@ def load_environment(global_conf, app_conf, initial=False,
 
     # sets the c attribute access when don't existing attribute are accessed
     config['pylons.strict_tmpl_context'] = True
-    config_file_name = os.path.split(config['__file__'])[-1]
-    test = re.match('^test[\w_]*\.ini$', config_file_name) is not None
-    if test:
-        if test_env is None:
-            test_env = not int(os.environ.get('RC_NO_TMP_PATH', 0))
-
-        from rhodecode.lib.utils import create_test_env, create_test_index
-        from rhodecode.tests import TESTS_TMP_PATH
-        # test repos
-        if test_env:
-            create_test_env(TESTS_TMP_PATH, config)
-            create_test_index(TESTS_TMP_PATH, config, True)
 
     # Limit backends to "vcs.backends" from configuration
     backends = config['vcs.backends'] = aslist(
@@ -132,10 +131,6 @@ def load_environment(global_conf, app_conf, initial=False,
         start_vcs_server(server_and_port=vcs_server_uri,
                          protocol=utils.get_vcs_server_protocol(config),
                          log_level=config['vcs.server.log_level'])
-
-    # MULTIPLE DB configs
-    # Setup the SQLAlchemy database engine
-    utils.initialize_database(config)
 
     set_available_permissions(config)
     db_cfg = make_db_config(clear_session=True)
@@ -179,3 +174,19 @@ def _use_direct_hook_calls(config):
 def _get_vcs_hooks_protocol(config):
     protocol = config.get('vcs.hooks.protocol', 'pyro4').lower()
     return protocol
+
+
+def load_pyramid_environment(global_config, settings):
+    # Some parts of the code expect a merge of global and app settings.
+    settings_merged = global_config.copy()
+    settings_merged.update(settings)
+
+    # If this is a test run we prepare the test environment like
+    # creating a test database, test search index and test repositories.
+    # This has to be done before the database connection is initialized.
+    if settings['is_test']:
+        rhodecode.is_test = True
+        utils.initialize_test_environment(settings_merged)
+
+    # Initialize the database connection.
+    utils.initialize_database(settings_merged)

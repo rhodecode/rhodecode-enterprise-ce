@@ -21,12 +21,11 @@
 import logging
 
 from pyramid.exceptions import ConfigurationError
-from pyramid.i18n import TranslationStringFactory
 
 from rhodecode.lib.utils2 import safe_str
 from rhodecode.model.settings import SettingsModel
+from rhodecode.translation import _
 
-_ = TranslationStringFactory('rhodecode-enterprise')
 
 log = logging.getLogger(__name__)
 
@@ -128,7 +127,7 @@ class AuthnRootResource(AuthnResourceBase):
         # Allow plugin resources with identical names by rename duplicates.
         unique_name = _ensure_unique_name(resource.__name__)
         if unique_name != resource.__name__:
-            log.warn('Name collision for traversal resource "%s" registered',
+            log.warn('Name collision for traversal resource "%s" registered '
                      'by authentication plugin "%s"', resource.__name__,
                      plugin_id)
             resource.__name__ = unique_name

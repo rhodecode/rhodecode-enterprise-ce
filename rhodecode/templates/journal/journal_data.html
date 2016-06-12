@@ -28,7 +28,7 @@
                     </div>
                     <div class="journal_action_params">${h.literal(h.action_parser(entry)[1]())}</div>
                     <div class="date">
-                        ${h.age_component(entry.action_date)}
+                        ${h.age_component(entry.action_date, time_is_local=True)}
                     </div>
                 %endfor
                 </div>

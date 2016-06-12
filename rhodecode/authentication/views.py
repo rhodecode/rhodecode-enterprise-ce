@@ -23,7 +23,6 @@ import formencode.htmlfill
 import logging
 
 from pyramid.httpexceptions import HTTPFound
-from pyramid.i18n import TranslationStringFactory
 from pyramid.renderers import render
 from pyramid.response import Response
 
@@ -34,10 +33,9 @@ from rhodecode.lib.auth import LoginRequired, HasPermissionAllDecorator
 from rhodecode.model.forms import AuthSettingsForm
 from rhodecode.model.meta import Session
 from rhodecode.model.settings import SettingsModel
+from rhodecode.translation import _
 
 log = logging.getLogger(__name__)
-
-_ = TranslationStringFactory('rhodecode-enterprise')
 
 
 class AuthnPluginViewBase(object):
@@ -47,51 +45,27 @@ class AuthnPluginViewBase(object):
         self.context = context
         self.plugin = context.plugin
 
-    # TODO: Think about replacing the htmlfill stuff.
-    def _render_and_fill(self, template, template_context, request,
-                         form_defaults, validation_errors):
-        """
-        Helper to render a template and fill the HTML form fields with
-        defaults. Also displays the form errors.
-        """
-        # Render template to string.
-        html = render(template, template_context, request=request)
-
-        # Fill the HTML form fields with default values and add error messages.
-        html = formencode.htmlfill.render(
-            html,
-            defaults=form_defaults,
-            errors=validation_errors,
-            prefix_error=False,
-            encoding="UTF-8",
-            force_defaults=False)
-
-        return html
-
-    def settings_get(self):
+    def settings_get(self, defaults=None, errors=None):
         """
         View that displays the plugin settings as a form.
         """
-        form_defaults = {}
-        validation_errors = None
+        defaults = defaults or {}
+        errors = errors or {}
         schema = self.plugin.get_settings_schema()
 
         # Get default values for the form.
-        for node in schema.children:
-            value = self.plugin.get_setting_by_name(node.name) or node.default
-            form_defaults[node.name] = value
+        for node in schema:
+            db_value = self.plugin.get_setting_by_name(node.name)
+            defaults.setdefault(node.name, db_value)
 
         template_context = {
+            'defaults': defaults,
+            'errors': errors,
+            'plugin': self.context.plugin,
             'resource': self.context,
-            'plugin': self.context.plugin
         }
 
-        return Response(self._render_and_fill(
-            'rhodecode:templates/admin/auth/plugin_settings.html',
-            template_context,
-            self.request,
-            form_defaults,
-            validation_errors))
+        return template_context
 
     def settings_post(self):
         """
@@ -102,24 +76,12 @@ class AuthnPluginViewBase(object):
             valid_data = schema.deserialize(self.request.params)
         except colander.Invalid, e:
             # Display error message and display form again.
-            form_defaults = self.request.params
-            validation_errors = e.asdict()
             self.request.session.flash(
                 _('Errors exist when saving plugin settings. '
-                    'Please check the form inputs.'),
+                  'Please check the form inputs.'),
                 queue='error')
-
-            template_context = {
-                'resource': self.context,
-                'plugin': self.context.plugin
-            }
-
-            return Response(self._render_and_fill(
-                'rhodecode:templates/admin/auth/plugin_settings.html',
-                template_context,
-                self.request,
-                form_defaults,
-                validation_errors))
+            defaults = schema.flatten(self.request.params)
+            return self.settings_get(errors=e.asdict(), defaults=defaults)
 
         # Store validated data.
         for name, value in valid_data.items():
@@ -151,10 +113,10 @@ class AuthSettingsView(object):
 
     @LoginRequired()
     @HasPermissionAllDecorator('hg.admin')
-    def index(self, defaults={}, errors=None, prefix_error=False):
+    def index(self, defaults=None, errors=None, prefix_error=False):
+        defaults = defaults or {}
         authn_registry = self.request.registry.getUtility(IAuthnPluginRegistry)
-        default_plugins = ['egg:rhodecode-enterprise-ce#rhodecode']
-        enabled_plugins = SettingsModel().get_auth_plugins() or default_plugins
+        enabled_plugins = SettingsModel().get_auth_plugins()
 
         # Create template context and render it.
         template_context = {

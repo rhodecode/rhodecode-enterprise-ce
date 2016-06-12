@@ -1,6 +1,5 @@
 ## -*- coding: utf-8 -*-
 <%inherit file="base/root.html"/>
-<%namespace file="base/social_buttons.html" import="render_social_buttons"/>
 
 <%def name="title()">
     ${_('Create an Account')}
@@ -34,65 +33,91 @@
             <!-- login -->
             <div class="sign-in-title">
                 <h1>${_('Create an account')}</h1>
-                <h4>${h.link_to(_("Go to the login page to sign in with an existing account."),h.url('login'))}</h4>
+                <h4>${h.link_to(_("Go to the login page to sign in with an existing account."), request.route_path('login'))}</h4>
             </div>
             <div class="inner form">
-                ${h.form(url('register'), needs_csrf_token= False)}
-                    <label for="username">${_('Username')}:</label>
-                    ${h.text('username', c.form_data.get('username'))}
-                    <label for="password">${_('Password')}:</label>
-                    ${h.password('password', c.form_data.get('password'))}
-                    <label for="password">${_('Re-enter password')}:</label>
-                    ${h.password('password_confirmation', c.form_data.get('password'))}
-                    <label for="firstname">${_('First Name')}:</label>
-                    ${h.text('firstname')}
-                    <label for="lastname">${_('Last Name')}:</label>
-                    ${h.text('lastname')}
-                    <label for="email">${_('Email')}:</label>
-                    ${h.text('email', c.form_data.get('email'))}
+                ${h.form(request.route_path('register'), needs_csrf_token=False)}
 
-                    %if c.captcha_active:
+                    <label for="username">${_('Username')}:</label>
+                    ${h.text('username', defaults.get('username'))}
+                    %if 'username' in errors:
+                      <span class="error-message">${errors.get('username')}</span>
+                      <br />
+                    %endif
+
+                    <label for="password">${_('Password')}:</label>
+                    ${h.password('password', defaults.get('password'))}
+                    %if 'password' in errors:
+                      <span class="error-message">${errors.get('password')}</span>
+                      <br />
+                    %endif
+
+                    <label for="password_confirmation">${_('Re-enter password')}:</label>
+                    ${h.password('password_confirmation', defaults.get('password_confirmation'))}
+                    %if 'password_confirmation' in errors:
+                      <span class="error-message">${errors.get('password_confirmation')}</span>
+                      <br />
+                    %endif
+
+                    <label for="firstname">${_('First Name')}:</label>
+                    ${h.text('firstname', defaults.get('firstname'))}
+                    %if 'firstname' in errors:
+                      <span class="error-message">${errors.get('firstname')}</span>
+                      <br />
+                    %endif
+
+                    <label for="lastname">${_('Last Name')}:</label>
+                    ${h.text('lastname', defaults.get('lastname'))}
+                    %if 'lastname' in errors:
+                      <span class="error-message">${errors.get('lastname')}</span>
+                      <br />
+                    %endif
+
+                    <label for="email">${_('Email')}:</label>
+                    ${h.text('email', defaults.get('email'))}
+                    %if 'email' in errors:
+                      <span class="error-message">${errors.get('email')}</span>
+                      <br />
+                    %endif
+
+                    %if captcha_active:
                     <div>
-                        <label for="email">${_('Captcha')}:</label>
+                        <label for="recaptcha">${_('Captcha')}:</label>
                         ${h.hidden('recaptcha_field')}
                         <div id="recaptcha"></div>
+                        %if 'recaptcha_field' in errors:
+                          <span class="error-message">${errors.get('recaptcha_field')}</span>
+                          <br />
+                        %endif
                     </div>
                     %endif
 
-                    %if not c.auto_active:
+                    %if not auto_active:
                         <p class="activation_msg">
                             ${_('Account activation requires admin approval.')}
                         </p>
                     %endif
                     <p class="register_message">
-                        ${c.register_message|n}
+                        ${register_message|n}
                     </p>
 
                     ${h.submit('sign_up',_('Create Account'),class_="btn sign-in")}
 
                 ${h.end_form()}
             </div>
-
-        % if c.social_plugins:
-        <p>${_('Register using one of external services')}:</p>
-
-        <p>
-            ${render_social_buttons(c.social_plugins, 'register')}
-        </p>
-        % endif
-
+            <%block name="below_register_button" />
         </div>
     </div>
 </div>
 
-%if c.captcha_active:
+%if captcha_active:
 <script type="text/javascript" src="https://www.google.com/recaptcha/api/js/recaptcha_ajax.js"></script>
 %endif
 <script type="text/javascript">
 $(document).ready(function(){
     $('#username').focus();
-    %if c.captcha_active:
-      Recaptcha.create("${c.captcha_public_key}", "recaptcha", {theme: "white"});
+    %if captcha_active:
+      Recaptcha.create("${captcha_public_key}", "recaptcha", {theme: "white"});
     %endif
 });
 </script>

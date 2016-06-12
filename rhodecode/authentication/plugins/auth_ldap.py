@@ -33,6 +33,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from rhodecode.authentication.base import RhodeCodeExternalAuthPlugin
 from rhodecode.authentication.schema import AuthnPluginSettingsSchemaBase
 from rhodecode.authentication.routes import AuthnPluginResourceBase
+from rhodecode.lib.colander_utils import strip_whitespace
 from rhodecode.lib.exceptions import (
     LdapConnectionError, LdapUsernameError, LdapPasswordError, LdapImportError
 )
@@ -45,8 +46,9 @@ log = logging.getLogger(__name__)
 try:
     import ldap
 except ImportError:
-    # means that python-ldap is not installed
-    ldap = Missing()
+    # means that python-ldap is not installed, we use Missing object to mark
+    # ldap lib is Missing
+    ldap = Missing
 
 
 def plugin_factory(plugin_id, *args, **kwds):
@@ -71,12 +73,14 @@ class LdapSettingsSchema(AuthnPluginSettingsSchemaBase):
         colander.String(),
         default='',
         description=_('Host of the LDAP Server'),
+        preparer=strip_whitespace,
         title=_('LDAP Host'),
         widget='string')
     port = colander.SchemaNode(
         colander.Int(),
         default=389,
         description=_('Port that the LDAP server is listening on'),
+        preparer=strip_whitespace,
         title=_('Port'),
         validator=colander.Range(min=0, max=65536),
         widget='int')
@@ -85,6 +89,7 @@ class LdapSettingsSchema(AuthnPluginSettingsSchemaBase):
         default='',
         description=_('User to connect to LDAP'),
         missing='',
+        preparer=strip_whitespace,
         title=_('Account'),
         widget='string')
     dn_pass = colander.SchemaNode(
@@ -92,6 +97,7 @@ class LdapSettingsSchema(AuthnPluginSettingsSchemaBase):
         default='',
         description=_('Password to connect to LDAP'),
         missing='',
+        preparer=strip_whitespace,
         title=_('Password'),
         widget='password')
     tls_kind = colander.SchemaNode(
@@ -113,6 +119,7 @@ class LdapSettingsSchema(AuthnPluginSettingsSchemaBase):
         default='',
         description=_('Base DN to search (e.g., dc=mydomain,dc=com)'),
         missing='',
+        preparer=strip_whitespace,
         title=_('Base DN'),
         widget='string')
     filter = colander.SchemaNode(
@@ -120,6 +127,7 @@ class LdapSettingsSchema(AuthnPluginSettingsSchemaBase):
         default='',
         description=_('Filter to narrow results (e.g., ou=Users, etc)'),
         missing='',
+        preparer=strip_whitespace,
         title=_('LDAP Search Filter'),
         widget='string')
     search_scope = colander.SchemaNode(
@@ -133,14 +141,16 @@ class LdapSettingsSchema(AuthnPluginSettingsSchemaBase):
         colander.String(),
         default='',
         description=_('LDAP Attribute to map to user name'),
-        title=_('Login Attribute'),
         missing_msg=_('The LDAP Login attribute of the CN must be specified'),
+        preparer=strip_whitespace,
+        title=_('Login Attribute'),
         widget='string')
     attr_firstname = colander.SchemaNode(
         colander.String(),
         default='',
         description=_('LDAP Attribute to map to first name'),
         missing='',
+        preparer=strip_whitespace,
         title=_('First Name Attribute'),
         widget='string')
     attr_lastname = colander.SchemaNode(
@@ -148,6 +158,7 @@ class LdapSettingsSchema(AuthnPluginSettingsSchemaBase):
         default='',
         description=_('LDAP Attribute to map to last name'),
         missing='',
+        preparer=strip_whitespace,
         title=_('Last Name Attribute'),
         widget='string')
     attr_email = colander.SchemaNode(
@@ -155,6 +166,7 @@ class LdapSettingsSchema(AuthnPluginSettingsSchemaBase):
         default='',
         description=_('LDAP Attribute to map to email address'),
         missing='',
+        preparer=strip_whitespace,
         title=_('Email Attribute'),
         widget='string')
 
@@ -171,7 +183,7 @@ class AuthLdap(object):
                  tls_kind='PLAIN', tls_reqcert='DEMAND', ldap_version=3,
                  search_scope='SUBTREE', attr_login='uid',
                  ldap_filter='(&(objectClass=user)(!(objectClass=computer)))'):
-        if isinstance(ldap, Missing):
+        if ldap == Missing:
             raise LdapImportError("Missing or incompatible ldap library")
 
         self.ldap_version = ldap_version
@@ -317,12 +329,14 @@ class RhodeCodeAuthPlugin(RhodeCodeExternalAuthPlugin):
         config.add_view(
             'rhodecode.authentication.views.AuthnPluginViewBase',
             attr='settings_get',
+            renderer='rhodecode:templates/admin/auth/plugin_settings.html',
             request_method='GET',
             route_name='auth_home',
             context=LdapAuthnResource)
         config.add_view(
             'rhodecode.authentication.views.AuthnPluginViewBase',
             attr='settings_post',
+            renderer='rhodecode:templates/admin/auth/plugin_settings.html',
             request_method='POST',
             route_name='auth_home',
             context=LdapAuthnResource)

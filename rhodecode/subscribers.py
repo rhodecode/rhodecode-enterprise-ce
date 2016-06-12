@@ -20,9 +20,11 @@
 
 
 import pylons
-from pyramid.i18n import get_localizer, TranslationStringFactory
 
-tsf = TranslationStringFactory('rc_root')
+from pyramid.i18n import get_localizer
+from pyramid.threadlocal import get_current_request
+
+from rhodecode.translation import _ as tsf
 
 
 def add_renderer_globals(event):
@@ -33,8 +35,11 @@ def add_renderer_globals(event):
     event['c'] = pylons.tmpl_context
     event['url'] = pylons.url
 
+    # TODO: When executed in pyramid view context the request is not available
+    # in the event. Find a better solution to get the request.
+    request = event['request'] or get_current_request()
+
     # Add Pyramid translation as '_' to context
-    request = event['request']
     event['_'] = request.translate
     event['localizer'] = request.localizer
 

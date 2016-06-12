@@ -17,10 +17,12 @@ Quick Start Guide
    credentials during |RCE| installation. See the relevant database
    documentation for more details.
 
-To get |RCM| up and running, run through the below steps:
+To get |RCE| up and running, run through the below steps:
 
 1. Download the latest |RCC| installer from your `rhodecode.com`_ profile
-   page. If you don't have an account, sign up at `rhodecode.com/register`_.
+   or main page.
+   If you don't have an account, sign up at `rhodecode.com/register`_.
+
 2. Run the |RCC| installer and accept the End User Licence using the
    following example:
 
@@ -45,12 +47,17 @@ To get |RCM| up and running, run through the below steps:
     Added process group vcsserver-1
 
 
-4. Install |RCE|. If using MySQL or PostgreSQL, during installation you'll be
-   asked for your database credentials, so have them at hand. You don't need
-   any for SQLite.
+4. Install |RCEE| or |RCCE|. If using MySQL or PostgreSQL, during
+   installation you'll be asked for your database credentials, so have them at hand.
+   Mysql or Postgres needs to be running and a new database needs to be created.
+   You don't need any credentials or to create a database for SQLite.
 
 .. code-block:: bash
    :emphasize-lines: 11-16
+
+    $ rccontrol install Community
+
+    or
 
     $ rccontrol install Enterprise
 
@@ -69,8 +76,8 @@ To get |RCM| up and running, run through the below steps:
     Database password: somepassword
     Database name: example-db-name
 
-5. Check the status of your installation. You |RCE| instance runs on the URL
-   displayed in the status message.
+5. Check the status of your installation. You |RCEE|/|RCCE| instance runs
+   on the URL displayed in the status message.
 
 .. code-block:: bash
 
@@ -79,13 +86,13 @@ To get |RCM| up and running, run through the below steps:
     - NAME: enterprise-1
     - STATUS: RUNNING
     - TYPE: Enterprise
-    - VERSION: 3.3.0
+    - VERSION: 4.1.0
     - URL: http://127.0.0.1:10003
 
     - NAME: vcsserver-1
     - STATUS: RUNNING
     - TYPE: VCSServer
-    - VERSION: 3.3.0
+    - VERSION: 4.1.0
     - URL: http://127.0.0.1:10001
 
 .. note::

@@ -30,7 +30,7 @@ from StringIO import StringIO
 
 from zope.cachedescriptors.property import Lazy as LazyProperty
 
-from rhodecode.lib.datelib import date_fromtimestamp
+from rhodecode.lib.datelib import utcdate_fromtimestamp
 from rhodecode.lib.utils import safe_unicode, safe_str
 from rhodecode.lib.utils2 import safe_int
 from rhodecode.lib.vcs.conf import settings
@@ -95,7 +95,7 @@ class GitCommit(base.BaseCommit):
                 if value:
                     value = safe_unicode(value)
             elif attr == "date":
-                value = date_fromtimestamp(*value)
+                value = utcdate_fromtimestamp(*value)
             elif attr == "parents":
                 value = self._make_commits(value)
             self.__dict__[attr] = value
@@ -135,7 +135,7 @@ class GitCommit(base.BaseCommit):
     def date(self):
         unix_ts, tz = self._remote.get_object_attrs(
             self.raw_id, self._date_property, self._date_tz_property)
-        return date_fromtimestamp(unix_ts, tz)
+        return utcdate_fromtimestamp(unix_ts, tz)
 
     @LazyProperty
     def status(self):

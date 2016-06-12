@@ -243,7 +243,7 @@
 
 <%def name="gist_created(created_on)">
     <div class="created">
-      ${h.age_component(created_on)}
+      ${h.age_component(created_on, time_is_local=True)}
     </div>
 </%def>
 
@@ -252,7 +252,7 @@
           %if expires == -1:
             ${_('never')}
           %else:
-            ${h.age_component(h.time_to_datetime(expires))}
+            ${h.age_component(h.time_to_utcdatetime(expires))}
           %endif
     </div>
 </%def>
@@ -289,7 +289,7 @@
 </%def>
 
 <%def name="pullrequest_updated_on(updated_on)">
-    ${h.age_component(h.time_to_datetime(updated_on))}
+    ${h.age_component(h.time_to_utcdatetime(updated_on))}
 </%def>
 
 <%def name="pullrequest_author(full_contact)">

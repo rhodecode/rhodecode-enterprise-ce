@@ -25,7 +25,7 @@ from rhodecode.model.user import UserModel
 from rhodecode.model.user_group import UserGroupModel
 from rhodecode.tests import TEST_USER_REGULAR_LOGIN
 from rhodecode.api.tests.utils import (
-    build_data, api_call, assert_error, assert_ok, crash)
+    build_data, api_call, assert_error, assert_ok, crash, jsonify)
 
 
 @pytest.mark.usefixtures("testuser_api", "app")
@@ -40,14 +40,18 @@ class TestUpdateUserGroup(object):
     def test_api_update_user_group(self, changing_attr, updates, user_util):
         user_group = user_util.create_user_group()
         group_name = user_group.users_group_name
+        expected_api_data = user_group.get_api_data()
+        expected_api_data.update(updates)
+
         id_, params = build_data(
             self.apikey, 'update_user_group', usergroupid=group_name,
             **updates)
         response = api_call(self.app, params)
+
         expected = {
             'msg': 'updated user group ID:%s %s' % (
                 user_group.users_group_id, user_group.users_group_name),
-            'user_group': user_group.get_api_data()
+            'user_group': jsonify(expected_api_data)
         }
         assert_ok(id_, expected, given=response.body)
 
@@ -63,6 +67,10 @@ class TestUpdateUserGroup(object):
             self, changing_attr, updates, user_util):
         user_group = user_util.create_user_group()
         group_name = user_group.users_group_name
+        expected_api_data = user_group.get_api_data()
+        expected_api_data.update(updates)
+
+
         # grant permission to this user
         user = UserModel().get_by_username(self.TEST_USER_LOGIN)
 
@@ -75,7 +83,7 @@ class TestUpdateUserGroup(object):
         expected = {
             'msg': 'updated user group ID:%s %s' % (
                 user_group.users_group_id, user_group.users_group_name),
-            'user_group': user_group.get_api_data()
+            'user_group': jsonify(expected_api_data)
         }
         assert_ok(id_, expected, given=response.body)
 

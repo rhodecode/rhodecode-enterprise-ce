@@ -4,7 +4,6 @@
 ##    ${p.perms_summary(c.perm_user.permissions)}
 
 <%def name="perms_summary(permissions, show_all=False, actions=True)">
-
 <div id="perms" class="table fields">
   %for section in sorted(permissions.keys()):
   <div class="panel panel-default">
@@ -134,7 +133,15 @@
                         %endif
                     </td>
                     <td class="td-tags">
+                      %if hasattr(permissions[section], 'perm_origin_stack'):
+                         %for i, (perm, origin) in enumerate(reversed(permissions[section].perm_origin_stack[k])):
+                         <span class="${i > 0 and 'perm_overriden' or ''} perm_tag ${perm.split('.')[-1]}">
+                          ${perm} (${origin})
+                        </span>
+                         %endfor
+                      %else:
                          <span class="perm_tag ${section_perm.split('.')[-1]}">${section_perm}</span>
+                      %endif
                     </td>
                     %if actions:
                     <td class="td-action">
@@ -154,7 +161,7 @@
             <tr id="empty_${section}" class="noborder" style="display:none;">
               <td colspan="6">${_('No permission defined')}</td>
             </tr>
-            
+
             </tbody>
           %endif
          </table>

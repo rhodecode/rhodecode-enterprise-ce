@@ -43,11 +43,14 @@
                      </div>
                     <div class="field">
                         <div class="label">
-                            <label for="users_group_active">${_('Members')}:</label>
+                            <label for="users_group_active">${_('Search')}:</label>
+                               ${h.text('from_user_group',
+                                        placeholder="user/usergroup",
+                                        class_="medium")}
                         </div>
                         <div class="select side-by-side-selector">
                             <div class="left-group">
-                                <label class="text" >${_('Chosen group members')}</label>
+                                <label class="text"><strong>${_('Chosen group members')}</strong></label>
                                 ${h.select('users_group_members',[x[0] for x in c.group_members],c.group_members,multiple=True,size=8,)}
                                <div class="btn" id="remove_all_elements" >
                                    ${_('Remove all elements')}
@@ -60,7 +63,8 @@
                                 <i  id="remove_element" class="icon-chevron-right"></i>
                             </div>
                             <div class="right-group">
-                                 <label class="text" >${_('Available members')}</label>
+                                 <label class="text" >${_('Available users')}
+                                 </label>
                                  ${h.select('available_members',[],c.available_members,multiple=True,size=8,)}
                                  <div  class="btn" id="add_all_elements" >
                                      <i  class="icon-chevron-left"></i>${_('Add all elements')}
@@ -86,6 +90,42 @@
             'dropdownAutoWidth': true
         });
 
+        $('#from_user_group').autocomplete({
+            serviceUrl: pyroutes.url('user_autocomplete_data'),
+            minChars:2,
+            maxHeight:400,
+            width:300,
+            deferRequestBy: 300, //miliseconds
+            showNoSuggestionNotice: true,
+            params: { user_groups:true },
+            formatResult: autocompleteFormatResult,
+            lookupFilter: autocompleteFilterResult,
+            onSelect: function(element, suggestion){
+
+                function preSelectUserIds(uids) {
+                    $('#available_members').val(uids);
+                    $('#users_group_members').val(uids);
+                }
+
+                if (suggestion.value_type == 'user_group') {
+                    $.getJSON(
+                        pyroutes.url('edit_user_group_members',
+                                    {'user_group_id': suggestion.id}),
+                        function(data) {
+                            var uids = [];
+                            $.each(data.members, function(idx, user) {
+                                var userid = user[0],
+                                    username = user[1];
+                                uids.push(userid.toString());
+                            });
+                            preSelectUserIds(uids)
+                        }
+                    );
+                } else if (suggestion.value_type == 'user') {
+                    preSelectUserIds([suggestion.id.toString()]);
+                }
+            }
+        });
         UsersAutoComplete('user', '${c.rhodecode_user.user_id}');
     })
 </script>

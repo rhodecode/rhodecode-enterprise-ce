@@ -25,14 +25,20 @@ from zope.interface import implementer
 
 from rhodecode.authentication.interface import IAuthnPluginRegistry
 from rhodecode.lib.utils2 import safe_str
+from rhodecode.model.settings import SettingsModel
 
 log = logging.getLogger(__name__)
 
 
 @implementer(IAuthnPluginRegistry)
 class AuthenticationPluginRegistry(object):
-    def __init__(self):
+
+    # INI settings key to set a fallback authentication plugin.
+    fallback_plugin_key = 'rhodecode.auth_plugin_fallback'
+
+    def __init__(self, settings):
         self._plugins = {}
+        self._fallback_plugin = settings.get(self.fallback_plugin_key, None)
 
     def add_authn_plugin(self, config, plugin):
         plugin_id = plugin.get_id()
@@ -51,3 +57,31 @@ class AuthenticationPluginRegistry(object):
 
     def get_plugin(self, plugin_id):
         return self._plugins.get(plugin_id, None)
+
+    def get_plugins_for_authentication(self):
+        """
+        Returns a list of plugins which should be consulted when authenticating
+        a user. It only returns plugins which are enabled and active.
+        Additionally it includes the fallback plugin from the INI file, if
+        `rhodecode.auth_plugin_fallback` is set to a plugin ID.
+        """
+        plugins = []
+
+        # Add all enabled and active plugins to the list. We iterate over the
+        # auth_plugins setting from DB beacuse it also represents the ordering.
+        enabled_plugins = SettingsModel().get_auth_plugins()
+        for plugin_id in enabled_plugins:
+            plugin = self.get_plugin(plugin_id)
+            if plugin is not None and plugin.is_active():
+                plugins.append(plugin)
+
+        # Add the fallback plugin from ini file.
+        if self._fallback_plugin:
+            log.warn(
+                'Using fallback authentication plugin from INI file: "%s"',
+                self._fallback_plugin)
+            plugin = self.get_plugin(self._fallback_plugin)
+            if plugin is not None and plugin not in plugins:
+                plugins.append(plugin)
+
+        return plugins

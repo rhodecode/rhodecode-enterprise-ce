@@ -22,6 +22,7 @@ import mock
 import pytest
 
 import rhodecode
+from rhodecode.config.routing import ADMIN_PREFIX
 from rhodecode.lib.utils2 import md5
 from rhodecode.model.db import RhodeCodeUi
 from rhodecode.model.meta import Session
@@ -157,7 +158,7 @@ class TestAdminSettingsGlobal:
             'csrf_token': csrf_token,
         })
 
-        response = self.app.get(url('register'))
+        response = self.app.get(ADMIN_PREFIX + '/register')
         response.mustcontain('captcha')
 
     def test_captcha_deactivate(self, csrf_token):
@@ -167,7 +168,7 @@ class TestAdminSettingsGlobal:
             'csrf_token': csrf_token,
         })
 
-        response = self.app.get(url('register'))
+        response = self.app.get(ADMIN_PREFIX + '/register')
         response.mustcontain(no=['captcha'])
 
     def test_title_change(self, csrf_token):

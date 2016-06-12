@@ -29,6 +29,7 @@ IMPORTANT: if you change any routing here, make sure to take a look at lib/base.
 and _route_name variable which uses some of stored naming here to do redirects.
 """
 import os
+import re
 from routes import Mapper
 
 from rhodecode.config import routing_links
@@ -50,9 +51,60 @@ URL_NAME_REQUIREMENTS = {
 }
 
 
+class JSRoutesMapper(Mapper):
+    """
+    Wrapper for routes.Mapper to make pyroutes compatible url definitions
+    """
+    _named_route_regex = re.compile(r'^[a-z-_0-9A-Z]+$')
+    _argument_prog = re.compile('\{(.*?)\}|:\((.*)\)')
+    def __init__(self, *args, **kw):
+        super(JSRoutesMapper, self).__init__(*args, **kw)
+        self._jsroutes = []
+
+    def connect(self, *args, **kw):
+        """
+        Wrapper for connect to take an extra argument jsroute=True
+
+        :param jsroute: boolean, if True will add the route to the pyroutes list
+        """
+        if kw.pop('jsroute', False):
+            if not self._named_route_regex.match(args[0]):
+                raise Exception('only named routes can be added to pyroutes')
+            self._jsroutes.append(args[0])
+
+        super(JSRoutesMapper, self).connect(*args, **kw)
+
+    def _extract_route_information(self, route):
+        """
+        Convert a route into tuple(name, path, args), eg:
+            ('user_profile', '/profile/%(username)s', ['username'])
+        """
+        routepath = route.routepath
+        def replace(matchobj):
+            if matchobj.group(1):
+                return "%%(%s)s" % matchobj.group(1).split(':')[0]
+            else:
+                return "%%(%s)s" % matchobj.group(2)
+
+        routepath = self._argument_prog.sub(replace, routepath)
+        return (
+            route.name,
+            routepath,
+            [(arg[0].split(':')[0] if arg[0] != '' else arg[1])
+              for arg in self._argument_prog.findall(route.routepath)]
+        )
+
+    def jsroutes(self):
+        """
+        Return a list of pyroutes.js compatible routes
+        """
+        for route_name in self._jsroutes:
+            yield self._extract_route_information(self._routenames[route_name])
+
+
 def make_map(config):
     """Create, configure and return the routes Mapper"""
-    rmap = Mapper(directory=config['pylons.paths']['controllers'],
+    rmap = JSRoutesMapper(directory=config['pylons.paths']['controllers'],
                   always_scan=config['debug'])
     rmap.minimization = False
     rmap.explicit = False
@@ -124,14 +176,14 @@ def make_map(config):
     #==========================================================================
 
     # MAIN PAGE
-    rmap.connect('home', '/', controller='home', action='index')
-    rmap.connect('repo_switcher_data', '/_repos_and_groups', controller='home',
-                 action='repo_switcher_data')
+    rmap.connect('home', '/', controller='home', action='index', jsroute=True)
+    rmap.connect('goto_switcher_data', '/_goto_data', controller='home',
+                 action='goto_switcher_data')
     rmap.connect('repo_list_data', '/_repos', controller='home',
                  action='repo_list_data')
 
     rmap.connect('user_autocomplete_data', '/_users', controller='home',
-                 action='user_autocomplete_data')
+                 action='user_autocomplete_data', jsroute=True)
     rmap.connect('user_group_autocomplete_data', '/_user_groups', controller='home',
                  action='user_group_autocomplete_data')
 
@@ -167,7 +219,7 @@ def make_map(config):
                   action='create', conditions={'method': ['POST']})
         m.connect('repos', '/repos',
                   action='index', conditions={'method': ['GET']})
-        m.connect('new_repo', '/create_repository',
+        m.connect('new_repo', '/create_repository', jsroute=True,
                   action='create_repository', conditions={'method': ['GET']})
         m.connect('/repos/{repo_name}',
                   action='update', conditions={'method': ['PUT'],
@@ -303,22 +355,29 @@ def make_map(config):
                   function=check_user_group)
 
         # EXTRAS USER GROUP ROUTES
-        m.connect('edit_user_group_global_perms', '/user_groups/{user_group_id}/edit/global_permissions',
+        m.connect('edit_user_group_global_perms',
+                  '/user_groups/{user_group_id}/edit/global_permissions',
                   action='edit_global_perms', conditions={'method': ['GET']})
-        m.connect('edit_user_group_global_perms', '/user_groups/{user_group_id}/edit/global_permissions',
+        m.connect('edit_user_group_global_perms',
+                  '/user_groups/{user_group_id}/edit/global_permissions',
                   action='update_global_perms', conditions={'method': ['PUT']})
-        m.connect('edit_user_group_perms_summary', '/user_groups/{user_group_id}/edit/permissions_summary',
+        m.connect('edit_user_group_perms_summary',
+                  '/user_groups/{user_group_id}/edit/permissions_summary',
                   action='edit_perms_summary', conditions={'method': ['GET']})
 
-        m.connect('edit_user_group_perms', '/user_groups/{user_group_id}/edit/permissions',
+        m.connect('edit_user_group_perms',
+                  '/user_groups/{user_group_id}/edit/permissions',
                   action='edit_perms', conditions={'method': ['GET']})
-        m.connect('edit_user_group_perms', '/user_groups/{user_group_id}/edit/permissions',
+        m.connect('edit_user_group_perms',
+                  '/user_groups/{user_group_id}/edit/permissions',
                   action='update_perms', conditions={'method': ['PUT']})
 
-        m.connect('edit_user_group_advanced', '/user_groups/{user_group_id}/edit/advanced',
+        m.connect('edit_user_group_advanced',
+                  '/user_groups/{user_group_id}/edit/advanced',
                   action='edit_advanced', conditions={'method': ['GET']})
 
-        m.connect('edit_user_group_members', '/user_groups/{user_group_id}/edit/members',
+        m.connect('edit_user_group_members',
+                  '/user_groups/{user_group_id}/edit/members', jsroute=True,
                   action='edit_members', conditions={'method': ['GET']})
 
     # ADMIN PERMISSIONS ROUTES
@@ -496,12 +555,6 @@ def make_map(config):
         m.connect('my_account_auth_tokens', '/my_account/auth_tokens',
                   action='my_account_auth_tokens_delete', conditions={'method': ['DELETE']})
 
-        m.connect('my_account_oauth', '/my_account/oauth',
-                  action='my_account_oauth', conditions={'method': ['GET']})
-        m.connect('my_account_oauth', '/my_account/oauth',
-                  action='my_account_oauth_delete',
-                  conditions={'method': ['DELETE']})
-
     # NOTIFICATION REST ROUTES
     with rmap.submapper(path_prefix=ADMIN_PREFIX,
                         controller='admin/notifications') as m:
@@ -522,9 +575,9 @@ def make_map(config):
                         controller='admin/gists') as m:
         m.connect('gists', '/gists',
                   action='create', conditions={'method': ['POST']})
-        m.connect('gists', '/gists',
+        m.connect('gists', '/gists', jsroute=True,
                   action='index', conditions={'method': ['GET']})
-        m.connect('new_gist', '/gists/new',
+        m.connect('new_gist', '/gists/new', jsroute=True,
                   action='new', conditions={'method': ['GET']})
 
         m.connect('/gists/{gist_id}',
@@ -557,8 +610,12 @@ def make_map(config):
         m.connect('admin_add_repo', '/add_repo/{new_repo:[a-z0-9\. _-]*}',
                   action='add_repo')
         m.connect(
-            'pull_requests_global', '/pull_requests/{pull_request_id:[0-9]+}',
+            'pull_requests_global_0', '/pull_requests/{pull_request_id:[0-9]+}',
             action='pull_requests')
+        m.connect(
+            'pull_requests_global', '/pull-requests/{pull_request_id:[0-9]+}',
+            action='pull_requests')
+
 
     # USER JOURNAL
     rmap.connect('journal', '%s/journal' % (ADMIN_PREFIX,),
@@ -586,7 +643,7 @@ def make_map(config):
                  action='public_journal_atom')
 
     rmap.connect('toggle_following', '%s/toggle_following' % (ADMIN_PREFIX,),
-                 controller='journal', action='toggle_following',
+                 controller='journal', action='toggle_following', jsroute=True,
                  conditions={'method': ['POST']})
 
     # FULL TEXT SEARCH
@@ -597,27 +654,6 @@ def make_map(config):
                  action='index',
                  conditions={'function': check_repo},
                  requirements=URL_NAME_REQUIREMENTS)
-
-    # LOGIN/LOGOUT/REGISTER/SIGN IN
-    rmap.connect('login_home', '%s/login' % (ADMIN_PREFIX,), controller='login',
-                 action='index')
-
-    rmap.connect('logout_home', '%s/logout' % (ADMIN_PREFIX,), controller='login',
-                 action='logout', conditions={'method': ['POST']})
-
-    rmap.connect('register', '%s/register' % (ADMIN_PREFIX,), controller='login',
-                 action='register')
-
-    rmap.connect('reset_password', '%s/password_reset' % (ADMIN_PREFIX,),
-                 controller='login', action='password_reset')
-
-    rmap.connect('reset_password_confirmation',
-                 '%s/password_reset_confirmation' % (ADMIN_PREFIX,),
-                 controller='login', action='password_reset_confirmation')
-
-    rmap.connect('social_auth',
-                 '%s/social_auth/{provider_name}' % (ADMIN_PREFIX,),
-                 controller='login', action='social_auth')
 
     # FEEDS
     rmap.connect('rss_feed_home', '/{repo_name}/feed/rss',
@@ -644,17 +680,17 @@ def make_map(config):
     rmap.connect('repo_stats', '/{repo_name}/repo_stats/{commit_id}',
                  controller='summary', action='repo_stats',
                  conditions={'function': check_repo},
-                 requirements=URL_NAME_REQUIREMENTS)
+                 requirements=URL_NAME_REQUIREMENTS, jsroute=True)
 
     rmap.connect('repo_refs_data', '/{repo_name}/refs-data',
-                 controller='summary', action='repo_refs_data',
+                 controller='summary', action='repo_refs_data', jsroute=True,
                  requirements=URL_NAME_REQUIREMENTS)
     rmap.connect('repo_refs_changelog_data', '/{repo_name}/refs-data-changelog',
                  controller='summary', action='repo_refs_changelog_data',
-                 requirements=URL_NAME_REQUIREMENTS)
+                 requirements=URL_NAME_REQUIREMENTS, jsroute=True)
 
     rmap.connect('changeset_home', '/{repo_name}/changeset/{revision}',
-                 controller='changeset', revision='tip',
+                 controller='changeset', revision='tip', jsroute=True,
                  conditions={'function': check_repo},
                  requirements=URL_NAME_REQUIREMENTS)
     rmap.connect('changeset_children', '/{repo_name}/changeset_children/{revision}',
@@ -667,12 +703,13 @@ def make_map(config):
                  requirements=URL_NAME_REQUIREMENTS)
 
     # repo edit options
-    rmap.connect('edit_repo', '/{repo_name}/settings',
+    rmap.connect('edit_repo', '/{repo_name}/settings', jsroute=True,
                  controller='admin/repos', action='edit',
                  conditions={'method': ['GET'], 'function': check_repo},
                  requirements=URL_NAME_REQUIREMENTS)
 
     rmap.connect('edit_repo_perms', '/{repo_name}/settings/permissions',
+                 jsroute=True,
                  controller='admin/repos', action='edit_permissions',
                  conditions={'method': ['GET'], 'function': check_repo},
                  requirements=URL_NAME_REQUIREMENTS)
@@ -804,13 +841,13 @@ def make_map(config):
                  requirements=URL_NAME_REQUIREMENTS)
 
     rmap.connect('changeset_comment',
-                 '/{repo_name}/changeset/{revision}/comment',
+                 '/{repo_name}/changeset/{revision}/comment', jsroute=True,
                  controller='changeset', revision='tip', action='comment',
                  conditions={'function': check_repo},
                  requirements=URL_NAME_REQUIREMENTS)
 
     rmap.connect('changeset_comment_preview',
-                 '/{repo_name}/changeset/comment/preview',
+                 '/{repo_name}/changeset/comment/preview', jsroute=True,
                  controller='changeset', action='preview_comment',
                  conditions={'function': check_repo, 'method': ['POST']},
                  requirements=URL_NAME_REQUIREMENTS)
@@ -819,11 +856,11 @@ def make_map(config):
                  '/{repo_name}/changeset/comment/{comment_id}/delete',
                  controller='changeset', action='delete_comment',
                  conditions={'function': check_repo, 'method': ['DELETE']},
-                 requirements=URL_NAME_REQUIREMENTS)
+                 requirements=URL_NAME_REQUIREMENTS, jsroute=True)
 
     rmap.connect('changeset_info', '/changeset_info/{repo_name}/{revision}',
                  controller='changeset', action='changeset_info',
-                 requirements=URL_NAME_REQUIREMENTS)
+                 requirements=URL_NAME_REQUIREMENTS, jsroute=True)
 
     rmap.connect('compare_home',
                  '/{repo_name}/compare',
@@ -835,33 +872,33 @@ def make_map(config):
                  '/{repo_name}/compare/{source_ref_type}@{source_ref:.*?}...{target_ref_type}@{target_ref:.*?}',
                  controller='compare', action='compare',
                  conditions={'function': check_repo},
-                 requirements=URL_NAME_REQUIREMENTS)
+                 requirements=URL_NAME_REQUIREMENTS, jsroute=True)
 
     rmap.connect('pullrequest_home',
                  '/{repo_name}/pull-request/new', controller='pullrequests',
                  action='index', conditions={'function': check_repo,
                                              'method': ['GET']},
-                 requirements=URL_NAME_REQUIREMENTS)
+                 requirements=URL_NAME_REQUIREMENTS, jsroute=True)
 
     rmap.connect('pullrequest',
                  '/{repo_name}/pull-request/new', controller='pullrequests',
                  action='create', conditions={'function': check_repo,
                                               'method': ['POST']},
-                 requirements=URL_NAME_REQUIREMENTS)
+                 requirements=URL_NAME_REQUIREMENTS, jsroute=True)
 
     rmap.connect('pullrequest_repo_refs',
                  '/{repo_name}/pull-request/refs/{target_repo_name:.*?[^/]}',
                  controller='pullrequests',
                  action='get_repo_refs',
                  conditions={'function': check_repo, 'method': ['GET']},
-                 requirements=URL_NAME_REQUIREMENTS)
+                 requirements=URL_NAME_REQUIREMENTS, jsroute=True)
 
     rmap.connect('pullrequest_repo_destinations',
                  '/{repo_name}/pull-request/repo-destinations',
                  controller='pullrequests',
                  action='get_repo_destinations',
                  conditions={'function': check_repo, 'method': ['GET']},
-                 requirements=URL_NAME_REQUIREMENTS)
+                 requirements=URL_NAME_REQUIREMENTS, jsroute=True)
 
     rmap.connect('pullrequest_show',
                  '/{repo_name}/pull-request/{pull_request_id}',
@@ -875,7 +912,7 @@ def make_map(config):
                  controller='pullrequests',
                  action='update', conditions={'function': check_repo,
                                               'method': ['PUT']},
-                 requirements=URL_NAME_REQUIREMENTS)
+                 requirements=URL_NAME_REQUIREMENTS, jsroute=True)
 
     rmap.connect('pullrequest_merge',
                  '/{repo_name}/pull-request/{pull_request_id}',
@@ -896,20 +933,20 @@ def make_map(config):
                  controller='pullrequests',
                  action='show_all', conditions={'function': check_repo,
                                                 'method': ['GET']},
-                 requirements=URL_NAME_REQUIREMENTS)
+                 requirements=URL_NAME_REQUIREMENTS, jsroute=True)
 
     rmap.connect('pullrequest_comment',
                  '/{repo_name}/pull-request-comment/{pull_request_id}',
                  controller='pullrequests',
                  action='comment', conditions={'function': check_repo,
                                                'method': ['POST']},
-                 requirements=URL_NAME_REQUIREMENTS)
+                 requirements=URL_NAME_REQUIREMENTS, jsroute=True)
 
     rmap.connect('pullrequest_comment_delete',
                  '/{repo_name}/pull-request-comment/{comment_id}/delete',
                  controller='pullrequests', action='delete_comment',
                  conditions={'function': check_repo, 'method': ['DELETE']},
-                 requirements=URL_NAME_REQUIREMENTS)
+                 requirements=URL_NAME_REQUIREMENTS, jsroute=True)
 
     rmap.connect('summary_home_explicit', '/{repo_name}/summary',
                  controller='summary', conditions={'function': check_repo},
@@ -927,7 +964,7 @@ def make_map(config):
                  controller='bookmarks', conditions={'function': check_repo},
                  requirements=URL_NAME_REQUIREMENTS)
 
-    rmap.connect('changelog_home', '/{repo_name}/changelog',
+    rmap.connect('changelog_home', '/{repo_name}/changelog', jsroute=True,
                  controller='changelog', conditions={'function': check_repo},
                  requirements=URL_NAME_REQUIREMENTS)
 
@@ -936,21 +973,21 @@ def make_map(config):
                  conditions={'function': check_repo},
                  requirements=URL_NAME_REQUIREMENTS)
 
-    rmap.connect('changelog_file_home', '/{repo_name}/changelog/{revision}/{f_path}',
+    rmap.connect('changelog_file_home',
+                 '/{repo_name}/changelog/{revision}/{f_path}',
                  controller='changelog', f_path=None,
                  conditions={'function': check_repo},
-                 requirements=URL_NAME_REQUIREMENTS)
+                 requirements=URL_NAME_REQUIREMENTS, jsroute=True)
 
     rmap.connect('changelog_details', '/{repo_name}/changelog_details/{cs}',
                  controller='changelog', action='changelog_details',
                  conditions={'function': check_repo},
                  requirements=URL_NAME_REQUIREMENTS)
 
-    rmap.connect('files_home',
-                 '/{repo_name}/files/{revision}/{f_path}',
+    rmap.connect('files_home',  '/{repo_name}/files/{revision}/{f_path}',
                  controller='files', revision='tip', f_path='',
                  conditions={'function': check_repo},
-                 requirements=URL_NAME_REQUIREMENTS)
+                 requirements=URL_NAME_REQUIREMENTS, jsroute=True)
 
     rmap.connect('files_home_simple_catchrev',
                  '/{repo_name}/files/{revision}',
@@ -968,13 +1005,13 @@ def make_map(config):
                  '/{repo_name}/history/{revision}/{f_path}',
                  controller='files', action='history', revision='tip', f_path='',
                  conditions={'function': check_repo},
-                 requirements=URL_NAME_REQUIREMENTS)
+                 requirements=URL_NAME_REQUIREMENTS, jsroute=True)
 
     rmap.connect('files_authors_home',
                  '/{repo_name}/authors/{revision}/{f_path}',
                  controller='files', action='authors', revision='tip', f_path='',
                  conditions={'function': check_repo},
-                 requirements=URL_NAME_REQUIREMENTS)
+                 requirements=URL_NAME_REQUIREMENTS, jsroute=True)
 
     rmap.connect('files_diff_home', '/{repo_name}/diff/{f_path}',
                  controller='files', action='diff', f_path='',
@@ -1053,19 +1090,19 @@ def make_map(config):
     rmap.connect('files_archive_home', '/{repo_name}/archive/{fname}',
                  controller='files', action='archivefile',
                  conditions={'function': check_repo},
-                 requirements=URL_NAME_REQUIREMENTS)
+                 requirements=URL_NAME_REQUIREMENTS, jsroute=True)
 
     rmap.connect('files_nodelist_home',
                  '/{repo_name}/nodelist/{revision}/{f_path}',
                  controller='files', action='nodelist',
                  conditions={'function': check_repo},
-                 requirements=URL_NAME_REQUIREMENTS)
+                 requirements=URL_NAME_REQUIREMENTS, jsroute=True)
 
     rmap.connect('files_metadata_list_home',
                  '/{repo_name}/metadata_list/{revision}/{f_path}',
                  controller='files', action='metadata_list',
                  conditions={'function': check_repo},
-                 requirements=URL_NAME_REQUIREMENTS)
+                 requirements=URL_NAME_REQUIREMENTS, jsroute=True)
 
     rmap.connect('repo_fork_create_home', '/{repo_name}/fork',
                  controller='forks', action='fork_create',
@@ -1096,7 +1133,7 @@ def make_map(config):
 
     # catch all, at the end
     _connect_with_slash(
-        rmap, 'summary_home', '/{repo_name}',
+        rmap, 'summary_home', '/{repo_name}', jsroute=True,
         controller='summary', action='index',
         conditions={'function': check_repo},
         requirements=URL_NAME_REQUIREMENTS)

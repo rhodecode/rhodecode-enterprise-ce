@@ -30,7 +30,6 @@ var removeReviewMember = function(reviewer_id, mark_delete){
         if (reviewer){
             // mark as to-remove
             var obj = $('#reviewer_{0}_name'.format(reviewer_id));
-            obj.css("text-decoration", "line-through");
             obj.addClass('to-delete');
             // now delete the input
             $('#reviewer_{0}_input'.format(reviewer_id)).remove();
