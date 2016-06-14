@@ -31,9 +31,9 @@ from pyramid.config import Configurator
 from pyramid.static import static_view
 from pyramid.settings import asbool, aslist
 from pyramid.wsgi import wsgiapp
-from pyramid.httpexceptions import HTTPError
+from pyramid.httpexceptions import HTTPError, HTTPInternalServerError
 import pyramid.httpexceptions as httpexceptions
-from pyramid.renderers import render_to_response
+from pyramid.renderers import render_to_response, render
 from routes.middleware import RoutesMiddleware
 import routes.util
 
@@ -183,8 +183,15 @@ def error_handler(exc, request):
     if not c.rhodecode_name:
         c.rhodecode_name = 'Rhodecode'
 
+    base_response = HTTPInternalServerError()
+    # prefer original exception for the response since it may have headers set
+    if isinstance(exc, HTTPError):
+        base_response = exc
+
     response = render_to_response(
-        '/errors/error_document.html', {'c': c}, request=request)
+        '/errors/error_document.html', {'c': c}, request=request,
+        response=base_response)
+
     return response
 
 
