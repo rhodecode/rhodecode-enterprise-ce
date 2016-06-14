@@ -168,7 +168,7 @@ def webob_to_pyramid_http_response(webob_response):
     return pyramid_response
 
 
-def error_handler(exc, request):
+def error_handler(exception, request):
     # TODO: dan: replace the old pylons error controller with this
     from rhodecode.model.settings import SettingsModel
     from rhodecode.lib.utils2 import AttributeDict
@@ -179,9 +179,14 @@ def error_handler(exc, request):
         log.exception('failed to fetch settings')
         rc_config = {}
 
+    base_response = HTTPInternalServerError()
+    # prefer original exception for the response since it may have headers set
+    if isinstance(exception, HTTPError):
+        base_response = exception
+
     c = AttributeDict()
-    c.error_message = exc.status
-    c.error_explanation = exc.explanation or str(exc)
+    c.error_message = base_response.status
+    c.error_explanation = base_response.explanation or str(base_response)
     c.visual = AttributeDict()
 
     c.visual.rhodecode_support_url = (
@@ -189,14 +194,9 @@ def error_handler(exc, request):
         request.route_url('rhodecode_support')
     )
     c.redirect_time = 0
-    c.rhodecode_name = rc_config.get('rhodecode_title')
+    c.rhodecode_name = rc_config.get('rhodecode_title', '')
     if not c.rhodecode_name:
         c.rhodecode_name = 'Rhodecode'
-
-    base_response = HTTPInternalServerError()
-    # prefer original exception for the response since it may have headers set
-    if isinstance(exc, HTTPError):
-        base_response = exc
 
     response = render_to_response(
         '/errors/error_document.html', {'c': c}, request=request,
@@ -207,6 +207,9 @@ def error_handler(exc, request):
 
 def includeme(config):
     settings = config.registry.settings
+
+    if asbool(settings.get('appenlight', 'false')):
+        config.include('appenlight_client.ext.pyramid_tween')
 
     # Includes which are required. The application would fail without them.
     config.include('pyramid_mako')
@@ -247,6 +250,7 @@ def includeme(config):
     if not vcs_server_enabled:
         pylons_app_as_view = DisableVCSPagesWrapper(pylons_app_as_view)
 
+
     def pylons_app_with_error_handler(context, request):
         """
         Handle exceptions from rc pylons app:
@@ -273,7 +277,14 @@ def includeme(config):
     # how to handle a request.
     config.add_notfound_view(pylons_app_with_error_handler)
 
-    config.add_view(error_handler, context=HTTPError) # exceptions in rc pyramid
+    if settings.get('debugtoolbar.enabled', False):
+        # if toolbar, then only http type exceptions get caught and rendered
+        ExcClass = HTTPError
+    else:
+        # if no toolbar, then any exception gets caught and rendered
+        ExcClass = Exception
+    config.add_view(error_handler, context=ExcClass)
+
 
 def includeme_last(config):
     """
@@ -313,6 +324,10 @@ def wrap_app_in_wsgi_middlewares(pyramid_app, config):
     # migration to pyramid.
     pyramid_app = RoutesMiddleware(
         pyramid_app, config.registry._pylons_compat_config['routes.map'])
+
+    if asbool(settings.get('appenlight', 'false')):
+        pyramid_app, _ = wrap_in_appenlight_if_enabled(
+            pyramid_app, config.registry._pylons_compat_config)
 
     # TODO: johbo: Don't really see why we enable the gzip middleware when
     # serving static files, might be something that should have its own setting
