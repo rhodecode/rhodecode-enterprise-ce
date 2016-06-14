@@ -261,7 +261,10 @@ def includeme(config):
                     webob_to_pyramid_http_response(response), request)
         except HTTPError as e: # pyramid type exceptions
             return error_handler(e, request)
-
+        except Exception:
+            if settings.get('debugtoolbar.enabled', False):
+                raise
+            return error_handler(HTTPInternalServerError(), request)
         return response
 
     # This is the glue which allows us to migrate in chunks. By registering the
