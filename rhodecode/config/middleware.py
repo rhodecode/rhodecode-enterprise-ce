@@ -158,6 +158,16 @@ def add_pylons_compat_data(registry, global_config, settings):
     registry._pylons_compat_settings = settings
 
 
+def webob_to_pyramid_http_response(webob_response):
+    ResponseClass = httpexceptions.status_map[webob_response.status_int]
+    pyramid_response = ResponseClass(webob_response.status)
+    pyramid_response.status = webob_response.status
+    pyramid_response.headers.update(webob_response.headers)
+    if pyramid_response.headers['content-type'] == 'text/html':
+        pyramid_response.headers['content-type'] = 'text/html; charset=UTF-8'
+    return pyramid_response
+
+
 def error_handler(exc, request):
     # TODO: dan: replace the old pylons error controller with this
     from rhodecode.model.settings import SettingsModel
@@ -237,7 +247,6 @@ def includeme(config):
     if not vcs_server_enabled:
         pylons_app_as_view = DisableVCSPagesWrapper(pylons_app_as_view)
 
-
     def pylons_app_with_error_handler(context, request):
         """
         Handle exceptions from rc pylons app:
@@ -248,8 +257,8 @@ def includeme(config):
         try:
             response = pylons_app_as_view(context, request)
             if 400 <= response.status_int <= 599: # webob type error responses
-                ExcClass = httpexceptions.status_map[response.status_int]
-                return error_handler(ExcClass(response.status), request)
+                return error_handler(
+                    webob_to_pyramid_http_response(response), request)
         except HTTPError as e: # pyramid type exceptions
             return error_handler(e, request)
 
