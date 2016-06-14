@@ -70,7 +70,7 @@ class DisableVCSPagesWrapper(object):
         self.handler = handler
 
     def __call__(self, context, request):
-        if not self._check_vcs_requirement(request.environ['PATH_INFO']):
+        if not self._check_vcs_requirement(request.path):
             raise VCSServerUnavailable('VCS Server is not available')
 
         return self.handler(context, request)

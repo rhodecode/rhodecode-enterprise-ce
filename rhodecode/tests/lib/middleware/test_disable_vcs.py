@@ -19,36 +19,35 @@
 # and proprietary license terms, please see https://rhodecode.com/licenses/
 
 import pytest
-from rhodecode.lib.middleware.disable_vcs import DisableVCSPagesWrapper
+from pyramid.response import Response
+from pyramid.testing import DummyRequest
+from rhodecode.lib.middleware.disable_vcs import (
+    DisableVCSPagesWrapper, VCSServerUnavailable)
 
 
-@pytest.mark.parametrize('url, expected_url', [
-    ('/', '/'),
-    ('/_admin/settings', '/_admin/settings'),
-    ('/_admin/i_am_fine', '/_admin/i_am_fine'),
-    ('/_admin/settings/mappings', '/error/vcs_unavailable'),
-    ('/_admin/my_account/repos', '/error/vcs_unavailable'),
-    ('/_admin/create_repository', '/error/vcs_unavailable'),
-    ('/_admin/gists/1', '/error/vcs_unavailable'),
-    ('/_admin/notifications/1', '/error/vcs_unavailable'),
+@pytest.mark.parametrize('url, should_raise', [
+    ('/', False),
+    ('/_admin/settings', False),
+    ('/_admin/i_am_fine', False),
+    ('/_admin/settings/mappings', True),
+    ('/_admin/my_account/repos', True),
+    ('/_admin/create_repository', True),
+    ('/_admin/gists/1', True),
+    ('/_admin/notifications/1', True),
 ])
-def test_vcs_disabled(url, expected_url):
-    app = DisableVCSPagesWrapper(app=SimpleApp())
-    assert expected_url == app(get_environ(url), None)
+def test_vcs_disabled(url, should_raise):
+    wrapped_view = DisableVCSPagesWrapper(pyramid_view)
+    request = DummyRequest(path=url)
 
+    if should_raise:
+        with pytest.raises(VCSServerUnavailable):
+            response = wrapped_view(None, request)
+    else:
+        response = wrapped_view(None, request)
+        assert response.status_int == 200
 
-def get_environ(url):
-    """Construct a minimum WSGI environ based on the URL."""
-    environ = {
-        'PATH_INFO': url,
-    }
-    return environ
-
-
-class SimpleApp(object):
+def pyramid_view(context, request):
     """
-    A mock app to be used in the wrapper that returns the modified URL
-    from the middleware
+    A mock pyramid view to be used in the wrapper
     """
-    def __call__(self, environ, start_response):
-        return environ['PATH_INFO']
+    return Response('success')
