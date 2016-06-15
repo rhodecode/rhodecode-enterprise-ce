@@ -822,7 +822,7 @@ class NavigationRegistry(object):
         NavEntry('system', lazy_ugettext('System Info'),
                  'admin_settings_system'),
         NavEntry('open_source', lazy_ugettext('Open Source Licenses'),
-                 'admin_settings_open_source'),
+                 'admin_settings_open_source', pyramid=True),
         # TODO: marcink: we disable supervisor now until the supervisor stats
         # page is fixed in the nix configuration
         # NavEntry('supervisor', lazy_ugettext('Supervisor'),

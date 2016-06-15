@@ -214,6 +214,7 @@ def includeme(config):
     # Includes which are required. The application would fail without them.
     config.include('pyramid_mako')
     config.include('pyramid_beaker')
+    config.include('rhodecode.admin')
     config.include('rhodecode.authentication')
     config.include('rhodecode.login')
     config.include('rhodecode.tweens')
