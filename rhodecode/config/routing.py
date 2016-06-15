@@ -505,10 +505,6 @@ def make_map(config):
         m.connect('admin_settings_labs', '/settings/labs',
                   action='settings_labs', conditions={'method': ['GET']})
 
-        m.connect('admin_settings_open_source', '/settings/open_source',
-                  action='settings_open_source',
-                  conditions={'method': ['GET']})
-
     # ADMIN MY ACCOUNT
     with rmap.submapper(path_prefix=ADMIN_PREFIX,
                         controller='admin/my_account') as m:

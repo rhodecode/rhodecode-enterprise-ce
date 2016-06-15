@@ -47,7 +47,7 @@ from rhodecode.lib.utils2 import (
     str2bool, safe_unicode, AttributeDict, safe_int)
 from rhodecode.lib.compat import OrderedDict
 from rhodecode.lib.ext_json import json
-from rhodecode.lib.utils import jsonify, read_opensource_licenses
+from rhodecode.lib.utils import jsonify
 
 from rhodecode.model.db import RhodeCodeUi, Repository
 from rhodecode.model.forms import ApplicationSettingsForm, \
@@ -61,7 +61,7 @@ from rhodecode.model.settings import (
     IssueTrackerSettingsModel, VcsSettingsModel, SettingNotFound,
     SettingsModel)
 from rhodecode.model.supervisor import SupervisorModel, SUPERVISOR_MASTER
-from rhodecode.model.user import UserModel
+
 
 log = logging.getLogger(__name__)
 
@@ -726,20 +726,6 @@ class SettingsController(BaseController):
 
         c.active = 'labs'
         c.lab_settings = _LAB_SETTINGS
-
-        return htmlfill.render(
-            render('admin/settings/settings.html'),
-            defaults=self._form_defaults(),
-            encoding='UTF-8',
-            force_defaults=False)
-
-    @HasPermissionAllDecorator('hg.admin')
-    def settings_open_source(self):
-        # url('admin_settings_open_source')
-
-        c.active = 'open_source'
-        c.opensource_licenses = collections.OrderedDict(
-            sorted(read_opensource_licenses().items(), key=lambda t: t[0]))
 
         return htmlfill.render(
             render('admin/settings/settings.html'),
