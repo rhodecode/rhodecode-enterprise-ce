@@ -950,13 +950,13 @@
     };
   };
   python-editor = super.buildPythonPackage {
-    name = "python-editor-1.0";
+    name = "python-editor-1.0.1";
     buildInputs = with self; [];
     doCheck = false;
     propagatedBuildInputs = with self; [];
     src = fetchurl {
-      url = "https://pypi.python.org/packages/f5/d9/01eb441489c8bd2adb33ee4f3aea299a3db531a584cb39c57a0ecf516d9c/python-editor-1.0.tar.gz";
-      md5 = "a5ead611360b17b52507297d8590b4e8";
+      url = "https://pypi.python.org/packages/2b/c0/df7b87d5cf016f82eab3b05cd35f53287c1178ad8c42bfb6fa61b89b22f6/python-editor-1.0.1.tar.gz";
+      md5 = "e1fa63535b40e022fa4fd646fd8b511a";
     };
   };
   python-ldap = super.buildPythonPackage {
@@ -1040,7 +1040,7 @@
     };
   };
   rhodecode-enterprise-ce = super.buildPythonPackage {
-    name = "rhodecode-enterprise-ce-4.1.0";
+    name = "rhodecode-enterprise-ce-4.1.1";
     buildInputs = with self; [WebTest configobj cssselect flake8 lxml mock pytest pytest-cov pytest-runner];
     doCheck = true;
     propagatedBuildInputs = with self; [Babel Beaker FormEncode Mako Markdown MarkupSafe MySQL-python Paste PasteDeploy PasteScript Pygments Pylons Pyro4 Routes SQLAlchemy Tempita URLObject WebError WebHelpers WebHelpers2 WebOb WebTest Whoosh alembic amqplib anyjson appenlight-client authomatic backport-ipaddress celery colander decorator docutils gunicorn infrae.cache ipython iso8601 kombu msgpack-python packaging psycopg2 pycrypto pycurl pyparsing pyramid pyramid-debugtoolbar pyramid-mako pyramid-beaker pysqlite python-dateutil python-ldap python-memcached python-pam recaptcha-client repoze.lru requests simplejson waitress zope.cachedescriptors psutil py-bcrypt];
@@ -1177,13 +1177,13 @@
     };
   };
   urllib3 = super.buildPythonPackage {
-    name = "urllib3-1.15.1";
+    name = "urllib3-1.16";
     buildInputs = with self; [];
     doCheck = false;
     propagatedBuildInputs = with self; [];
     src = fetchurl {
-      url = "https://pypi.python.org/packages/49/26/a7d12ea00cb4b9fa1e13b5980e5a04a1fe7c477eb8f657ce0b757a7a497d/urllib3-1.15.1.tar.gz";
-      md5 = "5be254b0dbb55d1307ede99e1895c8dd";
+      url = "https://pypi.python.org/packages/3b/f0/e763169124e3f5db0926bc3dbfcd580a105f9ca44cf5d8e6c7a803c9f6b5/urllib3-1.16.tar.gz";
+      md5 = "fcaab1c5385c57deeb7053d3d7d81d59";
     };
   };
   venusian = super.buildPythonPackage {
