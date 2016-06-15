@@ -44,7 +44,10 @@ class AuthnPluginViewBase(object):
         self.request = request
         self.context = context
         self.plugin = context.plugin
+        self._rhodecode_user = request.user
 
+    @LoginRequired()
+    @HasPermissionAllDecorator('hg.admin')
     def settings_get(self, defaults=None, errors=None):
         """
         View that displays the plugin settings as a form.
@@ -67,6 +70,9 @@ class AuthnPluginViewBase(object):
 
         return template_context
 
+    @LoginRequired()
+    @HasPermissionAllDecorator('hg.admin')
+    @auth.CSRFRequired()
     def settings_post(self):
         """
         View that validates and stores the plugin settings.

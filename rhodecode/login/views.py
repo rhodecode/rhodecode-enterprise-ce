@@ -208,6 +208,8 @@ class LoginView(object):
         })
         return render_ctx
 
+    @HasPermissionAnyDecorator(
+        'hg.admin', 'hg.register.auto_activate', 'hg.register.manual_activate')
     @view_config(
         route_name='register', request_method='POST',
         renderer='rhodecode:templates/register.html')
