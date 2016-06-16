@@ -133,6 +133,12 @@ self: super: {
     };
   });
 
+  pyramid-debugtoolbar = super.pyramid-debugtoolbar.override (attrs: {
+    meta = {
+      license = [ pkgs.lib.licenses.bsdOriginal localLicenses.repoze ];
+    };
+  });
+
   Pyro4 = super.Pyro4.override (attrs: {
     # TODO: Was not able to generate this version, needs further
     # investigation.
