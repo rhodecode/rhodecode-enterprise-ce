@@ -107,6 +107,9 @@ class RhodeCodeAuthPluginBase(object):
     def __init__(self, plugin_id):
         self._plugin_id = plugin_id
 
+    def __str__(self):
+        return self.get_id()
+
     def _get_setting_full_name(self, name):
         """
         Return the full setting name used for storing values in the database.
