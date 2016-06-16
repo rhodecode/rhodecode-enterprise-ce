@@ -976,7 +976,7 @@ def read_opensource_licenses():
 
     if not _license_cache:
         licenses = pkg_resources.resource_string(
-            'rhodecode.config', 'licenses.json')
+            'rhodecode', 'config/licenses.json')
         _license_cache = json.loads(licenses)
 
     return _license_cache
