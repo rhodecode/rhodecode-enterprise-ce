@@ -99,9 +99,6 @@ def make_app(global_conf, full_stack=True, static_files=True, **app_conf):
         # need any pylons stack middleware in them
         app = VCSMiddleware(app, config, appenlight_client)
 
-    # enable https redirects based on HTTP_X_URL_SCHEME set by proxy
-    app = HttpsFixup(app, config)
-
     # Establish the Registry for this application
     app = RegistryManager(app)
 
@@ -321,7 +318,11 @@ def wrap_app_in_wsgi_middlewares(pyramid_app, config):
     """
     settings = config.registry.settings
 
+    # enable https redirects based on HTTP_X_URL_SCHEME set by proxy
+    pyramid_app = HttpsFixup(pyramid_app, settings)
+
     # Add RoutesMiddleware to support the pylons compatibility tween during
+
     # migration to pyramid.
     pyramid_app = RoutesMiddleware(
         pyramid_app, config.registry._pylons_compat_config['routes.map'])
