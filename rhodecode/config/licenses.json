@@ -1,217 +1,256 @@
 {
-  "cyrus-sasl-2.1.26": {
-    "cyrus": "http://cyrusimap.web.cmu.edu/mediawiki/index.php/Downloads#Licensing"
+  "nodejs-4.3.1": {
+    "MIT License": "http://spdx.org/licenses/MIT"
   }, 
-  "openldap-2.4.41": {
-    "OLDAP-2.8": "http://spdx.org/licenses/OLDAP-2.8"
+  "postgresql-9.5.1": {
+    "PostgreSQL License": "http://spdx.org/licenses/PostgreSQL"
   }, 
-  "openssl-1.0.1p": {
-    "OpenSSL": "http://spdx.org/licenses/OpenSSL"
-  }, 
-  "python-2.7.10": {
-    "Python-2.0": "http://spdx.org/licenses/Python-2.0"
+  "python-2.7.11": {
+    "Python Software Foundation License version 2": "http://spdx.org/licenses/Python-2.0"
   }, 
   "python2.7-Babel-1.3": {
-    "BSD-3-Clause": "http://spdx.org/licenses/BSD-3-Clause"
+    "BSD 4-clause \"Original\" or \"Old\" License": "http://spdx.org/licenses/BSD-4-Clause"
   }, 
   "python2.7-Beaker-1.7.0": {
-    "BSD-3-Clause": "http://spdx.org/licenses/BSD-3-Clause"
+    "BSD 4-clause \"Original\" or \"Old\" License": "http://spdx.org/licenses/BSD-4-Clause"
   }, 
   "python2.7-FormEncode-1.2.4": {
-    "Python-2.0": "http://spdx.org/licenses/Python-2.0"
+    "Python Software Foundation License version 2": "http://spdx.org/licenses/Python-2.0"
   }, 
   "python2.7-Mako-1.0.1": {
-    "MIT": "http://spdx.org/licenses/MIT"
+    "MIT License": "http://spdx.org/licenses/MIT"
   }, 
   "python2.7-Markdown-2.6.2": {
-    "BSD-3-Clause": "http://spdx.org/licenses/BSD-3-Clause"
+    "BSD 4-clause \"Original\" or \"Old\" License": "http://spdx.org/licenses/BSD-4-Clause"
   }, 
   "python2.7-MarkupSafe-0.23": {
-    "BSD-3-Clause": "http://spdx.org/licenses/BSD-3-Clause"
+    "BSD 4-clause \"Original\" or \"Old\" License": "http://spdx.org/licenses/BSD-4-Clause"
   }, 
   "python2.7-Paste-2.0.2": {
-    "MIT": "http://spdx.org/licenses/MIT"
+    "MIT License": "http://spdx.org/licenses/MIT"
   }, 
   "python2.7-PasteDeploy-1.5.2": {
-    "MIT": "http://spdx.org/licenses/MIT"
+    "MIT License": "http://spdx.org/licenses/MIT"
   }, 
   "python2.7-PasteScript-1.7.5": {
-    "MIT": "http://spdx.org/licenses/MIT"
+    "MIT License": "http://spdx.org/licenses/MIT"
   }, 
   "python2.7-Pygments-2.0.2": {
-    "BSD-2-Clause": "http://spdx.org/licenses/BSD-2-Clause"
+    "BSD 4-clause \"Original\" or \"Old\" License": "http://spdx.org/licenses/BSD-4-Clause"
   }, 
-  "python2.7-Pylons-1.0.2-patch1": {
-    "BSD-3-Clause": "http://spdx.org/licenses/BSD-3-Clause"
+  "python2.7-Pylons-1.0.1-patch1": {
+    "BSD 4-clause \"Original\" or \"Old\" License": "http://spdx.org/licenses/BSD-4-Clause"
   }, 
   "python2.7-Pyro4-4.35": {
-    "MIT": "http://spdx.org/licenses/MIT"
+    "MIT License": "http://spdx.org/licenses/MIT"
   }, 
   "python2.7-Routes-1.13": {
-    "MIT": "http://spdx.org/licenses/MIT"
+    "BSD 4-clause \"Original\" or \"Old\" License": "http://spdx.org/licenses/BSD-4-Clause"
   }, 
   "python2.7-SQLAlchemy-0.9.9": {
-    "MIT": "http://spdx.org/licenses/MIT"
+    "MIT License": "http://spdx.org/licenses/MIT"
   }, 
   "python2.7-Tempita-0.5.2": {
-    "MIT": "http://spdx.org/licenses/MIT"
+    "MIT License": "http://spdx.org/licenses/MIT"
   }, 
   "python2.7-URLObject-2.4.0": {
-    "Unlicense": "http://spdx.org/licenses/Unlicense"
+    "The Unlicense": "http://unlicense.org/"
   }, 
   "python2.7-WebError-0.10.3": {
-    "MIT": "http://spdx.org/licenses/MIT"
+    "MIT License": "http://spdx.org/licenses/MIT"
   }, 
-  "python2.7-WebHelpers-1.3-cust1": {
-    "BSD-3-Clause": "http://spdx.org/licenses/BSD-3-Clause"
+  "python2.7-WebHelpers-1.3": {
+    "BSD 4-clause \"Original\" or \"Old\" License": "http://spdx.org/licenses/BSD-4-Clause"
   }, 
   "python2.7-WebHelpers2-2.0": {
-    "BSD-3-Clause": "http://spdx.org/licenses/BSD-3-Clause"
+    "MIT License": "http://spdx.org/licenses/MIT"
   }, 
   "python2.7-WebOb-1.3.1": {
-    "MIT": "http://spdx.org/licenses/MIT"
+    "MIT License": "http://spdx.org/licenses/MIT"
   }, 
-  "python2.7-Whoosh-2.7.0-patch1": {
-    "BSD-2-Clause": "http://spdx.org/licenses/BSD-2-Clause"
+  "python2.7-Whoosh-2.7.0": {
+    "BSD 2-clause \"Simplified\" License": "http://spdx.org/licenses/BSD-2-Clause", 
+    "BSD 4-clause \"Original\" or \"Old\" License": "http://spdx.org/licenses/BSD-4-Clause"
   }, 
   "python2.7-alembic-0.8.4": {
-    "MIT": "http://spdx.org/licenses/MIT"
+    "MIT License": "http://spdx.org/licenses/MIT"
   }, 
   "python2.7-amqplib-1.0.2": {
-    "LGPL-3.0": "http://spdx.org/licenses/LGPL-3.0"
+    "GNU Lesser General Public License v3.0 only": "http://spdx.org/licenses/LGPL-3.0"
   }, 
   "python2.7-anyjson-0.3.3": {
-    "BSD-2-Clause": "http://spdx.org/licenses/BSD-2-Clause"
+    "BSD 4-clause \"Original\" or \"Old\" License": "http://spdx.org/licenses/BSD-4-Clause"
   }, 
-  "python2.7-appenlight_client-0.6.14": {
-    "BSD-2-Clause": "http://spdx.org/licenses/BSD-2-Clause"
+  "python2.7-appenlight-client-0.6.14": {
+    "BSD 4-clause \"Original\" or \"Old\" License": "http://spdx.org/licenses/BSD-4-Clause"
   }, 
-  "python2.7-backport_ipaddress-0.1": {
-    "Python-2.0": "http://spdx.org/licenses/Python-2.0"
+  "python2.7-authomatic-0.1.0.post1": {
+    "MIT License": "http://spdx.org/licenses/MIT"
+  }, 
+  "python2.7-backport-ipaddress-0.1": {
+    "Python Software Foundation License version 2": "http://spdx.org/licenses/Python-2.0"
   }, 
   "python2.7-celery-2.2.10": {
-    "BSD-2-Clause": "http://spdx.org/licenses/BSD-2-Clause"
+    "BSD 4-clause \"Original\" or \"Old\" License": "http://spdx.org/licenses/BSD-4-Clause"
   }, 
-  "python2.7-click-4.0": {
-    "BSD-3-Clause": "http://spdx.org/licenses/BSD-3-Clause"
+  "python2.7-click-5.1": {
+    "BSD 4-clause \"Original\" or \"Old\" License": "http://spdx.org/licenses/BSD-4-Clause"
+  }, 
+  "python2.7-colander-1.2": {
+    "Repoze License": "http://www.repoze.org/LICENSE.txt"
   }, 
   "python2.7-configobj-5.0.6": {
-    "BSD-3-Clause": "http://spdx.org/licenses/BSD-3-Clause"
+    "BSD 4-clause \"Original\" or \"Old\" License": "http://spdx.org/licenses/BSD-4-Clause"
   }, 
   "python2.7-cssselect-0.9.1": {
-    "BSD-2-Clause": "http://spdx.org/licenses/BSD-2-Clause"
+    "BSD 4-clause \"Original\" or \"Old\" License": "http://spdx.org/licenses/BSD-4-Clause"
   }, 
   "python2.7-decorator-3.4.2": {
-    "BSD-3-Clause": "http://spdx.org/licenses/BSD-3-Clause"
+    "BSD 4-clause \"Original\" or \"Old\" License": "http://spdx.org/licenses/BSD-4-Clause"
   }, 
   "python2.7-docutils-0.12": {
-    "BSD-2-Clause": "http://spdx.org/licenses/BSD-2-Clause"
+    "BSD 2-clause \"Simplified\" License": "http://spdx.org/licenses/BSD-2-Clause"
+  }, 
+  "python2.7-elasticsearch-2.3.0": {
+    "Apache License 2.0": "http://spdx.org/licenses/Apache-2.0"
+  }, 
+  "python2.7-elasticsearch-dsl-2.0.0": {
+    "Apache License 2.0": "http://spdx.org/licenses/Apache-2.0"
   }, 
   "python2.7-future-0.14.3": {
-    "MIT": "http://spdx.org/licenses/MIT"
+    "MIT License": "http://spdx.org/licenses/MIT"
   }, 
   "python2.7-futures-3.0.2": {
-    "BSD-3-Clause": "http://spdx.org/licenses/BSD-3-Clause"
+    "BSD 4-clause \"Original\" or \"Old\" License": "http://spdx.org/licenses/BSD-4-Clause"
   }, 
-  "python2.7-greenlet-0.4.7": {
-    "MIT": "http://spdx.org/licenses/MIT"
+  "python2.7-gnureadline-6.3.3": {
+    "GNU General Public License v1.0 only": "http://spdx.org/licenses/GPL-1.0"
   }, 
-  "python2.7-gunicorn-19.3.0": {
-    "MIT": "http://spdx.org/licenses/MIT"
+  "python2.7-gunicorn-19.6.0": {
+    "MIT License": "http://spdx.org/licenses/MIT"
+  }, 
+  "python2.7-infrae.cache-1.0.1": {
+    "Zope Public License 2.1": "http://spdx.org/licenses/ZPL-2.1"
   }, 
   "python2.7-ipython-3.1.0": {
-    "BSD-3-Clause": "http://spdx.org/licenses/BSD-3-Clause"
+    "BSD 4-clause \"Original\" or \"Old\" License": "http://spdx.org/licenses/BSD-4-Clause"
   }, 
-  "python2.7-kombu-1.5.1-patch1": {
-    "BSD-3-Clause": "http://spdx.org/licenses/BSD-3-Clause"
+  "python2.7-iso8601-0.1.11": {
+    "MIT License": "http://spdx.org/licenses/MIT"
   }, 
-  "python2.7-mccabe-0.3": {
-    "expat": "http://directory.fsf.org/wiki/License:Expat"
-  }, 
-  "python2.7-meld3-1.0.2": {
-    "repoze": "http://repoze.org/license.html"
+  "python2.7-kombu-1.5.1": {
+    "BSD 4-clause \"Original\" or \"Old\" License": "http://spdx.org/licenses/BSD-4-Clause"
   }, 
   "python2.7-msgpack-python-0.4.6": {
-    "Apache-2.0": "http://spdx.org/licenses/Apache-2.0"
-  }, 
-  "python2.7-objgraph-2.0.0": {
-    "MIT": "http://spdx.org/licenses/MIT"
+    "Apache License 2.0": "http://spdx.org/licenses/Apache-2.0"
   }, 
   "python2.7-packaging-15.2": {
-    "Apache-2.0": "http://spdx.org/licenses/Apache-2.0"
+    "Apache License 2.0": "http://spdx.org/licenses/Apache-2.0"
   }, 
   "python2.7-psutil-2.2.1": {
-    "BSD-2-Clause": "http://spdx.org/licenses/BSD-2-Clause"
+    "BSD 4-clause \"Original\" or \"Old\" License": "http://spdx.org/licenses/BSD-4-Clause"
   }, 
   "python2.7-psycopg2-2.6": {
-    "LGPL-3.0+": "http://spdx.org/licenses/LGPL-3.0+"
+    "GNU Lesser General Public License v3.0 or later": "http://spdx.org/licenses/LGPL-3.0+"
   }, 
   "python2.7-py-1.4.29": {
-    "MIT": "http://spdx.org/licenses/MIT"
+    "MIT License": "http://spdx.org/licenses/MIT"
   }, 
   "python2.7-py-bcrypt-0.4": {
-    "BSD-4-Clause": "http://spdx.org/licenses/BSD-4-Clause"
+    "BSD 4-clause \"Original\" or \"Old\" License": "http://spdx.org/licenses/BSD-4-Clause"
   }, 
   "python2.7-pycrypto-2.6.1": {
-    "publicDomain": null
+    "Public Domain": null
+  }, 
+  "python2.7-pycurl-7.19.5": {
+    "MIT License": "http://spdx.org/licenses/MIT"
   }, 
   "python2.7-pyparsing-1.5.7": {
-    "MIT": "http://spdx.org/licenses/MIT"
+    "MIT License": "http://spdx.org/licenses/MIT"
+  }, 
+  "python2.7-pyramid-1.6.1": {
+    "Repoze License": "http://www.repoze.org/LICENSE.txt"
+  }, 
+  "python2.7-pyramid-beaker-0.8": {
+    "Repoze License": "http://www.repoze.org/LICENSE.txt"
+  }, 
+  "python2.7-pyramid-debugtoolbar-2.4.2": {
+    "BSD 4-clause \"Original\" or \"Old\" License": "http://spdx.org/licenses/BSD-4-Clause", 
+    "Repoze License": "http://www.repoze.org/LICENSE.txt"
+  }, 
+  "python2.7-pyramid-mako-1.0.2": {
+    "Repoze License": "http://www.repoze.org/LICENSE.txt"
   }, 
   "python2.7-pysqlite-2.6.3": {
-    "Libpng": "http://spdx.org/licenses/Libpng", 
-    "Zlib": "http://spdx.org/licenses/Zlib"
+    "libpng License": "http://spdx.org/licenses/Libpng", 
+    "zlib License": "http://spdx.org/licenses/Zlib"
   }, 
   "python2.7-pytest-2.8.5": {
-    "MIT": "http://spdx.org/licenses/MIT"
+    "MIT License": "http://spdx.org/licenses/MIT"
+  }, 
+  "python2.7-pytest-runner-2.7.1": {
+    "MIT License": "http://spdx.org/licenses/MIT"
   }, 
   "python2.7-python-dateutil-1.5": {
-    "BSD-2-Clause": "http://spdx.org/licenses/BSD-2-Clause"
+    "Python Software Foundation License version 2": "http://spdx.org/licenses/Python-2.0"
+  }, 
+  "python2.7-python-editor-1.0.1": {
+    "Apache License 2.0": "http://spdx.org/licenses/Apache-2.0"
   }, 
   "python2.7-python-ldap-2.4.19": {
-    "Python-2.0": "http://spdx.org/licenses/Python-2.0"
+    "Python Software Foundation License version 2": "http://spdx.org/licenses/Python-2.0"
+  }, 
+  "python2.7-python-memcached-1.57": {
+    "Python Software Foundation License version 2": "http://spdx.org/licenses/Python-2.0"
   }, 
   "python2.7-pytz-2015.4": {
-    "MIT": "http://spdx.org/licenses/MIT"
+    "MIT License": "http://spdx.org/licenses/MIT"
   }, 
   "python2.7-recaptcha-client-1.0.6": {
-    "MIT": "http://spdx.org/licenses/MIT"
+    "MIT License": "http://spdx.org/licenses/MIT"
   }, 
   "python2.7-repoze.lru-0.6": {
-    "repoze": "http://repoze.org/license.html"
+    "Repoze License": "http://www.repoze.org/LICENSE.txt"
   }, 
-  "python2.7-requests-2.5.1": {
-    "APSL-2.0": "http://spdx.org/licenses/APSL-2.0"
+  "python2.7-requests-2.9.1": {
+    "Apache License 2.0": "http://spdx.org/licenses/Apache-2.0"
   }, 
-  "python2.7-serpent-1.11": {
-    "MIT": "http://spdx.org/licenses/MIT"
+  "python2.7-serpent-1.12": {
+    "MIT License": "http://spdx.org/licenses/MIT"
   }, 
-  "python2.7-setproctitle-1.1.8": {
-    "BSD-2-Clause": "http://spdx.org/licenses/BSD-2-Clause"
+  "python2.7-setuptools-19.4": {
+    "Python Software Foundation License version 2": "http://spdx.org/licenses/Python-2.0", 
+    "Zope Public License 2.0": "http://spdx.org/licenses/ZPL-2.0"
   }, 
-  "python2.7-setuptools-18.0.1": {
-    "PSF": null, 
-    "ZPL": null
+  "python2.7-setuptools-scm-1.11.0": {
+    "MIT License": "http://spdx.org/licenses/MIT"
   }, 
   "python2.7-simplejson-3.7.2": {
-    "MIT": "http://spdx.org/licenses/MIT"
+    "Academic Free License": "http://spdx.org/licenses/AFL-2.1", 
+    "MIT License": "http://spdx.org/licenses/MIT"
   }, 
   "python2.7-six-1.9.0": {
-    "MIT": "http://spdx.org/licenses/MIT"
+    "MIT License": "http://spdx.org/licenses/MIT"
   }, 
-  "python2.7-subprocess32-3.2.6": {
-    "Python-2.0": "http://spdx.org/licenses/Python-2.0"
+  "python2.7-translationstring-1.3": {
+    "Repoze License": "http://www.repoze.org/LICENSE.txt"
   }, 
-  "python2.7-supervisor-3.1.3": {
-    "repoze": "http://repoze.org/license.html"
+  "python2.7-urllib3-1.16": {
+    "MIT License": "http://spdx.org/licenses/MIT"
   }, 
-  "python2.7-trollius-1.0.4": {
-    "APSL-2.0": "http://spdx.org/licenses/APSL-2.0"
+  "python2.7-venusian-1.0": {
+    "Repoze License": "http://www.repoze.org/LICENSE.txt"
   }, 
   "python2.7-waitress-0.8.9": {
-    "ZPL-2.1": "http://spdx.org/licenses/ZPL-2.1"
+    "Zope Public License 2.1": "http://spdx.org/licenses/ZPL-2.1"
   }, 
   "python2.7-zope.cachedescriptors-4.0.0": {
-    "ZPL-2.1": "http://spdx.org/licenses/ZPL-2.1"
+    "Zope Public License 2.1": "http://spdx.org/licenses/ZPL-2.1"
+  }, 
+  "python2.7-zope.deprecation-4.1.2": {
+    "Zope Public License 2.1": "http://spdx.org/licenses/ZPL-2.1"
+  }, 
+  "python2.7-zope.interface-4.1.3": {
+    "Zope Public License 2.1": "http://spdx.org/licenses/ZPL-2.1"
   }
 }
