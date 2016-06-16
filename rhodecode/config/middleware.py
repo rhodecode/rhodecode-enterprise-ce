@@ -120,9 +120,6 @@ def make_app(global_conf, full_stack=True, static_files=True, **app_conf):
         else:
             app = StatusCodeRedirect(app, [400, 401, 403, 404, 500])
 
-    # enable https redirects based on HTTP_X_URL_SCHEME set by proxy
-    app = HttpsFixup(app, config)
-
     # Establish the Registry for this application
     app = RegistryManager(app)
 
@@ -253,8 +250,12 @@ def wrap_app_in_wsgi_middlewares(pyramid_app, config):
     """
     settings = config.registry.settings
 
+    # enable https redirects based on HTTP_X_URL_SCHEME set by proxy
+    pyramid_app = HttpsFixup(pyramid_app, settings)
+
     # Add RoutesMiddleware. Currently we have two instances in the stack. This
     # is the upper one to support the pylons compatibility tween during
+
     # migration to pyramid.
     pyramid_app = RoutesMiddleware(
         pyramid_app, config.registry._pylons_compat_config['routes.map'])
