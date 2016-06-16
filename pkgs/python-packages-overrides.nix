@@ -90,8 +90,6 @@ self: super: {
     propagatedBuildInputs = attrs.propagatedBuildInputs ++ [
       pkgs.postgresql
     ];
-    # TODO:
-    #  - https://stackoverflow.com/questions/7751445/can-i-bundle-psycopg2-with-a-closed-source-django-application-using-py2exe
     meta = {
       license = pkgs.lib.licenses.lgpl3Plus;
     };
