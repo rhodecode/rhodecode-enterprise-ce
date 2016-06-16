@@ -8,9 +8,27 @@
 
 let
   sed = "sed -i";
+  localLicenses = {
+    repoze = {
+      fullName = "Repoze License";
+      url =  http://www.repoze.org/LICENSE.txt;
+    };
+  };
 in
 
 self: super: {
+
+  appenlight-client = super.appenlight-client.override (attrs: {
+    meta = {
+      license = [ pkgs.lib.licenses.bsdOriginal ];
+    };
+  });
+
+  future = super.future.override (attrs: {
+    meta = {
+      license = [ pkgs.lib.licenses.mit ];
+    };
+  });
 
   gnureadline = super.gnureadline.override (attrs: {
     buildInputs = attrs.buildInputs ++ [
@@ -72,6 +90,11 @@ self: super: {
     propagatedBuildInputs = attrs.propagatedBuildInputs ++ [
       pkgs.postgresql
     ];
+    # TODO:
+    #  - https://stackoverflow.com/questions/7751445/can-i-bundle-psycopg2-with-a-closed-source-django-application-using-py2exe
+    meta = {
+      license = pkgs.lib.licenses.lgpl3Plus;
+    };
   });
 
   pycurl = super.pycurl.override (attrs: {
@@ -83,6 +106,10 @@ self: super: {
       substituteInPlace setup.py --replace '--static-libs' '--libs'
       export PYCURL_SSL_LIBRARY=openssl
     '';
+    meta = {
+      # TODO: It is LGPL and MIT
+      license = pkgs.lib.licenses.mit;
+    };
   });
 
   Pylons = super.Pylons.override (attrs: {
@@ -101,6 +128,9 @@ self: super: {
       # confuses pserve.
       ${sed} '/import sys; sys.argv/d' $out/bin/.pserve-wrapped
     '';
+    meta = {
+      license = localLicenses.repoze;
+    };
   });
 
   Pyro4 = super.Pyro4.override (attrs: {
@@ -117,6 +147,9 @@ self: super: {
     propagatedBuildInputs = [
       pkgs.sqlite
     ];
+    meta = {
+      license = [ pkgs.lib.licenses.zlib pkgs.lib.licenses.libpng ];
+    };
   });
 
   pytest-runner = super.pytest-runner.override (attrs: {
@@ -165,6 +198,67 @@ self: super: {
         fullName = "The Unlicense";
         url = http://unlicense.org/;
       };
+    };
+  });
+
+  amqplib = super.amqplib.override (attrs: {
+    meta = {
+      license = pkgs.lib.licenses.lgpl3;
+    };
+  });
+
+  docutils = super.docutils.override (attrs: {
+    meta = {
+      license = pkgs.lib.licenses.bsd2;
+    };
+  });
+
+  colander = super.colander.override (attrs: {
+    meta = {
+      license = localLicenses.repoze;
+    };
+  });
+
+  pyramid-beaker  = super.pyramid-beaker.override (attrs: {
+    meta = {
+      license = localLicenses.repoze;
+    };
+  });
+
+  pyramid-mako = super.pyramid-mako.override (attrs: {
+    meta = {
+      license = localLicenses.repoze;
+    };
+  });
+
+  repoze.lru = super.repoze.lru.override (attrs: {
+    meta = {
+      license = localLicenses.repoze;
+    };
+  });
+
+  recaptcha-client = super.recaptcha-client.override (attrs: {
+    meta = {
+      # TODO: It is MIT/X11
+      license = pkgs.lib.licenses.mit;
+    };
+  });
+
+  python-editor = super.python-editor.override (attrs: {
+    meta = {
+      license = pkgs.lib.licenses.asl20;
+    };
+  });
+
+  translationstring = super.translationstring.override (attrs: {
+    meta = {
+      license = localLicenses.repoze;
+    };
+  });
+
+  venusian = super.venusian.override (attrs: {
+    meta = {
+      license = localLicenses.repoze;
     };
   });
 
