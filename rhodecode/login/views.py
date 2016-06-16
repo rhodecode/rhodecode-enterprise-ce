@@ -154,6 +154,7 @@ class LoginView(object):
                 self.session,
                 username=form_result['username'],
                 remember=form_result['remember'])
+            log.debug('Redirecting to "%s" after login.', came_from)
             raise HTTPFound(came_from, headers=headers)
         except formencode.Invalid as errors:
             defaults = errors.value
