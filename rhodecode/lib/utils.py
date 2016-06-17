@@ -726,11 +726,9 @@ def create_test_index(repo_location, config, full_index):
 
 def create_test_env(repos_test_path, config):
     """
-    Makes a fresh database and
-    installs test repository into tmp dir
+    Makes a fresh database.
     """
     from rhodecode.lib.db_manage import DbManage
-    from rhodecode.tests import HG_REPO, GIT_REPO, SVN_REPO, TESTS_TMP_PATH
 
     # PART ONE create db
     dbconf = config['sqlalchemy.db1.url']
@@ -752,7 +750,18 @@ def create_test_env(repos_test_path, config):
     dbmanage.create_permissions()
     dbmanage.populate_default_permissions()
     Session().commit()
-    # PART TWO make test repo
+
+    create_test_repositories(repos_test_path, config)
+
+
+def create_test_repositories(path, config):
+    """
+    Creates test repositories in the temporary directory. Repositories are
+    extracted from archives within the rc_testdata package.
+    """
+    import rc_testdata
+    from rhodecode.tests import HG_REPO, GIT_REPO, SVN_REPO, TESTS_TMP_PATH
+
     log.debug('making test vcs repositories')
 
     idx_path = config['search.location']
@@ -767,21 +776,12 @@ def create_test_env(repos_test_path, config):
         log.debug('remove %s', data_path)
         shutil.rmtree(data_path)
 
-    # CREATE DEFAULT TEST REPOS
-    cur_dir = dn(dn(abspath(__file__)))
-    with tarfile.open(jn(cur_dir, 'tests', 'fixtures',
-                         'vcs_test_hg.tar.gz')) as tar:
-        tar.extractall(jn(TESTS_TMP_PATH, HG_REPO))
-
-    cur_dir = dn(dn(abspath(__file__)))
-    with tarfile.open(jn(cur_dir, 'tests', 'fixtures',
-                         'vcs_test_git.tar.gz')) as tar:
-        tar.extractall(jn(TESTS_TMP_PATH, GIT_REPO))
+    rc_testdata.extract_hg_dump('vcs_test_hg', jn(TESTS_TMP_PATH, HG_REPO))
+    rc_testdata.extract_git_dump('vcs_test_git', jn(TESTS_TMP_PATH, GIT_REPO))
 
     # Note: Subversion is in the process of being integrated with the system,
     # until we have a properly packed version of the test svn repository, this
     # tries to copy over the repo from a package "rc_testdata"
-    import rc_testdata
     svn_repo_path = rc_testdata.get_svn_repo_archive()
     with tarfile.open(svn_repo_path) as tar:
         tar.extractall(jn(TESTS_TMP_PATH, SVN_REPO))
