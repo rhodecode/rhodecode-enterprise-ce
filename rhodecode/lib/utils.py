@@ -724,7 +724,16 @@ def create_test_index(repo_location, config):
         'vcs_search_index', os.path.dirname(config['search.location']))
 
 
-def create_test_env(repos_test_path, config):
+def create_test_directory(test_path):
+    """
+    create test dir if it doesn't exist
+    """
+    if not os.path.isdir(test_path):
+        log.debug('Creating testdir %s', test_path)
+        os.makedirs(test_path)
+
+
+def create_test_database(test_path, config):
     """
     Makes a fresh database.
     """
@@ -734,33 +743,26 @@ def create_test_env(repos_test_path, config):
     dbconf = config['sqlalchemy.db1.url']
     log.debug('making test db %s', dbconf)
 
-    # create test dir if it doesn't exist
-    if not os.path.isdir(repos_test_path):
-        log.debug('Creating testdir %s', repos_test_path)
-        os.makedirs(repos_test_path)
-
     dbmanage = DbManage(log_sql=False, dbconf=dbconf, root=config['here'],
                         tests=True, cli_args={'force_ask': True})
     dbmanage.create_tables(override=True)
     dbmanage.set_db_version()
     # for tests dynamically set new root paths based on generated content
-    dbmanage.create_settings(dbmanage.config_prompt(repos_test_path))
+    dbmanage.create_settings(dbmanage.config_prompt(test_path))
     dbmanage.create_default_user()
     dbmanage.create_test_admin_and_users()
     dbmanage.create_permissions()
     dbmanage.populate_default_permissions()
     Session().commit()
 
-    create_test_repositories(repos_test_path, config)
 
-
-def create_test_repositories(path, config):
+def create_test_repositories(test_path, config):
     """
     Creates test repositories in the temporary directory. Repositories are
     extracted from archives within the rc_testdata package.
     """
     import rc_testdata
-    from rhodecode.tests import HG_REPO, GIT_REPO, SVN_REPO, TESTS_TMP_PATH
+    from rhodecode.tests import HG_REPO, GIT_REPO, SVN_REPO
 
     log.debug('making test vcs repositories')
 
@@ -776,15 +778,15 @@ def create_test_repositories(path, config):
         log.debug('remove %s', data_path)
         shutil.rmtree(data_path)
 
-    rc_testdata.extract_hg_dump('vcs_test_hg', jn(TESTS_TMP_PATH, HG_REPO))
-    rc_testdata.extract_git_dump('vcs_test_git', jn(TESTS_TMP_PATH, GIT_REPO))
+    rc_testdata.extract_hg_dump('vcs_test_hg', jn(test_path, HG_REPO))
+    rc_testdata.extract_git_dump('vcs_test_git', jn(test_path, GIT_REPO))
 
     # Note: Subversion is in the process of being integrated with the system,
     # until we have a properly packed version of the test svn repository, this
     # tries to copy over the repo from a package "rc_testdata"
     svn_repo_path = rc_testdata.get_svn_repo_archive()
     with tarfile.open(svn_repo_path) as tar:
-        tar.extractall(jn(TESTS_TMP_PATH, SVN_REPO))
+        tar.extractall(jn(test_path, SVN_REPO))
 
 
 #==============================================================================
