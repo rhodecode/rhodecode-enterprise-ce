@@ -110,7 +110,7 @@ let
           pkgs.nodePackages.grunt-cli
           pkgs.subversion
           pytest-catchlog
-          rc_testdata
+          rhodecode-testdata
         ]);
 
       propagatedBuildInputs = attrs.propagatedBuildInputs ++ (with self; [
@@ -198,9 +198,11 @@ let
 
     });
 
-    rc_testdata = self.buildPythonPackage rec {
-      name = "rc_testdata-0.7.0";
-      src = rhodecode-testdata-src;
+    rhodecode-testdata = import "${rhodecode-testdata-src}/default.nix" {
+    inherit
+      doCheck
+      pkgs
+      pythonPackages;
     };
 
   };
