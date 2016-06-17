@@ -703,20 +703,7 @@ def get_custom_lexer(extension):
 #==============================================================================
 def create_test_index(repo_location, config):
     """
-    Makes default test index
-
-    :param config: test config
-    :param full_index:
-    # start test server:
-    rcserver --with-vcsserver test.ini
-
-    # build index and store it in /tmp/rc/index:
-    rhodecode-index --force --api-host=http://vps1.dev:5000 --api-key=xxx --engine-location=/tmp/rc/index
-
-    # package and move new packages
-    tar -zcvf vcs_search_index.tar.gz -C /tmp/rc index
-    mv vcs_search_index.tar.gz rhodecode/tests/fixtures/
-
+    Makes default test index.
     """
     import rc_testdata
 
@@ -726,7 +713,7 @@ def create_test_index(repo_location, config):
 
 def create_test_directory(test_path):
     """
-    create test dir if it doesn't exist
+    Create test directory if it doesn't exist.
     """
     if not os.path.isdir(test_path):
         log.debug('Creating testdir %s', test_path)
