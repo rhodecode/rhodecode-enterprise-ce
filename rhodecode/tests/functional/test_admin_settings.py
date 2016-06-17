@@ -460,7 +460,11 @@ class TestLabsSettings(object):
 
 @pytest.mark.usefixtures('app')
 class TestOpenSourceLicenses(object):
-    def test_records_are_displayed(self, autologin_user):
+
+    def _get_url(self, request):
+        return ADMIN_PREFIX + '/settings/open_source'
+
+    def test_records_are_displayed(self, autologin_user, request_stub):
         sample_licenses = {
             "python2.7-pytest-2.7.1": {
                 "UNKNOWN": None
@@ -470,11 +474,10 @@ class TestOpenSourceLicenses(object):
             }
         }
         read_licenses_patch = mock.patch(
-            'rhodecode.controllers.admin.settings.read_opensource_licenses',
+            'rhodecode.admin.views.read_opensource_licenses',
             return_value=sample_licenses)
         with read_licenses_patch:
-            response = self.app.get(
-                url('admin_settings_open_source'), status=200)
+            response = self.app.get(self._get_url(request_stub), status=200)
 
         assert_response = AssertResponse(response)
         assert_response.element_contains(
@@ -484,15 +487,15 @@ class TestOpenSourceLicenses(object):
             for license in sample_licenses[name]:
                 assert_response.element_contains('.panel-body', license)
 
-    def test_records_can_be_read(self, autologin_user):
-        response = self.app.get(url('admin_settings_open_source'), status=200)
+    def test_records_can_be_read(self, autologin_user, request_stub):
+        response = self.app.get(self._get_url(request_stub), status=200)
         assert_response = AssertResponse(response)
         assert_response.element_contains(
             '.panel-heading', 'Licenses of Third Party Packages')
 
-    def test_forbidden_when_normal_user(self, autologin_regular_user):
-        self.app.get(
-            url('admin_settings_open_source'), status=403)
+    def test_forbidden_when_normal_user(self, autologin_regular_user,
+                                        request_stub):
+        self.app.get(self._get_url(request_stub), status=403)
 
 
 @pytest.mark.usefixtures("app")
