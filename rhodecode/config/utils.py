@@ -82,7 +82,7 @@ def initialize_test_environment(settings, test_env=None):
     # test repos
     if test_env:
         create_test_env(TESTS_TMP_PATH, settings)
-        create_test_index(TESTS_TMP_PATH, settings, True)
+        create_test_index(TESTS_TMP_PATH, settings)
 
 
 def get_vcs_server_protocol(config):

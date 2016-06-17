@@ -701,7 +701,7 @@ def get_custom_lexer(extension):
 #==============================================================================
 # TEST FUNCTIONS AND CREATORS
 #==============================================================================
-def create_test_index(repo_location, config, full_index):
+def create_test_index(repo_location, config):
     """
     Makes default test index
 
