@@ -46,6 +46,7 @@ let
       !elem ext ["egg-info" "pyc"] &&
       !startsWith "result" path;
 
+  sources = pkgs.config.rc.sources or {};
   rhodecode-enterprise-ce-src = builtins.filterSource src-filter ./.;
 
   # Load the generated node packages
@@ -199,14 +200,17 @@ let
 
     rc_testdata = self.buildPythonPackage rec {
       name = "rc_testdata-0.7.0";
-      src = pkgs.fetchhg {
-        url = "https://code.rhodecode.com/upstream/rc_testdata";
-        rev = "v0.7.0";
-        sha256 = "0w3z0zn8lagr707v67lgys23sl6pbi4xg7pfvdbw58h3q384h6rx";
-      };
+      src = rhodecode-testdata-src;
     };
 
   };
+
+  rhodecode-testdata-src = sources.rhodecode-testdata or (
+    pkgs.fetchhg {
+      url = "https://code.rhodecode.com/upstream/rc_testdata";
+      rev = "v0.7.0";
+      sha256 = "0w3z0zn8lagr707v67lgys23sl6pbi4xg7pfvdbw58h3q384h6rx";
+  });
 
   # Apply all overrides and fix the final package set
   myPythonPackagesUnfix =
