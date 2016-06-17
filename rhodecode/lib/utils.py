@@ -718,10 +718,10 @@ def create_test_index(repo_location, config, full_index):
     mv vcs_search_index.tar.gz rhodecode/tests/fixtures/
 
     """
-    cur_dir = dn(dn(abspath(__file__)))
-    with tarfile.open(jn(cur_dir, 'tests', 'fixtures',
-                         'vcs_search_index.tar.gz')) as tar:
-        tar.extractall(os.path.dirname(config['search.location']))
+    import rc_testdata
+
+    rc_testdata.extract_search_index(
+        'vcs_search_index', os.path.dirname(config['search.location']))
 
 
 def create_test_env(repos_test_path, config):
