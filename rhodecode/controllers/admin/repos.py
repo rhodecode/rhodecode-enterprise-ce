@@ -307,9 +307,9 @@ class ReposController(BaseRepoController):
             'repo_group': repo.group.get_dict() if repo.group else {},
             'repo_type': repo.repo_type,
         }
-        _form = RepoForm(edit=True, old_data=old_data,
-                         repo_groups=c.repo_groups_choices,
-                         landing_revs=c.landing_revs_choices)()
+        _form = RepoForm(
+            edit=True, old_data=old_data, repo_groups=c.repo_groups_choices,
+            landing_revs=c.landing_revs_choices, allow_disabled=True)()
 
         try:
             form_result = _form.to_python(dict(request.POST))

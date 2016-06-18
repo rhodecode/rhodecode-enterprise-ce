@@ -246,11 +246,10 @@ class RepoGroupsController(BaseController):
                              repo_group=c.repo_group)
 
         repo_group_form = RepoGroupForm(
-            edit=True,
-            old_data=c.repo_group.get_dict(),
+            edit=True, old_data=c.repo_group.get_dict(),
             available_groups=c.repo_groups_choices,
-            can_create_in_root=can_create_in_root,
-        )()
+            can_create_in_root=can_create_in_root, allow_disabled=True)()
+
         try:
             form_result = repo_group_form.to_python(dict(request.POST))
             gr_name = form_result['group_name']
