@@ -133,6 +133,18 @@ class TestUserAutocompleteData(TestController):
         values = [suggestion['value'] for suggestion in result['suggestions']]
         assert user_name in values
 
+    def test_returns_inactive_users_when_active_flag_sent(self, user_util):
+        self.log_user()
+        user = user_util.create_user(is_active=False)
+        user_name = user.username
+        response = self.app.get(
+            url(controller='home', action='user_autocomplete_data',
+                user_groups='true', active='0'),
+            headers={'X-REQUESTED-WITH': 'XMLHttpRequest', }, status=200)
+        result = json.loads(response.body)
+        values = [suggestion['value'] for suggestion in result['suggestions']]
+        assert user_name in values
+
     def test_returns_groups_when_user_groups_sent(self, user_util):
         self.log_user()
         group = user_util.create_user_group(user_groups_active=True)
@@ -173,8 +185,10 @@ class TestUserAutocompleteData(TestController):
                 headers={'X-REQUESTED-WITH': 'XMLHttpRequest', }, status=200)
 
         result = json.loads(response.body)
-        users_mock.assert_called_once_with(name_contains=query)
-        groups_mock.assert_called_once_with(name_contains=query)
+        users_mock.assert_called_once_with(
+            name_contains=query, only_active=True)
+        groups_mock.assert_called_once_with(
+            name_contains=query, only_active=True)
         assert len(result['suggestions']) == 20
 
 

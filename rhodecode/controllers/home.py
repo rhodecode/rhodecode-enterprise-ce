@@ -37,7 +37,7 @@ from rhodecode.lib.base import BaseController, render
 from rhodecode.lib.index import searcher_from_config
 from rhodecode.lib.ext_json import json
 from rhodecode.lib.utils import jsonify
-from rhodecode.lib.utils2 import safe_unicode
+from rhodecode.lib.utils2 import safe_unicode, str2bool
 from rhodecode.model.db import Repository, RepoGroup
 from rhodecode.model.repo import RepoModel
 from rhodecode.model.repo_group import RepoGroupModel
@@ -259,13 +259,16 @@ class HomeController(BaseController):
     @jsonify
     def user_autocomplete_data(self):
         query = request.GET.get('query')
+        active = str2bool(request.GET.get('active') or True)
 
         repo_model = RepoModel()
-        _users = repo_model.get_users(name_contains=query)
+        _users = repo_model.get_users(
+            name_contains=query, only_active=active)
 
         if request.GET.get('user_groups'):
             # extend with user groups
-            _user_groups = repo_model.get_user_groups(name_contains=query)
+            _user_groups = repo_model.get_user_groups(
+                name_contains=query, only_active=active)
             _users = _users + _user_groups
 
         return {'suggestions': _users}
@@ -275,9 +278,11 @@ class HomeController(BaseController):
     @jsonify
     def user_group_autocomplete_data(self):
         query = request.GET.get('query')
+        active = str2bool(request.GET.get('active') or True)
 
         repo_model = RepoModel()
-        _user_groups = repo_model.get_user_groups(name_contains=query)
+        _user_groups = repo_model.get_user_groups(
+            name_contains=query, only_active=active)
         _user_groups = _user_groups
 
         return {'suggestions': _user_groups}
