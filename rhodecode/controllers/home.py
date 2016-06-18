@@ -274,4 +274,11 @@ class HomeController(BaseController):
     @XHRRequired()
     @jsonify
     def user_group_autocomplete_data(self):
-        return {'suggestions': []}
+        query = request.GET.get('query')
+
+        repo_model = RepoModel()
+        _user_groups = repo_model.get_user_groups(name_contains=query)
+        _user_groups = _user_groups
+
+        return {'suggestions': _user_groups}
+
