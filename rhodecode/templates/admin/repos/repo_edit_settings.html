@@ -1,3 +1,6 @@
+## -*- coding: utf-8 -*-
+<%namespace name="base" file="/base/base.html"/>
+
 <div class="panel panel-default">
     <div class="panel-heading">
         <h3 class="panel-title">${_('Settings for Repository: %s') % c.repo_info.repo_name}</h3>
@@ -69,15 +72,25 @@
                     <p class="help-block">${_('Default commit for files page, downloads, whoosh and readme')}</p>
                 </div>
             </div>
-            <div class="field">
+
+            <div class="field badged-field">
                 <div class="label">
                     <label for="user">${_('Owner')}:</label>
                 </div>
                 <div class="input">
-                       ${h.text('user', class_="medium", autocomplete="off")}
-                       <p class="help-block">${_('Change owner of this repository.')}</p>
+                    <div class="badge-input-container">
+                        <div class="user-badge">
+                            ${base.gravatar_with_user(c.repo_info.user.email, show_disabled=not c.repo_info.user.active)}
+                        </div>
+                        <div class="badge-input-wrap">
+                            ${h.text('user', class_="medium", autocomplete="off")}
+                        </div>
+                    </div>
+                    <form:error name="user"/>
+                    <p class="help-block">${_('Change owner of this repository.')}</p>
                 </div>
-             </div>
+            </div>
+
             <div class="field">
                 <div class="label label-textarea">
                     <label for="repo_description">${_('Description')}:</label>
