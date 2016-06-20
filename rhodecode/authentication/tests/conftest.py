@@ -22,6 +22,53 @@
 import pytest
 
 
+class EnabledAuthPlugin():
+    """
+    Context manager that updates the 'auth_plugins' setting in DB to enable
+    a plugin. Previous setting is restored on exit. The rhodecode auth plugin
+    is also enabled because it is needed to login the test users.
+    """
+
+    def __init__(self, plugin):
+        self.new_value = set([
+            'egg:rhodecode-enterprise-ce#rhodecode',
+            plugin.get_id()
+        ])
+
+    def __enter__(self):
+        from rhodecode.model.settings import SettingsModel
+        self._old_value = SettingsModel().get_auth_plugins()
+        SettingsModel().create_or_update_setting(
+            'auth_plugins', ','.join(self.new_value))
+
+    def __exit__(self, type, value, traceback):
+        from rhodecode.model.settings import SettingsModel
+        SettingsModel().create_or_update_setting(
+            'auth_plugins', ','.join(self._old_value))
+
+
+class DisabledAuthPlugin():
+    """
+    Context manager that updates the 'auth_plugins' setting in DB to disable
+    a plugin. Previous setting is restored on exit.
+    """
+
+    def __init__(self, plugin):
+        self.plugin_id = plugin.get_id()
+
+    def __enter__(self):
+        from rhodecode.model.settings import SettingsModel
+        self._old_value = SettingsModel().get_auth_plugins()
+        new_value = [id_ for id_ in self._old_value if id_ != self.plugin_id]
+        SettingsModel().create_or_update_setting(
+            'auth_plugins', ','.join(new_value))
+
+    def __exit__(self, type, value, traceback):
+        from rhodecode.model.settings import SettingsModel
+        SettingsModel().create_or_update_setting(
+            'auth_plugins', ','.join(self._old_value))
+
+
 @pytest.fixture(params=[
     ('rhodecode.authentication.plugins.auth_crowd', 'egg:rhodecode-enterprise-ce#crowd'),
     ('rhodecode.authentication.plugins.auth_headers', 'egg:rhodecode-enterprise-ce#headers'),
