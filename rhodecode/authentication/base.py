@@ -167,13 +167,13 @@ class RhodeCodeAuthPluginBase(object):
         """
         return AuthnPluginSettingsSchemaBase()
 
-    def get_setting_by_name(self, name):
+    def get_setting_by_name(self, name, default=None):
         """
         Returns a plugin setting by name.
         """
         full_name = self._get_setting_full_name(name)
         db_setting = SettingsModel().get_setting_by_name(full_name)
-        return db_setting.app_settings_value if db_setting else None
+        return db_setting.app_settings_value if db_setting else default
 
     def create_or_update_setting(self, name, value):
         """
