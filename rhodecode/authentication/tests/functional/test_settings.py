@@ -42,10 +42,36 @@ class TestAuthenticationSettings:
             response = app.get(url)
             assert response.status_code == 200
 
+    def test_plugin_settings_view_post(self, app, auth_plugin, csrf_token):
+        url = '{prefix}/auth/{name}'.format(
+            prefix=ADMIN_PREFIX,
+            name=auth_plugin.name)
+        params = {
+            'enabled': True,
+            'cache_ttl': 0,
+            'csrf_token': csrf_token,
+        }
+        with EnabledAuthPlugin(auth_plugin):
+            response = app.post(url, params=params)
+            assert response.status_code in [200, 302]
+
     def test_plugin_settings_view_get_404(self, app, auth_plugin):
         url = '{prefix}/auth/{name}'.format(
             prefix=ADMIN_PREFIX,
             name=auth_plugin.name)
         with DisabledAuthPlugin(auth_plugin):
             response = app.get(url, status=404)
+            assert response.status_code == 404
+
+    def test_plugin_settings_view_post_404(self, app, auth_plugin, csrf_token):
+        url = '{prefix}/auth/{name}'.format(
+            prefix=ADMIN_PREFIX,
+            name=auth_plugin.name)
+        params = {
+            'enabled': True,
+            'cache_ttl': 0,
+            'csrf_token': csrf_token,
+        }
+        with DisabledAuthPlugin(auth_plugin):
+            response = app.post(url, params=params, status=404)
             assert response.status_code == 404
