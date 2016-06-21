@@ -39,10 +39,10 @@ class SimpleSvnApp(object):
         request_headers = self._get_request_headers(environ)
 
         data = environ['wsgi.input']
-        # johbo: On Gunicorn, we end up with a 415 response if we pass data
-        # to requests. I think the request is usually without payload, still
-        # reading the data to be on the safe side.
-        if environ['REQUEST_METHOD'] == 'MKCOL':
+        # johbo: Avoid that we end up with sending the request in chunked
+        # transfer encoding (mainly on Gunicorn). If we know the content
+        # length, then we should transfer the payload in one request.
+        if environ['REQUEST_METHOD'] == 'MKCOL' or 'CONTENT_LENGTH' in environ:
             data = data.read()
 
         response = requests.request(
