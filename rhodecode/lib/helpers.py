@@ -744,6 +744,32 @@ def is_svn_without_proxy(repository):
     return False
 
 
+def discover_user(author):
+    """
+    Tries to discover RhodeCode User based on the autho string. Author string
+    is typically `FirstName LastName <email@address.com>`
+    """
+
+    # if author is already an instance use it for extraction
+    if isinstance(author, User):
+        return author
+
+    # Valid email in the attribute passed, see if they're in the system
+    _email = author_email(author)
+    if _email != '':
+        user = User.get_by_email(_email, case_insensitive=True, cache=True)
+        if user is not None:
+            return user
+
+    # Maybe it's a username, we try to extract it and fetch by username ?
+    _author = author_name(author)
+    user = User.get_by_username(_author, case_insensitive=True, cache=True)
+    if user is not None:
+        return user
+
+    return None
+
+
 def email_or_none(author):
     # extract email from the commit string
     _email = author_email(author)
@@ -765,30 +791,13 @@ def email_or_none(author):
     return None
 
 
-def discover_user(author):
-    # if author is already an instance use it for extraction
-    if isinstance(author, User):
-        return author
-
-    # Valid email in the attribute passed, see if they're in the system
-    _email = email(author)
-    if _email != '':
-        user = User.get_by_email(_email, case_insensitive=True, cache=True)
-        if user is not None:
-            return user
-
-    # Maybe it's a username?
-    _author = author_name(author)
-    user = User.get_by_username(_author, case_insensitive=True,
-                                cache=True)
-    if user is not None:
-        return user
-
-    return None
-
-
 def link_to_user(author, length=0, **kwargs):
     user = discover_user(author)
+    # user can be None, but if we have it already it means we can re-use it
+    # in the person() function, so we save 1 intensive-query
+    if user:
+        author = user
+
     display_person = person(author, 'username_or_name_or_email')
     if length:
         display_person = shorter(display_person, length)
@@ -803,11 +812,9 @@ def link_to_user(author, length=0, **kwargs):
 
 
 def person(author, show_attr="username_and_name"):
-    # attr to return from fetched user
-    person_getter = lambda usr: getattr(usr, show_attr)
     user = discover_user(author)
     if user:
-        return person_getter(user)
+        return getattr(user, show_attr)
     else:
         _author = author_name(author)
         _email = email(author)
