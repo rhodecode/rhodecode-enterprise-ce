@@ -128,7 +128,7 @@ class RhodeCodeAuthPluginBase(object):
         """
         schema_node = self.get_settings_schema().get(name)
         db_type = self._settings_type_map.get(
-            schema_node.typ.__class__, 'unicode')
+            type(schema_node.typ), 'unicode')
         if name in self._settings_encrypted:
             db_type = '{}.encrypted'.format(db_type)
         return db_type
