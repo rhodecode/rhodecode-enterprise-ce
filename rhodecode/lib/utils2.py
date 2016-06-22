@@ -321,7 +321,8 @@ def engine_from_config(configuration, prefix='sqlalchemy.', **kwargs):
             setattr(conn, 'query_start_time', time.time())
             log.info(color_sql(">>>>> STARTING QUERY >>>>>"))
             calling_context = find_calling_context(ignore_modules=[
-                'rhodecode.lib.caching_query'
+                'rhodecode.lib.caching_query',
+                'rhodecode.model.settings',
             ])
             if calling_context:
                 log.info(color_sql('call context %s:%s' % (
