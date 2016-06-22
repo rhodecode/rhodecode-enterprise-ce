@@ -55,15 +55,16 @@ EXCEPTIONS_MAP = {
 
 class RepoMaker(object):
 
-    def __init__(self, server_and_port, backend_endpoint, session):
+    def __init__(self, server_and_port, backend_endpoint, session_factory):
         self.url = urlparse.urljoin(
             'http://%s' % server_and_port, backend_endpoint)
-        self._session = session
+        self._session_factory = session_factory
 
     def __call__(self, path, config, with_wire=None):
         log.debug('RepoMaker call on %s', path)
         return RemoteRepo(
-            path, config, self.url, self._session, with_wire=with_wire)
+            path, config, self.url, self._session_factory(),
+            with_wire=with_wire)
 
     def __getattr__(self, name):
         def f(*args, **kwargs):
@@ -77,7 +78,8 @@ class RepoMaker(object):
             'method': name,
             'params': {'args': args, 'kwargs': kwargs}
         }
-        return _remote_call(self.url, payload, EXCEPTIONS_MAP, self._session)
+        return _remote_call(
+            self.url, payload, EXCEPTIONS_MAP, self._session_factory())
 
 
 class RemoteRepo(object):

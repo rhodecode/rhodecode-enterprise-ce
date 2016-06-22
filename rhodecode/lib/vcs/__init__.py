@@ -93,11 +93,14 @@ def connect_http(server_and_port):
     from rhodecode.lib.vcs import connection, client_http
     from rhodecode.lib.middleware.utils import scm_app
 
-    session = _create_http_rpc_session()
+    session_factory = client_http.ThreadlocalSessionFactory()
 
-    connection.Git = client_http.RepoMaker(server_and_port, '/git', session)
-    connection.Hg = client_http.RepoMaker(server_and_port, '/hg', session)
-    connection.Svn = client_http.RepoMaker(server_and_port, '/svn', session)
+    connection.Git = client_http.RepoMaker(
+        server_and_port, '/git', session_factory)
+    connection.Hg = client_http.RepoMaker(
+        server_and_port, '/hg', session_factory)
+    connection.Svn = client_http.RepoMaker(
+        server_and_port, '/svn', session_factory)
 
     scm_app.HG_REMOTE_WSGI = client_http.VcsHttpProxy(
         server_and_port, '/proxy/hg')
