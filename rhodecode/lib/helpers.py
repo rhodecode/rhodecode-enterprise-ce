@@ -1652,10 +1652,10 @@ def process_patterns(text_string, repo_name, config):
     if repo_name:
         # Retrieving repo_name to avoid invalid repo_name to explode on
         # IssueTrackerSettingsModel but still passing invalid name further down
-        repo = Repository.get_by_repo_name(repo_name)
+        repo = Repository.get_by_repo_name(repo_name, cache=True)
 
     settings_model = IssueTrackerSettingsModel(repo=repo)
-    active_entries = settings_model.get_settings()
+    active_entries = settings_model.get_settings(cache=True)
 
     newtext = text_string
     for uid, entry in active_entries.items():
