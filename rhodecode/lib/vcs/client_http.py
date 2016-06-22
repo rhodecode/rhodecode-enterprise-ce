@@ -31,6 +31,7 @@ implementation.
 
 import copy
 import logging
+import threading
 import urllib2
 import urlparse
 import uuid
@@ -38,7 +39,7 @@ import uuid
 import msgpack
 import requests
 
-from . import exceptions
+from . import exceptions, CurlSession
 
 
 log = logging.getLogger(__name__)
@@ -216,3 +217,17 @@ class VcsHttpProxy(object):
         headers = iterator.next()
 
         return iterator, status, headers
+
+
+class ThreadlocalSessionFactory(object):
+    """
+    Creates one CurlSession per thread on demand.
+    """
+
+    def __init__(self):
+        self._thread_local = threading.local()
+
+    def __call__(self):
+        if not hasattr(self._thread_local, 'curl_session'):
+            self._thread_local.curl_session = CurlSession()
+        return self._thread_local.curl_session
