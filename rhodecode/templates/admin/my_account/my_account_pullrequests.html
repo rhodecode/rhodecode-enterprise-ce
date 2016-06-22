@@ -1,13 +1,12 @@
+<%namespace name="base" file="/base/base.html"/>
 
 <div class="panel panel-default">
   <div class="panel-body">
-    <div class="field">
       %if c.show_closed:
         ${h.checkbox('show_closed',checked="checked", label=_('Show Closed Pull Requests'))}
       %else:
         ${h.checkbox('show_closed',label=_('Show Closed Pull Requests'))}
       %endif
-    </div>
   </div>
 </div>
 
@@ -15,29 +14,57 @@
   <div class="panel-heading">
     <h3 class="panel-title">${_('Pull Requests You Opened')}</h3>
   </div>
-
   <div class="panel-body">
     <div class="pullrequestlist">
         %if c.my_pull_requests:
+        <table class="rctable">
+          <thead>
+            <th class="td-status"></th>
+            <th>${_('Target Repo')}</th>
+            <th>${_('Author')}</th>
+            <th></th>
+            <th>${_('Title')}</th>
+            <th class="td-time">${_('Opened On')}</th>
+            <th></th>
+          </thead>
           %for pull_request in c.my_pull_requests:
-            <div class="${'closed' if pull_request.is_closed() else ''} prwrapper">
-              <div class="pr">
+            <tr class="${'closed' if pull_request.is_closed() else ''} prwrapper">
+              <td class="td-status">
                 <div class="${'flag_status %s' % pull_request.calculated_review_status()} pull-left"></div>
-                <a href="${h.url('pullrequest_show',repo_name=pull_request.target_repo.repo_name,pull_request_id=pull_request.pull_request_id)}">
-                  ${_('Pull request #%s opened on %s') % (pull_request.pull_request_id, h.format_date(pull_request.created_on))}
-                  %if pull_request.is_closed():
-                    (${_('Closed')})
-                  %endif
-                </a>
-                <div class="repolist_actions">
-                  ${h.secure_form(url('pullrequest_delete', repo_name=pull_request.target_repo.repo_name, pull_request_id=pull_request.pull_request_id),method='delete')}
-                    ${h.submit('remove_%s' % pull_request.pull_request_id, _('Delete'),
-                    class_="btn btn-link btn-danger",onclick="return confirm('"+_('Confirm to delete this pull request')+"');")}
-                  ${h.end_form()}
+              </td>
+              <td class="td-componentname">
+                ${h.link_to(pull_request.target_repo.repo_name,h.url('summary_home',repo_name=pull_request.target_repo.repo_name))}
+              </td>
+              <td class="user">
+                ${base.gravatar_with_user(pull_request.author.email, 16)}
+              </td>
+              <td class="td-message expand_commit" data-pr-id="m${pull_request.pull_request_id}" title="${_('Expand commit message')}">
+                <div class="show_more_col">
+                  <i class="show_more"></i>&nbsp;
                 </div>
-              </div>
-            </div>
+              </td>
+              <td class="mid td-description">
+                <div class="log-container truncate-wrap">
+                    <div class="message truncate" id="c-m${pull_request.pull_request_id}"><a href="${h.url('pullrequest_show',repo_name=pull_request.target_repo.repo_name,pull_request_id=pull_request.pull_request_id)}">#${pull_request.pull_request_id}: ${pull_request.title}</a>\
+                    %if pull_request.is_closed():
+                      &nbsp;(${_('Closed')})\
+                    %endif
+                    <br/>${pull_request.description}</div>
+                </div>
+              </td>
+
+              <td class="td-time">
+                ${h.age_component(pull_request.created_on)}
+              </td>
+              <td class="td-action repolist_actions">
+                ${h.secure_form(url('pullrequest_delete', repo_name=pull_request.target_repo.repo_name, pull_request_id=pull_request.pull_request_id),method='delete')}
+                  ${h.submit('remove_%s' % pull_request.pull_request_id, _('Delete'),
+                  class_="btn btn-link btn-danger",onclick="return confirm('"+_('Confirm to delete this pull request')+"');")}
+                ${h.end_form()}
+              </td>
+            </tr>
           %endfor
+        </table>
        %else:
         <h2><span class="empty_data">${_('You currently have no open pull requests.')}</span></h2>
        %endif
@@ -53,21 +80,49 @@
   <div class="panel-body">
     <div class="pullrequestlist">
         %if c.participate_in_pull_requests:
+        <table class="rctable">
+          <thead>
+            <th class="td-status"></th>
+            <th>${_('Target Repo')}</th>
+            <th>${_('Author')}</th>
+            <th></th>
+            <th>${_('Title')}</th>
+            <th class="td-time">${_('Opened On')}</th>
+          </thead>
           %for pull_request in c.participate_in_pull_requests:
-          <div class="${'closed' if pull_request.is_closed() else ''} prwrapper">
-            <div class="pr">
-              <div class="${'flag_status %s' % pull_request.calculated_review_status()} pull-left"></div>
-              <a href="${h.url('pullrequest_show',repo_name=pull_request.target_repo.repo_name,pull_request_id=pull_request.pull_request_id)}">
-                ${_('Pull request #%s opened by %s on %s') % (pull_request.pull_request_id, pull_request.author.full_name, h.format_date(pull_request.created_on))}
-              </a>
-              %if pull_request.is_closed():
-                (${_('Closed')})
-              %endif
-            </div>
-          </div>
+            <tr class="${'closed' if pull_request.is_closed() else ''} prwrapper">
+              <td class="td-status">
+                <div class="${'flag_status %s' % pull_request.calculated_review_status()} pull-left"></div>
+              </td>
+              <td class="td-componentname">
+                ${h.link_to(pull_request.target_repo.repo_name,h.url('summary_home',repo_name=pull_request.target_repo.repo_name))}
+              </td>
+              <td class="user">
+                ${base.gravatar_with_user(pull_request.author.email, 16)}
+              </td>
+              <td class="td-message expand_commit" data-pr-id="p${pull_request.pull_request_id}" title="${_('Expand commit message')}">
+                <div class="show_more_col">
+                  <i class="show_more"></i>&nbsp;
+                </div>
+              </td>
+              <td class="mid td-description">
+                <div class="log-container truncate-wrap">
+                    <div class="message truncate" id="c-p${pull_request.pull_request_id}"><a href="${h.url('pullrequest_show',repo_name=pull_request.target_repo.repo_name,pull_request_id=pull_request.pull_request_id)}">#${pull_request.pull_request_id}: ${pull_request.title}</a>\
+                    %if pull_request.is_closed():
+                      &nbsp;(${_('Closed')})\
+                    %endif
+                    <br/>${pull_request.description}</div>
+                </div>
+              </td>
+
+              <td class="td-time">
+                ${h.age_component(pull_request.created_on)}
+              </td>
+            </tr>
           %endfor
+        </table>
         %else:
-         <li><span class="empty_data">${_('There are currently no open pull requests requiring your participation.')}</span></li>
+         <h2 class="empty_data">${_('There are currently no open pull requests requiring your participation.')}</h2>
         %endif
     </div>
   </div>
@@ -81,5 +136,18 @@
         else{
             window.location = "${h.url('my_account_pullrequests')}";
         }
-    })
+    });
+    $('.expand_commit').on('click',function(e){
+      var target_expand = $(this);
+      var cid = target_expand.data('prId');
+
+      if (target_expand.hasClass('open')){
+        $('#c-'+cid).css({'height': '2.75em', 'text-overflow': 'ellipsis', 'overflow':'hidden'});
+        target_expand.removeClass('open');
+      }
+      else {
+        $('#c-'+cid).css({'height': 'auto', 'text-overflow': 'initial', 'overflow':'visible'});
+        target_expand.addClass('open');
+      }
+    });
 </script>
