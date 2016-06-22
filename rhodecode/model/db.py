@@ -1374,10 +1374,9 @@ class Repository(Base, BaseModel):
     @classmethod
     def get_by_repo_name(cls, repo_name):
         session = Session()
-        for (klass, pkey), instance in session.identity_map.items():
-            if cls == klass:
-                if getattr(instance, 'repo_name') == repo_name:
-                    return instance
+        for (item_cls, pkey), instance in session.identity_map.items():
+            if cls == item_cls and instance.repo_name == repo_name:
+                return instance
 
         q = session.query(cls).filter(cls.repo_name == repo_name)
         q = q.options(joinedload(Repository.fork))\
