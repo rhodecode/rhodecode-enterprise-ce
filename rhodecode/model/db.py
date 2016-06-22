@@ -1374,10 +1374,15 @@ class Repository(Base, BaseModel):
     @classmethod
     def get_by_repo_name(cls, repo_name):
         session = Session()
+        exist_in_session = []
         for (item_cls, pkey), instance in session.identity_map.items():
             if cls == item_cls and instance.repo_name == repo_name:
-                return instance
-
+                exist_in_session.append(instance)
+        if exist_in_session:
+            if len(exist_in_session) > 1:
+                raise Exception('2 same name repos in session')
+            return exist_in_session[0]
+            
         q = session.query(cls).filter(cls.repo_name == repo_name)
         return q.scalar()
 
