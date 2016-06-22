@@ -1379,10 +1379,11 @@ class Repository(Base, BaseModel):
             if cls == item_cls and instance.repo_name == repo_name:
                 exist_in_session.append(instance)
         if exist_in_session:
-            if len(exist_in_session) > 1:
-                raise Exception('2 same name repos in session')
-            return exist_in_session[0]
-            
+            if len(exist_in_session) == 1:
+                return exist_in_session[0]
+            log.exception(
+                'multiple repos with same name: %r' % exist_in_session)
+
         q = session.query(cls).filter(cls.repo_name == repo_name)
         return q.scalar()
 
