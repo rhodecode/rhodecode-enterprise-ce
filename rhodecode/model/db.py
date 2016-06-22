@@ -220,6 +220,20 @@ class BaseModel(object):
         obj = cls.query().get(id_)
         Session().delete(obj)
 
+    @classmethod
+    def identity_cache(cls, session, attr_name, value):
+        exist_in_session = []
+        for (item_cls, pkey), instance in session.identity_map.items():
+            if cls == item_cls and getattr(instance, attr_name) == value:
+                exist_in_session.append(instance)
+        if exist_in_session:
+            if len(exist_in_session) == 1:
+                return exist_in_session[0]
+            log.exception(
+                'multiple objects with attr %s and '
+                'value %s found with same name: %r',
+                attr_name, value, exist_in_session)
+
     def __repr__(self):
         if hasattr(self, '__unicode__'):
             # python repr needs to return str
@@ -639,16 +653,26 @@ class User(Base, BaseModel):
             log.error(traceback.format_exc())
 
     @classmethod
-    def get_by_username(cls, username, case_insensitive=False, cache=False):
+    def get_by_username(cls, username, case_insensitive=False,
+                        cache=False, identity_cache=False):
+        session = Session()
+
         if case_insensitive:
-            q = cls.query().filter(func.lower(cls.username) == func.lower(username))
+            q = cls.query().filter(
+                func.lower(cls.username) == func.lower(username))
         else:
             q = cls.query().filter(cls.username == username)
 
         if cache:
-            q = q.options(FromCache(
-                            "sql_cache_short",
-                            "get_user_%s" % _hash_key(username)))
+            if identity_cache:
+                val = cls.identity_cache(session, 'username', username)
+                if val:
+                    return val
+            else:
+                q = q.options(
+                    FromCache("sql_cache_short",
+                              "get_user_by_name_%s" % _hash_key(username)))
+
         return q.scalar()
 
     @classmethod
@@ -1364,7 +1388,7 @@ class Repository(Base, BaseModel):
     def normalize_repo_name(cls, repo_name):
         """
         Normalizes os specific repo_name to the format internally stored inside
-        dabatabase using URL_SEP
+        database using URL_SEP
 
         :param cls:
         :param repo_name:
@@ -1372,19 +1396,20 @@ class Repository(Base, BaseModel):
         return cls.NAME_SEP.join(repo_name.split(os.sep))
 
     @classmethod
-    def get_by_repo_name(cls, repo_name):
+    def get_by_repo_name(cls, repo_name, cache=False, identity_cache=False):
         session = Session()
-        exist_in_session = []
-        for (item_cls, pkey), instance in session.identity_map.items():
-            if cls == item_cls and instance.repo_name == repo_name:
-                exist_in_session.append(instance)
-        if exist_in_session:
-            if len(exist_in_session) == 1:
-                return exist_in_session[0]
-            log.exception(
-                'multiple repos with same name: %r' % exist_in_session)
-
         q = session.query(cls).filter(cls.repo_name == repo_name)
+
+        if cache:
+            if identity_cache:
+                val = cls.identity_cache(session, 'repo_name', repo_name)
+                if val:
+                    return val
+            else:
+                q = q.options(
+                    FromCache("sql_cache_short",
+                              "get_repo_by_name_%s" % _hash_key(repo_name)))
+
         return q.scalar()
 
     @classmethod
