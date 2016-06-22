@@ -1264,9 +1264,9 @@ class Repository(Base, BaseModel):
         "group_id", Integer(), ForeignKey('groups.group_id'), nullable=True,
         unique=False, default=None)
 
-    user = relationship('User')
-    fork = relationship('Repository', remote_side=repo_id)
-    group = relationship('RepoGroup')
+    user = relationship('User', lazy='joined')
+    fork = relationship('Repository', remote_side=repo_id, lazy='joined')
+    group = relationship('RepoGroup', lazy='joined')
     repo_to_perm = relationship(
         'UserRepoToPerm', cascade='all',
         order_by='UserRepoToPerm.repo_to_perm_id')
@@ -1379,9 +1379,6 @@ class Repository(Base, BaseModel):
                 return instance
 
         q = session.query(cls).filter(cls.repo_name == repo_name)
-        q = q.options(joinedload(Repository.fork))\
-            .options(joinedload(Repository.user))\
-            .options(joinedload(Repository.group))
         return q.scalar()
 
     @classmethod
