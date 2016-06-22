@@ -438,15 +438,17 @@ def get_matching_line_offsets(lines, terms):
     :param max_lines: cut off for lines of interest
      eg.
 
-    >>> get_matching_line_offsets('''
-words words words
-words words words
-some text some
-words words words
-words words words
-text here what
-''', 'text', context=1)
+    text = '''
+    words words words
+    words words words
+    some text some
+    words words words
+    words words words
+    text here what
+    '''
+    get_matching_line_offsets(text, 'text', context=1)
     {3: [(5, 9)], 6: [(0, 4)]]
+
     """
     matching_lines = {}
     phrases = [normalize_text_for_matching(phrase)
@@ -460,6 +462,7 @@ text here what
 
     return matching_lines
 
+
 def get_lexer_safe(mimetype=None, filepath=None):
     """
     Tries to return a relevant pygments lexer using mimetype/filepath name,
@@ -470,7 +473,7 @@ def get_lexer_safe(mimetype=None, filepath=None):
         if mimetype:
             lexer = get_lexer_for_mimetype(mimetype)
         if not lexer:
-            lexer = get_lexer_for_filename(path)
+            lexer = get_lexer_for_filename(filepath)
     except pygments.util.ClassNotFound:
         pass
 
@@ -675,11 +678,6 @@ def _shorten_commit_id(commit_id):
     return commit_id[:def_len]
 
 
-def get_repo_id_from_name(repo_name):
-    repo = get_by_repo_name(repo_name)
-    return repo.repo_id
-
-
 def show_id(commit):
     """
     Configurable function that shows ID
@@ -858,7 +856,7 @@ def desc_stylize(value):
     value = re.sub(r'\[(lang|language)\ \=\>\ *([a-zA-Z\-\/\#\+]*)\]',
                    '<div class="metatag" tag="lang">\\2</div>', value)
     value = re.sub(r'\[([a-z]+)\]',
-                  '<div class="metatag" tag="\\1">\\1</div>', value)
+                   '<div class="metatag" tag="\\1">\\1</div>', value)
 
     return value
 
@@ -883,7 +881,7 @@ def escaped_stylize(value):
     value = re.sub(r'\[(lang|language)\ \=\&gt;\ *([a-zA-Z\-\/\#\+]*)\]',
                    '<div class="metatag" tag="lang">\\2</div>', value)
     value = re.sub(r'\[([a-z]+)\]',
-                  '<div class="metatag" tag="\\1">\\1</div>', value)
+                   '<div class="metatag" tag="\\1">\\1</div>', value)
 
     return value
 
