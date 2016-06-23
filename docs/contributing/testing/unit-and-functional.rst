@@ -27,7 +27,7 @@ py.test integration
 The integration with the test runner is based on the following three parts:
 
 - `pytest_pylons` is a py.test plugin which does the integration with the
-  Pylons web framework. It sets up the Pylons environment based on a given ini
+  Pylons web framework. It sets up the Pylons environment based on the given ini
   file.
 
   Tests which depend on the Pylons environment to be set up must request the

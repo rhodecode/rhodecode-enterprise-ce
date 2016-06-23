@@ -9,19 +9,19 @@ environment dependencies are correctly declared and installed during setup.
 It also enables atomic upgrades, rollbacks, and multiple instances of RhodeCode
 Enterprise for efficient cluster management.
 
-To set up RhodeCode Enterprise inside the Nix environment use the following steps:
+To set up RhodeCode Enterprise inside the Nix environment, use the following steps:
 
 
 
 Setup Nix Package Manager
 -------------------------
 
-To install the Nix Package Manager please run::
+To install the Nix Package Manager, please run::
 
    $ curl https://nixos.org/nix/install | sh
 
-or go to https://nixos.org/nix/ and follow their installation instructions.
-Once this is correctly set up on your system you should be able to use the
+or go to https://nixos.org/nix/ and follow the installation instructions.
+Once this is correctly set up on your system, you should be able to use the
 following commands:
 
 * `nix-env`
@@ -34,8 +34,8 @@ following commands:
    Update your channels frequently by running ``nix-channel --upgrade``.
 
 
-Switch nix to latest STABLE channel
------------------------------------
+Switch nix to the latest STABLE channel
+---------------------------------------
 
 run::
 
@@ -49,7 +49,7 @@ Followed by::
 Clone the required repositories
 -------------------------------
 
-After Nix is set up, clone the RhodeCode Enterprise Community Edition, and
+After Nix is set up, clone the RhodeCode Enterprise Community Edition and
 RhodeCode VCSServer repositories into the same directory.
 To do this, use the following example::
 
@@ -59,23 +59,23 @@ To do this, use the following example::
 
 .. note::
 
-   If you cannot clone the repository, please request read permissions.
+   If you cannot clone the repository, please request read permissions via support@rhodecode.com
 
 
 
 Enter the Development Shell
 ---------------------------
 
-The final step is to start into the development shell. To do this run the
+The final step is to start the development shell. To do this, run the
 following command from inside the cloned repository::
 
    cd ~/rhodecode-enterprise-ce
-   nix-shell --arg dev true
+   nix-shell
 
 .. note::
 
    On the first run, this will take a while to download and optionally compile
-   a few things. The next runs of it will be faster.
+   a few things. The following runs will be faster.
 
 
 
@@ -90,13 +90,13 @@ use the following steps:
 
    .. note::
 
-      It is recommended to call it `dev.ini`.
+      It is recommended to use the name `dev.ini`.
 
 
 Setup the Development Database
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-To create a development database use the following example. This is a one
+To create a development database, use the following example. This is a one
 time operation::
 
     paster setup-rhodecode dev.ini \
@@ -109,7 +109,7 @@ Start the Development Server
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 When starting the development server, you should start the vcsserver as a
-separate process. To do this use one of the following examples:
+separate process. To do this, use one of the following examples:
 
 1. Set the `start.vcs_server` flag in the ``dev.ini`` file to true. For example:
 
@@ -136,6 +136,6 @@ separate process. To do this use one of the following examples:
 Run the Environment Tests
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Please make sure that the test are passing to verify that your environment is
+Please make sure that the tests are passing to verify that your environment is
 set up correctly. More details about the tests are described in:
 :file:`/docs/dev/testing`.

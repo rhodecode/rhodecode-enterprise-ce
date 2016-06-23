@@ -1,7 +1,7 @@
 README - Quickstart
 ===================
 
-This folder contains functional tests and the automation of specification
+This folder contains the functional tests and automation of specification
 examples. Details about testing can be found in
 `/docs-internal/testing/index.rst`.
 
@@ -21,7 +21,7 @@ Use the following example call for the database setup of Enterprise::
      --api-key=9999999999999999999999999999999999999999 \
      your-enterprise-config.ini
 
-This way the username, password and auth token of the admin user will match the
+This way the username, password, and auth token of the admin user will match the
 defaults from the test run.
 
 
@@ -34,7 +34,7 @@ Usage
 2. Enter `nix-shell` from the acceptance_tests folder::
 
      cd acceptance_tests
-     nix-shell -I ~/dev
+     nix-shell
 
    Make sure that `rcpkgs` and `rcnixpkgs` are available on the nix path.
 

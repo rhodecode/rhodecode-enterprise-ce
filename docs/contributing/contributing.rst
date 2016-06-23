@@ -5,7 +5,7 @@ Contributing to RhodeCode
 
 
 
-Welcome to contribution guides and development docs of RhodeCode.
+Welcome to the contribution guides and development docs of RhodeCode.
 
 
 
