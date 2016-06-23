@@ -68,9 +68,9 @@ def configure_vcs(config):
 
 
 def initialize_database(config):
-    from rhodecode.lib.utils2 import engine_from_config
+    from rhodecode.lib.utils2 import engine_from_config, get_encryption_key
     engine = engine_from_config(config, 'sqlalchemy.db1.')
-    init_model(engine, encryption_key=config['beaker.session.secret'])
+    init_model(engine, encryption_key=get_encryption_key(config))
 
 
 def initialize_test_environment(settings, test_env=None):

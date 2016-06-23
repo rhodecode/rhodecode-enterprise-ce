@@ -46,7 +46,7 @@ from pylons import config
 from pyramid.threadlocal import get_current_registry
 
 from rhodecode.model import meta, db
-from rhodecode.lib.utils2 import obfuscate_url_pw
+from rhodecode.lib.utils2 import obfuscate_url_pw, get_encryption_key
 
 log = logging.getLogger(__name__)
 
@@ -66,8 +66,8 @@ def init_model(engine, encryption_key=None):
 
 
 def init_model_encryption(migration_models):
-    migration_models.ENCRYPTION_KEY = config['beaker.session.secret']
-    db.ENCRYPTION_KEY = config['beaker.session.secret']
+    migration_models.ENCRYPTION_KEY = get_encryption_key(config)
+    db.ENCRYPTION_KEY = get_encryption_key(config)
 
 
 class BaseModel(object):

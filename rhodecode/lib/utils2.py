@@ -342,6 +342,10 @@ def engine_from_config(configuration, prefix='sqlalchemy.', **kwargs):
     return engine
 
 
+def get_encryption_key(config):
+    return config['beaker.session.secret']
+
+
 def age(prevdate, now=None, show_short_version=False, show_suffix=True,
         short_format=False):
     """
