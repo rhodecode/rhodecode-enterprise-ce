@@ -52,8 +52,7 @@ from rhodecode.model import meta
 from rhodecode.model.db import (
     Repository, User, RhodeCodeUi, UserLog, RepoGroup, UserGroup)
 from rhodecode.model.meta import Session
-from rhodecode.model.repo_group import RepoGroupModel
-from rhodecode.model.settings import VcsSettingsModel, SettingsModel
+
 
 log = logging.getLogger(__name__)
 
@@ -384,6 +383,8 @@ def config_data_from_db(clear_session=True, repo=None):
     Read the configuration data from the database and return configuration
     tuples.
     """
+    from rhodecode.model.settings import VcsSettingsModel
+
     config = []
 
     sa = meta.Session()
@@ -467,6 +468,7 @@ def set_rhodecode_config(config):
 
     :param config:
     """
+    from rhodecode.model.settings import SettingsModel
     app_settings = SettingsModel().get_all_settings()
 
     for k, v in app_settings.items():
@@ -481,6 +483,7 @@ def map_groups(path):
 
     :param paths: full path to repository
     """
+    from rhodecode.model.repo_group import RepoGroupModel
     sa = meta.Session()
     groups = path.split(Repository.NAME_SEP)
     parent = None
@@ -525,6 +528,9 @@ def repo2db_mapper(initial_repo_list, remove_obsolete=False):
     """
     from rhodecode.model.repo import RepoModel
     from rhodecode.model.scm import ScmModel
+    from rhodecode.model.repo_group import RepoGroupModel
+    from rhodecode.model.settings import SettingsModel
+
     sa = meta.Session()
     repo_model = RepoModel()
     user = User.get_first_admin()
