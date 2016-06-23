@@ -23,6 +23,7 @@ import logging
 from collections import namedtuple
 from functools import wraps
 
+from rhodecode.lib import caches
 from rhodecode.lib.caching_query import FromCache
 from rhodecode.lib.utils2 import (
     Optional, AttributeDict, safe_str, remove_prefix, str2bool)
@@ -201,22 +202,30 @@ class SettingsModel(BaseModel):
         return res
 
     def get_all_settings(self, cache=False):
-        q = self._get_settings_query()
+        def _compute():
+            q = self._get_settings_query()
+            if not q:
+                raise Exception('Could not get application settings !')
+
+            settings = {
+                'rhodecode_' + result.app_settings_name: result.app_settings_value
+                for result in q
+            }
+            return settings
+
         if cache:
             repo = self._get_repo(self.repo) if self.repo else None
-            cache_key = (
+            namespace = 'rhodecode_settings'
+            cache_manager = caches.get_cache_manager(
+                'sql_cache_short', namespace)
+            _cache_key = (
                 "get_repo_{}_settings".format(repo.repo_id)
-                if repo else "get_hg_settings")
-            q = q.options(FromCache("sql_cache_short", cache_key))
+                if repo else "get_app_settings")
 
-        if not q:
-            raise Exception('Could not get application settings !')
+            return cache_manager.get(_cache_key, createfunc=_compute)
 
-        settings = {
-            'rhodecode_' + result.app_settings_name: result.app_settings_value
-            for result in q
-        }
-        return settings
+        else:
+            return _compute()
 
     def get_auth_settings(self):
         q = self._get_settings_query()
