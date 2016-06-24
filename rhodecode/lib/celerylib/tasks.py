@@ -30,7 +30,7 @@ import logging
 from celery.task import task
 from pylons import config
 
-from rhodecode import CELERY_ENABLED
+import rhodecode
 from rhodecode.lib.celerylib import (
     run_task, dbsession, __get_lockkey, LockHeld, DaemonLock,
     get_session, vcsconnection)
@@ -45,7 +45,7 @@ add_cache(config)  # pragma: no cover
 
 
 def get_logger(cls):
-    if CELERY_ENABLED:
+    if rhodecode.CELERY_ENABLED:
         try:
             log = cls.get_logger()
         except Exception:

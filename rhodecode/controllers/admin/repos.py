@@ -248,9 +248,9 @@ class ReposController(BaseRepoController):
         task_id = request.GET.get('task_id')
 
         if task_id and task_id not in ['None']:
-            from rhodecode import CELERY_ENABLED
+            import rhodecode
             from celery.result import AsyncResult
-            if CELERY_ENABLED:
+            if rhodecode.CELERY_ENABLED:
                 task = AsyncResult(task_id)
                 if task.failed():
                     msg = self._log_creation_exception(task.result, c.repo)
