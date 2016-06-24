@@ -343,7 +343,9 @@ def engine_from_config(configuration, prefix='sqlalchemy.', **kwargs):
 
 
 def get_encryption_key(config):
-    return config['beaker.session.secret']
+    secret = config.get('rhodecode.encrypted_values.secret')
+    default = config['beaker.session.secret']
+    return secret or default
 
 
 def age(prevdate, now=None, show_short_version=False, show_suffix=True,
