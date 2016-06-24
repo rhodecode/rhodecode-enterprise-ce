@@ -64,7 +64,7 @@ def run_task(task, *args, **kwargs):
                 log.error('Unable to connect to celeryd. Sync execution')
                 rhodecode.CELERY_ENABLED = False
             else:
-                log.error("Exception while connecting to celeryd.")
+                log.exception("Exception while connecting to celeryd.")
         except KeyError as e:
             log.error('Unable to connect to celeryd. Sync execution')
         except Exception as e:
