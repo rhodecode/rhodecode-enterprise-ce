@@ -201,6 +201,11 @@ class SettingsModel(BaseModel):
         Session.add(res)
         return res
 
+    def invalidate_settings_cache(self):
+        namespace = 'rhodecode_settings'
+        cache_manager = caches.get_cache_manager('sql_cache_short', namespace)
+        caches.clear_cache_manager(cache_manager)
+
     def get_all_settings(self, cache=False):
         def _compute():
             q = self._get_settings_query()
@@ -214,6 +219,7 @@ class SettingsModel(BaseModel):
             return settings
 
         if cache:
+            log.debug('Fetching app settings using cache')
             repo = self._get_repo(self.repo) if self.repo else None
             namespace = 'rhodecode_settings'
             cache_manager = caches.get_cache_manager(

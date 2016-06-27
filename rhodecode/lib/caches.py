@@ -87,6 +87,12 @@ def get_cache_manager(region_name, cache_name, custom_ttl=None):
 
 
 def clear_cache_manager(cache_manager):
+    """
+    namespace = 'foobar'
+    cache_manager = get_cache_manager('repo_cache_long', namespace)
+    clear_cache_manager(cache_manager)
+    """
+
     log.debug('Clearing all values for cache manager %s', cache_manager)
     cache_manager.clear()
 

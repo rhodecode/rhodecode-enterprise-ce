@@ -257,8 +257,8 @@ class SettingsController(BaseController):
                 Session().add(sett)
 
             Session().commit()
+            SettingsModel().invalidate_settings_cache()
             h.flash(_('Updated application settings'), category='success')
-
         except Exception:
             log.exception("Exception while updating application settings")
             h.flash(
@@ -321,7 +321,7 @@ class SettingsController(BaseController):
                 Session().add(sett)
 
             Session().commit()
-
+            SettingsModel().invalidate_settings_cache()
             h.flash(_('Updated visualisation settings'), category='success')
         except Exception:
             log.exception("Exception updating visualization settings")
@@ -403,6 +403,7 @@ class SettingsController(BaseController):
 
             Session().commit()
 
+        SettingsModel().invalidate_settings_cache()
         h.flash(_('Updated issue tracker entries'), category='success')
         return redirect(url('admin_settings_issuetracker'))
 
@@ -708,6 +709,7 @@ class SettingsController(BaseController):
                     category='error')
         else:
             Session().commit()
+            SettingsModel().invalidate_settings_cache()
             h.flash(_('Updated Labs settings'), category='success')
             return redirect(url('admin_settings_labs'))
 
