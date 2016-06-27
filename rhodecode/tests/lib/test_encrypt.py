@@ -20,7 +20,8 @@
 
 import pytest
 
-from rhodecode.lib.encrypt import AESCipher
+from rhodecode.lib.encrypt import (
+    AESCipher, SignatureVerificationError, InvalidDecryptedValue)
 
 
 class TestEncryptModule(object):
@@ -38,3 +39,38 @@ class TestEncryptModule(object):
     def test_encryption(self, key, text):
         enc = AESCipher(key).encrypt(text)
         assert AESCipher(key).decrypt(enc) == text
+
+    def test_encryption_with_hmac(self):
+        key = 'secret'
+        text = 'ihatemysql'
+        enc = AESCipher(key, hmac=True).encrypt(text)
+        assert AESCipher(key, hmac=True).decrypt(enc) == text
+
+    def test_encryption_with_hmac_with_bad_key(self):
+        key = 'secretstring'
+        text = 'ihatemysql'
+        enc = AESCipher(key, hmac=True).encrypt(text)
+
+        with pytest.raises(SignatureVerificationError) as e:
+            assert AESCipher('differentsecret', hmac=True).decrypt(enc) == ''
+
+        assert 'Encryption signature verification failed' in str(e)
+
+    def test_encryption_with_hmac_with_bad_data(self):
+        key = 'secret'
+        text = 'ihatemysql'
+        enc = AESCipher(key, hmac=True).encrypt(text)
+        enc = 'xyz' + enc[3:]
+        with pytest.raises(SignatureVerificationError) as e:
+            assert AESCipher(key, hmac=True).decrypt(enc) == text
+
+        assert 'Encryption signature verification failed' in str(e)
+
+    def test_encryption_with_hmac_with_bad_key_not_strict(self):
+        key = 'secretstring'
+        text = 'ihatemysql'
+        enc = AESCipher(key, hmac=True).encrypt(text)
+
+        assert isinstance(AESCipher(
+            'differentsecret', hmac=True, strict_verification=False
+        ).decrypt(enc), InvalidDecryptedValue)

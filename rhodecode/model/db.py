@@ -70,7 +70,8 @@ log = logging.getLogger(__name__)
 # BASE CLASSES
 # =============================================================================
 
-# this is propagated from .ini file beaker.session.secret
+# this is propagated from .ini file rhodecode.encrypted_values.secret or
+# beaker.session.secret if first is not set.
 # and initialized at environment.py
 ENCRYPTION_KEY = None
 
@@ -115,14 +116,17 @@ class EncryptedTextValue(TypeDecorator):
     def process_bind_param(self, value, dialect):
         if not value:
             return value
-        if value.startswith('enc$aes$'):
+        if value.startswith('enc$aes$') or value.startswith('enc$aes_hmac$'):
             # protect against double encrypting if someone manually starts
             # doing
             raise ValueError('value needs to be in unencrypted format, ie. '
-                             'not starting with enc$aes$')
-        return 'enc$aes$%s' % AESCipher(ENCRYPTION_KEY).encrypt(value)
+                             'not starting with enc$aes')
+        return 'enc$aes_hmac$%s' % AESCipher(
+            ENCRYPTION_KEY, hmac=True).encrypt(value)
 
     def process_result_value(self, value, dialect):
+        import rhodecode
+
         if not value:
             return value
 
@@ -134,9 +138,19 @@ class EncryptedTextValue(TypeDecorator):
             if parts[0] != 'enc':
                 # parts ok but without our header ?
                 return value
-
+            enc_strict_mode = str2bool(rhodecode.CONFIG.get(
+                'rhodecode.encrypted_values.strict') or True)
             # at that stage we know it's our encryption
-            decrypted_data = AESCipher(ENCRYPTION_KEY).decrypt(parts[2])
+            if parts[1] == 'aes':
+                decrypted_data = AESCipher(ENCRYPTION_KEY).decrypt(parts[2])
+            elif parts[1] == 'aes_hmac':
+                decrypted_data = AESCipher(
+                    ENCRYPTION_KEY, hmac=True,
+                    strict_verification=enc_strict_mode).decrypt(parts[2])
+            else:
+                raise ValueError(
+                    'Encryption type part is wrong, must be `aes` '
+                    'or `aes_hmac`, got `%s` instead' % (parts[1]))
             return decrypted_data
 
 
@@ -1754,7 +1768,7 @@ class Repository(Base, BaseModel):
         clone_uri = self.clone_uri
         if clone_uri:
             import urlobject
-            url_obj = urlobject.URLObject(self.clone_uri)
+            url_obj = urlobject.URLObject(clone_uri)
             if url_obj.password:
                 clone_uri = url_obj.with_password('*****')
         return clone_uri
