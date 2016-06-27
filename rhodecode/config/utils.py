@@ -56,8 +56,6 @@ def configure_vcs(config):
         'svn': 'rhodecode.lib.vcs.backends.svn.SubversionRepository',
     }
 
-    conf.settings.HG_USE_REBASE_FOR_MERGING = config.get(
-        'rhodecode_hg_use_rebase_for_merging', False)
     conf.settings.GIT_REV_FILTER = shlex.split(
         config.get('git_rev_filter', '--all').strip())
     conf.settings.DEFAULT_ENCODINGS = aslist(config.get('default_encoding',

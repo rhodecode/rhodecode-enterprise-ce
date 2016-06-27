@@ -711,12 +711,10 @@ TODO: To be written...
         source_ref = Reference('book', bookmark_name, source_commit.raw_id)
         workspace = 'test-merge'
 
-        with mock.patch.object(rhodecode.lib.vcs.conf.settings,
-                               'HG_USE_REBASE_FOR_MERGING', return_value=True):
-            merge_response = target_repo.merge(
-                target_ref, source_repo, source_ref, workspace,
-                'test user', 'test@rhodecode.com', 'merge message 1',
-                dry_run=False)
+        merge_response = target_repo.merge(
+            target_ref, source_repo, source_ref, workspace,
+            'test user', 'test@rhodecode.com', 'merge message 1',
+            dry_run=False, use_rebase=True)
 
         expected_merge_response = MergeResponse(
             True, True, merge_response.merge_commit_id,
