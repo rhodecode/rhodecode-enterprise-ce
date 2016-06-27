@@ -33,6 +33,7 @@ from pylons.controllers.util import redirect
 from pylons.i18n.translation import _
 from webob.exc import HTTPForbidden, HTTPNotFound, HTTPBadRequest
 
+import rhodecode
 from rhodecode.lib import auth, helpers as h
 from rhodecode.lib.auth import (
     LoginRequired, HasPermissionAllDecorator,
@@ -42,7 +43,7 @@ from rhodecode.lib.base import BaseRepoController, render
 from rhodecode.lib.ext_json import json
 from rhodecode.lib.exceptions import AttachedForksError
 from rhodecode.lib.utils import action_logger, repo_name_slug, jsonify
-from rhodecode.lib.utils2 import safe_int
+from rhodecode.lib.utils2 import safe_int, str2bool
 from rhodecode.lib.vcs import RepositoryError
 from rhodecode.model.db import (
     User, Repository, UserFollowing, RepoGroup, RepositoryField)
@@ -779,6 +780,8 @@ class ReposController(BaseRepoController):
         c.repo_info = self._load_repo(repo_name)
         defaults = self._vcs_form_defaults(repo_name)
         c.inherit_global_settings = defaults['inherit_global_settings']
+        c.labs_active = str2bool(
+            rhodecode.CONFIG.get('labs_settings_active', 'false'))
 
         return htmlfill.render(
             render('admin/repos/repo_edit.html'),
