@@ -365,7 +365,8 @@ class BaseRepository(object):
         raise NotImplementedError
 
     def merge(self, target_ref, source_repo, source_ref, workspace_id,
-              user_name='', user_email='', message='', dry_run=False):
+              user_name='', user_email='', message='', dry_run=False,
+              use_rebase=False):
         """
         Merge the revisions specified in `source_ref` from `source_repo`
         onto the `target_ref` of this repository.
@@ -388,6 +389,8 @@ class BaseRepository(object):
         :param user_email: Merge commit `user_email`.
         :param message: Merge commit `message`.
         :param dry_run: If `True` the merge will not take place.
+        :param use_rebase: If `True` commits from the source will be rebased
+            on top of the target instead of being merged.
         """
         if dry_run:
             message = message or 'sample_message'
@@ -407,7 +410,8 @@ class BaseRepository(object):
         try:
             return self._merge_repo(
                 shadow_repository_path, target_ref, source_repo,
-                source_ref, message, user_name, user_email, dry_run=dry_run)
+                source_ref, message, user_name, user_email, dry_run=dry_run,
+                use_rebase=use_rebase)
         except RepositoryError:
             log.exception(
                 'Unexpected failure when running merge, dry-run=%s',

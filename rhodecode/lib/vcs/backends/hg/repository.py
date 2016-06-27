@@ -659,7 +659,8 @@ class MercurialRepository(BaseRepository):
 
     def _merge_repo(self, shadow_repository_path, target_ref,
                     source_repo, source_ref, merge_message,
-                    merger_name, merger_email, dry_run=False):
+                    merger_name, merger_email, dry_run=False,
+                    use_rebase=False):
         if target_ref.commit_id not in self._heads():
             return MergeResponse(
                 False, False, None, MergeFailureReason.TARGET_IS_NOT_HEAD)
