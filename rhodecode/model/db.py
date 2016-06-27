@@ -779,7 +779,7 @@ class User(Base, BaseModel):
     def get_first_super_admin(cls):
         user = User.query().filter(User.admin == true()).first()
         if user is None:
-            raise Exception('Missing administrative account!')
+            raise Exception('FATAL: Missing administrative account!')
         return user
 
     @classmethod
@@ -794,7 +794,7 @@ class User(Base, BaseModel):
     def get_default_user(cls, cache=False):
         user = User.get_by_username(User.DEFAULT_USER, cache=cache)
         if user is None:
-            raise Exception('Missing default account!')
+            raise Exception('FATAL: Missing default account!')
         return user
 
     def _get_default_perms(self, user, suffix=''):
