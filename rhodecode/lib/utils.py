@@ -492,7 +492,7 @@ def map_groups(path):
     # last element is repo in nested groups structure
     groups = groups[:-1]
     rgm = RepoGroupModel(sa)
-    owner = User.get_first_admin()
+    owner = User.get_first_super_admin()
     for lvl, group_name in enumerate(groups):
         group_name = '/'.join(groups[:lvl] + [group_name])
         group = RepoGroup.get_by_group_name(group_name)
@@ -533,7 +533,7 @@ def repo2db_mapper(initial_repo_list, remove_obsolete=False):
 
     sa = meta.Session()
     repo_model = RepoModel()
-    user = User.get_first_admin()
+    user = User.get_first_super_admin()
     added = []
 
     # creation defaults

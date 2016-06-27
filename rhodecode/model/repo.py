@@ -339,7 +339,7 @@ class RepoModel(BaseModel):
         if repo_info.user:
             defaults.update({'user': repo_info.user.username})
         else:
-            replacement_user = User.get_first_admin().username
+            replacement_user = User.get_first_super_admin().username
             defaults.update({'user': replacement_user})
 
         # fill repository users

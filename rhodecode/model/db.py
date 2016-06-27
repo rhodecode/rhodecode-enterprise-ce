@@ -776,8 +776,8 @@ class User(Base, BaseModel):
         Session().add(self)
 
     @classmethod
-    def get_first_admin(cls):
-        user = User.query().filter(User.admin == True).first()
+    def get_first_super_admin(cls):
+        user = User.query().filter(User.admin == true()).first()
         if user is None:
             raise Exception('Missing administrative account!')
         return user

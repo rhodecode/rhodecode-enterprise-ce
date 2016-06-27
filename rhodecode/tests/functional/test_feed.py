@@ -33,7 +33,7 @@ class TestFeedController(TestController):
         assert """<rss version="2.0">""" in response
 
     def test_rss_with_auth_token(self, backend):
-        auth_token = User.get_first_admin().feed_token
+        auth_token = User.get_first_super_admin().feed_token
         assert auth_token != ''
         response = self.app.get(url(controller='feed', action='rss',
                                     repo_name=backend.repo_name, auth_token=auth_token))

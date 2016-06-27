@@ -448,7 +448,7 @@ class TestLoginController:
             assert [] == whitelist['api_access_controllers_whitelist']
             if test_name == 'proper_auth_token':
                 # use builtin if api_key is None
-                auth_token = User.get_first_admin().api_key
+                auth_token = User.get_first_super_admin().api_key
 
             with fixture.anon_access(False):
                 self.app.get(url(controller='changeset',
@@ -471,7 +471,7 @@ class TestLoginController:
             assert ['ChangesetController:changeset_raw'] == \
                 whitelist['api_access_controllers_whitelist']
             if test_name == 'proper_auth_token':
-                auth_token = User.get_first_admin().api_key
+                auth_token = User.get_first_super_admin().api_key
 
             with fixture.anon_access(False):
                 self.app.get(url(controller='changeset',

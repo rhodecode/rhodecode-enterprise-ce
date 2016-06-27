@@ -88,7 +88,7 @@ class UserGroupsController(BaseController):
         if user_group.user:
             data.update({'user': user_group.user.username})
         else:
-            replacement_user = User.get_first_admin().username
+            replacement_user = User.get_first_super_admin().username
             data.update({'user': replacement_user})
         return data
 

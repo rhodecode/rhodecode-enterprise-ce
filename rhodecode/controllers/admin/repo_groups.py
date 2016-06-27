@@ -99,7 +99,7 @@ class RepoGroupsController(BaseController):
         if repo_group.user:
             data.update({'user': repo_group.user.username})
         else:
-            replacement_user = User.get_first_admin().username
+            replacement_user = User.get_first_super_admin().username
             data.update({'user': replacement_user})
 
         # fill repository group users

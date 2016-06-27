@@ -377,7 +377,7 @@ class UserModel(BaseModel):
             raise
 
     def _handle_user_repos(self, username, repositories, handle_mode=None):
-        _superadmin = self.cls.get_first_admin()
+        _superadmin = self.cls.get_first_super_admin()
         left_overs = True
 
         from rhodecode.model.repo import RepoModel
@@ -400,7 +400,7 @@ class UserModel(BaseModel):
 
     def _handle_user_repo_groups(self, username, repository_groups,
                                  handle_mode=None):
-        _superadmin = self.cls.get_first_admin()
+        _superadmin = self.cls.get_first_super_admin()
         left_overs = True
 
         from rhodecode.model.repo_group import RepoGroupModel
@@ -422,7 +422,7 @@ class UserModel(BaseModel):
         return left_overs
 
     def _handle_user_user_groups(self, username, user_groups, handle_mode=None):
-        _superadmin = self.cls.get_first_admin()
+        _superadmin = self.cls.get_first_super_admin()
         left_overs = True
 
         from rhodecode.model.user_group import UserGroupModel
