@@ -577,7 +577,7 @@ class MercurialRepository(BaseRepository):
             push_branches=push_branches)
 
     def _local_merge(self, target_ref, merge_message, user_name, user_email,
-                     source_ref):
+                     source_ref, use_rebase=False):
         """
         Merge the given source_revision into the checked out revision.
 
@@ -597,7 +597,7 @@ class MercurialRepository(BaseRepository):
             # In this case we should force a commit message
             return source_ref.commit_id, True
 
-        if settings.HG_USE_REBASE_FOR_MERGING:
+        if use_rebase:
             try:
                 bookmark_name = 'rcbook%s%s' % (source_ref.commit_id,
                                                 target_ref.commit_id)
@@ -691,7 +691,7 @@ class MercurialRepository(BaseRepository):
         try:
             merge_commit_id, needs_push = shadow_repo._local_merge(
                 target_ref, merge_message, merger_name, merger_email,
-                source_ref)
+                source_ref, use_rebase=use_rebase)
             merge_possible = True
         except RepositoryError as e:
             log.exception('Failure when doing local merge on hg shadow repo')
