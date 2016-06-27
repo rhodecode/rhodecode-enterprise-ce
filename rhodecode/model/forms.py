@@ -416,7 +416,6 @@ def LabsSettingsForm():
         allow_extra_fields = True
         filter_extra_fields = False
 
-        rhodecode_hg_use_rebase_for_merging = v.StringBoolean(if_missing=False)
         rhodecode_proxy_subversion_http_requests = v.StringBoolean(
             if_missing=False)
         rhodecode_subversion_http_server_url = v.UnicodeString(

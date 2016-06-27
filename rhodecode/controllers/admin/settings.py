@@ -790,13 +790,6 @@ LabSetting = collections.namedtuple(
 # rhodecode.model.forms.LabsSettingsForm.
 _LAB_SETTINGS = [
     LabSetting(
-        key='rhodecode_hg_use_rebase_for_merging',
-        type='bool',
-        group=lazy_ugettext('Mercurial server-side merge'),
-        label=lazy_ugettext('Use rebase instead of creating a merge commit when merging via web interface'),
-        help=''  # Do not translate the empty string!
-    ),
-    LabSetting(
         key='rhodecode_proxy_subversion_http_requests',
         type='bool',
         group=lazy_ugettext('Subversion HTTP Support'),
