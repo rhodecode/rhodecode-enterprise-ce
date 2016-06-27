@@ -7,7 +7,7 @@
 RhodeCode Enterprise runs inside a Nix managed environment. This ensures build
 environment dependencies are correctly declared and installed during setup.
 It also enables atomic upgrades, rollbacks, and multiple instances of RhodeCode
-Enterprise for efficient cluster management.
+Enterprise running with isolation.
 
 To set up RhodeCode Enterprise inside the Nix environment, use the following steps:
 
@@ -59,7 +59,8 @@ To do this, use the following example::
 
 .. note::
 
-   If you cannot clone the repository, please request read permissions via support@rhodecode.com
+   If you cannot clone the repository, please request read permissions
+   via support@rhodecode.com
 
 
 
@@ -75,7 +76,8 @@ following command from inside the cloned repository::
 .. note::
 
    On the first run, this will take a while to download and optionally compile
-   a few things. The following runs will be faster.
+   a few things. The following runs will be faster. The development shell works
+   fine on MacOS and Linux platforms.
 
 
 
@@ -137,5 +139,5 @@ Run the Environment Tests
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Please make sure that the tests are passing to verify that your environment is
-set up correctly. More details about the tests are described in:
-:file:`/docs/dev/testing`.
+set up correctly. RhodeCode uses py.test to run tests.
+Please simply run ``make test`` to run the basic test suite.
