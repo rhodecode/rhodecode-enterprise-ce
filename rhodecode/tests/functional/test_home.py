@@ -110,10 +110,12 @@ class TestHomeController(TestController):
     def test_index_show_version(self, autologin_user, name, state):
         version_string = 'RhodeCode Enterprise %s' % rhodecode.__version__
 
-        show = SettingsModel().get_setting_by_name('show_version')
-        show.app_settings_value = state
-        Session().add(show)
+        sett = SettingsModel().create_or_update_setting(
+            'show_version', state, 'bool')
+        Session().add(sett)
         Session().commit()
+        SettingsModel().invalidate_settings_cache()
+
         response = self.app.get(url(controller='home', action='index'))
         if state is True:
             response.mustcontain(version_string)
