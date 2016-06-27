@@ -401,7 +401,9 @@ class IssueTrackerSettingsModel(object):
 class VcsSettingsModel(object):
 
     INHERIT_SETTINGS = 'inherit_vcs_settings'
-    GENERAL_SETTINGS = ('use_outdated_comments', 'pr_merge_enabled')
+    GENERAL_SETTINGS = (
+        'use_outdated_comments', 'pr_merge_enabled',
+        'hg_use_rebase_for_merging')
     HOOKS_SETTINGS = (
         ('hooks', 'changegroup.repo_size'),
         ('hooks', 'changegroup.push_logger'),

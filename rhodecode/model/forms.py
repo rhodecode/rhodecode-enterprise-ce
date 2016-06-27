@@ -382,6 +382,7 @@ class _BaseVcsSettingsForm(formencode.Schema):
 
     rhodecode_pr_merge_enabled = v.StringBoolean(if_missing=False)
     rhodecode_use_outdated_comments = v.StringBoolean(if_missing=False)
+    rhodecode_hg_use_rebase_for_merging = v.StringBoolean(if_missing=False)
 
 
 def ApplicationUiSettingsForm():
