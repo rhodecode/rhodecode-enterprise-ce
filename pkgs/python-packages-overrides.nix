@@ -95,6 +95,14 @@ self: super: {
     };
   });
 
+  py-gfm = super.py-gfm.override  {
+    src = pkgs.fetchgit {
+      url = "https://code.rhodecode.com/upstream/py-gfm";
+      rev = "0d66a19bc16e3d49de273c0f797d4e4781e8c0f2";
+      sha256 = "0ryp74jyihd3ckszq31bml5jr3bciimhfp7va7kw6ld92930ksv3";
+    };
+  };
+
   pycurl = super.pycurl.override (attrs: {
     propagatedBuildInputs = attrs.propagatedBuildInputs ++ [
       pkgs.curl
