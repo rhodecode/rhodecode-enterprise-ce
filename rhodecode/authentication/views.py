@@ -59,9 +59,9 @@ class AuthnPluginViewBase(object):
         # Compute default values for the form. Priority is:
         # 1. Passed to this method 2. DB value 3. Schema default
         for node in schema:
-            value = self.plugin.get_setting_by_name(
-                node.name, node.default)
-            defaults.setdefault(node.name, value)
+            if node.name not in defaults:
+                defaults[node.name] = self.plugin.get_setting_by_name(
+                    node.name, node.default)
 
         template_context = {
             'defaults': defaults,
