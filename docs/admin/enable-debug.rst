@@ -47,7 +47,7 @@ the ``debug`` level.
     ### LOGGING CONFIGURATION   ####
     ################################
     [loggers]
-    keys = root, routes, rhodecode, sqlalchemy, beaker, pyro4, templates, whoosh_indexer
+    keys = root, routes, rhodecode, sqlalchemy, beaker, pyro4, templates
 
     [handlers]
     keys = console, console_sql, file, file_rotating
@@ -98,12 +98,6 @@ the ``debug`` level.
     handlers = console_sql
     qualname = sqlalchemy.engine
     propagate = 0
-
-    [logger_whoosh_indexer]
-    level = DEBUG
-    handlers =
-    qualname = whoosh_indexer
-    propagate = 1
 
     ##############
     ## HANDLERS ##
