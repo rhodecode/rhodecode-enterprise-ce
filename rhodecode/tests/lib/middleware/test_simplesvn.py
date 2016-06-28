@@ -178,7 +178,7 @@ class TestSimpleSvnApp(object):
         ]
         request_mock.assert_called_once_with(
             self.environment['REQUEST_METHOD'], expected_url,
-            data=self.wsgi_input, headers=expected_request_headers)
+            data=self.data, headers=expected_request_headers)
         response_mock.iter_content.assert_called_once_with(chunk_size=1024)
         args, _ = start_response.call_args
         assert args[0] == '200 OK'
