@@ -33,7 +33,8 @@ from docutils.core import publish_parts
 from docutils.parsers.rst import directives
 import markdown
 
-from rhodecode.lib.markdown_ext import FlavoredCheckboxExtension, UrlizeExtension
+from rhodecode.lib.markdown_ext import (
+    UrlizeExtension, GithubFlavoredMarkdownExtension)
 from rhodecode.lib.utils2 import safe_unicode, md5_safe, MENTIONS_REGEX
 
 log = logging.getLogger(__name__)
@@ -147,9 +148,7 @@ class MarkupRenderer(object):
         # the safe_mode=True parameter of the markdown method.
         extensions = ['codehilite', 'extra', 'def_list', 'sane_lists']
         if flavored:
-            extensions.append('nl2br')
-            extensions.append(FlavoredCheckboxExtension())
-            extensions.append(UrlizeExtension())
+            extensions.append(GithubFlavoredMarkdownExtension())
 
         if mentions:
             mention_pat = re.compile(MENTIONS_REGEX)

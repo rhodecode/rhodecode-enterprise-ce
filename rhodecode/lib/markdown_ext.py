@@ -22,6 +22,8 @@ import re
 
 import markdown
 
+from mdx_gfm import GithubFlavoredMarkdownExtension  # noqa
+
 
 class FlavoredCheckboxExtension(markdown.Extension):
 
@@ -65,8 +67,6 @@ class FlavoredCheckboxPostprocessor(markdown.postprocessors.Postprocessor):
         return html.replace(before, after)
 
 
-
-
 # Global Vars
 URLIZE_RE = '(%s)' % '|'.join([
     r'<(?:f|ht)tps?://[^>]*>',
@@ -74,6 +74,7 @@ URLIZE_RE = '(%s)' % '|'.join([
     r'\bwww\.[^)<>\s]+[^.,)<>\s]',
     r'[^(<\s]+\.(?:com|net|org)\b',
 ])
+
 
 class UrlizePattern(markdown.inlinepatterns.Pattern):
     """ Return a link Element given an autolink (`http://example/com`). """
