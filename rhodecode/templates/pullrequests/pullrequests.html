@@ -47,9 +47,9 @@
         <ul class="nav nav-pills nav-stacked">
           <li class="${'active' if c.active=='open' else ''}"><a href="${h.url('pullrequest_show_all',repo_name=c.repo_name,source=0)}">${_('Opened')}</a></li>
           <li class="${'active' if c.active=='my' else ''}"><a href="${h.url('pullrequest_show_all',repo_name=c.repo_name,source=0,my=1)}">${_('Opened by me')}</a></li>
+          <li class="${'active' if c.active=='awaiting' else ''}"><a href="${h.url('pullrequest_show_all',repo_name=c.repo_name,source=0,awaiting_review=1)}">${_('Awaiting review')}</a></li>
           <li class="${'active' if c.active=='awaiting_my' else ''}"><a href="${h.url('pullrequest_show_all',repo_name=c.repo_name,source=0,awaiting_my_review=1)}">${_('Awaiting my review')}</a></li>
           <li class="${'active' if c.active=='closed' else ''}"><a href="${h.url('pullrequest_show_all',repo_name=c.repo_name,source=0,closed=1)}">${_('Closed')}</a></li>
-          <li class="${'active' if c.active=='awaiting' else ''}"><a href="${h.url('pullrequest_show_all',repo_name=c.repo_name,source=0,awaiting_review=1)}">${_('Awaiting review')}</a></li>
           <li class="${'active' if c.active=='source' else ''}"><a href="${h.url('pullrequest_show_all',repo_name=c.repo_name,source=1)}">${_('From this repo')}</a></li>
         </ul>
     </div>
