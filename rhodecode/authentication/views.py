@@ -80,15 +80,17 @@ class AuthnPluginViewBase(object):
         View that validates and stores the plugin settings.
         """
         schema = self.plugin.get_settings_schema()
+        data = self.request.params
+
         try:
-            valid_data = schema.deserialize(self.request.params)
+            valid_data = schema.deserialize(data)
         except colander.Invalid, e:
             # Display error message and display form again.
             self.request.session.flash(
                 _('Errors exist when saving plugin settings. '
                   'Please check the form inputs.'),
                 queue='error')
-            defaults = schema.flatten(self.request.params)
+            defaults = {key: data[key] for key in data if key in schema}
             return self.settings_get(errors=e.asdict(), defaults=defaults)
 
         # Store validated data.
