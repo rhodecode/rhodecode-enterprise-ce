@@ -45,12 +45,15 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         <h3 class="panel-title">${_('System Info')}</h3>
+        % if c.allowed_to_snapshot:
+            <a href="${url('admin_settings_system', snapshot=1)}" class="panel-edit">${_('create snapshot')}</a>
+        % endif
     </div>
     <div class="panel-body">
         <dl class="dl-horizontal settings">
         %for dt, dd, tt in elems:
-          <dt >${dt}:</dt>
-          <dd  title="${tt}">${dd}</dd>
+          <dt>${dt}:</dt>
+          <dd title="${tt}">${dd}</dd>
         %endfor
         </dl>
     </div>
@@ -69,7 +72,7 @@
           <tbody>
               %for key, value in c.py_modules:
                   <tr>
-                      <td >${key}</td>
+                      <td>${key}</td>
                       <td>${value}</td>
                   </tr>
               %endfor

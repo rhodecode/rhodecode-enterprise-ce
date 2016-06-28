@@ -49,7 +49,7 @@ from rhodecode.lib.compat import OrderedDict
 from rhodecode.lib.ext_json import json
 from rhodecode.lib.utils import jsonify
 
-from rhodecode.model.db import RhodeCodeUi, Repository
+from rhodecode.model.db import RhodeCodeUi, Repository, User
 from rhodecode.model.forms import ApplicationSettingsForm, \
     ApplicationUiSettingsForm, ApplicationVisualisationForm, \
     LabsSettingsForm, IssueTrackerPatternsForm
@@ -60,6 +60,7 @@ from rhodecode.model.meta import Session
 from rhodecode.model.settings import (
     IssueTrackerSettingsModel, VcsSettingsModel, SettingNotFound,
     SettingsModel)
+
 from rhodecode.model.supervisor import SupervisorModel, SUPERVISOR_MASTER
 
 
@@ -524,6 +525,7 @@ class SettingsController(BaseController):
     def settings_system(self):
         """GET /admin/settings/system: All items in the collection"""
         # url('admin_settings_system')
+        snapshot = str2bool(request.GET.get('snapshot'))
         c.active = 'system'
 
         defaults = self._form_defaults()
@@ -557,6 +559,35 @@ class SettingsController(BaseController):
                 ' %s' % c.memory['error'] if 'error' in c.memory else '')
         except TypeError:
             c.system_memory = 'NOT AVAILABLE'
+
+        rhodecode_ini_safe = rhodecode.CONFIG.copy()
+        blacklist = [
+            'rhodecode_license_key',
+            'routes.map',
+            'pylons.h',
+            'pylons.app_globals',
+            'pylons.environ_config',
+            'sqlalchemy.db1.url',
+            ('app_conf', 'sqlalchemy.db1.url')
+        ]
+        for k in blacklist:
+            if isinstance(k, tuple):
+                section, key = k
+                if section in rhodecode_ini_safe:
+                    rhodecode_ini_safe[section].pop(key, None)
+            else:
+                rhodecode_ini_safe.pop(k, None)
+
+        c.rhodecode_ini_safe = rhodecode_ini_safe
+
+        # TODO: marcink, figure out how to allow only selected users to do this
+        c.allowed_to_snapshot = False
+
+        if snapshot:
+            if c.allowed_to_snapshot:
+                return render('admin/settings/settings_system_snapshot.html')
+            else:
+                h.flash('You are not allowed to do this', category='warning')
 
         return htmlfill.render(
             render('admin/settings/settings.html'),

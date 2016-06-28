@@ -1,0 +1,75 @@
+<%
+ elems = [
+    ## general
+    (_('RhodeCode Enterprise version'), c.rhodecode_version, ''),
+    (_('Upgrade info endpoint'), c.rhodecode_update_url, ''),
+    (_('Configuration INI file'), c.rhodecode_config_ini, ''),
+    ## systems stats
+    (_('RhodeCode Enterprise Server IP'), c.server_ip, ''),
+    (_('RhodeCode Enterprise Server ID'), c.server_id, ''),
+    (_('Platform'), c.platform, ''),
+    (_('Uptime'), c.uptime_age, ''),
+    (_('Storage location'), c.storage, ''),
+    (_('Storage disk space'), "%s/%s, %s%% used%s" % (h.format_byte_size_binary(c.disk['used']), h.format_byte_size_binary(c.disk['total']),(c.disk['percent']), ' %s' % c.disk['error'] if 'error' in c.disk else ''), ''),
+
+    (_('Search index storage'), c.index_storage, ''),
+    (_('Search index size'), "%s %s" % (h.format_byte_size_binary(c.disk_index['used']), ' %s' % c.disk_index['error'] if 'error' in c.disk_index else ''), ''),
+
+    (_('Gist storage'), c.gist_storage, ''),
+    (_('Gist storage size'), "%s (%s items)%s" % (h.format_byte_size_binary(c.disk_gist['used']),c.disk_gist['items'], ' %s' % c.disk_gist['error'] if 'error' in c.disk_gist else ''), ''),
+
+    (_('Archive cache'), c.archive_storage, ''),
+    (_('Archive cache size'), "%s%s" % (h.format_byte_size_binary(c.disk_archive['used']), ' %s' % c.disk_archive['error'] if 'error' in c.disk_archive else ''), ''),
+
+    (_('System memory'), c.system_memory, ''),
+    (_('CPU'), '%s %%' %(c.cpu), ''),
+    (_('Load'), '1min: %s, 5min: %s, 15min: %s' %(c.load['1_min'],c.load['5_min'],c.load['15_min']), ''),
+
+    ## rhodecode stuff
+    (_('Python version'), c.py_version, ''),
+    (_('Python path'), c.py_path, ''),
+    (_('GIT version'), c.git_version, ''),
+    (_('HG version'), c.hg_version, ''),
+    (_('SVN version'), c.svn_version, ''),
+    (_('Database'), "%s @ version: %s" % (c.db_type, c.db_migrate_version), ''),
+    (_('Database version'), c.db_version, ''),
+
+ ]
+%>
+
+<pre>
+SYSTEM INFO
+-----------
+
+% for dt, dd, tt in elems:
+${dt}: ${dd}
+% endfor
+
+PYTHON PACKAGES
+---------------
+
+% for key, value in c.py_modules:
+${key}: ${value}
+% endfor
+
+SYSTEM SETTINGS
+---------------
+
+% for key, value in sorted(c.rhodecode_ini_safe.items()):
+  % if isinstance(value, dict):
+
+    % for key2, value2 in value.items():
+[${key}]${key2}: ${value2}
+    % endfor
+
+  % else:
+${key}: ${value}
+  % endif
+% endfor
+
+</pre>
+
+
+
+
+
