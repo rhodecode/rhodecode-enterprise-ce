@@ -23,11 +23,11 @@ import logging
 import collections
 
 from pylons import url
-from pylons.i18n.translation import lazy_ugettext
 from zope.interface import implementer
 
 from rhodecode.admin.interfaces import IAdminNavigationRegistry
 from rhodecode.lib.utils import get_registry
+from rhodecode.translation import _
 
 
 log = logging.getLogger(__name__)
@@ -71,28 +71,24 @@ class NavEntry(object):
 class NavigationRegistry(object):
 
     _base_entries = [
-        NavEntry('global', lazy_ugettext('Global'), 'admin_settings_global'),
-        NavEntry('vcs', lazy_ugettext('VCS'), 'admin_settings_vcs'),
-        NavEntry('visual', lazy_ugettext('Visual'), 'admin_settings_visual'),
-        NavEntry('mapping', lazy_ugettext('Remap and Rescan'),
-                 'admin_settings_mapping'),
-        NavEntry('issuetracker', lazy_ugettext('Issue Tracker'),
+        NavEntry('global', _('Global'), 'admin_settings_global'),
+        NavEntry('vcs', _('VCS'), 'admin_settings_vcs'),
+        NavEntry('visual', _('Visual'), 'admin_settings_visual'),
+        NavEntry('mapping', _('Remap and Rescan'), 'admin_settings_mapping'),
+        NavEntry('issuetracker', _('Issue Tracker'),
                  'admin_settings_issuetracker'),
-        NavEntry('email', lazy_ugettext('Email'), 'admin_settings_email'),
-        NavEntry('hooks', lazy_ugettext('Hooks'), 'admin_settings_hooks'),
-        NavEntry('search', lazy_ugettext('Full Text Search'),
-                 'admin_settings_search'),
-        NavEntry('system', lazy_ugettext('System Info'),
-                 'admin_settings_system'),
-        NavEntry('open_source', lazy_ugettext('Open Source Licenses'),
+        NavEntry('email', _('Email'), 'admin_settings_email'),
+        NavEntry('hooks', _('Hooks'), 'admin_settings_hooks'),
+        NavEntry('search', _('Full Text Search'), 'admin_settings_search'),
+        NavEntry('system', _('System Info'), 'admin_settings_system'),
+        NavEntry('open_source', _('Open Source Licenses'),
                  'admin_settings_open_source', pyramid=True),
         # TODO: marcink: we disable supervisor now until the supervisor stats
         # page is fixed in the nix configuration
-        # NavEntry('supervisor', lazy_ugettext('Supervisor'),
-        #          'admin_settings_supervisor'),
+        # NavEntry('supervisor', _('Supervisor'), 'admin_settings_supervisor'),
     ]
 
-    _labs_entry = NavEntry('labs', lazy_ugettext('Labs'),
+    _labs_entry = NavEntry('labs', _('Labs'),
                            'admin_settings_labs')
 
     def __init__(self, labs_active=False):
