@@ -18,6 +18,7 @@ General
 - Repos, repo groups, user groups: visually show what user is an owner of a
   resource, and if potentially he is disabled in the system.
 - Pull requests: reorder navigation on repo pull requests, fixes #2995
+- Dependencies: bump dulwich to 0.13.0
 
 New Features
 ^^^^^^^^^^^^
@@ -65,3 +66,5 @@ Fixes
 - Elasticsearch: fixed issues when searching single repo using elastic search
 - Social auth: fix issues with non-active users using social authentication
   causing a 500 error.
+- Fixed problem with largefiles extensions on per-repo settings using local
+  .hgrc files present inside the repo directory.
