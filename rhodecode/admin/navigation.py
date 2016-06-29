@@ -27,6 +27,7 @@ from pylons.i18n.translation import lazy_ugettext
 from zope.interface import implementer
 
 from rhodecode.admin.interfaces import IAdminNavigationRegistry
+from rhodecode.lib.utils import get_registry
 
 
 log = logging.getLogger(__name__)
@@ -35,6 +36,15 @@ NavListEntry = collections.namedtuple('NavListEntry', ['key', 'name', 'url'])
 
 
 class NavEntry(object):
+    """
+    Represents an entry in the admin navigation.
+
+    :param key: Unique identifier used to store reference in an OrderedDict.
+    :param name: Display name, usually a translation string.
+    :param view_name: Name of the view, used generate the URL.
+    :param pyramid: Indicator to use pyramid for URL generation. This should
+        be removed as soon as we are fully migrated to pyramid.
+    """
 
     def __init__(self, key, name, view_name, pyramid=False):
         self.key = key
@@ -106,7 +116,7 @@ def navigation_registry(request):
     """
     Helper that returns the admin navigation registry.
     """
-    pyramid_registry = request.registry
+    pyramid_registry = get_registry(request)
     nav_registry = pyramid_registry.queryUtility(IAdminNavigationRegistry)
     return nav_registry
 

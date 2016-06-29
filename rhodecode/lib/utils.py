@@ -33,14 +33,14 @@ import tempfile
 import traceback
 import tarfile
 import warnings
-from os.path import abspath
-from os.path import dirname as dn, join as jn
+from os.path import join as jn
 
 import paste
 import pkg_resources
 from paste.script.command import Command, BadCommand
 from webhelpers.text import collapse, remove_formatting, strip_tags
 from mako import exceptions
+from pyramid.threadlocal import get_current_registry
 
 from rhodecode.lib.fakemod import create_module
 from rhodecode.lib.vcs.backends.base import Config
@@ -975,3 +975,16 @@ def read_opensource_licenses():
         _license_cache = json.loads(licenses)
 
     return _license_cache
+
+
+def get_registry(request):
+    """
+    Utility to get the pyramid registry from a request. During migration to
+    pyramid we sometimes want to use the pyramid registry from pylons context.
+    Therefore this utility returns `request.registry` for pyramid requests and
+    uses `get_current_registry()` for pylons requests.
+    """
+    try:
+        return request.registry
+    except AttributeError:
+        return get_current_registry()
