@@ -28,7 +28,7 @@
                 margin: 0 7px 0 .7em;
                 font-size: @basefontsize;
                 color: white;
-            
+
                 &.empty {
                     background-color: @grey4;
                 }
@@ -94,7 +94,7 @@
         &:focus {
             outline: none;
         }
-    
+
         ul li  {
             display: block;
 
@@ -145,7 +145,7 @@
         &:hover,
         &.open,
         &.active {
-            a { 
+            a {
                 color: @grey1;
             }
         }
@@ -288,6 +288,11 @@
    }
 }
 
+.navigation li:last-child .submenu {
+    right: -20px;
+    left: auto;
+}
+
 .submenu {
     position: absolute;
     top: 100%;
@@ -333,7 +338,7 @@
                -moz-transition: background .3s;
                  -o-transition: background .3s;
                     transition: background .3s;
-            
+
             ul {
                 display: block;
             }
@@ -480,7 +485,7 @@
             &.select2-result-unselectable > .select2-result-label {
                 margin: 0 8px;
             }
-                
+
         }
     }
 
@@ -594,7 +599,7 @@ ul#context-pages {
         padding: 0;
         border: none;
     }
-    
+
     .nav-pills {
         margin: 0;
     }
