@@ -37,7 +37,7 @@ from pylons.i18n.translation import _, lazy_ugettext
 from webob.exc import HTTPBadRequest
 
 import rhodecode
-from rhodecode.admin.navigation import navigation
+from rhodecode.admin.navigation import navigation_list
 from rhodecode.lib import auth
 from rhodecode.lib import helpers as h
 from rhodecode.lib.auth import LoginRequired, HasPermissionAllDecorator
@@ -80,7 +80,7 @@ class SettingsController(BaseController):
         super(SettingsController, self).__before__()
         c.labs_active = str2bool(
             rhodecode.CONFIG.get('labs_settings_active', 'false'))
-        c.navlist = navigation.get_navlist(request)
+        c.navlist = navigation_list(request)
 
     def _get_hg_ui_settings(self):
         ret = RhodeCodeUi.query().all()

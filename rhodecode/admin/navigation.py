@@ -21,13 +21,12 @@
 
 import logging
 import collections
+
 from pylons import url
 from pylons.i18n.translation import lazy_ugettext
 from zope.interface import implementer
 
-import rhodecode
 from rhodecode.admin.interfaces import IAdminNavigationRegistry
-from rhodecode.lib.utils2 import str2bool
 
 
 log = logging.getLogger(__name__)
@@ -83,17 +82,16 @@ class NavigationRegistry(object):
         #          'admin_settings_supervisor'),
     ]
 
-    def __init__(self):
+    _labs_entry = NavEntry('labs', lazy_ugettext('Labs'),
+                           'admin_settings_labs')
+
+    def __init__(self, labs_active=False):
         self._registered_entries = collections.OrderedDict([
             (item.key, item) for item in self.__class__._base_entries
         ])
 
-        # Add the labs entry when it's activated.
-        labs_active = str2bool(
-            rhodecode.CONFIG.get('labs_settings_active', 'false'))
         if labs_active:
-            self.add_entry(
-                NavEntry('labs', lazy_ugettext('Labs'), 'admin_settings_labs'))
+            self.add_entry(self._labs_entry)
 
     def add_entry(self, entry):
         self._registered_entries[entry.key] = entry
@@ -103,4 +101,18 @@ class NavigationRegistry(object):
                    for i in self._registered_entries.values()]
         return navlist
 
-navigation = NavigationRegistry()
+
+def navigation_registry(request):
+    """
+    Helper that returns the admin navigation registry.
+    """
+    pyramid_registry = request.registry
+    nav_registry = pyramid_registry.queryUtility(IAdminNavigationRegistry)
+    return nav_registry
+
+
+def navigation_list(request):
+    """
+    Helper that returns the admin navigation as list of NavListEntry objects.
+    """
+    return navigation_registry(request).get_navlist(request)

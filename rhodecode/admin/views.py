@@ -24,9 +24,10 @@ import logging
 from pylons import tmpl_context as c
 from pyramid.view import view_config
 
-from rhodecode.controllers.admin.settings import navigation
 from rhodecode.lib.auth import LoginRequired, HasPermissionAllDecorator
 from rhodecode.lib.utils import read_opensource_licenses
+
+from .navigation import navigation_list
 
 
 log = logging.getLogger(__name__)
@@ -47,7 +48,7 @@ class AdminSettingsView(object):
         renderer='rhodecode:templates/admin/settings/settings.html')
     def open_source_licenses(self):
         c.active = 'open_source'
-        c.navlist = navigation.get_navlist(self.request)
+        c.navlist = navigation_list(self.request)
         c.opensource_licenses = collections.OrderedDict(
             sorted(read_opensource_licenses().items(), key=lambda t: t[0]))
 
