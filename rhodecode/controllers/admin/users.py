@@ -100,9 +100,7 @@ class UsersController(BaseController):
         users_data = []
         for user in c.users_list:
             users_data.append({
-                "gravatar": grav_tmpl(user.email, 20),
-                "username": h.link_to(
-                    user.username, h.url('user_profile', username=user.username)),
+                "username": h.gravatar_with_user(user.username),
                 "username_raw": user.username,
                 "email": user.email,
                 "first_name": h.escape(user.name),
