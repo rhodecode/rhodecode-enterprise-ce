@@ -54,15 +54,16 @@ class ResultWrapper(object):
 
 def run_task(task, *args, **kwargs):
     if rhodecode.CELERY_ENABLED:
+        celery_is_up = False
         try:
             t = task.apply_async(args=args, kwargs=kwargs)
             log.info('running task %s:%s', t.task_id, task)
+            celery_is_up = True
             return t
 
         except socket.error as e:
             if isinstance(e, IOError) and e.errno == 111:
                 log.error('Unable to connect to celeryd. Sync execution')
-                rhodecode.CELERY_ENABLED = False
             else:
                 log.exception("Exception while connecting to celeryd.")
         except KeyError as e:
@@ -71,6 +72,11 @@ def run_task(task, *args, **kwargs):
             log.exception(
                 "Exception while trying to run task asynchronous. "
                 "Fallback to sync execution.")
+
+        # keep in mind there maybe a subtle race condition where something
+        # depending on rhodecode.CELERY_ENABLED such as @dbsession decorator
+        # will see CELERY_ENABLED as True before this has a chance to set False
+        rhodecode.CELERY_ENABLED = celery_is_up
     else:
         log.debug('executing task %s in sync mode', task)
     return ResultWrapper(task(*args, **kwargs))
