@@ -58,30 +58,43 @@ def stub_session():
     return session
 
 
-def test_repo_maker_uses_session_for_classmethods(stub_session):
+@pytest.fixture
+def stub_session_factory(stub_session):
+    """
+    Stub of `rhodecode.lib.vcs.client_http.ThreadlocalSessionFactory`.
+    """
+    session_factory = mock.Mock()
+    session_factory.return_value = stub_session
+    return session_factory
+
+
+def test_repo_maker_uses_session_for_classmethods(stub_session_factory):
     repo_maker = client_http.RepoMaker(
-        'server_and_port', 'endpoint', stub_session)
+        'server_and_port', 'endpoint', stub_session_factory)
     repo_maker.example_call()
-    stub_session.post.assert_called_with(
+    stub_session_factory().post.assert_called_with(
         'http://server_and_port/endpoint', data=mock.ANY)
 
 
 def test_repo_maker_uses_session_for_instance_methods(
-        stub_session, config):
+        stub_session_factory, config):
     repo_maker = client_http.RepoMaker(
-        'server_and_port', 'endpoint', stub_session)
+        'server_and_port', 'endpoint', stub_session_factory)
     repo = repo_maker('stub_path', config)
     repo.example_call()
-    stub_session.post.assert_called_with(
+    stub_session_factory().post.assert_called_with(
         'http://server_and_port/endpoint', data=mock.ANY)
 
 
+@mock.patch('rhodecode.lib.vcs.client_http.ThreadlocalSessionFactory')
 @mock.patch('rhodecode.lib.vcs.connection')
-def test_connect_passes_in_the_same_session(connection, stub_session):
-    session_factory_patcher = mock.patch.object(
-        vcs, '_create_http_rpc_session', return_value=stub_session)
-    with session_factory_patcher:
-        vcs.connect_http('server_and_port')
-    assert connection.Hg._session == stub_session
-    assert connection.Svn._session == stub_session
-    assert connection.Git._session == stub_session
+def test_connect_passes_in_the_same_session(
+        connection, session_factory_class, stub_session):
+    session_factory = session_factory_class.return_value
+    session_factory.return_value = stub_session
+
+    vcs.connect_http('server_and_port')
+
+    assert connection.Hg._session_factory() == stub_session
+    assert connection.Svn._session_factory() == stub_session
+    assert connection.Git._session_factory() == stub_session

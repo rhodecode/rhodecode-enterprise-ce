@@ -248,9 +248,9 @@ class ReposController(BaseRepoController):
         task_id = request.GET.get('task_id')
 
         if task_id and task_id not in ['None']:
-            from rhodecode import CELERY_ENABLED
+            import rhodecode
             from celery.result import AsyncResult
-            if CELERY_ENABLED:
+            if rhodecode.CELERY_ENABLED:
                 task = AsyncResult(task_id)
                 if task.failed():
                     msg = self._log_creation_exception(task.result, c.repo)
@@ -307,9 +307,9 @@ class ReposController(BaseRepoController):
             'repo_group': repo.group.get_dict() if repo.group else {},
             'repo_type': repo.repo_type,
         }
-        _form = RepoForm(edit=True, old_data=old_data,
-                         repo_groups=c.repo_groups_choices,
-                         landing_revs=c.landing_revs_choices)()
+        _form = RepoForm(
+            edit=True, old_data=old_data, repo_groups=c.repo_groups_choices,
+            landing_revs=c.landing_revs_choices, allow_disabled=True)()
 
         try:
             form_result = _form.to_python(dict(request.POST))

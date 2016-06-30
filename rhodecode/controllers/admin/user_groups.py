@@ -88,7 +88,7 @@ class UserGroupsController(BaseController):
         if user_group.user:
             data.update({'user': user_group.user.username})
         else:
-            replacement_user = User.get_first_admin().username
+            replacement_user = User.get_first_super_admin().username
             data.update({'user': replacement_user})
         return data
 
@@ -209,9 +209,9 @@ class UserGroupsController(BaseController):
 
         available_members = [safe_unicode(x[0]) for x in c.available_members]
 
-        users_group_form = UserGroupForm(edit=True,
-                                         old_data=c.user_group.get_dict(),
-                                         available_members=available_members)()
+        users_group_form = UserGroupForm(
+            edit=True, old_data=c.user_group.get_dict(),
+            available_members=available_members, allow_disabled=True)()
 
         try:
             form_result = users_group_form.to_python(request.POST)

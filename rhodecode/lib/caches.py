@@ -87,6 +87,12 @@ def get_cache_manager(region_name, cache_name, custom_ttl=None):
 
 
 def clear_cache_manager(cache_manager):
+    """
+    namespace = 'foobar'
+    cache_manager = get_cache_manager('repo_cache_long', namespace)
+    clear_cache_manager(cache_manager)
+    """
+
     log.debug('Clearing all values for cache manager %s', cache_manager)
     cache_manager.clear()
 
@@ -161,7 +167,7 @@ class FreshRegionCache(ActiveRegionCache):
 class InvalidationContext(object):
     def __repr__(self):
         return '<InvalidationContext:{}[{}]>'.format(
-            self.repo_name, self.cache_type)
+            safe_str(self.repo_name), safe_str(self.cache_type))
 
     def __init__(self, compute_func, repo_name, cache_type,
                  raise_exception=False):

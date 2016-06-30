@@ -110,10 +110,12 @@ class TestHomeController(TestController):
     def test_index_show_version(self, autologin_user, name, state):
         version_string = 'RhodeCode Enterprise %s' % rhodecode.__version__
 
-        show = SettingsModel().get_setting_by_name('show_version')
-        show.app_settings_value = state
-        Session().add(show)
+        sett = SettingsModel().create_or_update_setting(
+            'show_version', state, 'bool')
+        Session().add(sett)
         Session().commit()
+        SettingsModel().invalidate_settings_cache()
+
         response = self.app.get(url(controller='home', action='index'))
         if state is True:
             response.mustcontain(version_string)
@@ -128,6 +130,18 @@ class TestUserAutocompleteData(TestController):
         user_name = user.username
         response = self.app.get(
             url(controller='home', action='user_autocomplete_data'),
+            headers={'X-REQUESTED-WITH': 'XMLHttpRequest', }, status=200)
+        result = json.loads(response.body)
+        values = [suggestion['value'] for suggestion in result['suggestions']]
+        assert user_name in values
+
+    def test_returns_inactive_users_when_active_flag_sent(self, user_util):
+        self.log_user()
+        user = user_util.create_user(is_active=False)
+        user_name = user.username
+        response = self.app.get(
+            url(controller='home', action='user_autocomplete_data',
+                user_groups='true', active='0'),
             headers={'X-REQUESTED-WITH': 'XMLHttpRequest', }, status=200)
         result = json.loads(response.body)
         values = [suggestion['value'] for suggestion in result['suggestions']]
@@ -173,8 +187,10 @@ class TestUserAutocompleteData(TestController):
                 headers={'X-REQUESTED-WITH': 'XMLHttpRequest', }, status=200)
 
         result = json.loads(response.body)
-        users_mock.assert_called_once_with(name_contains=query)
-        groups_mock.assert_called_once_with(name_contains=query)
+        users_mock.assert_called_once_with(
+            name_contains=query, only_active=True)
+        groups_mock.assert_called_once_with(
+            name_contains=query, only_active=True)
         assert len(result['suggestions']) == 20
 
 

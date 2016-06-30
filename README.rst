@@ -41,6 +41,19 @@ The latest sources can be obtained from official RhodeCode instance
 https://code.rhodecode.com
 
 
+Contributions
+-------------
+
+RhodeCode is open-source; contributions are welcome!
+
+Please see the contribution documentation inside of the docs folder, which is
+also available at
+https://docs.rhodecode.com/RhodeCode-Enterprise/contributing/contributing.html
+
+For additional information about collaboration tools, our issue tracker,
+licensing, and contribution credit, visit https://rhodecode.com/open-source 
+
+
 RhodeCode Features
 ------------------
 

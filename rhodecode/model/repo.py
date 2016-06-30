@@ -140,10 +140,12 @@ class RepoModel(BaseModel):
 
         return None
 
-    def get_users(self, name_contains=None, limit=20):
+    def get_users(self, name_contains=None, limit=20, only_active=True):
         # TODO: mikhail: move this method to the UserModel.
         query = self.sa.query(User)
-        query = query.filter(User.active == true())
+        if only_active:
+            query = query.filter(User.active == true())
+
         if name_contains:
             ilike_expression = u'%{}%'.format(safe_unicode(name_contains))
             query = query.filter(
@@ -165,16 +167,19 @@ class RepoModel(BaseModel):
                 'icon_link': h.gravatar_url(user.email, 14),
                 'value_display': h.person(user.email),
                 'value': user.username,
-                'value_type': 'user'
+                'value_type': 'user',
+                'active': user.active,
             }
             for user in users
         ]
         return _users
 
-    def get_user_groups(self, name_contains=None, limit=20):
+    def get_user_groups(self, name_contains=None, limit=20, only_active=True):
         # TODO: mikhail: move this method to the UserGroupModel.
         query = self.sa.query(UserGroup)
-        query = query.filter(UserGroup.users_group_active == true())
+        if only_active:
+            query = query.filter(UserGroup.users_group_active == true())
+
         if name_contains:
             ilike_expression = u'%{}%'.format(safe_unicode(name_contains))
             query = query.filter(
@@ -196,7 +201,8 @@ class RepoModel(BaseModel):
                 'value_display': 'Group: %s (%d members)' % (
                     group.users_group_name, len(group.members),),
                 'value': group.users_group_name,
-                'value_type': 'user_group'
+                'value_type': 'user_group',
+                'active': group.users_group_active,
             }
             for group in user_groups
         ]
@@ -333,7 +339,7 @@ class RepoModel(BaseModel):
         if repo_info.user:
             defaults.update({'user': repo_info.user.username})
         else:
-            replacement_user = User.get_first_admin().username
+            replacement_user = User.get_first_super_admin().username
             defaults.update({'user': replacement_user})
 
         # fill repository users

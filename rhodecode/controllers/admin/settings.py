@@ -37,6 +37,7 @@ from pylons.i18n.translation import _, lazy_ugettext
 from webob.exc import HTTPBadRequest
 
 import rhodecode
+from rhodecode.admin.navigation import navigation_list
 from rhodecode.lib import auth
 from rhodecode.lib import helpers as h
 from rhodecode.lib.auth import LoginRequired, HasPermissionAllDecorator
@@ -47,7 +48,7 @@ from rhodecode.lib.utils2 import (
     str2bool, safe_unicode, AttributeDict, safe_int)
 from rhodecode.lib.compat import OrderedDict
 from rhodecode.lib.ext_json import json
-from rhodecode.lib.utils import jsonify, read_opensource_licenses
+from rhodecode.lib.utils import jsonify
 
 from rhodecode.model.db import RhodeCodeUi, Repository
 from rhodecode.model.forms import ApplicationSettingsForm, \
@@ -60,8 +61,9 @@ from rhodecode.model.meta import Session
 from rhodecode.model.settings import (
     IssueTrackerSettingsModel, VcsSettingsModel, SettingNotFound,
     SettingsModel)
+
 from rhodecode.model.supervisor import SupervisorModel, SUPERVISOR_MASTER
-from rhodecode.model.user import UserModel
+
 
 log = logging.getLogger(__name__)
 
@@ -78,7 +80,7 @@ class SettingsController(BaseController):
         super(SettingsController, self).__before__()
         c.labs_active = str2bool(
             rhodecode.CONFIG.get('labs_settings_active', 'false'))
-        c.navlist = navigation.get_navlist(request)
+        c.navlist = navigation_list(request)
 
     def _get_hg_ui_settings(self):
         ret = RhodeCodeUi.query().all()
@@ -257,8 +259,8 @@ class SettingsController(BaseController):
                 Session().add(sett)
 
             Session().commit()
+            SettingsModel().invalidate_settings_cache()
             h.flash(_('Updated application settings'), category='success')
-
         except Exception:
             log.exception("Exception while updating application settings")
             h.flash(
@@ -321,7 +323,7 @@ class SettingsController(BaseController):
                 Session().add(sett)
 
             Session().commit()
-
+            SettingsModel().invalidate_settings_cache()
             h.flash(_('Updated visualisation settings'), category='success')
         except Exception:
             log.exception("Exception updating visualization settings")
@@ -403,6 +405,7 @@ class SettingsController(BaseController):
 
             Session().commit()
 
+        SettingsModel().invalidate_settings_cache()
         h.flash(_('Updated issue tracker entries'), category='success')
         return redirect(url('admin_settings_issuetracker'))
 
@@ -523,6 +526,7 @@ class SettingsController(BaseController):
     def settings_system(self):
         """GET /admin/settings/system: All items in the collection"""
         # url('admin_settings_system')
+        snapshot = str2bool(request.GET.get('snapshot'))
         c.active = 'system'
 
         defaults = self._form_defaults()
@@ -556,6 +560,35 @@ class SettingsController(BaseController):
                 ' %s' % c.memory['error'] if 'error' in c.memory else '')
         except TypeError:
             c.system_memory = 'NOT AVAILABLE'
+
+        rhodecode_ini_safe = rhodecode.CONFIG.copy()
+        blacklist = [
+            'rhodecode_license_key',
+            'routes.map',
+            'pylons.h',
+            'pylons.app_globals',
+            'pylons.environ_config',
+            'sqlalchemy.db1.url',
+            ('app_conf', 'sqlalchemy.db1.url')
+        ]
+        for k in blacklist:
+            if isinstance(k, tuple):
+                section, key = k
+                if section in rhodecode_ini_safe:
+                    rhodecode_ini_safe[section].pop(key, None)
+            else:
+                rhodecode_ini_safe.pop(k, None)
+
+        c.rhodecode_ini_safe = rhodecode_ini_safe
+
+        # TODO: marcink, figure out how to allow only selected users to do this
+        c.allowed_to_snapshot = False
+
+        if snapshot:
+            if c.allowed_to_snapshot:
+                return render('admin/settings/settings_system_snapshot.html')
+            else:
+                h.flash('You are not allowed to do this', category='warning')
 
         return htmlfill.render(
             render('admin/settings/settings.html'),
@@ -708,6 +741,7 @@ class SettingsController(BaseController):
                     category='error')
         else:
             Session().commit()
+            SettingsModel().invalidate_settings_cache()
             h.flash(_('Updated Labs settings'), category='success')
             return redirect(url('admin_settings_labs'))
 
@@ -726,20 +760,6 @@ class SettingsController(BaseController):
 
         c.active = 'labs'
         c.lab_settings = _LAB_SETTINGS
-
-        return htmlfill.render(
-            render('admin/settings/settings.html'),
-            defaults=self._form_defaults(),
-            encoding='UTF-8',
-            force_defaults=False)
-
-    @HasPermissionAllDecorator('hg.admin')
-    def settings_open_source(self):
-        # url('admin_settings_open_source')
-
-        c.active = 'open_source'
-        c.opensource_licenses = collections.OrderedDict(
-            sorted(read_opensource_licenses().items(), key=lambda t: t[0]))
 
         return htmlfill.render(
             render('admin/settings/settings.html'),
@@ -791,76 +811,3 @@ _LAB_SETTINGS = [
         help=lazy_ugettext('e.g. http://localhost:8080/')
     ),
 ]
-
-
-NavListEntry = collections.namedtuple('NavListEntry', ['key', 'name', 'url'])
-
-
-class NavEntry(object):
-
-    def __init__(self, key, name, view_name, pyramid=False):
-        self.key = key
-        self.name = name
-        self.view_name = view_name
-        self.pyramid = pyramid
-
-    def generate_url(self, request):
-        if self.pyramid:
-            if hasattr(request, 'route_path'):
-                return request.route_path(self.view_name)
-            else:
-                # TODO: johbo: Remove this after migrating to pyramid.
-                # We need the pyramid request here to generate URLs to pyramid
-                # views from within pylons views.
-                from pyramid.threadlocal import get_current_request
-                pyramid_request = get_current_request()
-                return pyramid_request.route_path(self.view_name)
-        else:
-            return url(self.view_name)
-
-
-class NavigationRegistry(object):
-
-    _base_entries = [
-        NavEntry('global', lazy_ugettext('Global'), 'admin_settings_global'),
-        NavEntry('vcs', lazy_ugettext('VCS'), 'admin_settings_vcs'),
-        NavEntry('visual', lazy_ugettext('Visual'), 'admin_settings_visual'),
-        NavEntry('mapping', lazy_ugettext('Remap and Rescan'),
-                 'admin_settings_mapping'),
-        NavEntry('issuetracker', lazy_ugettext('Issue Tracker'),
-                 'admin_settings_issuetracker'),
-        NavEntry('email', lazy_ugettext('Email'), 'admin_settings_email'),
-        NavEntry('hooks', lazy_ugettext('Hooks'), 'admin_settings_hooks'),
-        NavEntry('search', lazy_ugettext('Full Text Search'),
-                 'admin_settings_search'),
-        NavEntry('system', lazy_ugettext('System Info'),
-                 'admin_settings_system'),
-        NavEntry('open_source', lazy_ugettext('Open Source Licenses'),
-                 'admin_settings_open_source'),
-        # TODO: marcink: we disable supervisor now until the supervisor stats
-        # page is fixed in the nix configuration
-        # NavEntry('supervisor', lazy_ugettext('Supervisor'),
-        #          'admin_settings_supervisor'),
-    ]
-
-    def __init__(self):
-        self._registered_entries = collections.OrderedDict([
-            (item.key, item) for item in self.__class__._base_entries
-        ])
-
-        # Add the labs entry when it's activated.
-        labs_active = str2bool(
-            rhodecode.CONFIG.get('labs_settings_active', 'false'))
-        if labs_active:
-            self.add_entry(
-                NavEntry('labs', lazy_ugettext('Labs'), 'admin_settings_labs'))
-
-    def add_entry(self, entry):
-        self._registered_entries[entry.key] = entry
-
-    def get_navlist(self, request):
-        navlist = [NavListEntry(i.key, i.name, i.generate_url(request))
-                   for i in self._registered_entries.values()]
-        return navlist
-
-navigation = NavigationRegistry()

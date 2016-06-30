@@ -478,9 +478,9 @@ class DbManage(object):
         elif not os.access(path, os.W_OK) and path_ok:
             log.warning('No write permission to given path %s' % (path,))
 
-        q = ('Given path %s is not writeable, do you want to '
-             'continue with read only mode ? [y/n]' % (path,))
-        if not self.ask_ok(q):
+            q = ('Given path %s is not writeable, do you want to '
+                 'continue with read only mode ? [y/n]' % (path,))
+            if not self.ask_ok(q):
                 log.error('Canceled by user')
                 sys.exit(-1)
 

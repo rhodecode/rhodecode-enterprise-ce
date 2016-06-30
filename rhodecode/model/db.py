@@ -70,7 +70,8 @@ log = logging.getLogger(__name__)
 # BASE CLASSES
 # =============================================================================
 
-# this is propagated from .ini file beaker.session.secret
+# this is propagated from .ini file rhodecode.encrypted_values.secret or
+# beaker.session.secret if first is not set.
 # and initialized at environment.py
 ENCRYPTION_KEY = None
 
@@ -115,14 +116,17 @@ class EncryptedTextValue(TypeDecorator):
     def process_bind_param(self, value, dialect):
         if not value:
             return value
-        if value.startswith('enc$aes$'):
+        if value.startswith('enc$aes$') or value.startswith('enc$aes_hmac$'):
             # protect against double encrypting if someone manually starts
             # doing
             raise ValueError('value needs to be in unencrypted format, ie. '
-                             'not starting with enc$aes$')
-        return 'enc$aes$%s' % AESCipher(ENCRYPTION_KEY).encrypt(value)
+                             'not starting with enc$aes')
+        return 'enc$aes_hmac$%s' % AESCipher(
+            ENCRYPTION_KEY, hmac=True).encrypt(value)
 
     def process_result_value(self, value, dialect):
+        import rhodecode
+
         if not value:
             return value
 
@@ -134,9 +138,19 @@ class EncryptedTextValue(TypeDecorator):
             if parts[0] != 'enc':
                 # parts ok but without our header ?
                 return value
-
+            enc_strict_mode = str2bool(rhodecode.CONFIG.get(
+                'rhodecode.encrypted_values.strict') or True)
             # at that stage we know it's our encryption
-            decrypted_data = AESCipher(ENCRYPTION_KEY).decrypt(parts[2])
+            if parts[1] == 'aes':
+                decrypted_data = AESCipher(ENCRYPTION_KEY).decrypt(parts[2])
+            elif parts[1] == 'aes_hmac':
+                decrypted_data = AESCipher(
+                    ENCRYPTION_KEY, hmac=True,
+                    strict_verification=enc_strict_mode).decrypt(parts[2])
+            else:
+                raise ValueError(
+                    'Encryption type part is wrong, must be `aes` '
+                    'or `aes_hmac`, got `%s` instead' % (parts[1]))
             return decrypted_data
 
 
@@ -219,6 +233,20 @@ class BaseModel(object):
     def delete(cls, id_):
         obj = cls.query().get(id_)
         Session().delete(obj)
+
+    @classmethod
+    def identity_cache(cls, session, attr_name, value):
+        exist_in_session = []
+        for (item_cls, pkey), instance in session.identity_map.items():
+            if cls == item_cls and getattr(instance, attr_name) == value:
+                exist_in_session.append(instance)
+        if exist_in_session:
+            if len(exist_in_session) == 1:
+                return exist_in_session[0]
+            log.exception(
+                'multiple objects with attr %s and '
+                'value %s found with same name: %r',
+                attr_name, value, exist_in_session)
 
     def __repr__(self):
         if hasattr(self, '__unicode__'):
@@ -639,16 +667,26 @@ class User(Base, BaseModel):
             log.error(traceback.format_exc())
 
     @classmethod
-    def get_by_username(cls, username, case_insensitive=False, cache=False):
+    def get_by_username(cls, username, case_insensitive=False,
+                        cache=False, identity_cache=False):
+        session = Session()
+
         if case_insensitive:
-            q = cls.query().filter(func.lower(cls.username) == func.lower(username))
+            q = cls.query().filter(
+                func.lower(cls.username) == func.lower(username))
         else:
             q = cls.query().filter(cls.username == username)
 
         if cache:
-            q = q.options(FromCache(
-                            "sql_cache_short",
-                            "get_user_%s" % _hash_key(username)))
+            if identity_cache:
+                val = cls.identity_cache(session, 'username', username)
+                if val:
+                    return val
+            else:
+                q = q.options(
+                    FromCache("sql_cache_short",
+                              "get_user_by_name_%s" % _hash_key(username)))
+
         return q.scalar()
 
     @classmethod
@@ -752,10 +790,10 @@ class User(Base, BaseModel):
         Session().add(self)
 
     @classmethod
-    def get_first_admin(cls):
-        user = User.query().filter(User.admin == True).first()
+    def get_first_super_admin(cls):
+        user = User.query().filter(User.admin == true()).first()
         if user is None:
-            raise Exception('Missing administrative account!')
+            raise Exception('FATAL: Missing administrative account!')
         return user
 
     @classmethod
@@ -770,7 +808,7 @@ class User(Base, BaseModel):
     def get_default_user(cls, cache=False):
         user = User.get_by_username(User.DEFAULT_USER, cache=cache)
         if user is None:
-            raise Exception('Missing default account!')
+            raise Exception('FATAL: Missing default account!')
         return user
 
     def _get_default_perms(self, user, suffix=''):
@@ -1264,9 +1302,9 @@ class Repository(Base, BaseModel):
         "group_id", Integer(), ForeignKey('groups.group_id'), nullable=True,
         unique=False, default=None)
 
-    user = relationship('User')
-    fork = relationship('Repository', remote_side=repo_id)
-    group = relationship('RepoGroup')
+    user = relationship('User', lazy='joined')
+    fork = relationship('Repository', remote_side=repo_id, lazy='joined')
+    group = relationship('RepoGroup', lazy='joined')
     repo_to_perm = relationship(
         'UserRepoToPerm', cascade='all',
         order_by='UserRepoToPerm.repo_to_perm_id')
@@ -1364,7 +1402,7 @@ class Repository(Base, BaseModel):
     def normalize_repo_name(cls, repo_name):
         """
         Normalizes os specific repo_name to the format internally stored inside
-        dabatabase using URL_SEP
+        database using URL_SEP
 
         :param cls:
         :param repo_name:
@@ -1372,11 +1410,20 @@ class Repository(Base, BaseModel):
         return cls.NAME_SEP.join(repo_name.split(os.sep))
 
     @classmethod
-    def get_by_repo_name(cls, repo_name):
-        q = Session().query(cls).filter(cls.repo_name == repo_name)
-        q = q.options(joinedload(Repository.fork))\
-            .options(joinedload(Repository.user))\
-            .options(joinedload(Repository.group))
+    def get_by_repo_name(cls, repo_name, cache=False, identity_cache=False):
+        session = Session()
+        q = session.query(cls).filter(cls.repo_name == repo_name)
+
+        if cache:
+            if identity_cache:
+                val = cls.identity_cache(session, 'repo_name', repo_name)
+                if val:
+                    return val
+            else:
+                q = q.options(
+                    FromCache("sql_cache_short",
+                              "get_repo_by_name_%s" % _hash_key(repo_name)))
+
         return q.scalar()
 
     @classmethod
@@ -1721,7 +1768,7 @@ class Repository(Base, BaseModel):
         clone_uri = self.clone_uri
         if clone_uri:
             import urlobject
-            url_obj = urlobject.URLObject(self.clone_uri)
+            url_obj = urlobject.URLObject(clone_uri)
             if url_obj.password:
                 clone_uri = url_obj.with_password('*****')
         return clone_uri

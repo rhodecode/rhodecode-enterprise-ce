@@ -68,21 +68,25 @@ def configure_vcs(config):
 
 
 def initialize_database(config):
-    from rhodecode.lib.utils2 import engine_from_config
+    from rhodecode.lib.utils2 import engine_from_config, get_encryption_key
     engine = engine_from_config(config, 'sqlalchemy.db1.')
-    init_model(engine, encryption_key=config['beaker.session.secret'])
+    init_model(engine, encryption_key=get_encryption_key(config))
 
 
 def initialize_test_environment(settings, test_env=None):
     if test_env is None:
         test_env = not int(os.environ.get('RC_NO_TMP_PATH', 0))
 
-    from rhodecode.lib.utils import create_test_env, create_test_index
+    from rhodecode.lib.utils import (
+        create_test_directory, create_test_database, create_test_repositories,
+        create_test_index)
     from rhodecode.tests import TESTS_TMP_PATH
     # test repos
     if test_env:
-        create_test_env(TESTS_TMP_PATH, settings)
-        create_test_index(TESTS_TMP_PATH, settings, True)
+        create_test_directory(TESTS_TMP_PATH)
+        create_test_database(TESTS_TMP_PATH, settings)
+        create_test_repositories(TESTS_TMP_PATH, settings)
+        create_test_index(TESTS_TMP_PATH, settings)
 
 
 def get_vcs_server_protocol(config):

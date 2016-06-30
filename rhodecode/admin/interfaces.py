@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (C) 2010-2016  RhodeCode GmbH
+# Copyright (C) 2016-2016  RhodeCode GmbH
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License, version 3
@@ -18,12 +18,12 @@
 # RhodeCode Enterprise Edition, including its added features, Support services,
 # and proprietary license terms, please see https://rhodecode.com/licenses/
 
-import pytest
-
-from rhodecode.tests import url
+from zope.interface import Interface
 
 
-@pytest.mark.usefixtures('app')
-class TestErrorController(object):
-    def test_direct_document_call(self):
-        self.app.get(url(controller='error', action='document'), status=404)
+class IAdminNavigationRegistry(Interface):
+    """
+    Interface for the admin navigation registry. Currently this is only
+    used to register and retrieve it via pyramids registry.
+    """
+    pass

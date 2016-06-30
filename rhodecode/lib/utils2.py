@@ -321,7 +321,8 @@ def engine_from_config(configuration, prefix='sqlalchemy.', **kwargs):
             setattr(conn, 'query_start_time', time.time())
             log.info(color_sql(">>>>> STARTING QUERY >>>>>"))
             calling_context = find_calling_context(ignore_modules=[
-                'rhodecode.lib.caching_query'
+                'rhodecode.lib.caching_query',
+                'rhodecode.model.settings',
             ])
             if calling_context:
                 log.info(color_sql('call context %s:%s' % (
@@ -339,6 +340,12 @@ def engine_from_config(configuration, prefix='sqlalchemy.', **kwargs):
                                 after_cursor_execute)
 
     return engine
+
+
+def get_encryption_key(config):
+    secret = config.get('rhodecode.encrypted_values.secret')
+    default = config['beaker.session.secret']
+    return secret or default
 
 
 def age(prevdate, now=None, show_short_version=False, show_suffix=True,

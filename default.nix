@@ -46,6 +46,7 @@ let
       !elem ext ["egg-info" "pyc"] &&
       !startsWith "result" path;
 
+  sources = pkgs.config.rc.sources or {};
   rhodecode-enterprise-ce-src = builtins.filterSource src-filter ./.;
 
   # Load the generated node packages
@@ -98,9 +99,11 @@ let
         '';
       in super.rhodecode-enterprise-ce.override (attrs: {
 
-      inherit doCheck;
+      inherit
+        doCheck
+        version;
       name = "rhodecode-enterprise-ce-${version}";
-      version = version;
+      releaseName = "RhodeCodeEnterpriseCE-${version}";
       src = rhodecode-enterprise-ce-src;
 
       buildInputs =
@@ -109,7 +112,7 @@ let
           pkgs.nodePackages.grunt-cli
           pkgs.subversion
           pytest-catchlog
-          rc_testdata
+          rhodecode-testdata
         ]);
 
       propagatedBuildInputs = attrs.propagatedBuildInputs ++ (with self; [
@@ -197,16 +200,21 @@ let
 
     });
 
-    rc_testdata = self.buildPythonPackage rec {
-      name = "rc_testdata-0.7.0";
-      src = pkgs.fetchhg {
-        url = "https://code.rhodecode.com/upstream/rc_testdata";
-        rev = "v0.7.0";
-        sha256 = "0w3z0zn8lagr707v67lgys23sl6pbi4xg7pfvdbw58h3q384h6rx";
-      };
+    rhodecode-testdata = import "${rhodecode-testdata-src}/default.nix" {
+    inherit
+      doCheck
+      pkgs
+      pythonPackages;
     };
 
   };
+
+  rhodecode-testdata-src = sources.rhodecode-testdata or (
+    pkgs.fetchhg {
+      url = "https://code.rhodecode.com/upstream/rc_testdata";
+      rev = "v0.8.0";
+      sha256 = "0hy1ba134rq2f9si85yx7j4qhc9ky0hjzdk553s3q026i7km809m";
+  });
 
   # Apply all overrides and fix the final package set
   myPythonPackagesUnfix =

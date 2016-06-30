@@ -269,6 +269,33 @@ form.rcform {
 
 }
 
+.badged-field {
+    .user-badge {
+        line-height: 25px;
+        padding: 10px 5px;
+        border-radius: @border-radius;
+        border-top: 1px solid @rclightblue;
+        border-left: 1px solid @rclightblue;
+        border-bottom: 1px solid @rclightblue;
+        font-size: 14px;
+        font-style: normal;
+        color: @text-light;
+        display: inline-block;
+        vertical-align: top;
+        cursor: default;
+        margin-right: -2px;
+    }
+    .badge-input-container {
+        display: flex;
+        position: relative;
+    }
+    .user-disabled {
+        text-decoration: line-through;
+    }
+    .badge-input-wrap {
+        display: inline-block;
+    }
+}
 
 // for situations where we wish to display the form value but not the form input
 input.input-valuedisplay {

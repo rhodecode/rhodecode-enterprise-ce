@@ -13,7 +13,7 @@ purposes. This section contains an overview of them.
 =============
 
 Enables the section "Style" in the application. This section provides an
-overview of all components which are found in the frontend style of the
+overview of all components which are found in the frontend of the
 application.
 
 
@@ -29,9 +29,9 @@ to ease development.
 `[logging]`
 ===========
 
-Use this to configure loggig to your current needs. The documentation of
-Python's `logging` module explains all details. The following snippets are
-useful for day to day development work.
+Use this to configure logging to your current needs. The documentation of
+Python's `logging` module explains all of the details. The following snippets
+are useful for day to day development work.
 
 
 Mute SQL output

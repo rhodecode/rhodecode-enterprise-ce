@@ -26,3 +26,18 @@ class IUserRegistered(Interface):
     """
     user = Attribute('The user object.')
     session = Attribute('The session while processing the register form post.')
+
+
+class IUserPreCreate(Interface):
+    """
+    An event type that is emitted before a new user object is created.
+    """
+    user_data = Attribute('Data used to create the new user')
+
+
+class IUserPreUpdate(Interface):
+    """
+    An event type that is emitted before a user object is updated.
+    """
+    user = Attribute('The not yet updated user object')
+    user_data = Attribute('Data used to update the user')

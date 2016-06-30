@@ -432,7 +432,13 @@ def test_get_repo_by_id(test, expected):
     assert _test == expected
 
 
-def test_invalidation_context(pylonsapp):
+@pytest.mark.parametrize("test_repo_name, repo_type", [
+  ("test_repo_1", None),
+  ("repo_group/foobar", None),
+  ("test_non_asci_ąćę", None),
+  (u"test_non_asci_unicode_ąćę", None),
+])
+def test_invalidation_context(pylonsapp, test_repo_name, repo_type):
     from beaker.cache import cache_region
     from rhodecode.lib import caches
     from rhodecode.model.db import CacheKey
@@ -442,7 +448,7 @@ def test_invalidation_context(pylonsapp):
         return 'result'
 
     invalidator_context = CacheKey.repo_context_cache(
-        _dummy_func, 'test_repo_1', 'repo')
+        _dummy_func, test_repo_name, 'repo')
 
     with invalidator_context as context:
         invalidated = context.invalidate()
@@ -451,6 +457,8 @@ def test_invalidation_context(pylonsapp):
     assert invalidated == True
     assert 'result' == result
     assert isinstance(context, caches.FreshRegionCache)
+
+    assert 'InvalidationContext' in repr(invalidator_context)
 
     with invalidator_context as context:
         context.invalidate()

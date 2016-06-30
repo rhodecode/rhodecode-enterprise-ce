@@ -66,10 +66,10 @@ Locators
 --------
 
 The specific information how to locate an element inside of the DOM tree of a
-page is kept in a separate class. This class serves mainly as a data container,
+page is kept in a separate class. This class serves mainly as a data container;
 it shall not contain any logic.
 
 The reason for keeping the locators separate is that we expect a frequent need
-for change whenever we work on our templates. In such a case it is more
-efficient to have all locators together and update them there instead of having
-to find all locators inside of the logic of a page object.
+for change whenever we work on our templates. In such a case, it is more
+efficient to have all of thelocators together and update them there instead of
+having to find every locator inside of the logic of a page object.

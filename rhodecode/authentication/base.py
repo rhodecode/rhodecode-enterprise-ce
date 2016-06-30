@@ -22,6 +22,7 @@
 Authentication modules
 """
 
+import colander
 import logging
 import time
 import traceback
@@ -97,15 +98,17 @@ class RhodeCodeAuthPluginBase(object):
     # Mapping of python to DB settings model types. Plugins may override or
     # extend this mapping.
     _settings_type_map = {
-        str: 'str',
-        int: 'int',
-        unicode: 'unicode',
-        bool: 'bool',
-        list: 'list',
+        colander.String: 'unicode',
+        colander.Integer: 'int',
+        colander.Boolean: 'bool',
+        colander.List: 'list',
     }
 
     def __init__(self, plugin_id):
         self._plugin_id = plugin_id
+
+    def __str__(self):
+        return self.get_id()
 
     def _get_setting_full_name(self, name):
         """
@@ -116,16 +119,19 @@ class RhodeCodeAuthPluginBase(object):
         # PluginSetting or to use the plugin id here.
         return 'auth_{}_{}'.format(self.name, name)
 
-    def _get_setting_type(self, name, value):
+    def _get_setting_type(self, name):
         """
-        Get the type as used by the SettingsModel accordingly to type of passed
-        value. Optionally the suffix `.encrypted` is appended to instruct
-        SettingsModel to store it encrypted.
+        Return the type of a setting. This type is defined by the SettingsModel
+        and determines how the setting is stored in DB. Optionally the suffix
+        `.encrypted` is appended to instruct SettingsModel to store it
+        encrypted.
         """
-        type_ = self._settings_type_map.get(type(value), 'unicode')
+        schema_node = self.get_settings_schema().get(name)
+        db_type = self._settings_type_map.get(
+            type(schema_node.typ), 'unicode')
         if name in self._settings_encrypted:
-            type_ = '{}.encrypted'.format(type_)
-        return type_
+            db_type = '{}.encrypted'.format(db_type)
+        return db_type
 
     def is_enabled(self):
         """
@@ -161,20 +167,20 @@ class RhodeCodeAuthPluginBase(object):
         """
         return AuthnPluginSettingsSchemaBase()
 
-    def get_setting_by_name(self, name):
+    def get_setting_by_name(self, name, default=None):
         """
         Returns a plugin setting by name.
         """
         full_name = self._get_setting_full_name(name)
         db_setting = SettingsModel().get_setting_by_name(full_name)
-        return db_setting.app_settings_value if db_setting else None
+        return db_setting.app_settings_value if db_setting else default
 
     def create_or_update_setting(self, name, value):
         """
         Create or update a setting for this plugin in the persistent storage.
         """
         full_name = self._get_setting_full_name(name)
-        type_ = self._get_setting_type(name, value)
+        type_ = self._get_setting_type(name)
         db_setting = SettingsModel().create_or_update_setting(
             full_name, value, type_)
         return db_setting.app_settings_value

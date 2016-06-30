@@ -82,7 +82,7 @@ def load_environment(global_conf, app_conf, initial=False,
 
     config['routes.map'] = make_map(config)
 
-    if asbool(config['debug']):
+    if asbool(config.get('generate_js_files', 'false')):
         jsroutes = config['routes.map'].jsroutes()
         jsroutes_file_content = generate_jsroutes_content(jsroutes)
         jsroutes_file_path = os.path.join(

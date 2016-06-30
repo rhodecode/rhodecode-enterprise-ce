@@ -69,7 +69,6 @@ def pylons_compatibility_tween_factory(handler, registry):
             context.rhodecode_user = auth_user
             attach_context_attributes(context)
             pylons.tmpl_context._push_object(context)
-
             return handler(request)
         finally:
             # Dispose current database session and rollback uncommitted

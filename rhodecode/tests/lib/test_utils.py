@@ -29,6 +29,7 @@ import pytest
 from rhodecode.lib import caching_query
 from rhodecode.lib import utils
 from rhodecode.lib.utils2 import md5
+from rhodecode.model import settings
 from rhodecode.model import db
 from rhodecode.model import meta
 from rhodecode.model.repo import RepoModel
@@ -402,7 +403,7 @@ class TestConfigDataFromDb(object):
         ]
         repo_name = 'test_repo'
 
-        model_patch = mock.patch.object(utils, 'VcsSettingsModel')
+        model_patch = mock.patch.object(settings, 'VcsSettingsModel')
         hooks_patch = mock.patch.object(
             utils, 'get_enabled_hook_classes',
             return_value=['pull', 'push', 'repo_size'])

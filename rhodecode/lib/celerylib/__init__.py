@@ -34,7 +34,6 @@ from decorator import decorator
 
 from zope.cachedescriptors.property import Lazy as LazyProperty
 
-from rhodecode import CELERY_ENABLED, CELERY_EAGER
 from rhodecode.config import utils
 from rhodecode.lib.utils2 import safe_str, md5_safe, aslist
 from rhodecode.lib.pidlock import DaemonLock, LockHeld
@@ -54,8 +53,7 @@ class ResultWrapper(object):
 
 
 def run_task(task, *args, **kwargs):
-    global CELERY_ENABLED
-    if CELERY_ENABLED:
+    if rhodecode.CELERY_ENABLED:
         try:
             t = task.apply_async(args=args, kwargs=kwargs)
             log.info('running task %s:%s', t.task_id, task)
@@ -63,18 +61,18 @@ def run_task(task, *args, **kwargs):
 
         except socket.error as e:
             if isinstance(e, IOError) and e.errno == 111:
-                log.debug('Unable to connect to celeryd. Sync execution')
-                CELERY_ENABLED = False
+                log.error('Unable to connect to celeryd. Sync execution')
+                rhodecode.CELERY_ENABLED = False
             else:
                 log.exception("Exception while connecting to celeryd.")
         except KeyError as e:
-                log.debug('Unable to connect to celeryd. Sync execution')
+            log.error('Unable to connect to celeryd. Sync execution')
         except Exception as e:
             log.exception(
                 "Exception while trying to run task asynchronous. "
                 "Fallback to sync execution.")
-
-    log.debug('executing task %s in sync mode', task)
+    else:
+        log.debug('executing task %s in sync mode', task)
     return ResultWrapper(task(*args, **kwargs))
 
 
@@ -106,7 +104,7 @@ def locked_task(func):
 
 
 def get_session():
-    if CELERY_ENABLED:
+    if rhodecode.CELERY_ENABLED:
         utils.initialize_database(config)
     sa = meta.Session()
     return sa
@@ -118,7 +116,7 @@ def dbsession(func):
             ret = func(*fargs, **fkwargs)
             return ret
         finally:
-            if CELERY_ENABLED and not CELERY_EAGER:
+            if rhodecode.CELERY_ENABLED and not rhodecode.CELERY_EAGER:
                 meta.Session.remove()
 
     return decorator(__wrapper, func)
@@ -126,7 +124,7 @@ def dbsession(func):
 
 def vcsconnection(func):
     def __wrapper(func, *fargs, **fkwargs):
-        if CELERY_ENABLED and not CELERY_EAGER:
+        if rhodecode.CELERY_ENABLED and not rhodecode.CELERY_EAGER:
             backends = config['vcs.backends'] = aslist(
                 config.get('vcs.backends', 'hg,git'), sep=',')
             for alias in rhodecode.BACKENDS.keys():

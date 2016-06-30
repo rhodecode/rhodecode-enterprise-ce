@@ -138,7 +138,11 @@ def UserForm(edit=False, available_languages=[], old_data={}):
     return _UserForm
 
 
-def UserGroupForm(edit=False, old_data={}, available_members=[]):
+def UserGroupForm(edit=False, old_data=None, available_members=None,
+                  allow_disabled=False):
+    old_data = old_data or {}
+    available_members = available_members or []
+
     class _UserGroupForm(formencode.Schema):
         allow_extra_fields = True
         filter_extra_fields = True
@@ -157,14 +161,18 @@ def UserGroupForm(edit=False, old_data={}, available_members=[]):
                 available_members, hideList=False, testValueList=True,
                 if_missing=None, not_empty=False
             )
-            #this is user group owner
-            user = All(v.UnicodeString(not_empty=True), v.ValidRepoUser())
-
+            # this is user group owner
+            user = All(
+                v.UnicodeString(not_empty=True),
+                v.ValidRepoUser(allow_disabled))
     return _UserGroupForm
 
 
-def RepoGroupForm(edit=False, old_data={}, available_groups=[],
-                   can_create_in_root=False):
+def RepoGroupForm(edit=False, old_data=None, available_groups=None,
+                   can_create_in_root=False, allow_disabled=False):
+    old_data = old_data or {}
+    available_groups = available_groups or []
+
     class _RepoGroupForm(formencode.Schema):
         allow_extra_fields = True
         filter_extra_fields = False
@@ -178,11 +186,14 @@ def RepoGroupForm(edit=False, old_data={}, available_groups=[],
         group_parent_id = v.OneOf(available_groups, hideList=False,
                                   testValueList=True, not_empty=True)
         enable_locking = v.StringBoolean(if_missing=False)
-        chained_validators = [v.ValidRepoGroup(edit, old_data, can_create_in_root)]
+        chained_validators = [
+            v.ValidRepoGroup(edit, old_data, can_create_in_root)]
 
         if edit:
-            #this is repo group owner
-            user = All(v.UnicodeString(not_empty=True), v.ValidRepoUser())
+            # this is repo group owner
+            user = All(
+                v.UnicodeString(not_empty=True),
+                v.ValidRepoUser(allow_disabled))
 
     return _RepoGroupForm
 
@@ -221,7 +232,8 @@ def PasswordResetForm():
     return _PasswordResetForm
 
 
-def RepoForm(edit=False, old_data=None, repo_groups=None, landing_revs=None):
+def RepoForm(edit=False, old_data=None, repo_groups=None, landing_revs=None,
+             allow_disabled=False):
     old_data = old_data or {}
     repo_groups = repo_groups or []
     landing_revs = landing_revs or []
@@ -248,7 +260,9 @@ def RepoForm(edit=False, old_data=None, repo_groups=None, landing_revs=None):
 
         if edit:
             # this is repo owner
-            user = All(v.UnicodeString(not_empty=True), v.ValidRepoUser())
+            user = All(
+                v.UnicodeString(not_empty=True),
+                v.ValidRepoUser(allow_disabled))
             clone_uri_change = v.UnicodeString(
                 not_empty=False, if_missing=v.Missing)
 

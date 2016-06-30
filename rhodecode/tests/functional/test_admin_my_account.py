@@ -85,9 +85,12 @@ class TestMyAccountController(TestController):
         response = self.app.get(url('my_account_pullrequests'))
         response.mustcontain('You currently have no open pull requests.')
 
-        pr = pr_util.create_pull_request()
+        pr = pr_util.create_pull_request(title='TestMyAccountPR')
         response = self.app.get(url('my_account_pullrequests'))
-        response.mustcontain('Pull request #%d opened' % pr.pull_request_id)
+        response.mustcontain('There are currently no open pull requests '
+                             'requiring your participation')
+
+        response.mustcontain('#%s: TestMyAccountPR' % pr.pull_request_id)
 
     def test_my_account_my_emails(self):
         self.log_user()

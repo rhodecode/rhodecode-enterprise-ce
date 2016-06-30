@@ -33,14 +33,14 @@ import tempfile
 import traceback
 import tarfile
 import warnings
-from os.path import abspath
-from os.path import dirname as dn, join as jn
+from os.path import join as jn
 
 import paste
 import pkg_resources
 from paste.script.command import Command, BadCommand
 from webhelpers.text import collapse, remove_formatting, strip_tags
 from mako import exceptions
+from pyramid.threadlocal import get_current_registry
 
 from rhodecode.lib.fakemod import create_module
 from rhodecode.lib.vcs.backends.base import Config
@@ -52,8 +52,7 @@ from rhodecode.model import meta
 from rhodecode.model.db import (
     Repository, User, RhodeCodeUi, UserLog, RepoGroup, UserGroup)
 from rhodecode.model.meta import Session
-from rhodecode.model.repo_group import RepoGroupModel
-from rhodecode.model.settings import VcsSettingsModel, SettingsModel
+
 
 log = logging.getLogger(__name__)
 
@@ -384,6 +383,8 @@ def config_data_from_db(clear_session=True, repo=None):
     Read the configuration data from the database and return configuration
     tuples.
     """
+    from rhodecode.model.settings import VcsSettingsModel
+
     config = []
 
     sa = meta.Session()
@@ -467,6 +468,7 @@ def set_rhodecode_config(config):
 
     :param config:
     """
+    from rhodecode.model.settings import SettingsModel
     app_settings = SettingsModel().get_all_settings()
 
     for k, v in app_settings.items():
@@ -481,6 +483,7 @@ def map_groups(path):
 
     :param paths: full path to repository
     """
+    from rhodecode.model.repo_group import RepoGroupModel
     sa = meta.Session()
     groups = path.split(Repository.NAME_SEP)
     parent = None
@@ -489,7 +492,7 @@ def map_groups(path):
     # last element is repo in nested groups structure
     groups = groups[:-1]
     rgm = RepoGroupModel(sa)
-    owner = User.get_first_admin()
+    owner = User.get_first_super_admin()
     for lvl, group_name in enumerate(groups):
         group_name = '/'.join(groups[:lvl] + [group_name])
         group = RepoGroup.get_by_group_name(group_name)
@@ -525,9 +528,12 @@ def repo2db_mapper(initial_repo_list, remove_obsolete=False):
     """
     from rhodecode.model.repo import RepoModel
     from rhodecode.model.scm import ScmModel
+    from rhodecode.model.repo_group import RepoGroupModel
+    from rhodecode.model.settings import SettingsModel
+
     sa = meta.Session()
     repo_model = RepoModel()
-    user = User.get_first_admin()
+    user = User.get_first_super_admin()
     added = []
 
     # creation defaults
@@ -701,58 +707,56 @@ def get_custom_lexer(extension):
 #==============================================================================
 # TEST FUNCTIONS AND CREATORS
 #==============================================================================
-def create_test_index(repo_location, config, full_index):
+def create_test_index(repo_location, config):
     """
-    Makes default test index
-
-    :param config: test config
-    :param full_index:
-    # start test server:
-    rcserver --with-vcsserver test.ini
-
-    # build index and store it in /tmp/rc/index:
-    rhodecode-index --force --api-host=http://vps1.dev:5000 --api-key=xxx --engine-location=/tmp/rc/index
-
-    # package and move new packages
-    tar -zcvf vcs_search_index.tar.gz -C /tmp/rc index
-    mv vcs_search_index.tar.gz rhodecode/tests/fixtures/
-
+    Makes default test index.
     """
-    cur_dir = dn(dn(abspath(__file__)))
-    with tarfile.open(jn(cur_dir, 'tests', 'fixtures',
-                         'vcs_search_index.tar.gz')) as tar:
-        tar.extractall(os.path.dirname(config['search.location']))
+    import rc_testdata
+
+    rc_testdata.extract_search_index(
+        'vcs_search_index', os.path.dirname(config['search.location']))
 
 
-def create_test_env(repos_test_path, config):
+def create_test_directory(test_path):
     """
-    Makes a fresh database and
-    installs test repository into tmp dir
+    Create test directory if it doesn't exist.
+    """
+    if not os.path.isdir(test_path):
+        log.debug('Creating testdir %s', test_path)
+        os.makedirs(test_path)
+
+
+def create_test_database(test_path, config):
+    """
+    Makes a fresh database.
     """
     from rhodecode.lib.db_manage import DbManage
-    from rhodecode.tests import HG_REPO, GIT_REPO, SVN_REPO, TESTS_TMP_PATH
 
     # PART ONE create db
     dbconf = config['sqlalchemy.db1.url']
     log.debug('making test db %s', dbconf)
-
-    # create test dir if it doesn't exist
-    if not os.path.isdir(repos_test_path):
-        log.debug('Creating testdir %s', repos_test_path)
-        os.makedirs(repos_test_path)
 
     dbmanage = DbManage(log_sql=False, dbconf=dbconf, root=config['here'],
                         tests=True, cli_args={'force_ask': True})
     dbmanage.create_tables(override=True)
     dbmanage.set_db_version()
     # for tests dynamically set new root paths based on generated content
-    dbmanage.create_settings(dbmanage.config_prompt(repos_test_path))
+    dbmanage.create_settings(dbmanage.config_prompt(test_path))
     dbmanage.create_default_user()
     dbmanage.create_test_admin_and_users()
     dbmanage.create_permissions()
     dbmanage.populate_default_permissions()
     Session().commit()
-    # PART TWO make test repo
+
+
+def create_test_repositories(test_path, config):
+    """
+    Creates test repositories in the temporary directory. Repositories are
+    extracted from archives within the rc_testdata package.
+    """
+    import rc_testdata
+    from rhodecode.tests import HG_REPO, GIT_REPO, SVN_REPO
+
     log.debug('making test vcs repositories')
 
     idx_path = config['search.location']
@@ -767,24 +771,15 @@ def create_test_env(repos_test_path, config):
         log.debug('remove %s', data_path)
         shutil.rmtree(data_path)
 
-    # CREATE DEFAULT TEST REPOS
-    cur_dir = dn(dn(abspath(__file__)))
-    with tarfile.open(jn(cur_dir, 'tests', 'fixtures',
-                         'vcs_test_hg.tar.gz')) as tar:
-        tar.extractall(jn(TESTS_TMP_PATH, HG_REPO))
-
-    cur_dir = dn(dn(abspath(__file__)))
-    with tarfile.open(jn(cur_dir, 'tests', 'fixtures',
-                         'vcs_test_git.tar.gz')) as tar:
-        tar.extractall(jn(TESTS_TMP_PATH, GIT_REPO))
+    rc_testdata.extract_hg_dump('vcs_test_hg', jn(test_path, HG_REPO))
+    rc_testdata.extract_git_dump('vcs_test_git', jn(test_path, GIT_REPO))
 
     # Note: Subversion is in the process of being integrated with the system,
     # until we have a properly packed version of the test svn repository, this
     # tries to copy over the repo from a package "rc_testdata"
-    import rc_testdata
     svn_repo_path = rc_testdata.get_svn_repo_archive()
     with tarfile.open(svn_repo_path) as tar:
-        tar.extractall(jn(TESTS_TMP_PATH, SVN_REPO))
+        tar.extractall(jn(test_path, SVN_REPO))
 
 
 #==============================================================================
@@ -976,7 +971,20 @@ def read_opensource_licenses():
 
     if not _license_cache:
         licenses = pkg_resources.resource_string(
-            'rhodecode.config', 'licenses.json')
+            'rhodecode', 'config/licenses.json')
         _license_cache = json.loads(licenses)
 
     return _license_cache
+
+
+def get_registry(request):
+    """
+    Utility to get the pyramid registry from a request. During migration to
+    pyramid we sometimes want to use the pyramid registry from pylons context.
+    Therefore this utility returns `request.registry` for pyramid requests and
+    uses `get_current_registry()` for pylons requests.
+    """
+    try:
+        return request.registry
+    except AttributeError:
+        return get_current_registry()

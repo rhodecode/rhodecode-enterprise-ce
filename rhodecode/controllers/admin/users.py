@@ -216,6 +216,8 @@ class UsersController(BaseController):
                 prefix_error=False,
                 encoding="UTF-8",
                 force_defaults=False)
+        except UserCreationError as e:
+            h.flash(e, 'error')
         except Exception:
             log.exception("Exception updating user")
             h.flash(_('Error occurred during update of user %s')
@@ -401,7 +403,7 @@ class UsersController(BaseController):
         c.active = 'advanced'
         c.perm_user = AuthUser(user_id=user_id, ip_addr=self.ip_addr)
         c.personal_repo_group = RepoGroup.get_by_group_name(user.username)
-        c.first_admin = User.get_first_admin()
+        c.first_admin = User.get_first_super_admin()
         defaults = user.get_dict()
 
         # Interim workaround if the user participated on any pull requests as a

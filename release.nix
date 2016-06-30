@@ -25,6 +25,7 @@
 # vcsserver resides.
 
 { pkgs ? import <nixpkgs> {}
+, doCheck ? true
 }:
 
 let

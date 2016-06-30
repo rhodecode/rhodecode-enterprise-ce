@@ -193,18 +193,23 @@ def ValidRegex(msg=None):
     return _validator
 
 
-def ValidRepoUser():
+def ValidRepoUser(allow_disabled=False):
     class _validator(formencode.validators.FancyValidator):
         messages = {
-            'invalid_username': _(u'Username %(username)s is not valid')
+            'invalid_username': _(u'Username %(username)s is not valid'),
+            'disabled_username': _(u'Username %(username)s is disabled')
         }
 
         def validate_python(self, value, state):
             try:
-                User.query().filter(User.active == true())\
-                    .filter(User.username == value).one()
+                user = User.query().filter(User.username == value).one()
             except Exception:
                 msg = M(self, 'invalid_username', state, username=value)
+                raise formencode.Invalid(
+                    msg, value, state, error_dict={'username': msg}
+                )
+            if user and (not allow_disabled and not user.active):
+                msg = M(self, 'disabled_username', state, username=value)
                 raise formencode.Invalid(
                     msg, value, state, error_dict={'username': msg}
                 )

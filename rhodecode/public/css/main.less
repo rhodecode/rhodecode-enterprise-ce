@@ -296,30 +296,30 @@ ul.auth_plugins {
 	}
 }
 
-// Pull Requests
+
+// My Account PR list
+
+#show_closed {
+    margin: 0 1em 0 0;
+}
 
 .pullrequestlist {
-	max-width: @pullrequest-width;
-	margin-bottom: @space;
-
-    // Tweaks for "My Account" / "Pull requests"
-    .prwrapper {
-        clear: left;
-
-        .pr {
-            margin: 0;
-            padding: 0;
-            border-bottom: none;
-        }
-
-        // TODO: johbo: Replace with something that makes up an inline form or
-        // similar.
-        .repolist_actions {
-            display: inline-block;
-        }
+    .closed {
+        background-color: @grey6;
     }
-
+    .td-status {
+        padding-left: .5em;
+    }
+    .truncate {
+        height: 2.75em;
+        white-space: pre-line;
+    }
+    table.rctable .user {
+        padding-left: 0;
+    }
 }
+
+// Pull Requests
 
 .pullrequests_section_head {
 	display: block;
@@ -1085,6 +1085,7 @@ table.issuetracker {
         width: auto;
     }
 }
+
 
 //Permissions Settings
 #add_perm {

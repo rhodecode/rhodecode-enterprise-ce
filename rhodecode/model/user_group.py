@@ -498,7 +498,7 @@ class UserGroupModel(BaseModel):
                 self.remove_user_from_group(gr, user)
 
         # now we calculate in which groups user should be == groups params
-        owner = User.get_first_admin().username
+        owner = User.get_first_super_admin().username
         for gr in set(groups):
             existing_group = UserGroup.get_by_group_name(gr)
             if not existing_group:

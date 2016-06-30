@@ -134,10 +134,10 @@
 </%def>
 
 
-<%def name="gravatar_with_user(contact, size=16)">
+<%def name="gravatar_with_user(contact, size=16, show_disabled=False)">
   <div class="rc-user tooltip" title="${contact}">
     ${self.gravatar(h.email_or_none(contact), size)}
-    <span class="user"> ${h.link_to_user(contact)}</span>
+    <span class="${'user user-disabled' if show_disabled else 'user'}"> ${h.link_to_user(contact)}</span>
   </div>
 </%def>
 
@@ -195,7 +195,7 @@
     %if repo_instance.clone_uri:
     <p>
        <i class="icon-code-fork"></i> ${_('Clone from')}
-       <a href="${h.url(str(h.hide_credentials(repo_instance.clone_uri)))}">${h.hide_credentials(repo_instance.clone_uri)}</a>
+       <a href="${h.url(h.safe_str(h.hide_credentials(repo_instance.clone_uri)))}">${h.hide_credentials(repo_instance.clone_uri)}</a>
     </p>
     %endif
 

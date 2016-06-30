@@ -255,7 +255,7 @@ class BasicAuth(AuthBasicAuthenticator):
 
 
 def attach_context_attributes(context):
-    rc_config = SettingsModel().get_all_settings()
+    rc_config = SettingsModel().get_all_settings(cache=True)
 
     context.rhodecode_version = rhodecode.__version__
     context.rhodecode_edition = config.get('rhodecode.edition')
@@ -425,7 +425,7 @@ class BaseController(WSGIController):
         _route_name = '.'.join([environ['pylons.routes_dict']['controller'],
                                 environ['pylons.routes_dict']['action']])
 
-        self.rc_config = SettingsModel().get_all_settings()
+        self.rc_config = SettingsModel().get_all_settings(cache=True)
         self.ip_addr = get_ip_addr(environ)
 
         # The rhodecode auth user is looked up and passed through the

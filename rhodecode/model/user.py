@@ -26,13 +26,13 @@ import logging
 import traceback
 
 import datetime
-from pylons import url
 from pylons.i18n.translation import _
 
 import ipaddress
 from sqlalchemy.exc import DatabaseError
 from sqlalchemy.sql.expression import true, false
 
+from rhodecode.events import UserPreCreate, UserPreUpdate
 from rhodecode.lib.utils2 import (
     safe_unicode, get_current_rhodecode_user, action_logger_generic,
     AttributeDict)
@@ -270,10 +270,12 @@ class UserModel(BaseModel):
                 # raises UserCreationError if it's not allowed for any reason to
                 # create new active user, this also executes pre-create hooks
                 check_allowed_create_user(user_data, cur_user, strict_check=True)
+            self.send_event(UserPreCreate(user_data))
             new_user = User()
             edit = False
         else:
             log.debug('updating user %s', username)
+            self.send_event(UserPreUpdate(user, user_data))
             new_user = user
             edit = True
 
@@ -375,7 +377,7 @@ class UserModel(BaseModel):
             raise
 
     def _handle_user_repos(self, username, repositories, handle_mode=None):
-        _superadmin = self.cls.get_first_admin()
+        _superadmin = self.cls.get_first_super_admin()
         left_overs = True
 
         from rhodecode.model.repo import RepoModel
@@ -398,7 +400,7 @@ class UserModel(BaseModel):
 
     def _handle_user_repo_groups(self, username, repository_groups,
                                  handle_mode=None):
-        _superadmin = self.cls.get_first_admin()
+        _superadmin = self.cls.get_first_super_admin()
         left_overs = True
 
         from rhodecode.model.repo_group import RepoGroupModel
@@ -420,7 +422,7 @@ class UserModel(BaseModel):
         return left_overs
 
     def _handle_user_user_groups(self, username, user_groups, handle_mode=None):
-        _superadmin = self.cls.get_first_admin()
+        _superadmin = self.cls.get_first_super_admin()
         left_overs = True
 
         from rhodecode.model.user_group import UserGroupModel

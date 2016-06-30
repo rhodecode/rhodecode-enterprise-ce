@@ -25,13 +25,15 @@ import logging
 
 from paste.registry import RegistryManager
 from paste.gzipper import make_gzip_middleware
-from pylons.middleware import ErrorHandler, StatusCodeRedirect
 from pylons.wsgiapp import PylonsApp
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.config import Configurator
 from pyramid.static import static_view
 from pyramid.settings import asbool, aslist
 from pyramid.wsgi import wsgiapp
+from pyramid.httpexceptions import HTTPError, HTTPInternalServerError
+import pyramid.httpexceptions as httpexceptions
+from pyramid.renderers import render_to_response, render
 from routes.middleware import RoutesMiddleware
 import routes.util
 
@@ -87,38 +89,15 @@ def make_app(global_conf, full_stack=True, static_files=True, **app_conf):
         app = csrf.OriginChecker(app, expected_origin,
                                  skip_urls=[routes.util.url_for('api')])
 
-    # Add RoutesMiddleware. Currently we have two instances in the stack. This
-    # is the lower one to make the StatusCodeRedirect middleware happy.
-    # TODO: johbo: This is not optimal, search for a better solution.
-    app = RoutesMiddleware(app, config['routes.map'])
-
-    # CUSTOM MIDDLEWARE HERE (filtered by error handling middlewares)
-    if asbool(config['pdebug']):
-        from rhodecode.lib.profiler import ProfilingMiddleware
-        app = ProfilingMiddleware(app)
-
-    # Protect from VCS Server error related pages when server is not available
-    vcs_server_enabled = asbool(config.get('vcs.server.enable', 'true'))
-    if not vcs_server_enabled:
-        app = DisableVCSPagesWrapper(app)
 
     if asbool(full_stack):
 
         # Appenlight monitoring and error handler
         app, appenlight_client = wrap_in_appenlight_if_enabled(app, config)
 
-        # Handle Python exceptions
-        app = ErrorHandler(app, global_conf, **config['pylons.errorware'])
-
         # we want our low level middleware to get to the request ASAP. We don't
         # need any pylons stack middleware in them
         app = VCSMiddleware(app, config, appenlight_client)
-        # Display error documents for 401, 403, 404 status codes (and
-        # 500 when debug is disabled)
-        if asbool(config['debug']):
-            app = StatusCodeRedirect(app)
-        else:
-            app = StatusCodeRedirect(app, [400, 401, 403, 404, 500])
 
     # Establish the Registry for this application
     app = RegistryManager(app)
@@ -176,16 +155,69 @@ def add_pylons_compat_data(registry, global_config, settings):
     registry._pylons_compat_settings = settings
 
 
+def webob_to_pyramid_http_response(webob_response):
+    ResponseClass = httpexceptions.status_map[webob_response.status_int]
+    pyramid_response = ResponseClass(webob_response.status)
+    pyramid_response.status = webob_response.status
+    pyramid_response.headers.update(webob_response.headers)
+    if pyramid_response.headers['content-type'] == 'text/html':
+        pyramid_response.headers['content-type'] = 'text/html; charset=UTF-8'
+    return pyramid_response
+
+
+def error_handler(exception, request):
+    # TODO: dan: replace the old pylons error controller with this
+    from rhodecode.model.settings import SettingsModel
+    from rhodecode.lib.utils2 import AttributeDict
+
+    try:
+        rc_config = SettingsModel().get_all_settings()
+    except Exception:
+        log.exception('failed to fetch settings')
+        rc_config = {}
+
+    base_response = HTTPInternalServerError()
+    # prefer original exception for the response since it may have headers set
+    if isinstance(exception, HTTPError):
+        base_response = exception
+
+    c = AttributeDict()
+    c.error_message = base_response.status
+    c.error_explanation = base_response.explanation or str(base_response)
+    c.visual = AttributeDict()
+
+    c.visual.rhodecode_support_url = (
+        request.registry.settings.get('rhodecode_support_url') or
+        request.route_url('rhodecode_support')
+    )
+    c.redirect_time = 0
+    c.rhodecode_name = rc_config.get('rhodecode_title', '')
+    if not c.rhodecode_name:
+        c.rhodecode_name = 'Rhodecode'
+
+    response = render_to_response(
+        '/errors/error_document.html', {'c': c}, request=request,
+        response=base_response)
+
+    return response
+
+
 def includeme(config):
     settings = config.registry.settings
+
+    if asbool(settings.get('appenlight', 'false')):
+        config.include('appenlight_client.ext.pyramid_tween')
 
     # Includes which are required. The application would fail without them.
     config.include('pyramid_mako')
     config.include('pyramid_beaker')
+    config.include('rhodecode.admin')
     config.include('rhodecode.authentication')
     config.include('rhodecode.login')
     config.include('rhodecode.tweens')
     config.include('rhodecode.api')
+    config.add_route(
+        'rhodecode_support', 'https://rhodecode.com/help/', static=True)
 
     # Set the authorization policy.
     authz_policy = ACLAuthorizationPolicy()
@@ -204,16 +236,52 @@ def includeme(config):
     for inc in includes:
         config.include(inc)
 
-    # This is the glue which allows us to migrate in chunks. By registering the
-    # pylons based application as the "Not Found" view in Pyramid, we will
-    # fallback to the old application each time the new one does not yet know
-    # how to handle a request.
     pylons_app = make_app(
         config.registry._pylons_compat_global_config,
         **config.registry._pylons_compat_settings)
     config.registry._pylons_compat_config = pylons_app.config
+
     pylons_app_as_view = wsgiapp(pylons_app)
-    config.add_notfound_view(pylons_app_as_view)
+
+    # Protect from VCS Server error related pages when server is not available
+    vcs_server_enabled = asbool(settings.get('vcs.server.enable', 'true'))
+    if not vcs_server_enabled:
+        pylons_app_as_view = DisableVCSPagesWrapper(pylons_app_as_view)
+
+
+    def pylons_app_with_error_handler(context, request):
+        """
+        Handle exceptions from rc pylons app:
+
+        - old webob type exceptions get converted to pyramid exceptions
+        - pyramid exceptions are passed to the error handler view
+        """
+        try:
+            response = pylons_app_as_view(context, request)
+            if 400 <= response.status_int <= 599: # webob type error responses
+                return error_handler(
+                    webob_to_pyramid_http_response(response), request)
+        except HTTPError as e: # pyramid type exceptions
+            return error_handler(e, request)
+        except Exception:
+            if settings.get('debugtoolbar.enabled', False):
+                raise
+            return error_handler(HTTPInternalServerError(), request)
+        return response
+
+    # This is the glue which allows us to migrate in chunks. By registering the
+    # pylons based application as the "Not Found" view in Pyramid, we will
+    # fallback to the old application each time the new one does not yet know
+    # how to handle a request.
+    config.add_notfound_view(pylons_app_with_error_handler)
+
+    if settings.get('debugtoolbar.enabled', False):
+        # if toolbar, then only http type exceptions get caught and rendered
+        ExcClass = HTTPError
+    else:
+        # if no toolbar, then any exception gets caught and rendered
+        ExcClass = Exception
+    config.add_view(error_handler, context=ExcClass)
 
 
 def includeme_last(config):
@@ -253,12 +321,15 @@ def wrap_app_in_wsgi_middlewares(pyramid_app, config):
     # enable https redirects based on HTTP_X_URL_SCHEME set by proxy
     pyramid_app = HttpsFixup(pyramid_app, settings)
 
-    # Add RoutesMiddleware. Currently we have two instances in the stack. This
-    # is the upper one to support the pylons compatibility tween during
+    # Add RoutesMiddleware to support the pylons compatibility tween during
 
     # migration to pyramid.
     pyramid_app = RoutesMiddleware(
         pyramid_app, config.registry._pylons_compat_config['routes.map'])
+
+    if asbool(settings.get('appenlight', 'false')):
+        pyramid_app, _ = wrap_in_appenlight_if_enabled(
+            pyramid_app, config.registry._pylons_compat_config)
 
     # TODO: johbo: Don't really see why we enable the gzip middleware when
     # serving static files, might be something that should have its own setting

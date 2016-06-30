@@ -84,8 +84,12 @@ def test_process_patterns_repo(backend, text_string, pattern, expected_text):
         'pref': '#',
         }
     }
+
+    def get_settings_mock(self, cache=True):
+        return config
+
     with mock.patch.object(IssueTrackerSettingsModel,
-                           'get_settings', lambda s: config):
+                           'get_settings', get_settings_mock):
         processed_text = helpers.process_patterns(
             text_string, repo.repo_name, config)
 
@@ -106,8 +110,12 @@ def test_process_patterns_no_repo(text_string, pattern, expected_text):
         'pref': '#',
         }
     }
+
+    def get_settings_mock(self, cache=True):
+        return config
+
     with mock.patch.object(IssueTrackerSettingsModel,
-                           'get_global_settings', lambda s, cache: config):
+                           'get_global_settings', get_settings_mock):
         processed_text = helpers.process_patterns(
             text_string, '', config)
 
@@ -126,8 +134,12 @@ def test_process_patterns_non_existent_repo_name(backend):
         'pref': '#',
         }
     }
+
+    def get_settings_mock(self, cache=True):
+        return config
+
     with mock.patch.object(IssueTrackerSettingsModel,
-                           'get_global_settings', lambda s, cache: config):
+                           'get_global_settings', get_settings_mock):
         processed_text = helpers.process_patterns(
             text_string, 'do-not-exist', config)
 
@@ -182,9 +194,11 @@ def test_get_matching_offsets(test_text, text_phrases, expected_output):
     assert helpers.get_matching_offsets(
         test_text, text_phrases) == expected_output
 
+
 def test_normalize_text_for_matching():
     assert helpers.normalize_text_for_matching(
         'OJjfe)*#$*@)$JF*)3r2f80h') == 'ojjfe        jf  3r2f80h'
+
 
 def test_get_matching_line_offsets():
     assert helpers.get_matching_line_offsets([

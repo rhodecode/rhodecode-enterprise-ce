@@ -19,19 +19,25 @@
 /**
  *  autocomplete formatter that uses gravatar
  * */
-var autocompleteFormatResult = function(data, value, org_formatter) {
-  var value_display = data.value_display;
+var autocompleteFormatResult = function (data, value, org_formatter) {
+  var activeUser = data.active || true;
+  var valueDisplay = data.value_display;
+
+  if (!activeUser) {
+    valueDisplay = '<strong>(disabled)</strong> ' + valueDisplay;
+  }
+
   var escapeRegExChars = function (value) {
     return value.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
   };
   var pattern = '(' + escapeRegExChars(value) + ')';
-  value_display = value_display.replace(new RegExp(pattern, 'gi'), '<strong>$1<\/strong>');
+  valueDisplay = valueDisplay.replace(new RegExp(pattern, 'gi'), '<strong>$1<\/strong>');
   var tmpl = '<div class="ac-container-wrap"><img class="gravatar" src="{0}"/>{1}</div>';
   if (data.icon_link === "") {
     tmpl = '<div class="ac-container-wrap">{0}</div>';
-    return tmpl.format(value_display);
+    return tmpl.format(valueDisplay);
   }
-  return tmpl.format(data.icon_link, value_display);
+  return tmpl.format(data.icon_link, valueDisplay);
 };
 
 /**
