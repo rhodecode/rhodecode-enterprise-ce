@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rhodecode-enterprise-ce 4.2.0\n"
 "Report-Msgid-Bugs-To: marcin@rhodecode.com\n"
-"POT-Creation-Date: 2016-06-28 10:55+0000\n"
+"POT-Creation-Date: 2016-06-30 17:18+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,10 +17,58 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.3\n"
 
-#: rhodecode/authentication/routes.py:60
-#: rhodecode/controllers/admin/settings.py:844
+#: rhodecode/admin/navigation.py:74 rhodecode/authentication/routes.py:60
 #: rhodecode/templates/admin/permissions/permissions.html:36
 msgid "Global"
+msgstr ""
+
+#: rhodecode/admin/navigation.py:75
+#: rhodecode/templates/admin/repos/repo_edit.html:48
+msgid "VCS"
+msgstr ""
+
+#: rhodecode/admin/navigation.py:76
+msgid "Visual"
+msgstr ""
+
+#: rhodecode/admin/navigation.py:77
+msgid "Remap and Rescan"
+msgstr ""
+
+#: rhodecode/admin/navigation.py:78
+#: rhodecode/templates/admin/repos/repo_edit.html:54
+msgid "Issue Tracker"
+msgstr ""
+
+#: rhodecode/admin/navigation.py:80 rhodecode/templates/register.html:76
+#: rhodecode/templates/admin/my_account/my_account_profile.html:48
+#: rhodecode/templates/admin/my_account/my_account_profile_edit.html:94
+#: rhodecode/templates/admin/users/user_add.html:86
+#: rhodecode/templates/admin/users/user_edit_profile.html:65
+#: rhodecode/templates/admin/users/users.html:91
+#: rhodecode/templates/users/user_profile.html:51
+msgid "Email"
+msgstr ""
+
+#: rhodecode/admin/navigation.py:81
+msgid "Hooks"
+msgstr ""
+
+#: rhodecode/admin/navigation.py:82
+msgid "Full Text Search"
+msgstr ""
+
+#: rhodecode/admin/navigation.py:83
+#: rhodecode/templates/admin/settings/settings_system.html:47
+msgid "System Info"
+msgstr ""
+
+#: rhodecode/admin/navigation.py:84
+msgid "Open Source Licenses"
+msgstr ""
+
+#: rhodecode/admin/navigation.py:91
+msgid "Labs"
 msgstr ""
 
 #: rhodecode/authentication/schema.py:35
@@ -39,19 +87,19 @@ msgstr ""
 msgid "Auth Cache TTL"
 msgstr ""
 
-#: rhodecode/authentication/views.py:88
+#: rhodecode/authentication/views.py:90
 msgid "Errors exist when saving plugin settings. Please check the form inputs."
 msgstr ""
 
-#: rhodecode/authentication/views.py:101 rhodecode/authentication/views.py:170
+#: rhodecode/authentication/views.py:103 rhodecode/authentication/views.py:172
 msgid "Auth settings updated successfully."
 msgstr ""
 
-#: rhodecode/authentication/views.py:175
+#: rhodecode/authentication/views.py:177
 msgid "Errors exist when saving plugin setting. Please check the form inputs."
 msgstr ""
 
-#: rhodecode/authentication/views.py:185
+#: rhodecode/authentication/views.py:187
 msgid "Error occurred during update of auth settings."
 msgstr ""
 
@@ -958,18 +1006,18 @@ msgid "Error occurred during deleting issue tracker entry"
 msgstr ""
 
 #: rhodecode/controllers/admin/repos.py:720
-#: rhodecode/controllers/admin/settings.py:362
+#: rhodecode/controllers/admin/settings.py:363
 msgid "Removed issue tracker entry"
 msgstr ""
 
 #: rhodecode/controllers/admin/repos.py:750
-#: rhodecode/controllers/admin/settings.py:408
+#: rhodecode/controllers/admin/settings.py:409
 msgid "Updated issue tracker entries"
 msgstr ""
 
 #: rhodecode/controllers/admin/repos.py:809
-#: rhodecode/controllers/admin/settings.py:141
-#: rhodecode/controllers/admin/settings.py:718
+#: rhodecode/controllers/admin/settings.py:142
+#: rhodecode/controllers/admin/settings.py:719
 msgid "Some form inputs contain invalid data."
 msgstr ""
 
@@ -978,142 +1026,92 @@ msgid "Error occurred during updating repository VCS settings"
 msgstr ""
 
 #: rhodecode/controllers/admin/repos.py:831
-#: rhodecode/controllers/admin/settings.py:167
+#: rhodecode/controllers/admin/settings.py:168
 msgid "Updated VCS settings"
 msgstr ""
 
-#: rhodecode/controllers/admin/settings.py:163
-#: rhodecode/controllers/admin/settings.py:266
+#: rhodecode/controllers/admin/settings.py:164
+#: rhodecode/controllers/admin/settings.py:267
 msgid "Error occurred during updating application settings"
 msgstr ""
 
-#: rhodecode/controllers/admin/settings.py:210
+#: rhodecode/controllers/admin/settings.py:211
 #, python-format
 msgid "Repositories successfully rescanned added: %s ; removed: %s"
 msgstr ""
 
-#: rhodecode/controllers/admin/settings.py:262
+#: rhodecode/controllers/admin/settings.py:263
 msgid "Updated application settings"
 msgstr ""
 
-#: rhodecode/controllers/admin/settings.py:326
+#: rhodecode/controllers/admin/settings.py:327
 msgid "Updated visualisation settings"
 msgstr ""
 
-#: rhodecode/controllers/admin/settings.py:329
+#: rhodecode/controllers/admin/settings.py:330
 msgid "Error occurred during updating visualisation settings"
 msgstr ""
 
-#: rhodecode/controllers/admin/settings.py:421
+#: rhodecode/controllers/admin/settings.py:422
 msgid "Please enter email address"
 msgstr ""
 
-#: rhodecode/controllers/admin/settings.py:439
+#: rhodecode/controllers/admin/settings.py:440
 msgid "Send email task created"
 msgstr ""
 
-#: rhodecode/controllers/admin/settings.py:472
+#: rhodecode/controllers/admin/settings.py:473
 msgid "Added new hook"
 msgstr ""
 
-#: rhodecode/controllers/admin/settings.py:487
+#: rhodecode/controllers/admin/settings.py:488
 msgid "Updated hooks"
 msgstr ""
 
-#: rhodecode/controllers/admin/settings.py:491
+#: rhodecode/controllers/admin/settings.py:492
 msgid "Error occurred during hook creation"
 msgstr ""
 
-#: rhodecode/controllers/admin/settings.py:539
+#: rhodecode/controllers/admin/settings.py:540
 #, python-format
 msgid "Critical: your disk space is very low <b>%s%%</b> usedpercent"
 msgstr ""
 
-#: rhodecode/controllers/admin/settings.py:543
+#: rhodecode/controllers/admin/settings.py:544
 #, python-format
 msgid "Warning: your disk space is running low <b>%s%%</b> usedpercent"
 msgstr ""
 
-#: rhodecode/controllers/admin/settings.py:739
+#: rhodecode/controllers/admin/settings.py:740
 msgid "Error occurred during updating labs settings"
 msgstr ""
 
-#: rhodecode/controllers/admin/settings.py:744
+#: rhodecode/controllers/admin/settings.py:745
 msgid "Updated Labs settings"
 msgstr ""
 
-#: rhodecode/controllers/admin/settings.py:794
+#: rhodecode/controllers/admin/settings.py:795
 msgid "Mercurial server-side merge"
 msgstr ""
 
-#: rhodecode/controllers/admin/settings.py:795
+#: rhodecode/controllers/admin/settings.py:796
 msgid "Use rebase instead of creating a merge commit when merging via web interface"
 msgstr ""
 
-#: rhodecode/controllers/admin/settings.py:801
+#: rhodecode/controllers/admin/settings.py:802
 msgid "Subversion HTTP Support"
 msgstr ""
 
-#: rhodecode/controllers/admin/settings.py:802
+#: rhodecode/controllers/admin/settings.py:803
 msgid "Proxy subversion HTTP requests"
 msgstr ""
 
-#: rhodecode/controllers/admin/settings.py:808
+#: rhodecode/controllers/admin/settings.py:809
 msgid "Subversion HTTP Server URL"
 msgstr ""
 
-#: rhodecode/controllers/admin/settings.py:810
+#: rhodecode/controllers/admin/settings.py:811
 msgid "e.g. http://localhost:8080/"
-msgstr ""
-
-#: rhodecode/controllers/admin/settings.py:845
-#: rhodecode/templates/admin/repos/repo_edit.html:48
-msgid "VCS"
-msgstr ""
-
-#: rhodecode/controllers/admin/settings.py:846
-msgid "Visual"
-msgstr ""
-
-#: rhodecode/controllers/admin/settings.py:847
-msgid "Remap and Rescan"
-msgstr ""
-
-#: rhodecode/controllers/admin/settings.py:849
-#: rhodecode/templates/admin/repos/repo_edit.html:54
-msgid "Issue Tracker"
-msgstr ""
-
-#: rhodecode/controllers/admin/settings.py:851
-#: rhodecode/templates/register.html:76
-#: rhodecode/templates/admin/my_account/my_account_profile.html:48
-#: rhodecode/templates/admin/my_account/my_account_profile_edit.html:94
-#: rhodecode/templates/admin/users/user_add.html:86
-#: rhodecode/templates/admin/users/user_edit_profile.html:65
-#: rhodecode/templates/admin/users/users.html:91
-#: rhodecode/templates/users/user_profile.html:51
-msgid "Email"
-msgstr ""
-
-#: rhodecode/controllers/admin/settings.py:852
-msgid "Hooks"
-msgstr ""
-
-#: rhodecode/controllers/admin/settings.py:853
-msgid "Full Text Search"
-msgstr ""
-
-#: rhodecode/controllers/admin/settings.py:855
-#: rhodecode/templates/admin/settings/settings_system.html:47
-msgid "System Info"
-msgstr ""
-
-#: rhodecode/controllers/admin/settings.py:857
-msgid "Open Source Licenses"
-msgstr ""
-
-#: rhodecode/controllers/admin/settings.py:875
-msgid "Labs"
 msgstr ""
 
 #: rhodecode/controllers/admin/user_groups.py:168

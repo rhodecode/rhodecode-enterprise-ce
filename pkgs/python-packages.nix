@@ -714,19 +714,6 @@
       license = [ { fullName = "LGPL"; } ];
     };
   };
-  greenlet = super.buildPythonPackage {
-    name = "greenlet-0.4.9";
-    buildInputs = with self; [];
-    doCheck = false;
-    propagatedBuildInputs = with self; [];
-    src = fetchurl {
-      url = "https://pypi.python.org/packages/4e/3d/9d421539b74e33608b245092870156b2e171fb49f2b51390aa4641eecb4a/greenlet-0.4.9.zip";
-      md5 = "c6659cdb2a5e591723e629d2eef22e82";
-    };
-    meta = {
-      license = [ pkgs.lib.licenses.mit ];
-    };
-  };
   gunicorn = super.buildPythonPackage {
     name = "gunicorn-19.6.0";
     buildInputs = with self; [];
