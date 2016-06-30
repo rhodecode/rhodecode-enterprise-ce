@@ -177,8 +177,7 @@ div.markdown-block p,
 div.markdown-block blockquote,
 div.markdown-block dl,
 div.markdown-block li,
-div.markdown-block table,
-div.markdown-block pre {
+div.markdown-block table {
     margin: 15px 0 !important;
     margin: 3px 0px 13px 0px !important;
     color: #424242 !important;
@@ -187,6 +186,17 @@ div.markdown-block pre {
     font-weight: normal  !important;
     overflow: visible !important;
     line-height: 140% !important;
+}
+
+div.markdown-block pre {
+  margin: 15px 0 !important;
+  margin: 3px 0px 13px 0px !important;
+  padding: .5em;
+  color: #424242 !important;
+  font-size: 13px !important;
+  overflow: visible !important;
+  line-height: 140% !important;
+  background-color: @grey7;
 }
 
 div.markdown-block img {
@@ -265,7 +275,8 @@ div.markdown-block code {
 div.markdown-block pre {
     border: @border-thickness solid @grey5;
     overflow: auto;
-    padding: 4px 8px;
+    padding: .5em;
+    background-color: @grey7;
 }
 
 div.markdown-block pre > code {

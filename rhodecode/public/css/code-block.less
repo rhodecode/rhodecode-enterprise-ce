@@ -494,16 +494,29 @@ div.codeblock {
 }
 
 .code-highlighttable,
-div.codeblock .code-body table {
-    width: 0 !important;
-    border: 0px !important;
-    margin: 0;
-    letter-spacing: normal;
+div.codeblock {
 
+    .code-body .markdown-block table {
+        border-collapse: collapse;
 
-    td {
+        th,
+        td {
+            padding: .5em !important;
+            border: @border-thickness solid @border-default-color !important;
+        }
+    }
+
+    .code-body table {
+        width: 0 !important;
         border: 0px !important;
-        vertical-align: top;
+        margin: 0;
+        letter-spacing: normal;
+    
+    
+        td {
+            border: 0px !important;
+            vertical-align: top;
+        }
     }
 }
 
