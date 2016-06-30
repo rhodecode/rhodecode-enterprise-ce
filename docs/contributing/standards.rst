@@ -95,7 +95,7 @@ Also known as "ac tests", these test from the user and business perspective to
 check if the requirements of a feature are met. Scenarios are created at a
 feature's inception and help to define its value.
 
-py.test is used for ac tests; they are located in a folder separate from the
+py.test is used for ac tests; they are located in a repo separate from the
 other tests which follow. Each feature has a .feature file which contains a
 brief description and the scenarios to be tested.
 
