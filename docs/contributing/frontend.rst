@@ -12,19 +12,21 @@ Templates
 =========
 
 - Indent with 4 spaces in general.
-
 - Embedded Python code follows the same conventions as in the backend.
 
-  A common problem are missed spaces around operators.
+  A common problem is missed spaces around operators.
 
 
 
 
-Grunt AND npm2nix
-=================
+Grunt
+=====
 
-
----something goes here ---
+We use Grunt to compile our JavaScript and LESS files. This is done automatically
+when you start an instance. If you are changing these files, however, it is
+recommended to amend `--reload` to the `runserver` command, or use `grunt watch`
+- the Gruntfile is located in the base directory. For more info on Grunt, see
+http://gruntjs.com/
 
 
 
@@ -37,8 +39,7 @@ Style
 -----
 
 - Use 4 spaces instead of tabs.
-
-- Avoid ``!important``, it is very often an indicator for a problem.
+- Avoid ``!important``; it is very often an indicator for a problem.
 
 
 
@@ -47,7 +48,7 @@ Structure
 ---------
 
 It is important that we maintain consistency in the LESS files so that things
-scale properly. CSS is organized using LESS and then compiled into a css file
+scale properly. CSS is organized using LESS and then compiled into a CSS file
 to be used in production. Find the class you need to change and change it
 there. Do not add overriding styles at the end of the file. The LESS file will
 be minified; use plenty of spacing and comments for readability.
