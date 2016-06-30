@@ -1,3 +1,4 @@
+.. _dev-setup:
 
 ===================
  Development setup
