@@ -572,13 +572,13 @@
     };
   };
   dogpile.cache = super.buildPythonPackage {
-    name = "dogpile.cache-0.5.7";
+    name = "dogpile.cache-0.6.1";
     buildInputs = with self; [];
     doCheck = false;
     propagatedBuildInputs = with self; [dogpile.core];
     src = fetchurl {
-      url = "https://pypi.python.org/packages/07/74/2a83bedf758156d9c95d112691bbad870d3b77ccbcfb781b4ef836ea7d96/dogpile.cache-0.5.7.tar.gz";
-      md5 = "3e58ce41af574aab41d78e9c4190f194";
+      url = "https://pypi.python.org/packages/f6/a0/6f2142c58c6588d17c734265b103ae1cd0741e1681dd9483a63f22033375/dogpile.cache-0.6.1.tar.gz";
+      md5 = "35d7fb30f22bbd0685763d894dd079a9";
     };
     meta = {
       license = [ pkgs.lib.licenses.bsdOriginal ];
@@ -1352,7 +1352,7 @@
     };
   };
   rhodecode-enterprise-ce = super.buildPythonPackage {
-    name = "rhodecode-enterprise-ce-4.2.0";
+    name = "rhodecode-enterprise-ce-4.3.0";
     buildInputs = with self; [WebTest configobj cssselect flake8 lxml mock pytest pytest-cov pytest-runner];
     doCheck = true;
     propagatedBuildInputs = with self; [Babel Beaker FormEncode Mako Markdown MarkupSafe MySQL-python Paste PasteDeploy PasteScript Pygments Pylons Pyro4 Routes SQLAlchemy Tempita URLObject WebError WebHelpers WebHelpers2 WebOb WebTest Whoosh alembic amqplib anyjson appenlight-client authomatic backport-ipaddress celery colander decorator docutils gunicorn infrae.cache ipython iso8601 kombu msgpack-python packaging psycopg2 py-gfm pycrypto pycurl pyparsing pyramid pyramid-debugtoolbar pyramid-mako pyramid-beaker pysqlite python-dateutil python-ldap python-memcached python-pam recaptcha-client repoze.lru requests simplejson waitress zope.cachedescriptors psutil py-bcrypt];
