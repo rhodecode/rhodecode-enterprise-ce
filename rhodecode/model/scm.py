@@ -279,11 +279,7 @@ class ScmModel(BaseModel):
         if repo:
             config = repo._config
             config.set('extensions', 'largefiles', '')
-            cs_cache = None
-            if delete:
-                # if we do a hard clear, reset last-commit to Empty
-                cs_cache = EmptyCommit()
-            repo.update_commit_cache(config=config, cs_cache=cs_cache)
+            repo.update_commit_cache(config=config, cs_cache=None)
             caches.clear_repo_caches(repo_name)
 
     def toggle_following_repo(self, follow_repo_id, user_id):
