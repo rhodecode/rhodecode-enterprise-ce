@@ -81,6 +81,7 @@ requirements = [
     'msgpack-python',
     'packaging',
     'psycopg2',
+    'py-gfm',
     'pycrypto',
     'pycurl',
     'pyparsing',
