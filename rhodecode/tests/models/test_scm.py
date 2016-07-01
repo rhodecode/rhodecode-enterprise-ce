@@ -77,6 +77,19 @@ def test_mark_for_invalidation_config(backend):
         assert kwargs['config'].__dict__ == repo._config.__dict__
 
 
+def test_mark_for_invalidation_with_delete_updates_last_commit(backend):
+    commits = [{'message': 'A'}, {'message': 'B'}]
+    repo = backend.create_repo(commits=commits)
+    scm.ScmModel().mark_for_invalidation(repo.repo_name, delete=True)
+    assert repo.changeset_cache['revision'] == 1
+
+
+def test_mark_for_invalidation_with_delete_updates_last_commit_empty(backend):
+    repo = backend.create_repo()
+    scm.ScmModel().mark_for_invalidation(repo.repo_name, delete=True)
+    assert repo.changeset_cache['revision'] == -1
+
+
 def test_strip_with_multiple_heads(backend_hg):
     commits = [
         {'message': 'A'},
