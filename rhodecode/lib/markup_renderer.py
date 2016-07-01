@@ -142,7 +142,7 @@ class MarkupRenderer(object):
         return '<br />' + source.replace("\n", '<br />')
 
     @classmethod
-    def markdown(cls, source, safe=True, flavored=False, mentions=False):
+    def markdown(cls, source, safe=True, flavored=True, mentions=False):
         # It does not allow to insert inline HTML. In presence of HTML tags, it
         # will replace them instead with [HTML_REMOVED]. This is controlled by
         # the safe_mode=True parameter of the markdown method.
@@ -170,7 +170,7 @@ class MarkupRenderer(object):
         except Exception:
             log.exception('Error when rendering Markdown')
             if safe:
-                log.debug('Fallbacking to render in plain mode')
+                log.debug('Fallback to render in plain mode')
                 return cls.plain(source)
             else:
                 raise
@@ -189,8 +189,9 @@ class MarkupRenderer(object):
 
         source = safe_unicode(source)
         try:
-            docutils_settings = dict([(alias, None) for alias in
-                                cls.RESTRUCTUREDTEXT_DISALLOWED_DIRECTIVES])
+            docutils_settings = dict(
+                [(alias, None) for alias in
+                 cls.RESTRUCTUREDTEXT_DISALLOWED_DIRECTIVES])
 
             docutils_settings.update({'input_encoding': 'unicode',
                                       'report_level': 4})
