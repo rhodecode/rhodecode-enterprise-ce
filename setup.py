@@ -99,6 +99,8 @@ requirements = [
     'simplejson',
     'waitress',
     'zope.cachedescriptors',
+    'dogpile.cache',
+    'dogpile.core'
 ]
 
 if is_windows:
