@@ -1721,7 +1721,7 @@ def rst(source, mentions=False):
 
 def markdown(source, mentions=False):
     return literal('<div class="markdown-block">%s</div>' %
-                   MarkupRenderer.markdown(source, flavored=False,
+                   MarkupRenderer.markdown(source, flavored=True,
                                            mentions=mentions))
 
 def renderer_from_filename(filename, exclude=None):
