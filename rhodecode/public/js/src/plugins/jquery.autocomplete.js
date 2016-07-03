@@ -84,7 +84,7 @@
                     return typeof response === 'string' ? $.parseJSON(response) : response;
                 },
                 showNoSuggestionNotice: false,
-                noSuggestionNotice: _TM['No results'],
+                noSuggestionNotice: _gettext('No results'),
                 orientation: 'bottom',
                 forceFixPosition: false,
                 replaceOnArrowKey: true

@@ -240,7 +240,7 @@ var deleteComment = function(comment_id) {
 };
 
 var createInlineAddButton = function(tr){
-  var label = _TM['Add another comment'];
+  var label = _gettext('Add another comment');
   var html_el = document.createElement('div');
   $(html_el).addClass('add-comment');
   html_el.innerHTML = '<span class="btn btn-secondary">{0}</span>'.format(label);
@@ -458,7 +458,7 @@ var CommentForm = (function() {
             };
 
             $(this.submitForm).find(this.statusChange).select2({
-                placeholder: _TM['Status Review'],
+                placeholder: _gettext('Status Review'),
                 formatResult: formatResult,
                 formatSelection: formatSelection,
                 containerCssClass: "drop-menu status_box_menu",
@@ -472,7 +472,7 @@ var CommentForm = (function() {
                     $(self.submitButton).prop('disabled', false);
                 }
                 //todo, fix this name
-                var placeholderText = _TM['Comment text will be set automatically based on currently selected status ({0}) ...'].format(status);
+                var placeholderText = _gettext('Comment text will be set automatically based on currently selected status ({0}) ...').format(status);
                 self.cm.setOption('placeholder', placeholderText);
             })
         };
@@ -586,7 +586,7 @@ var CommentForm = (function() {
             }
             $(this.submitButton).prop('disabled', submitState);
             if (submitEvent) {
-              $(this.submitButton).val(_TM['Submitting...']);
+              $(this.submitButton).val(_gettext('Submitting...'));
             } else {
               $(this.submitButton).val(this.submitButtonText);
             }
@@ -636,7 +636,7 @@ var CommentForm = (function() {
             self.setActionButtonsDisabled(true);
 
             $(self.previewBoxSelector).addClass('unloaded');
-            $(self.previewBoxSelector).html(_TM['Loading ...']);
+            $(self.previewBoxSelector).html(_gettext('Loading ...'));
             $(self.editContainer).hide();
             $(self.previewContainer).show();
 

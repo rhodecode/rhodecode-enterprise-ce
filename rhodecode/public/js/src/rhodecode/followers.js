@@ -23,8 +23,8 @@ var onSuccessFollow = function(target){
     if(f.hasClass('follow')){
         f.removeClass('follow');
         f.addClass('following');
-        f.attr('title', _TM['Stop following this repository']);
-        $(f).html(_TM['Unfollow']);
+        f.attr('title', _gettext('Stop following this repository'));
+        $(f).html(_gettext('Unfollow'));
         if(f_cnt.length){
             var cnt = Number(f_cnt.html())+1;
             f_cnt.html(cnt);
@@ -33,8 +33,8 @@ var onSuccessFollow = function(target){
     else{
         f.removeClass('following');
         f.addClass('follow');
-        f.attr('title', _TM['Start following this repository']);
-        $(f).html(_TM['Follow']);
+        f.attr('title', _gettext('Start following this repository'));
+        $(f).html(_gettext('Follow'));
         if(f_cnt.length){
             var cnt = Number(f_cnt.html())-1;
             f_cnt.html(cnt);

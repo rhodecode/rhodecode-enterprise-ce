@@ -10,21 +10,6 @@ var AgeModule = (function () {
   var show_suffix = show_suffix || true;
   var short_format = short_format || false;
 
-  // alias for backward compat
-  var _ = function(s) {
-    if (_TM.hasOwnProperty(s)) {
-      return _TM[s];
-    }
-    return s
-  };
-
-  var ungettext = function (singular, plural, n) {
-    if (n === 1){
-      return _(singular)
-    }
-    return _(plural)
-  };
-
   var _get_relative_delta = function(now, prevdate) {
 
     var duration = moment.duration(moment(now).diff(prevdate));
@@ -121,12 +106,12 @@ var AgeModule = (function () {
 
   } else {
     var fmt_funcs = {
-      'year': function(d) {return ungettext('{0} year', '{0} years', d).format(d)},
-      'month': function(d) {return ungettext('{0} month', '{0} months', d).format(d)},
-      'day': function(d) {return ungettext('{0} day', '{0} days', d).format(d)},
-      'hour': function(d) {return ungettext('{0} hour', '{0} hours', d).format(d)},
-      'minute': function(d) {return ungettext('{0} min', '{0} min', d).format(d)},
-      'second': function(d) {return ungettext('{0} sec', '{0} sec', d).format(d)}
+      'year': function(d) {return _ngettext('{0} year', '{0} years', d).format(d)},
+      'month': function(d) {return _ngettext('{0} month', '{0} months', d).format(d)},
+      'day': function(d) {return _ngettext('{0} day', '{0} days', d).format(d)},
+      'hour': function(d) {return _ngettext('{0} hour', '{0} hours', d).format(d)},
+      'minute': function(d) {return _ngettext('{0} min', '{0} min', d).format(d)},
+      'second': function(d) {return _ngettext('{0} sec', '{0} sec', d).format(d)}
     }
 
   }
@@ -146,7 +131,7 @@ var AgeModule = (function () {
         var _val = fmt_funcs[part](value);
         if (future) {
           if (show_suffix) {
-            return _('in {0}').format(_val)
+            return _gettext('in {0}').format(_val)
           } else {
             return _val
           }
@@ -154,7 +139,7 @@ var AgeModule = (function () {
         }
         else {
           if (show_suffix) {
-            return _('{0} ago').format(_val)
+            return _gettext('{0} ago').format(_val)
           } else {
             return _val
           }
@@ -166,17 +151,17 @@ var AgeModule = (function () {
       if (short_format) {
         var datetime_tmpl = '{0}, {1}';
         if (show_suffix) {
-          datetime_tmpl = _('{0}, {1} ago');
+          datetime_tmpl = _gettext('{0}, {1} ago');
           if (future) {
-            datetime_tmpl = _('in {0}, {1}');
+            datetime_tmpl = _gettext('in {0}, {1}');
           }
         }
       } else {
-        var datetime_tmpl = _('{0} and {1}');
+        var datetime_tmpl = _gettext('{0} and {1}');
         if (show_suffix) {
-          datetime_tmpl = _('{0} and {1} ago');
+          datetime_tmpl = _gettext('{0} and {1} ago');
           if (future) {
-            datetime_tmpl = _('in {0} and {1}')
+            datetime_tmpl = _gettext('in {0} and {1}')
           }
         }
       }
@@ -186,7 +171,7 @@ var AgeModule = (function () {
     i += 1;
   }
 
-  return _('just now')
+  return _gettext('just now')
 
 },
     createTimeComponent: function(dateTime, text) {

@@ -546,7 +546,7 @@
 
             $('#update_commits').on('click', function(e){
                 var isDisabled = !$(e.currentTarget).attr('disabled');
-                $(e.currentTarget).text(_TM['Updating...']);
+                $(e.currentTarget).text(_gettext('Updating...'));
                 $(e.currentTarget).attr('disabled', 'disabled');
                 if(isDisabled){
                     updateCommits("${c.repo_name}", "${c.pull_request.pull_request_id}");
