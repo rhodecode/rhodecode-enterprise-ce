@@ -496,7 +496,11 @@ div.codeblock {
 .code-highlighttable,
 div.codeblock {
 
-    .code-body .markdown-block table {
+    &.readme {
+        background-color: white;
+    }
+
+    .markdown-block table {
         border-collapse: collapse;
 
         th,
@@ -506,7 +510,7 @@ div.codeblock {
         }
     }
 
-    .code-body table {
+    table {
         width: 0 !important;
         border: 0px !important;
         margin: 0;
