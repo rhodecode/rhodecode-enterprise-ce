@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: rhodecode-enterprise-ce 4.2.0\n"
+"Project-Id-Version: rhodecode-enterprise-ce 4.3.0\n"
 "Report-Msgid-Bugs-To: marcin@rhodecode.com\n"
-"POT-Creation-Date: 2016-06-30 17:18+0000\n"
+"POT-Creation-Date: 2016-07-04 12:07+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1558,7 +1558,8 @@ msgstr ""
 msgid "in %s and %s"
 msgstr ""
 
-#: rhodecode/lib/utils2.py:504
+#: rhodecode/lib/utils2.py:504 rhodecode/public/js/scripts.js:24840
+#: rhodecode/public/js/src/plugins/jquery.timeago-extension.js:174
 msgid "just now"
 msgstr ""
 
@@ -2849,6 +2850,226 @@ msgstr ""
 
 #: rhodecode/model/validators.py:1067
 msgid "This gistid is already in use"
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:22844
+#: rhodecode/public/js/src/plugins/jquery.autocomplete.js:87
+msgid "No results"
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:24775
+#: rhodecode/public/js/src/plugins/jquery.timeago-extension.js:109
+msgid "{0} year"
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:24776
+#: rhodecode/public/js/src/plugins/jquery.timeago-extension.js:110
+msgid "{0} month"
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:24777
+#: rhodecode/public/js/src/plugins/jquery.timeago-extension.js:111
+msgid "{0} day"
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:24778
+#: rhodecode/public/js/src/plugins/jquery.timeago-extension.js:112
+msgid "{0} hour"
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:24779
+#: rhodecode/public/js/src/plugins/jquery.timeago-extension.js:113
+msgid "{0} min"
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:24780
+#: rhodecode/public/js/src/plugins/jquery.timeago-extension.js:114
+msgid "{0} sec"
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:24800
+#: rhodecode/public/js/src/plugins/jquery.timeago-extension.js:134
+msgid "in {0}"
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:24808
+#: rhodecode/public/js/src/plugins/jquery.timeago-extension.js:142
+msgid "{0} ago"
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:24820
+#: rhodecode/public/js/src/plugins/jquery.timeago-extension.js:154
+msgid "{0}, {1} ago"
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:24822
+#: rhodecode/public/js/src/plugins/jquery.timeago-extension.js:156
+msgid "in {0}, {1}"
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:24826
+#: rhodecode/public/js/src/plugins/jquery.timeago-extension.js:160
+msgid "{0} and {1}"
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:24828
+#: rhodecode/public/js/src/plugins/jquery.timeago-extension.js:162
+msgid "{0} and {1} ago"
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:24830
+#: rhodecode/public/js/src/plugins/jquery.timeago-extension.js:164
+msgid "in {0} and {1}"
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:38446
+#: rhodecode/public/js/rhodecode/i18n/select2/translations.js:4
+msgid "Loading more results..."
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:38449
+#: rhodecode/public/js/rhodecode/i18n/select2/translations.js:7
+msgid "Searching..."
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:38452
+#: rhodecode/public/js/rhodecode/i18n/select2/translations.js:10
+msgid "No matches found"
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:38455
+#: rhodecode/public/js/rhodecode/i18n/select2/translations.js:13
+msgid "Loading failed"
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:38459
+#: rhodecode/public/js/rhodecode/i18n/select2/translations.js:17
+msgid "One result is available, press enter to select it."
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:38461
+#: rhodecode/public/js/rhodecode/i18n/select2/translations.js:19
+msgid "{0} results are available, use up and down arrow keys to navigate."
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:38466
+#: rhodecode/public/js/rhodecode/i18n/select2/translations.js:24
+msgid "Please enter {0} or more character"
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:38468
+#: rhodecode/public/js/rhodecode/i18n/select2/translations.js:26
+msgid "Please enter {0} or more characters"
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:38473
+#: rhodecode/public/js/rhodecode/i18n/select2/translations.js:31
+msgid "Please delete {0} character"
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:38475
+#: rhodecode/public/js/rhodecode/i18n/select2/translations.js:33
+msgid "Please delete {0} characters"
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:38479
+#: rhodecode/public/js/rhodecode/i18n/select2/translations.js:37
+msgid "You can only select {0} item"
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:38481
+#: rhodecode/public/js/rhodecode/i18n/select2/translations.js:39
+msgid "You can only select {0} items"
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:39765
+#: rhodecode/public/js/src/rhodecode/codemirror.js:369
+msgid "Set status to Approved"
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:39783
+#: rhodecode/public/js/src/rhodecode/codemirror.js:387
+msgid "Set status to Rejected"
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:40170
+#: rhodecode/public/js/src/rhodecode/comments.js:243
+msgid "Add another comment"
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:40388
+#: rhodecode/public/js/src/rhodecode/comments.js:461
+msgid "Status Review"
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:40402
+#: rhodecode/public/js/src/rhodecode/comments.js:475
+msgid "Comment text will be set automatically based on currently selected status ({0}) ..."
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:40516
+#: rhodecode/public/js/src/rhodecode/comments.js:589
+msgid "Submitting..."
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:40566
+#: rhodecode/public/js/src/rhodecode/comments.js:639
+msgid "Loading ..."
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:40766
+#: rhodecode/public/js/src/rhodecode/files.js:150
+msgid "truncated result"
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:40768
+#: rhodecode/public/js/src/rhodecode/files.js:152
+msgid "truncated results"
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:40777
+#: rhodecode/public/js/src/rhodecode/files.js:161
+msgid "No matching files"
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:40912
+#: rhodecode/public/js/src/rhodecode/files.js:296
+msgid "Selection link"
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:40952
+#: rhodecode/public/js/src/rhodecode/followers.js:26
+msgid "Stop following this repository"
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:40953
+#: rhodecode/public/js/src/rhodecode/followers.js:27
+msgid "Unfollow"
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:40962
+#: rhodecode/public/js/src/rhodecode/followers.js:36
+msgid "Start following this repository"
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:40963
+#: rhodecode/public/js/src/rhodecode/followers.js:37
+msgid "Follow"
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:41646
+#: rhodecode/public/js/src/rhodecode/tooltips.js:119
+msgid "loading ..."
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:41883
+#: rhodecode/public/js/src/rhodecode.js:142
+msgid "file"
+msgstr ""
+
+#: rhodecode/public/js/scripts.js:41903
+#: rhodecode/public/js/src/rhodecode.js:162
+msgid "Show more"
 msgstr ""
 
 #: rhodecode/templates/index.html:5
