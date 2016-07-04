@@ -34,6 +34,7 @@ from urllib2 import URLError
 import msgpack
 import Pyro4
 import requests
+from pyramid.threadlocal import get_current_request
 from Pyro4.errors import CommunicationError, ConnectionClosedError, DaemonError
 
 from rhodecode.lib.vcs import exceptions
@@ -190,19 +191,61 @@ class RepoMaker(object):
         return _wrap_remote_call(remote_proxy, func)
 
 
-class ThreadlocalProxyFactory(object):
+class RequestScopeProxyFactory(object):
     """
-    Creates one Pyro4 proxy per thread on demand.
+    This factory returns pyro proxy instances based on a per request scope.
+    It returns the same instance if called from within the same request and
+    different instances if called from different requests.
     """
 
     def __init__(self, remote_uri):
         self._remote_uri = remote_uri
-        self._thread_local = threading.local()
+        self._proxy_pool = []
+        self._borrowed_proxies = {}
 
-    def __call__(self):
-        if not hasattr(self._thread_local, 'proxy'):
-            self._thread_local.proxy = Pyro4.Proxy(self._remote_uri)
-        return self._thread_local.proxy
+    def __call__(self, request=None):
+        """
+        Wrapper around `getProxy`.
+        """
+        request = request or get_current_request()
+        return self.getProxy(request)
+
+    def getProxy(self, request=None):
+        """
+        Call this to get the pyro proxy instance for the request.
+        """
+        request = request or get_current_request()
+
+        # Return already borrowed proxy for this request
+        if request in self._borrowed_proxies:
+            return self._borrowed_proxies[request]
+
+        # Get proxy from pool or create new instance.
+        try:
+            proxy = self._proxy_pool.pop()
+        except IndexError:
+            log.info('Creating new proxy for remote_uri=%s', self._remote_uri)
+            proxy = Pyro4.Proxy(self._remote_uri)
+
+        # Store proxy instance as borrowed and add request callback.
+        self._borrowed_proxies[request] = proxy
+        request.add_finished_callback(self._returnProxy)
+
+        return proxy
+
+    def _returnProxy(self, request=None):
+        """
+        Callback that gets called by pyramid when the request is finished.
+        It puts the proxy back into the pool.
+        """
+        request = request or get_current_request()
+
+        if request in self._borrowed_proxies:
+            proxy = self._borrowed_proxies.pop(request)
+            self._proxy_pool.append(proxy)
+        else:
+            log.warn('Return proxy for remote_uri=%s but no proxy borrowed '
+                     'for this request.', self._remote_uri)
 
 
 class RemoteRepo(object):

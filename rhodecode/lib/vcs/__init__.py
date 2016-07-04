@@ -64,11 +64,11 @@ def connect_pyro4(server_and_port):
     from rhodecode.lib.vcs import connection, client
     from rhodecode.lib.middleware.utils import scm_app
 
-    git_remote = client.ThreadlocalProxyFactory(
+    git_remote = client.RequestScopeProxyFactory(
         settings.pyro_remote(settings.PYRO_GIT, server_and_port))
-    hg_remote = client.ThreadlocalProxyFactory(
+    hg_remote = client.RequestScopeProxyFactory(
         settings.pyro_remote(settings.PYRO_HG, server_and_port))
-    svn_remote = client.ThreadlocalProxyFactory(
+    svn_remote = client.RequestScopeProxyFactory(
         settings.pyro_remote(settings.PYRO_SVN, server_and_port))
 
     connection.Git = client.RepoMaker(proxy_factory=git_remote)
