@@ -1861,7 +1861,8 @@ class Repository(Base, BaseModel):
             cs_cache = cs_cache.__json__()
 
         def is_outdated(new_cs_cache):
-            if new_cs_cache['raw_id'] != self.changeset_cache['raw_id']:
+            if (new_cs_cache['raw_id'] != self.changeset_cache['raw_id'] or
+                new_cs_cache['revision'] != self.changeset_cache['revision']):
                 return True
             return False
 
