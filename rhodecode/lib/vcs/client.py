@@ -210,12 +210,10 @@ class RequestScopeProxyFactory(object):
         request = request or get_current_request()
         return self.getProxy(request)
 
-    def getProxy(self, request=None):
+    def getProxy(self, request):
         """
         Call this to get the pyro proxy instance for the request.
         """
-        request = request or get_current_request()
-
         # Return already borrowed proxy for this request
         if request in self._borrowed_proxies:
             return self._borrowed_proxies[request]
@@ -233,13 +231,11 @@ class RequestScopeProxyFactory(object):
 
         return proxy
 
-    def _returnProxy(self, request=None):
+    def _returnProxy(self, request):
         """
         Callback that gets called by pyramid when the request is finished.
         It puts the proxy back into the pool.
         """
-        request = request or get_current_request()
-
         if request in self._borrowed_proxies:
             proxy = self._borrowed_proxies.pop(request)
             self._proxy_pool.append(proxy)
