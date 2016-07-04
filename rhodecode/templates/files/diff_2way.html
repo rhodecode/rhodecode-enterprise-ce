@@ -58,7 +58,7 @@
               </td>
               <td>
                 <div class="changes pull-right">${h.fancy_file_stats(c.diff_data['stats'])}</div>
-                <div class="comment-bubble pull-right" data-path="${c.node1.path}">
+                <div class="comment-bubble pull-right" data-path="${h.safe_unicode(c.node1.path)}">
                   <i class="icon-comment"></i>
                 </div>
               </td>
