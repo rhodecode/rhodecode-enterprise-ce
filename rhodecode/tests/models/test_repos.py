@@ -160,7 +160,8 @@ class TestRepoModel:
         with mock.patch('rhodecode.model.db.Repository.scm_instance') as scm:
             scm_instance = mock.Mock()
             scm_instance.get_commit.return_value = {
-                'raw_id': 40*'0'
+                'raw_id': 40*'0',
+                'revision': 1
             }
             scm.return_value = scm_instance
             repo.update_commit_cache()
