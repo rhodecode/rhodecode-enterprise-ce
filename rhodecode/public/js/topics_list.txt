@@ -1,0 +1,3 @@
+/plugins/__REGISTER__ - launched after the onDomReady() code from rhodecode.js is executed
+/ui/plugins/code/anchor_focus - launched when rc starts to scroll on load to anchor on PR/Codeview
+/ui/plugins/code/comment_form_built - launched when injectInlineForm() is executed and the form object is created

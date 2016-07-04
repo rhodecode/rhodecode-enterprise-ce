@@ -385,29 +385,17 @@ $(document).ready(function() {
             if (lineno.length > 0){
                 var tr = lineno.parents('tr.line');
                 tr.addClass('selected');
+                $.Topic('/ui/plugins/code/anchor_focus').prepare({
+                    tr:tr,
+                    remainder:remainder});
 
-                // once we scrolled into our line, trigger chat app
-                if (remainder){
-                    tr.find('.add-comment-line a').trigger( "click" );
-                    setTimeout(function(){
-                        var nextNode = $(tr).next();
-                        if(nextNode.hasClass('inline-comments')){
-                            nextNode.next().find('.switch-to-chat').trigger( "click" );
-                        }
-                        else{
-                            nextNode.find('.switch-to-chat').trigger( "click" );
-                        }
-                        // trigger scroll into, later so all elements are already loaded
-                        tr[0].scrollIntoView();
-                    }, 250);
-
-                }
-                else{
+                if (!remainder){
                     tr[0].scrollIntoView();
                 }
             }
         }
-    };
+    }
 
     collapsableContent();
+    $.Topic('/plugins/__REGISTER__').prepare({});
 });
