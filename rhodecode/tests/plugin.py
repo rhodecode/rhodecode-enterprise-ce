@@ -285,6 +285,27 @@ def tests_tmp_path(request):
     return TESTS_TMP_PATH
 
 
+@pytest.fixture(scope='session', autouse=True)
+def patch_pyro_request_scope_proxy_factory(request):
+    """
+    Patch the pyro proxy factory to always use the same dummy request object
+    when under test. This will return the same pyro proxy on every call.
+    """
+    dummy_request = pyramid.testing.DummyRequest()
+
+    def mocked_call(self, request=None):
+        return self.getProxy(request=dummy_request)
+
+    patcher = mock.patch(
+        'rhodecode.lib.vcs.client.RequestScopeProxyFactory.__call__',
+        new=mocked_call)
+    patcher.start()
+
+    @request.addfinalizer
+    def undo_patching():
+        patcher.stop()
+
+
 @pytest.fixture
 def test_repo_group(request):
     """
