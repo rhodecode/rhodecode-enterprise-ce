@@ -56,6 +56,7 @@ module.exports = function(grunt) {
           '<%= dirs.js.src %>/rhodecode/utils/colorgenerator.js',
           '<%= dirs.js.src %>/rhodecode/utils/ie.js',
           '<%= dirs.js.src %>/rhodecode/utils/os.js',
+          '<%= dirs.js.src %>/rhodecode/utils/topics.js',
 
           // Rhodecode widgets
           '<%= dirs.js.src %>/rhodecode/widgets/multiselect.js',
