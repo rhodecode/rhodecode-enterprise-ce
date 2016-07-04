@@ -228,9 +228,9 @@
                           open_new_pull_request.hide();
                       } else {
                           if (selected_changes == 1) {
-                             open_new_pull_request.html(_TM['Open new pull request for selected commit']);
+                             open_new_pull_request.html(_gettext('Open new pull request for selected commit'));
                           } else if (selected_changes == 0) {
-                             open_new_pull_request.html(_TM['Open new pull request']);
+                             open_new_pull_request.html(_gettext('Open new pull request'));
                           }
                           open_new_pull_request.show();
                       }
@@ -244,8 +244,8 @@
                              'revision': revStart+'...'+revEnd});
 
                     var link = (revStart == revEnd)
-                        ? _TM['Show selected commit __S']
-                        : _TM['Show selected commits __S ... __E'];
+                        ? _gettext('Show selected commit __S')
+                        : _gettext('Show selected commits __S ... __E');
 
                     link = link.replace('__S', revStart.substr(0,6));
                     link = link.replace('__E', revEnd.substr(0,6));

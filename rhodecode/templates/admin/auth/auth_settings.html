@@ -101,7 +101,7 @@
       elems.splice(elems.indexOf(plugin_id), 1);
       auth_plugins_input.val(elems.join(','));
       $(cur_button).removeClass('btn-success');
-      cur_button.innerHTML = _TM['disabled'];
+      cur_button.innerHTML = _gettext('disabled');
     }
     else{
       if(elems.indexOf(plugin_id) == -1){
@@ -109,7 +109,7 @@
       }
       auth_plugins_input.val(elems.join(','));
       $(cur_button).addClass('btn-success');
-      cur_button.innerHTML = _TM['enabled'];
+      cur_button.innerHTML = _gettext('enabled');
     }
   });
 </script>

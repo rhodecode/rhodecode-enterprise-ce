@@ -366,7 +366,7 @@ var initCommentBoxCodeMirror = function(textAreaId, triggerActions){
       var actions = [
         {
           text: "approve",
-          displayText: _TM['Set status to Approved'],
+          displayText: _gettext('Set status to Approved'),
           hint: function(CodeMirror, data, completion) {
             CodeMirror.replaceRange("", completion.from || data.from,
                         completion.to || data.to, "complete");
@@ -384,7 +384,7 @@ var initCommentBoxCodeMirror = function(textAreaId, triggerActions){
         },
         {
           text: "reject",
-          displayText: _TM['Set status to Rejected'],
+          displayText: _gettext('Set status to Rejected'),
           hint: function(CodeMirror, data, completion) {
               CodeMirror.replaceRange("", completion.from || data.from,
                           completion.to || data.to, "complete");

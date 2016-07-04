@@ -147,9 +147,9 @@ var fileBrowserListeners = function(node_list_url, url_base){
         if(results.length > limit){
           var truncated_count = results.length - matches_max;
           if (truncated_count === 1) {
-            match.push('<tr><td>{0} {1}</td><td colspan="5"></td></tr>'.format(truncated_count, _TM['truncated result']));
+            match.push('<tr><td>{0} {1}</td><td colspan="5"></td></tr>'.format(truncated_count, _gettext('truncated result')));
           } else {
-            match.push('<tr><td>{0} {1}</td><td colspan="5"></td></tr>'.format(truncated_count, _TM['truncated results']));
+            match.push('<tr><td>{0} {1}</td><td colspan="5"></td></tr>'.format(truncated_count, _gettext('truncated results')));
           }
         }
       }
@@ -158,7 +158,7 @@ var fileBrowserListeners = function(node_list_url, url_base){
         $('#tbody_filtered').show();
 
         if (match.length === 0){
-          match.push('<tr><td>{0}</td><td colspan="5"></td></tr>'.format(_TM['No matching files']));
+          match.push('<tr><td>{0}</td><td colspan="5"></td></tr>'.format(_gettext('No matching files')));
         }
         $('#tbody_filtered').html(match.join(""));
       }
@@ -293,7 +293,7 @@ var getSelectionLink = function(e) {
       anchor = '#L'+ranges[0]+'-'+ranges[1];
       var link = document.createElement('a');
       link.href = location.href.substring(0,location.href.indexOf('#'))+anchor;
-      link.innerHTML = _TM['Selection link'];
+      link.innerHTML = _gettext('Selection link');
       hl_div.appendChild(link);
       $('#codeblock').append(hl_div);
 

@@ -42,8 +42,8 @@ $(document).ready(function() {
       var api = datatable.api();
       var total = api.page.info().recordsDisplay;
       var active = datatable.fnGetFilteredData();
-
-      $('#user_count').text(_TM["{0} active out of {1} users"].format(active, total));
+      var _text = _gettext("{0} active out of {1} users").format(active, total);
+      $('#user_count').text(_text);
     };
 
     // custom filter that filters by username OR email

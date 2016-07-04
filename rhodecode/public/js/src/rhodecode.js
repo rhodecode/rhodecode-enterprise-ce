@@ -24,15 +24,6 @@ if (typeof console == "undefined" || typeof console.log == "undefined"){
     console = { log: function() {} }
 }
 
-
-// alias for backward compat
-var _tm = function(s) {
-    if (_TM.hasOwnProperty(s)) {
-      return _TM[s];
-    }
-    return s
-};
-
 // TODO: move the following function to submodules
 
 /**
@@ -148,7 +139,7 @@ var showRepoStats = function(target, data){
 
         var td2 = document.createElement('td');
         var trending_language = document.createElement('div');
-        var nr_files = obj.count +" "+ (obj.count === 1 ? _tm('file'): _tm('files'));
+        var nr_files = obj.count +" "+ _ngettext('file', 'files', obj.count);
 
         trending_language.title = key + " " + nr_files;
 
@@ -168,7 +159,7 @@ var showRepoStats = function(target, data){
             lnk = document.createElement('a');
 
             lnk.href = '#';
-            lnk.innerHTML = _tm('Show more');
+            lnk.innerHTML = _ngettext('Show more');
             lnk.id = 'code_stats_show_more';
             td.appendChild(lnk);
 

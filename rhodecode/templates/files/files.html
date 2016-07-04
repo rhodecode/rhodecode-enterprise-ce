@@ -233,7 +233,7 @@
                             {'repo_name': templateContext.repo_name,
                              'revision': state.rev, 'f_path': path, 'limit': 6});
                     $('#file_history_container').show();
-                    $('#file_history_container').html('<div class="file-history-inner">{0}</div>'.format(_TM['Loading ...']));
+                    $('#file_history_container').html('<div class="file-history-inner">{0}</div>'.format(_gettext('Loading ...')));
 
                     $.pjax({
                         url: url,

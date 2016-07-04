@@ -151,7 +151,7 @@
         ${h.form('', class_='inline-form comment-form-login', method='get')}
         <div class="pull-left">
             <div class="comment-help pull-right">
-              ${_('You need to be logged in to comment.')} <a href="${h.url('login_home',came_from=h.url.current())}">${_('Login now')}</a>
+              ${_('You need to be logged in to comment.')} <a href="${h.route_path('login', _query={'came_from': h.url.current()})}">${_('Login now')}</a>
             </div>
         </div>
         <div class="comment-button pull-right">

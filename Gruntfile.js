@@ -19,6 +19,7 @@ module.exports = function(grunt) {
           '<%= dirs.js.src %>/mousetrap.js',
           '<%= dirs.js.src %>/moment.js',
           '<%= dirs.js.src %>/appenlight-client-0.4.1.min.js',
+          '<%= dirs.js.src %>/i18n_utils.js',
 
           // Plugins
           '<%= dirs.js.src %>/plugins/jquery.pjax.js',

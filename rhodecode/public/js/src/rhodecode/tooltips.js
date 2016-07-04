@@ -116,7 +116,7 @@ var show_changeset_tooltip = function(){
         }
         if(rid && !$(target).hasClass('tooltip')){
             $(target).attr('id', ttid);
-            $(target).attr('title', _TM['loading ...']);
+            $(target).attr('title', _gettext('loading ...'));
             TTIP.main.set_listeners(target);
             TTIP.main.show_tip(e, target);
             var url = pyroutes.url('changeset_info', {"repo_name":repo_name, "revision": rid});
