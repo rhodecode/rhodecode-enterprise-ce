@@ -28,10 +28,11 @@ let
   };
 
   Pygments = buildPythonPackage rec {
-    name = "Pygments-2.0.2";
+    name = "Pygments-2.1.3";
+    doCheck = false;
     src = fetchurl {
-      url = "https://pypi.python.org/packages/source/P/Pygments/${name}.tar.gz";
-      md5 = "238587a1370d62405edabd0794b3ec4a";
+      url = "https://pypi.python.org/packages/b8/67/ab177979be1c81bc99c8d0592ef22d547e70bb4c6815c383286ed5dec504/Pygments-2.1.3.tar.gz";
+      md5 = "ed3fba2467c8afcda4d317e4ef2c6150";
     };
   };
 
@@ -78,11 +79,19 @@ let
     ];
   };
 
-  Sphinx = buildPythonPackage (rec {
-    name = "Sphinx-1.3.1";
+  imagesize = buildPythonPackage rec {
+    name = "imagesize-0.7.1";
     src = fetchurl {
-      url = "http://pypi.python.org/packages/source/S/Sphinx/${name}.tar.gz";
-      md5 = "8786a194acf9673464c5455b11fd4332";
+      url = "https://pypi.python.org/packages/53/72/6c6f1e787d9cab2cc733cf042f125abec07209a58308831c9f292504e826/${name}.tar.gz";
+      md5 = "976148283286a6ba5f69b0f81aef8052";
+    };
+  };
+
+  Sphinx = buildPythonPackage (rec {
+    name = "Sphinx-1.4.4";
+    src = fetchurl {
+      url = "https://pypi.python.org/packages/20/a2/72f44c84f6c4115e3fef58d36d657ec311d80196eab9fd5ec7bcde76143b/${name}.tar.gz";
+      md5 = "64ce2ec08d37ed56313a98232cbe2aee";
     };
     propagatedBuildInputs = [
       docutils
@@ -93,6 +102,7 @@ let
       snowballstemmer
       pytz
       babel
+      imagesize
 
       # TODO: johbo: Had to include it here so that can be imported
       sphinx_rtd_theme
