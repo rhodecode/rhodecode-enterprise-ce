@@ -781,7 +781,7 @@ class ReposController(BaseRepoController):
         defaults = self._vcs_form_defaults(repo_name)
         c.inherit_global_settings = defaults['inherit_global_settings']
         c.labs_active = str2bool(
-            rhodecode.CONFIG.get('labs_settings_active', 'false'))
+            rhodecode.CONFIG.get('labs_settings_active', 'true'))
 
         return htmlfill.render(
             render('admin/repos/repo_edit.html'),
