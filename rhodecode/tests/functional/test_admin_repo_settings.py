@@ -18,9 +18,11 @@
 # RhodeCode Enterprise Edition, including its added features, Support services,
 # and proprietary license terms, please see https://rhodecode.com/licenses/
 
+import mock
 import pytest
 
 from rhodecode.tests import url, HG_REPO
+from rhodecode.tests.utils import AssertResponse
 
 
 @pytest.mark.usefixtures('autologin_user', 'app')
@@ -38,3 +40,31 @@ class TestAdminRepoSettingsController:
     ])
     def test_simple_get(self, urlname, app):
         app.get(url(urlname, repo_name=HG_REPO))
+
+    @pytest.mark.parametrize('setting_name', [
+        'rhodecode_hg_use_rebase_for_merging',
+    ])
+    def test_labs_settings_enabled_hg(self, setting_name):
+        import rhodecode
+        vcs_settings_url = url('repo_vcs_settings', repo_name=HG_REPO)
+
+        with mock.patch.dict(
+                rhodecode.CONFIG, {'labs_settings_active': 'true'}):
+            response = self.app.get(vcs_settings_url)
+
+        assertr = AssertResponse(response)
+        assertr.one_element_exists('#{}'.format(setting_name))
+
+    @pytest.mark.parametrize('setting_name', [
+        'rhodecode_hg_use_rebase_for_merging',
+    ])
+    def test_labs_settings_disabled_hg(self, setting_name):
+        import rhodecode
+        vcs_settings_url = url('repo_vcs_settings', repo_name=HG_REPO)
+
+        with mock.patch.dict(
+                rhodecode.CONFIG, {'labs_settings_active': 'false'}):
+            response = self.app.get(vcs_settings_url)
+
+        assertr = AssertResponse(response)
+        assertr.no_element_exists('#{}'.format(setting_name))
