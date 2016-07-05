@@ -1310,8 +1310,6 @@ def comment_commit(
         userid=Optional(OAttr('apiuser')), status=Optional(None)):
     """
     Set a commit comment, and optionally change the status of the commit.
-    This command can be executed only using api_key belonging to user
-    with admin rights, or repository administrator.
 
     :param apiuser: This is filled automatically from the |authtoken|.
     :type apiuser: AuthUser
@@ -1344,7 +1342,7 @@ def comment_commit(
     """
     repo = get_repo_or_error(repoid)
     if not has_superadmin_permission(apiuser):
-        _perms = ('repository.admin',)
+        _perms = ('repository.read', 'repository.write', 'repository.admin')
         has_repo_permissions(apiuser, repoid, repo, _perms)
 
     if isinstance(userid, Optional):
