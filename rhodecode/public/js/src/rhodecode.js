@@ -397,5 +397,4 @@ $(document).ready(function() {
     }
 
     collapsableContent();
-    $.Topic('/plugins/__REGISTER__').prepare({});
 });

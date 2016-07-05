@@ -23,8 +23,6 @@ def get_plugin_settings(prefix, settings):
     """
     Returns plugin settings. Use::
 
-
-
     :param prefix:
     :param settings:
     :return:
@@ -45,21 +43,15 @@ def register_rhodecode_plugin(config, plugin_name, plugin_config):
                 'javascript': None,
                 'static': None,
                 'css': None,
-                'top_nav': None,
+                'nav': None,
                 'fulltext_indexer': None,
                 'sqlalchemy_migrations': None,
                 'default_values_setter': None,
-                'resource_types': [],
-                'url_gen': None
+                'url_gen': None,
+                'template_hooks': {}
             }
         config.registry.rhodecode_plugins[plugin_name].update(
             plugin_config)
-        # inform RC what kind of resource types we have available
-        # so we can avoid failing when a plugin is removed but data
-        # is still present in the db
-        if plugin_config.get('resource_types'):
-            config.registry.resource_types.extend(
-                plugin_config['resource_types'])
 
     config.action(
         'register_rhodecode_plugin={}'.format(plugin_name), register)

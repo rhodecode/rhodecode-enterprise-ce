@@ -140,6 +140,8 @@
         <%def name="head_extra()"></%def>
         ${self.head_extra()}
 
+        <%include file="/base/plugins_base.html"/>
+
         ## extra stuff
         %if c.pre_code:
             ${c.pre_code|n}
