@@ -24,16 +24,17 @@ from rhodecode_api import RhodeCodeAPI
 
 
 def add_api_pr_args(parser):
-    parser.add_argument("--token", help="Rhodecode user token", required=True)
     parser.add_argument("--url", help="Rhodecode host url", required=True)
+    parser.add_argument("--token", help="Rhodecode user token", required=True)
     parser.add_argument("--repoid", help="Repo id", required=True)
-    parser.add_argument("--prid", help="Pull request id", required=True)
     parser.add_argument("--message", help="Comment to add", required=True)
-
     parser.add_argument("--status", help="Status to set (approved|rejected)")
     parser.add_argument(
+        "--prid",
+        help="(Optional) Pull request id")
+    parser.add_argument(
         "--commit-id",
-        help="Expected commit ID for source repo")
+        help="(Optional) Expected commit ID for source repo")
 
 
 def get_pr_head(args):
@@ -59,18 +60,30 @@ if __name__ == "__main__":
     args = parser.parse_args()
     status = args.status
 
-    if args.commit_id and status:
-        if not pr_has_same_head(args):
-            # PR updated, don't set status
-            status = None
-
     rc = RhodeCodeAPI(args.url, args.token)
-    resp = rc.comment_pull_request(
-        repoid=args.repoid,
-        pullrequestid=int(args.prid),
-        message=args.message,
-        status=status
-    )
+
+    if not (args.prid or args.commit_id):
+        raise AttributeError('You must specify --prid or --commit-id')
+
+    if args.prid:
+        if args.commit_id and status:
+            if not pr_has_same_head(args):
+                # PR updated, don't set status
+                status = None
+
+        resp = rc.comment_pull_request(
+            repoid=args.repoid,
+            pullrequestid=int(args.prid),
+            message=args.message,
+            status=status
+        )
+    elif args.commit_id:
+        resp = rc.comment_commit(
+            repoid=args.repoid,
+            commit_id=args.commit_id,
+            message=args.message,
+            status=status,
+        )
 
     if resp['error']:
         raise Exception(resp['error'])
