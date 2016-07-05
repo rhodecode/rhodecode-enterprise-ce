@@ -231,10 +231,11 @@ class RequestScopeProxyFactory(object):
         try:
             proxy = self._proxy_pool.pop()
         except IndexError:
-            log.info('Creating new proxy for remote_uri=%s', self._remote_uri)
+            log.info('Creating pyro proxy for remote_uri=%s', self._remote_uri)
             proxy = Pyro4.Proxy(self._remote_uri)
 
-        # Store proxy instance as borrowed and add request callback.
+        # Mark proxy as borrowed for the request context and add a callback
+        # that returns it when the request processing is finished.
         self._borrowed_proxies[request] = proxy
         request.add_finished_callback(self._returnProxy)
 
