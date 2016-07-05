@@ -962,13 +962,13 @@
     };
   };
   psycopg2 = super.buildPythonPackage {
-    name = "psycopg2-2.6";
+    name = "psycopg2-2.6.1";
     buildInputs = with self; [];
     doCheck = false;
     propagatedBuildInputs = with self; [];
     src = fetchurl {
-      url = "https://pypi.python.org/packages/dd/c7/9016ff8ff69da269b1848276eebfb264af5badf6b38caad805426771f04d/psycopg2-2.6.tar.gz";
-      md5 = "fbbb039a8765d561a1c04969bbae7c74";
+      url = "https://pypi.python.org/packages/86/fd/cc8315be63a41fe000cce20482a917e874cdc1151e62cb0141f5e55f711e/psycopg2-2.6.1.tar.gz";
+      md5 = "842b44f8c95517ed5b792081a2370da1";
     };
     meta = {
       license = [ pkgs.lib.licenses.zpt21 { fullName = "GNU Library or Lesser General Public License (LGPL)"; } { fullName = "LGPL with exceptions or ZPL"; } ];
@@ -1466,13 +1466,13 @@
     };
   };
   supervisor = super.buildPythonPackage {
-    name = "supervisor-3.1.3";
+    name = "supervisor-3.3.0";
     buildInputs = with self; [];
     doCheck = false;
     propagatedBuildInputs = with self; [meld3];
     src = fetchurl {
-      url = "https://pypi.python.org/packages/a6/41/65ad5bd66230b173eb4d0b8810230f3a9c59ef52ae066e540b6b99895db7/supervisor-3.1.3.tar.gz";
-      md5 = "aad263c4fbc070de63dd354864d5e552";
+      url = "https://pypi.python.org/packages/44/80/d28047d120bfcc8158b4e41127706731ee6a3419c661e0a858fb0e7c4b2d/supervisor-3.3.0.tar.gz";
+      md5 = "46bac00378d1eddb616752b990c67416";
     };
     meta = {
       license = [ { fullName = "BSD-derived (http://www.repoze.org/LICENSE.txt)"; } ];
