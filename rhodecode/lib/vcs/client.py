@@ -214,7 +214,16 @@ class RequestScopeProxyFactory(object):
         """
         Call this to get the pyro proxy instance for the request.
         """
-        # Return already borrowed proxy for this request
+
+        # If called without a request context we return new proxy instances
+        # on every call. This allows to run e.g. invoke tasks.
+        if request is None:
+            log.info('Creating pyro proxy without request context for '
+                     'remote_uri=%s', self._remote_uri)
+            return Pyro4.Proxy(self._remote_uri)
+
+        # If there is an already borrowed proxy for the request context we
+        # return that instance instead of creating a new one.
         if request in self._borrowed_proxies:
             return self._borrowed_proxies[request]
 
