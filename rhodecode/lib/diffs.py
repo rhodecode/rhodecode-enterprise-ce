@@ -49,11 +49,11 @@ class OPS(object):
 def wrap_to_table(str_):
     return '''<table class="code-difftable">
                 <tr class="line no-comment">
-                <td class="add-comment-line tooltip" title="Click to comment"><span class="add-comment-content"></span></td>
+                <td class="add-comment-line tooltip" title="%s"><span class="add-comment-content"></span></td>
                 <td class="lineno new"></td>
                 <td class="code no-comment"><pre>%s</pre></td>
                 </tr>
-              </table>''' % str_
+              </table>''' % (_('Click to comment'), str_)
 
 
 def wrapped_diff(filenode_old, filenode_new, diff_limit=None, file_limit=None,
@@ -626,7 +626,9 @@ class DiffProcessor(object):
             """
 
             if condition:
-                return '''<a href="%(url)s" class="tooltip" title="Click to select line">%(label)s</a>''' % {
+                return '''<a href="%(url)s" class="tooltip"
+                title="%(title)s">%(label)s</a>''' % {
+                    'title': _('Click to select line'),
                     'url': url,
                     'label': label
                 }
