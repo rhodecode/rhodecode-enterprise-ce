@@ -385,13 +385,12 @@ $(document).ready(function() {
             if (lineno.length > 0){
                 var tr = lineno.parents('tr.line');
                 tr.addClass('selected');
+
+                tr[0].scrollIntoView();
+
                 $.Topic('/ui/plugins/code/anchor_focus').prepare({
                     tr:tr,
                     remainder:remainder});
-
-                if (!remainder){
-                    tr[0].scrollIntoView();
-                }
             }
         }
     }
