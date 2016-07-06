@@ -20,19 +20,22 @@ import mock
 import decorator
 
 
-def assert_fires_events(*expected_events):
-    """ Testing decorator to check if the function fires events in order """
-    def deco(func):
-        def wrapper(func, *args, **kwargs):
-            with mock.patch('rhodecode.events.trigger') as mock_trigger:
-                result = func(*args, **kwargs)
+class EventCatcher(object):
+    """ Testing context manager to check if events are fired """
 
-            captured_events = []
-            for call in mock_trigger.call_args_list:
-                event = call[0][0]
-                captured_events.append(type(event))
+    def __init__(self):
+        self.events = [] # the actual events captured
+        self.event_types = [] # the types of events captured
 
-            assert set(captured_events) == set(expected_events)
-            return result
-        return decorator.decorator(wrapper, func)
-    return deco
+    def __enter__(self):
+        self.event_trigger_patch = mock.patch('rhodecode.events.trigger')
+        self.mocked_event_trigger = self.event_trigger_patch.start()
+        return self
+
+    def __exit__(self, type_, value, traceback):
+        self.event_trigger_patch.stop()
+
+        for call in self.mocked_event_trigger.call_args_list:
+            event = call[0][0]
+            self.events.append(event)
+            self.event_types.append(type(event))

@@ -34,8 +34,6 @@ class RepoPreCreateEvent(RepoEvent):
     """
     An instance of this class is emitted as an :term:`event` before a repo is
     created.
-
-    :param repo_name: repository name
     """
     name = 'repo-pre-create'
 

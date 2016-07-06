@@ -38,7 +38,9 @@ def trigger(event):
 
 
 from rhodecode.events.user import (
-    UserPreCreate, UserPreUpdate, UserRegistered
+    UserPreCreate,
+    UserPreUpdate,
+    UserRegistered
 )
 
 from rhodecode.events.repo import (
