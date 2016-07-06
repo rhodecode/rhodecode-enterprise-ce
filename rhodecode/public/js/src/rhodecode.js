@@ -259,6 +259,15 @@ $(document).ready(function() {
         });
 
     $('.compare_view_files').on(
+        'mouseenter mouseleave', 'tr.line .add-comment-line a',function(event){
+            if (event.type === "mouseenter") {
+                $(this).parents('tr.line').addClass('commenting');
+            } else {
+                $(this).parents('tr.line').removeClass('commenting');
+            }
+        });
+
+    $('.compare_view_files').on(
         'click', 'tr.line .lineno a',function(event) {
             if ($(this).text() != ""){
                 $('tr.line').removeClass('selected');
