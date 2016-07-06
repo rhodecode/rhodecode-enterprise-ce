@@ -145,17 +145,6 @@ class BaseModel(object):
         return self._get_instance(
             db.Permission, permission, callback=db.Permission.get_by_key)
 
-    def send_event(self, event):
-        """
-        Helper method to send an event. This wraps the pyramid logic to send an
-        event.
-        """
-        # For the first step we are using pyramids thread locals here. If the
-        # event mechanism works out as a good solution we should think about
-        # passing the registry into the constructor to get rid of it.
-        registry = get_current_registry()
-        registry.notify(event)
-
     @classmethod
     def get_all(cls):
         """

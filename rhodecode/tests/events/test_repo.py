@@ -18,36 +18,51 @@
 # RhodeCode Enterprise Edition, including its added features, Support services,
 # and proprietary license terms, please see https://rhodecode.com/licenses/
 
-import mock
+import pytest
+
+from rhodecode.tests.events.conftest import assert_fires_events
 
 from rhodecode.lib import hooks_base, utils2
+from rhodecode.model.repo import RepoModel
+from rhodecode.events.repo import (
+    RepoPrePullEvent, RepoPullEvent,
+    RepoPrePushEvent, RepoPushEvent,
+    RepoPreCreateEvent, RepoCreatedEvent,
+    RepoPreDeleteEvent, RepoDeletedEvent,
+)
 
 
-@mock.patch.multiple(
-    hooks_base,
-    action_logger=mock.Mock(),
-    post_push_extension=mock.Mock(),
-    Repository=mock.Mock())
-def test_post_push_truncates_commits(user_regular, repo_stub):
-    extras = {
+@pytest.fixture
+def scm_extras(user_regular, repo_stub):
+    extras = utils2.AttributeDict({
         'ip': '127.0.0.1',
         'username': user_regular.username,
-        'action': 'push_local',
+        'action': '',
         'repository': repo_stub.repo_name,
-        'scm': 'git',
+        'scm': repo_stub.scm_instance().alias,
         'config': '',
         'server_url': 'http://example.com',
         'make_lock': None,
         'locked_by': [None],
-        'commit_ids': ['abcde12345' * 4] * 30000,
-    }
-    extras = utils2.AttributeDict(extras)
+        'commit_ids': ['a' * 40] * 3,
+    })
+    return extras
 
-    hooks_base.post_push(extras)
 
-    # Calculate appropriate action string here
-    expected_action = 'push_local:%s' % ','.join(extras.commit_ids[:29000])
+@assert_fires_events(
+    RepoPreCreateEvent, RepoCreatedEvent, RepoPreDeleteEvent, RepoDeletedEvent)
+def test_create_delete_repo_fires_events(backend):
+    repo = backend.create_repo()
+    RepoModel().delete(repo)
 
-    hooks_base.action_logger.assert_called_with(
-        extras.username, expected_action, extras.repository, extras.ip,
-        commit=True)
+
+@assert_fires_events(RepoPrePushEvent, RepoPushEvent)
+def test_pull_fires_events(scm_extras):
+    hooks_base.pre_push(scm_extras)
+    hooks_base.post_push(scm_extras)
+
+
+@assert_fires_events(RepoPrePullEvent, RepoPullEvent)
+def test_push_fires_events(scm_extras):
+    hooks_base.pre_pull(scm_extras)
+    hooks_base.post_pull(scm_extras)

@@ -27,6 +27,7 @@ import os
 import collections
 
 import rhodecode
+from rhodecode import events
 from rhodecode.lib import helpers as h
 from rhodecode.lib.utils import action_logger
 from rhodecode.lib.utils2 import safe_str
@@ -102,6 +103,9 @@ def pre_push(extras):
     # Calling hooks after checking the lock, for consistent behavior
     pre_push_extension(repo_store_path=Repository.base_path(), **extras)
 
+    events.trigger(events.RepoPrePushEvent(repo_name=extras.repository,
+                                           extras=extras))
+
     return HookResponse(0, output)
 
 
@@ -128,6 +132,8 @@ def pre_pull(extras):
 
     # Calling hooks after checking the lock, for consistent behavior
     pre_pull_extension(**extras)
+    events.trigger(events.RepoPrePullEvent(repo_name=extras.repository,
+                                           extras=extras))
 
     return HookResponse(0, output)
 
@@ -138,6 +144,8 @@ def post_pull(extras):
     action = 'pull'
     action_logger(user, action, extras.repository, extras.ip, commit=True)
 
+    events.trigger(events.RepoPullEvent(repo_name=extras.repository,
+                                        extras=extras))
     # extension hook call
     post_pull_extension(**extras)
 
@@ -170,6 +178,10 @@ def post_push(extras):
     action = action_tmpl % ','.join(commit_ids)
     action_logger(
         extras.username, action, extras.repository, extras.ip, commit=True)
+
+    events.trigger(events.RepoPushEvent(repo_name=extras.repository,
+                                        pushed_commit_ids=commit_ids,
+                                        extras=extras))
 
     # extension hook call
     post_push_extension(

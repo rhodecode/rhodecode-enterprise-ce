@@ -17,12 +17,13 @@
 # and proprietary license terms, please see https://rhodecode.com/licenses/
 
 from zope.interface import implementer
-from rhodecode.interfaces import (
+from rhodecode.events import RhodecodeEvent
+from rhodecode.events.interfaces import (
     IUserRegistered, IUserPreCreate, IUserPreUpdate)
 
 
 @implementer(IUserRegistered)
-class UserRegistered(object):
+class UserRegistered(RhodecodeEvent):
     """
     An instance of this class is emitted as an :term:`event` whenever a user
     account is registered.
@@ -33,7 +34,7 @@ class UserRegistered(object):
 
 
 @implementer(IUserPreCreate)
-class UserPreCreate(object):
+class UserPreCreate(RhodecodeEvent):
     """
     An instance of this class is emitted as an :term:`event` before a new user
     object is created.
@@ -43,7 +44,7 @@ class UserPreCreate(object):
 
 
 @implementer(IUserPreUpdate)
-class UserPreUpdate(object):
+class UserPreUpdate(RhodecodeEvent):
     """
     An instance of this class is emitted as an :term:`event` before a user
     object is updated.
