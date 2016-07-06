@@ -249,21 +249,17 @@ $(document).ready(function() {
             });
         }
     });
-    // Add tooltips
-    $('tr.line .lineno a').attr("title","Click to select line").addClass('tooltip');
-    $('tr.line .add-comment-line a').attr("title","Click to comment").addClass('tooltip');
+    $('.compare_view_files').on(
+        'mouseenter mouseleave', 'tr.line .lineno a',function(event) {
+            if (event.type === "mouseenter") {
+                $(this).parents('tr.line').addClass('hover');
+            } else {
+                $(this).parents('tr.line').removeClass('hover');
+            }
+        });
 
-    // Set colors and styles
-    $('tr.line .lineno a').hover(
-        function(){
-            $(this).parents('tr.line').addClass('hover');
-        }, function(){
-            $(this).parents('tr.line').removeClass('hover');
-        }
-    );
-
-    $('tr.line .lineno a').click(
-        function(){
+    $('.compare_view_files').on(
+        'click', 'tr.line .lineno a',function(event) {
             if ($(this).text() != ""){
                 $('tr.line').removeClass('selected');
                 $(this).parents("tr.line").addClass('selected');
@@ -271,7 +267,7 @@ $(document).ready(function() {
                 // Replace URL without jumping to it if browser supports.
                 // Default otherwise
                 if (history.pushState) {
-                    var new_location = location.href
+                    var new_location = location.href;
                     if (location.hash){
                         new_location = new_location.replace(location.hash, "");
                     }
@@ -283,23 +279,14 @@ $(document).ready(function() {
                     return false;
                 }
             }
-        }
-    );
+        });
 
-    $('tr.line .add-comment-line a').hover(
-        function(){
-            $(this).parents('tr.line').addClass('commenting');
-        }, function(){
-            $(this).parents('tr.line').removeClass('commenting');
-        }
-    );
-
-    $('tr.line .add-comment-line a').on('click', function(e){
-        var tr = $(e.currentTarget).parents('tr.line')[0];
-        injectInlineForm(tr);
-        return false;
-    });
-
+    $('.compare_view_files').on(
+        'click', 'tr.line .add-comment-line a',function(event) {
+            var tr = $(event.currentTarget).parents('tr.line')[0];
+            injectInlineForm(tr);
+            return false;
+        });
 
     $('.collapse_file').on('click', function(e) {
         e.stopPropagation();
