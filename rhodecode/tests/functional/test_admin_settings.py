@@ -343,6 +343,38 @@ class TestAdminSettingsVcs:
         setting = SettingsModel().get_setting_by_name(setting_key)
         assert setting.app_settings_value is new_value
 
+    def test_has_a_section_for_labs_settings_if_enabled(self, app):
+        with mock.patch.dict(
+                rhodecode.CONFIG, {'labs_settings_active': 'true'}):
+            response = self.app.get(url('admin_settings_vcs'))
+        response.mustcontain('Labs settings:')
+
+    def test_has_not_a_section_for_labs_settings_if_disables(self, app):
+        with mock.patch.dict(
+                rhodecode.CONFIG, {'labs_settings_active': 'false'}):
+            response = self.app.get(url('admin_settings_vcs'))
+        response.mustcontain(no='Labs settings:')
+
+    @pytest.mark.parametrize('new_value', [True, False])
+    def test_allows_to_change_hg_rebase_merge_strategy(
+            self, app, form_defaults, csrf_token, new_value):
+        setting_key = 'hg_use_rebase_for_merging'
+
+        form_defaults.update({
+            'csrf_token': csrf_token,
+            'rhodecode_' + setting_key: str(new_value),
+        })
+
+        with mock.patch.dict(
+                rhodecode.CONFIG, {'labs_settings_active': 'true'}):
+            app.post(
+                url('admin_settings_vcs'),
+                params=form_defaults,
+                status=302)
+
+        setting = SettingsModel().get_setting_by_name(setting_key)
+        assert setting.app_settings_value is new_value
+
     @pytest.fixture
     def disable_sql_cache(self, request):
         patcher = mock.patch(
@@ -414,7 +446,6 @@ class TestLabsSettings(object):
 
     @pytest.mark.parametrize('setting_name', [
         'proxy_subversion_http_requests',
-        'hg_use_rebase_for_merging',
     ])
     def test_update_boolean_settings(self, csrf_token, setting_name):
         self.app.post(
