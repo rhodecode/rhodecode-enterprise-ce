@@ -47,9 +47,14 @@ class TestApiUpdateRepo(object):
         ({'enable_statistics': True}, SAME_AS_UPDATES),
         ({'enable_locking': True}, SAME_AS_UPDATES),
         ({'enable_downloads': True}, SAME_AS_UPDATES),
-        ({'name': 'new_repo_name'}, {'repo_name': 'new_repo_name'}),
-        ({'group': 'test_group_for_update'},
-            {'repo_name': 'test_group_for_update/%s' % UPDATE_REPO_NAME}),
+        ({'name': 'new_repo_name'}, {
+            'repo_name': 'new_repo_name',
+            'url': 'http://test.example.com:80/new_repo_name',
+        }),
+        ({'group': 'test_group_for_update'}, {
+            'repo_name': 'test_group_for_update/%s' % UPDATE_REPO_NAME,
+            'url': 'http://test.example.com:80/test_group_for_update/%s' % UPDATE_REPO_NAME
+        }),
     ])
     def test_api_update_repo(self, updates, expected, backend):
         repo_name = UPDATE_REPO_NAME

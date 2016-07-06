@@ -16,8 +16,31 @@
 # RhodeCode Enterprise Edition, including its added features, Support services,
 # and proprietary license terms, please see https://rhodecode.com/licenses/
 
+from marshmallow import Schema, fields
+
 from rhodecode.model.db import Repository, Session
-from rhodecode.events import RhodecodeEvent
+from rhodecode.events.base import RhodecodeEvent
+
+
+def get_pull_request_url(repo):
+    from rhodecode.model.repo import RepoModel
+    return RepoModel().get_url(repo)
+
+
+class RepositorySchema(Schema):
+    """
+    Marshmallow schema for a repository
+    """
+    repo_id = fields.Integer()
+    repo_name = fields.Str()
+    url = fields.Function(get_pull_request_url)
+
+
+class RepoEventSchema(RhodecodeEvent.MarshmallowSchema):
+    """
+    Marshmallow schema for a repository event
+    """
+    repository = fields.Nested(RepositorySchema)
 
 
 class RepoEvent(RhodecodeEvent):
@@ -26,7 +49,10 @@ class RepoEvent(RhodecodeEvent):
 
     :param repo: a :class:`Repository` instance
     """
+    MarshmallowSchema = RepoEventSchema
+
     def __init__(self, repo):
+        super(RepoEvent, self).__init__()
         self.repo = repo
 
 
@@ -72,6 +98,16 @@ class RepoVCSEvent(RepoEvent):
             raise Exception('repo by this name %s does not exist' % repo_name)
         self.extras = extras
         super(RepoVCSEvent, self).__init__(self.repo)
+
+    @property
+    def acting_user(self):
+        if self.extras.get('username'):
+            return User.get_by_username(extras['username'])
+
+    @property
+    def acting_ip(self):
+        if self.extras.get('ip'):
+            return User.get_by_username(extras['ip'])
 
 
 class RepoPrePullEvent(RepoVCSEvent):

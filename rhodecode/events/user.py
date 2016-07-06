@@ -17,7 +17,8 @@
 # and proprietary license terms, please see https://rhodecode.com/licenses/
 
 from zope.interface import implementer
-from rhodecode.events import RhodecodeEvent
+
+from rhodecode.events.base import RhodecodeEvent
 from rhodecode.events.interfaces import (
     IUserRegistered, IUserPreCreate, IUserPreUpdate)
 

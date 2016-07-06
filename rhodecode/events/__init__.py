@@ -19,12 +19,6 @@
 from pyramid.threadlocal import get_current_registry
 
 
-class RhodecodeEvent(object):
-    """
-    Base event class for all Rhodecode events
-    """
-
-
 def trigger(event):
     """
     Helper method to send an event. This wraps the pyramid logic to send an
@@ -37,6 +31,8 @@ def trigger(event):
     registry.notify(event)
 
 
+from rhodecode.events.base import RhodecodeEvent
+
 from rhodecode.events.user import (
     UserPreCreate,
     UserPreUpdate,
@@ -44,6 +40,7 @@ from rhodecode.events.user import (
 )
 
 from rhodecode.events.repo import (
+    RepoEvent,
     RepoPreCreateEvent, RepoCreatedEvent,
     RepoPreDeleteEvent, RepoDeletedEvent,
     RepoPrePushEvent,   RepoPushEvent,
@@ -51,6 +48,7 @@ from rhodecode.events.repo import (
 )
 
 from rhodecode.events.pullrequest import (
+    PullRequestEvent,
     PullRequestCreateEvent,
     PullRequestUpdateEvent,
     PullRequestReviewEvent,

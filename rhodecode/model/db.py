@@ -1641,6 +1641,7 @@ class Repository(Base, BaseModel):
             'repo_name': repo.repo_name,
             'repo_type': repo.repo_type,
             'clone_uri': repo.clone_uri or '',
+            'url': url('summary_home', repo_name=self.repo_name, qualified=True),
             'private': repo.private,
             'created_on': repo.created_on,
             'description': repo.description,
@@ -3112,10 +3113,9 @@ class PullRequest(Base, _PullRequestBase):
         merge_status = PullRequestModel().merge_status(pull_request)
         data = {
             'pull_request_id': pull_request.pull_request_id,
-            'url': url('pullrequest_show',
-                       repo_name=pull_request.target_repo.repo_name,
-                       pull_request_id=pull_request.pull_request_id,
-                       qualified=True),
+            'url': url('pullrequest_show', repo_name=self.target_repo.repo_name,
+                                       pull_request_id=self.pull_request_id,
+                                       qualified=True),
             'title': pull_request.title,
             'description': pull_request.description,
             'status': pull_request.status,

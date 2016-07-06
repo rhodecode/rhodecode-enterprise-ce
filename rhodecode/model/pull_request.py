@@ -748,6 +748,11 @@ class PullRequestModel(BaseModel):
 
         return ids_to_add, ids_to_remove
 
+    def get_url(self, pull_request):
+        return url('pullrequest_show', repo_name=self.target_repo.repo_name,
+                                       pull_request_id=self.pull_request_id,
+                                       qualified=True)
+
     def notify_reviewers(self, pull_request, reviewers_ids):
         # notification to reviewers
         if not reviewers_ids:
