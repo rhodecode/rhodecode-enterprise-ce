@@ -24,14 +24,12 @@ Summary controller for RhodeCode Enterprise
 
 import logging
 from string import lower
-from itertools import product
 
 from pylons import tmpl_context as c, request
 from pylons.i18n.translation import _
 from beaker.cache import cache_region, region_invalidate
 
-from rhodecode.config.conf import (
-    ALL_READMES, ALL_EXTS, LANGUAGES_EXTENSIONS_MAP)
+from rhodecode.config.conf import (LANGUAGES_EXTENSIONS_MAP)
 from rhodecode.controllers import utils
 from rhodecode.controllers.changelog import _load_changelog_summary
 from rhodecode.lib import caches, helpers as h
@@ -49,10 +47,6 @@ from rhodecode.model.db import Statistics, CacheKey, User
 
 log = logging.getLogger(__name__)
 
-README_FILES = [''.join([x[0][0], x[1][0]])
-                for x in sorted(list(product(ALL_READMES, ALL_EXTS)),
-                                key=lambda y:y[0][1] + y[1][1])]
-
 
 class SummaryController(BaseRepoController):
 
@@ -62,6 +56,7 @@ class SummaryController(BaseRepoController):
     def __get_readme_data(self, db_repo):
         repo_name = db_repo.repo_name
         log.debug('Looking for README file')
+        default_renderer = c.visual.default_renderer
 
         @cache_region('long_term')
         def _generate_readme(cache_key):
@@ -73,7 +68,7 @@ class SummaryController(BaseRepoController):
                 if isinstance(commit, EmptyCommit):
                     raise EmptyRepositoryError()
                 renderer = MarkupRenderer()
-                for f in README_FILES:
+                for f in renderer.pick_readme_order(default_renderer):
                     try:
                         node = commit.get_node(f)
                     except NodeDoesNotExistError:

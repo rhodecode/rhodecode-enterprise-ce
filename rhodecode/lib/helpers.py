@@ -1726,17 +1726,7 @@ def markdown(source, mentions=False):
                                            mentions=mentions))
 
 def renderer_from_filename(filename, exclude=None):
-    from rhodecode.config.conf import MARKDOWN_EXTS, RST_EXTS
-
-    def _filter(elements):
-        if isinstance(exclude, (list, tuple)):
-            return [x for x in elements if x not in exclude]
-        return elements
-
-    if filename.endswith(tuple(_filter([x[0] for x in MARKDOWN_EXTS if x[0]]))):
-        return 'markdown'
-    if filename.endswith(tuple(_filter([x[0] for x in RST_EXTS if x[0]]))):
-        return 'rst'
+    return MarkupRenderer.renderer_from_filename(filename, exclude=exclude)
 
 
 def render(source, renderer='rst', mentions=False):

@@ -177,3 +177,37 @@ Auto status change to |new_status|
     renderer = RstTemplateRenderer()
     rendered = renderer.render('auto_status_change.mako', **params)
     assert expected == rendered
+
+
+@pytest.mark.parametrize(
+    "readmes, exts, order",
+    [
+        ([], [], []),
+
+        ([('readme1', 0), ('text1', 1)], [('.ext', 0), ('.txt', 1)],
+         ['readme1.ext', 'readme1.txt', 'text1.ext', 'text1.txt']),
+
+        ([('readme2', 0), ('text2', 1)], [('.ext', 2), ('.txt', 1)],
+         ['readme2.txt', 'readme2.ext', 'text2.txt', 'text2.ext']),
+
+        ([('readme3', 0), ('text3', 1)], [('.XXX', 1)],
+         ['readme3.XXX', 'text3.XXX']),
+    ])
+def test_generate_readmes(readmes, exts, order):
+    assert order == MarkupRenderer.generate_readmes(readmes, exts)
+
+
+@pytest.mark.parametrize(
+    "renderer, expected_order",
+    [
+        ('plain', ['readme', 'README', 'Readme']),
+        ('text', ['readme', 'README', 'Readme']),
+        ('markdown', MarkupRenderer.generate_readmes(
+            MarkupRenderer.ALL_READMES, MarkupRenderer.MARKDOWN_EXTS)),
+        ('rst', MarkupRenderer.generate_readmes(
+            MarkupRenderer.ALL_READMES, MarkupRenderer.RST_EXTS)),
+    ])
+def test_order_of_readme_generation(renderer, expected_order):
+    mkd_renderer = MarkupRenderer()
+    assert expected_order == mkd_renderer.pick_readme_order(
+        renderer)[:len(expected_order)]
