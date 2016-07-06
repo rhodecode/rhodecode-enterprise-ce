@@ -21,6 +21,8 @@
 import mock
 import pytest
 
+import rhodecode
+from rhodecode.model.settings import SettingsModel
 from rhodecode.tests import url, HG_REPO
 from rhodecode.tests.utils import AssertResponse
 
@@ -41,30 +43,72 @@ class TestAdminRepoSettingsController:
     def test_simple_get(self, urlname, app):
         app.get(url(urlname, repo_name=HG_REPO))
 
-    @pytest.mark.parametrize('setting_name', [
-        'rhodecode_hg_use_rebase_for_merging',
+    @pytest.mark.parametrize('setting_name, setting_backends', [
+        ('hg_use_rebase_for_merging', ['hg']),
     ])
-    def test_labs_settings_enabled_hg(self, setting_name):
-        import rhodecode
-        vcs_settings_url = url('repo_vcs_settings', repo_name=HG_REPO)
+    def test_labs_settings_visible_if_enabled(
+            self, setting_name, setting_backends, backend):
+        if backend.alias not in setting_backends:
+            pytest.skip('Setting not available for backend {}'.format(backend))
+
+        vcs_settings_url = url(
+            'repo_vcs_settings', repo_name=backend.repo.repo_name)
 
         with mock.patch.dict(
                 rhodecode.CONFIG, {'labs_settings_active': 'true'}):
             response = self.app.get(vcs_settings_url)
 
         assertr = AssertResponse(response)
-        assertr.one_element_exists('#{}'.format(setting_name))
+        assertr.one_element_exists('#rhodecode_{}'.format(setting_name))
 
-    @pytest.mark.parametrize('setting_name', [
-        'rhodecode_hg_use_rebase_for_merging',
+    @pytest.mark.parametrize('setting_name, setting_backends', [
+        ('hg_use_rebase_for_merging', ['hg']),
     ])
-    def test_labs_settings_disabled_hg(self, setting_name):
-        import rhodecode
-        vcs_settings_url = url('repo_vcs_settings', repo_name=HG_REPO)
+    def test_labs_settings_not_visible_if_disabled(
+            self, setting_name, setting_backends, backend):
+        if backend.alias not in setting_backends:
+            pytest.skip('Setting not available for backend {}'.format(backend))
+
+        vcs_settings_url = url(
+            'repo_vcs_settings', repo_name=backend.repo.repo_name)
 
         with mock.patch.dict(
                 rhodecode.CONFIG, {'labs_settings_active': 'false'}):
             response = self.app.get(vcs_settings_url)
 
         assertr = AssertResponse(response)
-        assertr.no_element_exists('#{}'.format(setting_name))
+        assertr.no_element_exists('#rhodecode_{}'.format(setting_name))
+
+    @pytest.mark.parametrize('setting_name, setting_backends', [
+        ('hg_use_rebase_for_merging', ['hg']),
+    ])
+    def test_update_boolean_settings(
+            self, csrf_token, setting_name, setting_backends, backend):
+        if backend.alias not in setting_backends:
+            pytest.skip('Setting not available for backend {}'.format(backend))
+
+        settings_model = SettingsModel(repo=backend.repo)
+        vcs_settings_url = url(
+            'repo_vcs_settings', repo_name=backend.repo.repo_name)
+
+        self.app.post(
+            vcs_settings_url,
+            params={
+                'new_svn_branch': 'dummy-value-for-testing',
+                'new_svn_tag': 'dummy-value-for-testing',
+                'rhodecode_{}'.format(setting_name): 'true',
+                'csrf_token': csrf_token,
+            })
+        setting = settings_model.get_setting_by_name(setting_name)
+        assert setting.app_settings_value
+
+        self.app.post(
+            vcs_settings_url,
+            params={
+                'new_svn_branch': 'dummy-value-for-testing',
+                'new_svn_tag': 'dummy-value-for-testing',
+                'rhodecode_{}'.format(setting_name): 'false',
+                'csrf_token': csrf_token,
+            })
+        setting = settings_model.get_setting_by_name(setting_name)
+        assert not setting.app_settings_value
