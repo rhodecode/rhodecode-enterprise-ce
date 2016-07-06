@@ -26,10 +26,10 @@ TTIP.main = {
     offset:     [15,15],
     maxWidth:   600,
 
-    set_listeners: function(tt){
-        $(tt).mouseover(tt, yt.show_tip);
-        $(tt).mousemove(tt, yt.move_tip);
-        $(tt).mouseout(tt, yt.close_tip);
+    setDeferredListeners: function(){
+        $('body').on('mouseover', '.tooltip', yt.show_tip);
+        $('body').on('mousemove', '.tooltip', yt.move_tip);
+        $('body').on('mouseout', '.tooltip', yt.close_tip);
     },
 
     init: function(){
@@ -43,19 +43,13 @@ TTIP.main = {
         if(yt.maxWidth !== null){
           $(yt.tipBox).css('max-width', yt.maxWidth+'px');
         }
-
-        var tooltips = $('.tooltip');
-        var ttLen = tooltips.length;
-
-        for(i=0;i<ttLen;i++){
-            yt.set_listeners(tooltips[i]);
-        }
+        yt.setDeferredListeners();
     },
 
     show_tip: function(e, el){
         e.stopPropagation();
         e.preventDefault();
-        var el = e.data || el;
+        var el = e.data || e.currentTarget || el;
         if(el.tagName.toLowerCase() === 'img'){
             yt.tipText = el.alt ? el.alt : '';
         } else {
@@ -76,7 +70,7 @@ TTIP.main = {
     move_tip: function(e, el){
         e.stopPropagation();
         e.preventDefault();
-        var el = e.data || el;
+        var el = e.data || e.currentTarget || el;
         var movePos = [e.pageX, e.pageY];
         $(yt.tipBox).css('top', (movePos[1] + yt.offset[1]) + 'px')
         $(yt.tipBox).css('left', (movePos[0] + yt.offset[0]) + 'px')
@@ -85,7 +79,7 @@ TTIP.main = {
     close_tip: function(e, el){
         e.stopPropagation();
         e.preventDefault();
-        var el = e.data || el;
+        var el = e.data || e.currentTarget || el;
         $(yt.tipBox).hide();
         $(el).attr('title', $(el).attr('tt_title'));
         $('#tip-box').hide();
@@ -97,30 +91,13 @@ TTIP.main = {
  */
 var tooltip_activate = function(){
     yt = TTIP.main;
-    $(document).ready(yt.init);
+    if ($(document).data('activated-tooltips') !== '1'){
+        $(document).ready(yt.init);
+        $(document).data('activated-tooltips', '1');
+    }
 };
 
 /**
  * show changeset tooltip
  */
-var show_changeset_tooltip = function(){
-    $('.lazy-cs').mouseover(function(e) {
-        var target = e.currentTarget;
-        var rid = $(target).attr('raw_id');
-        var repo_name = $(target).attr('repo_name');
-        var ttid = 'tt-'+rid;
-        var success = function(o){
-            $(target).addClass('tooltip')
-            $(target).attr('title', o['message']);
-            TTIP.main.show_tip(e, target);
-        }
-        if(rid && !$(target).hasClass('tooltip')){
-            $(target).attr('id', ttid);
-            $(target).attr('title', _gettext('loading ...'));
-            TTIP.main.set_listeners(target);
-            TTIP.main.show_tip(e, target);
-            var url = pyroutes.url('changeset_info', {"repo_name":repo_name, "revision": rid});
-            ajaxGET(url, success);
-        }
-    });
-};
+var show_changeset_tooltip = function(){};
