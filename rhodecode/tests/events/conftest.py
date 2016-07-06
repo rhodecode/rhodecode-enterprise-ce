@@ -25,7 +25,7 @@ class EventCatcher(object):
 
     def __init__(self):
         self.events = [] # the actual events captured
-        self.event_types = [] # the types of events captured
+        self.events_types = [] # the types of events captured
 
     def __enter__(self):
         self.event_trigger_patch = mock.patch('rhodecode.events.trigger')
@@ -38,4 +38,4 @@ class EventCatcher(object):
         for call in self.mocked_event_trigger.call_args_list:
             event = call[0][0]
             self.events.append(event)
-            self.event_types.append(type(event))
+            self.events_types.append(type(event))

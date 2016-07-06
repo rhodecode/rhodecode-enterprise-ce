@@ -52,28 +52,28 @@ def scm_extras(user_regular, repo_stub):
 def test_create_delete_repo_fires_events(backend):
     with EventCatcher() as event_catcher:
         repo = backend.create_repo()
-    assert event_catcher.event_types == [RepoPreCreateEvent, RepoCreatedEvent]
+    assert event_catcher.events_types == [RepoPreCreateEvent, RepoCreatedEvent]
 
     with EventCatcher() as event_catcher:
         RepoModel().delete(repo)
-    assert event_catcher.event_types == [RepoPreDeleteEvent, RepoDeletedEvent]
+    assert event_catcher.events_types == [RepoPreDeleteEvent, RepoDeletedEvent]
 
 
 def test_pull_fires_events(scm_extras):
     with EventCatcher() as event_catcher:
         hooks_base.pre_push(scm_extras)
-    assert event_catcher.event_types == [RepoPrePushEvent]
+    assert event_catcher.events_types == [RepoPrePushEvent]
 
     with EventCatcher() as event_catcher:
         hooks_base.post_push(scm_extras)
-    assert event_catcher.event_types == [RepoPushEvent]
+    assert event_catcher.events_types == [RepoPushEvent]
 
 
 def test_push_fires_events(scm_extras):
     with EventCatcher() as event_catcher:
         hooks_base.pre_pull(scm_extras)
-    assert event_catcher.event_types == [RepoPrePullEvent]
+    assert event_catcher.events_types == [RepoPrePullEvent]
 
     with EventCatcher() as event_catcher:
         hooks_base.post_pull(scm_extras)
-    assert event_catcher.event_types == [RepoPullEvent]
+    assert event_catcher.events_types == [RepoPullEvent]
