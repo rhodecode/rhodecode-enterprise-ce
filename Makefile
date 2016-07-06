@@ -20,7 +20,7 @@ ci-docs: docs;
 clean: test-clean
 	find . -type f \( -iname '*.c' -o -iname '*.pyc' -o -iname '*.so' \) -exec rm '{}' ';'
 
-test: test-clean test-lint test-only
+test: test-clean test-only
 
 test-clean:
 	rm -rf coverage.xml htmlcov junit.xml pylint.log result
