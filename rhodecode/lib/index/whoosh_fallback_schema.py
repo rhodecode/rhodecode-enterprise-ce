@@ -49,9 +49,9 @@ FILE_SCHEMA = Schema(
     extension=ID(stored=True),
     commit_id=TEXT(stored=True),
 
-    size=NUMERIC(stored=True),
+    size=NUMERIC(int, 64, signed=False, stored=True),
     mimetype=TEXT(stored=True),
-    lines=NUMERIC(stored=True),
+    lines=NUMERIC(int, 64, signed=False, stored=True),
 )
 
 
@@ -63,7 +63,7 @@ COMMIT_SCHEMA = Schema(
     repository_id=NUMERIC(unique=True, stored=True),
     commit_idx=NUMERIC(stored=True, sortable=True),
     commit_idx_sort=ID(),
-    date=NUMERIC(stored=True, sortable=True),
+    date=NUMERIC(int, 64, signed=False, stored=True, sortable=True),
     owner=TEXT(stored=True),
     author=TEXT(stored=True),
     message=FieldType(format=Characters(), analyzer=ANALYZER,
