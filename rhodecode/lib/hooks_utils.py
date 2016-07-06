@@ -21,6 +21,7 @@
 import pylons
 import webob
 
+from rhodecode import events
 from rhodecode.lib import hooks_base
 from rhodecode.lib import utils2
 
@@ -76,6 +77,7 @@ def trigger_log_create_pull_request_hook(username, repo_name, repo_alias,
 
     extras = _get_rc_scm_extras(username, repo_name, repo_alias,
                                 'create_pull_request')
+    events.trigger(events.PullRequestCreateEvent(pull_request))
     extras.update(pull_request.get_api_data())
     hooks_base.log_create_pull_request(**extras)
 
@@ -95,6 +97,7 @@ def trigger_log_merge_pull_request_hook(username, repo_name, repo_alias,
 
     extras = _get_rc_scm_extras(username, repo_name, repo_alias,
                                 'merge_pull_request')
+    events.trigger(events.PullRequestMergeEvent(pull_request))
     extras.update(pull_request.get_api_data())
     hooks_base.log_merge_pull_request(**extras)
 
@@ -114,6 +117,7 @@ def trigger_log_close_pull_request_hook(username, repo_name, repo_alias,
 
     extras = _get_rc_scm_extras(username, repo_name, repo_alias,
                                 'close_pull_request')
+    events.trigger(events.PullRequestCloseEvent(pull_request))
     extras.update(pull_request.get_api_data())
     hooks_base.log_close_pull_request(**extras)
 
@@ -133,6 +137,7 @@ def trigger_log_review_pull_request_hook(username, repo_name, repo_alias,
 
     extras = _get_rc_scm_extras(username, repo_name, repo_alias,
                                 'review_pull_request')
+    events.trigger(events.PullRequestReviewEvent(pull_request))
     extras.update(pull_request.get_api_data())
     hooks_base.log_review_pull_request(**extras)
 
@@ -152,5 +157,6 @@ def trigger_log_update_pull_request_hook(username, repo_name, repo_alias,
 
     extras = _get_rc_scm_extras(username, repo_name, repo_alias,
                                 'update_pull_request')
+    events.trigger(events.PullRequestUpdateEvent(pull_request))
     extras.update(pull_request.get_api_data())
     hooks_base.log_update_pull_request(**extras)

@@ -49,3 +49,11 @@ from rhodecode.events.repo import (
     RepoPrePushEvent,   RepoPushEvent,
     RepoPrePullEvent,   RepoPullEvent,
 )
+
+from rhodecode.events.pullrequest import (
+    PullRequestCreateEvent,
+    PullRequestUpdateEvent,
+    PullRequestReviewEvent,
+    PullRequestMergeEvent,
+    PullRequestCloseEvent,
+)
