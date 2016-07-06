@@ -86,18 +86,9 @@ TTIP.main = {
     }
 };
 
-/**
- * tooltip activate
- */
-var tooltip_activate = function(){
-    yt = TTIP.main;
-    if ($(document).data('activated-tooltips') !== '1'){
-        $(document).ready(yt.init);
-        $(document).data('activated-tooltips', '1');
-    }
-};
-
-/**
- * show changeset tooltip
- */
-var show_changeset_tooltip = function(){};
+// activate tooltips
+yt = TTIP.main;
+if ($(document).data('activated-tooltips') !== '1'){
+    $(document).ready(yt.init);
+    $(document).data('activated-tooltips', '1');
+}

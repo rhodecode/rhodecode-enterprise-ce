@@ -46,8 +46,6 @@
     $('#j_filter').autoGrowInput();
     $(document).on('pjax:success',function(){
       show_more_event();
-      tooltip_activate();
-      show_changeset_tooltip();
     });
     $(document).pjax('#refresh', '#journal',
                      {url: "${h.url.current(filter=c.search_term)}", push: false});

@@ -50,8 +50,6 @@ ${c.users_log.pager('$link_previous ~2~ $link_next')}
         //therefore the .one method
         $(document).on('pjax:complete',function(){
             show_more_event();
-            tooltip_activate();
-            show_changeset_tooltip();
         });
 
         $(document).pjax('#user_log .pager_link', '#user_log');

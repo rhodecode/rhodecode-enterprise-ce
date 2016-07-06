@@ -121,7 +121,6 @@
                             '<span title="{0}">{1}</span>'.format(
                                     data[i].author, data[i].user_profile));
                 }
-                tooltip_activate();
                 timeagoActivate();
             });
             metadataRequest.fail(function (data, textStatus, errorThrown) {
@@ -134,7 +133,6 @@
 
         var callbacks = function() {
             var state = getState('callbacks');
-            tooltip_activate();
             timeagoActivate();
 
             // used for history, and switch to
@@ -316,7 +314,6 @@
                 $('#file_history_overview').hide();
                 $('#file_history_overview_full').show();
                 timeagoActivate();
-                tooltip_activate();
             } else {
                 callbacks();
             }

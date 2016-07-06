@@ -192,7 +192,6 @@ var injectInlineForm = function(tr){
       // re trigger the linkification of next/prev navigation
       linkifyComments($('.inline-comment-injected'));
       timeagoActivate();
-      tooltip_activate();
       bindDeleteCommentButtons();
       commentForm.setActionButtonsDisabled(false);
 
@@ -536,7 +535,6 @@ var CommentForm = (function() {
                     self.resetCommentFormState();
                     bindDeleteCommentButtons();
                     timeagoActivate();
-                    tooltip_activate();
                 }
             };
             var submitFailCallback = function(){
