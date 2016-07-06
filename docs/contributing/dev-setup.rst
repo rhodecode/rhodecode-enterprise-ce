@@ -78,7 +78,7 @@ following command from inside the cloned repository::
 
    On the first run, this will take a while to download and optionally compile
    a few things. The following runs will be faster. The development shell works
-   fine on MacOS and Linux platforms.
+   fine on both MacOS and Linux platforms.
 
 
 
@@ -111,10 +111,8 @@ time operation::
 Start the Development Server
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-When starting the development server, you should start the vcsserver as a
-separate process. To do this, use one of the following examples:
-
-1. Set the `start.vcs_server` flag in the ``dev.ini`` file to true. For example:
+First, set the `start.vcs_server` flag in the ``dev.ini`` file to true.
+For example:
 
    .. code-block:: python
 
@@ -124,16 +122,18 @@ separate process. To do this, use one of the following examples:
       vcs.server = localhost:9900
       vcs.server.log_level = debug
 
-   Then start the server using the following command: ``rcserver dev.ini``
+From the rhodecode-vcsserver directory, start the development server in another
+nix-shell, using the following command::
 
-2. Start the development server using the following example::
+      pserve configs/development_pyramid.ini http_port=9900
 
-      rcserver --with-vcsserver dev.ini
+In the adjacent nix-shell which you created for your development server, you may
+now start CE with the following command::
 
-3. Start the development server in a different terminal using the following
-   example::
+      rcserver dev.ini
 
-      vcsserver
+You may also wish to use the option `--reload` with this command so that any
+changes which you make in the code trigger an automatic refresh.
 
 
 Run the Environment Tests
@@ -141,4 +141,12 @@ Run the Environment Tests
 
 Please make sure that the tests are passing to verify that your environment is
 set up correctly. RhodeCode uses py.test to run tests.
-Please simply run ``make test`` to run the basic test suite.
+While your instance is running, start a new nix-shell and simply run
+``make test`` to run the basic test suite.
+
+
+Need Help?
+^^^^^^^^^^
+
+Join us on Slack via https://rhodecode.com/join or post questions in our
+Community Portal at https://community.rhodecode.com
