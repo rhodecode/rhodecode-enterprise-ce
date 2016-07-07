@@ -49,6 +49,39 @@ def scm_extras(user_regular, repo_stub):
     return extras
 
 
+# TODO: dan: make the serialization tests complete json comparisons
+@pytest.mark.parametrize('EventClass', [
+    RepoPreCreateEvent, RepoCreatedEvent,
+    RepoPreDeleteEvent, RepoDeletedEvent,
+])
+def test_repo_events_serialized(repo_stub, EventClass):
+    event = EventClass(repo_stub)
+    data = event.as_dict()
+    assert data['name'] == EventClass.name
+    assert data['repo']['repo_name'] == repo_stub.repo_name
+
+
+@pytest.mark.parametrize('EventClass', [
+    RepoPrePullEvent, RepoPullEvent, RepoPrePushEvent
+])
+def test_vcs_repo_events_serialize(repo_stub, scm_extras, EventClass):
+    event = EventClass(repo_name=repo_stub.repo_name, extras=scm_extras)
+    data = event.as_dict()
+    assert data['name'] == EventClass.name
+    assert data['repo']['repo_name'] == repo_stub.repo_name
+
+
+
+@pytest.mark.parametrize('EventClass', [RepoPushEvent])
+def test_vcs_repo_events_serialize(repo_stub, scm_extras, EventClass):
+    event = EventClass(repo_name=repo_stub.repo_name,
+                       pushed_commit_ids=scm_extras['commit_ids'],
+                       extras=scm_extras)
+    data = event.as_dict()
+    assert data['name'] == EventClass.name
+    assert data['repo']['repo_name'] == repo_stub.repo_name
+
+
 def test_create_delete_repo_fires_events(backend):
     with EventCatcher() as event_catcher:
         repo = backend.create_repo()
@@ -77,3 +110,4 @@ def test_push_fires_events(scm_extras):
     with EventCatcher() as event_catcher:
         hooks_base.post_pull(scm_extras)
     assert event_catcher.events_types == [RepoPullEvent]
+

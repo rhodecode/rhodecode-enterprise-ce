@@ -212,6 +212,7 @@ def includeme(config):
     config.include('pyramid_mako')
     config.include('pyramid_beaker')
     config.include('rhodecode.admin')
+    config.include('rhodecode.integrations')
     config.include('rhodecode.authentication')
     config.include('rhodecode.login')
     config.include('rhodecode.tweens')

@@ -749,7 +749,7 @@ class PullRequestModel(BaseModel):
         return ids_to_add, ids_to_remove
 
     def get_url(self, pull_request):
-        return url('pullrequest_show', repo_name=self.target_repo.repo_name,
+        return h.url('pullrequest_show', repo_name=self.target_repo.repo_name,
                                        pull_request_id=self.pull_request_id,
                                        qualified=True)
 

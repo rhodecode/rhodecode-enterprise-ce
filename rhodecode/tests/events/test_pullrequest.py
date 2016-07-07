@@ -31,6 +31,23 @@ from rhodecode.events import (
     PullRequestCloseEvent,
 )
 
+# TODO: dan: make the serialization tests complete json comparisons
+@pytest.mark.backends("git", "hg")
+@pytest.mark.parametrize('EventClass', [
+    PullRequestCreateEvent,
+    PullRequestUpdateEvent,
+    PullRequestReviewEvent,
+    PullRequestMergeEvent,
+    PullRequestCloseEvent,
+])
+def test_pullrequest_events_serialized(pr_util, EventClass):
+    pr = pr_util.create_pull_request()
+    event = EventClass(pr)
+    data = event.as_dict()
+    assert data['name'] == EventClass.name
+    assert data['repo']['repo_name'] == pr.target_repo.repo_name
+    assert data['pullrequest']['pull_request_id'] == pr.pull_request_id
+
 
 @pytest.mark.backends("git", "hg")
 def test_create_pull_request_events(pr_util):

@@ -39,8 +39,9 @@ class RhodecodeEventSchema(Schema):
     Marshmallow schema for a rhodecode event
     """
     utc_timestamp = fields.DateTime()
-    acting_user = fields.Nested(UserSchema)
-    acting_ip = fields.Str()
+    actor = fields.Nested(UserSchema)
+    actor_ip = fields.Str()
+    name = fields.Str(attribute='name')
 
 
 class RhodecodeEvent(object):
@@ -54,13 +55,13 @@ class RhodecodeEvent(object):
         self.utc_timestamp = datetime.utcnow()
 
     @property
-    def acting_user(self):
+    def actor(self):
         if self.request:
             return self.request.user.get_instance()
         return SYSTEM_USER
 
     @property
-    def acting_ip(self):
+    def actor_ip(self):
         if self.request:
             return self.request.user.ip_addr
         return '<no ip available>'

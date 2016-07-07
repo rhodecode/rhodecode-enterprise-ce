@@ -18,11 +18,11 @@
 
 from marshmallow import Schema, fields
 
-from rhodecode.model.db import Repository, Session
+from rhodecode.model.db import User, Repository, Session
 from rhodecode.events.base import RhodecodeEvent
 
 
-def get_pull_request_url(repo):
+def get_repo_url(repo):
     from rhodecode.model.repo import RepoModel
     return RepoModel().get_url(repo)
 
@@ -33,14 +33,14 @@ class RepositorySchema(Schema):
     """
     repo_id = fields.Integer()
     repo_name = fields.Str()
-    url = fields.Function(get_pull_request_url)
+    url = fields.Function(get_repo_url)
 
 
 class RepoEventSchema(RhodecodeEvent.MarshmallowSchema):
     """
     Marshmallow schema for a repository event
     """
-    repository = fields.Nested(RepositorySchema)
+    repo = fields.Nested(RepositorySchema)
 
 
 class RepoEvent(RhodecodeEvent):
@@ -100,14 +100,14 @@ class RepoVCSEvent(RepoEvent):
         super(RepoVCSEvent, self).__init__(self.repo)
 
     @property
-    def acting_user(self):
+    def actor(self):
         if self.extras.get('username'):
-            return User.get_by_username(extras['username'])
+            return User.get_by_username(self.extras['username'])
 
     @property
-    def acting_ip(self):
+    def actor_ip(self):
         if self.extras.get('ip'):
-            return User.get_by_username(extras['ip'])
+            return self.extras['ip']
 
 
 class RepoPrePullEvent(RepoVCSEvent):
