@@ -772,19 +772,17 @@ def discover_user(author):
 def email_or_none(author):
     # extract email from the commit string
     _email = author_email(author)
-    if _email != '':
-        # check it against RhodeCode database, and use the MAIN email for this
-        # user
-        user = User.get_by_email(_email, case_insensitive=True, cache=True)
-        if user is not None:
-            return user.email
-        return _email
 
-    # See if it contains a username we can get an email from
-    user = User.get_by_username(author_name(author), case_insensitive=True,
+    # If we have an email, use it, otherwise
+    # see if it contains a username we can get an email from
+    if _email != '':
+        return _email
+    else:
+        user = User.get_by_username(author_name(author), case_insensitive=True,
                                 cache=True)
+    
     if user is not None:
-        return user.email
+            return user.email
 
     # No valid email, not a valid user in the system, none!
     return None
