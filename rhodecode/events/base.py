@@ -22,6 +22,7 @@ from pyramid.threadlocal import get_current_request
 from rhodecode.lib.utils2 import AttributeDict
 
 
+# this is a user object to be used for events caused by the system (eg. shell)
 SYSTEM_USER = AttributeDict(dict(
     username='__SYSTEM__'
 ))
