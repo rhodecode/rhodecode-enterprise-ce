@@ -640,8 +640,8 @@ class PullrequestsController(BaseRepoController):
         pull_request_id = safe_int(pull_request_id)
         c.pull_request = PullRequest.get_or_404(pull_request_id)
 
-        if hasattr(c, 'pylons_dispatch_info'):
-            c.pylons_dispatch_info['extra']['pull_request'] = pull_request_id
+        c.template_context['pull_request_data']['pull_request_id'] = \
+            pull_request_id
 
         # pull_requests repo_name we opened it against
         # ie. target_repo must match

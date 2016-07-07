@@ -425,9 +425,29 @@ class BaseController(WSGIController):
         _route_name = '.'.join([environ['pylons.routes_dict']['controller'],
                                 environ['pylons.routes_dict']['action']])
 
-        c.pylons_dispatch_info = {
-            'controller': environ['pylons.routes_dict']['controller'],
-            'action': environ['pylons.routes_dict']['action'],
+        c.template_context = {
+            'repo_name': None,
+            'repo_type': None,
+            'repo_landing_commit': None,
+            'rhodecode_user': {
+                'username': None,
+                'email': None,
+            },
+            'visual': {
+                'default_renderer': None
+            },
+            'commit_data': {
+                'commit_id': None
+            },
+            'pull_request_data': {'pull_request_id': None},
+            'timeago': {
+                'refresh_time': 120 * 1000,
+                'cutoff_limit': 1000*60*60*24*7
+            },
+            'pylons_dispatch':{
+                'controller': environ['pylons.routes_dict']['controller'],
+                'action': environ['pylons.routes_dict']['action'],
+            },
             'extra': {'plugins': {}}
         }
 

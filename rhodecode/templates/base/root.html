@@ -1,55 +1,19 @@
 ## -*- coding: utf-8 -*-
 <!DOCTYPE html>
 
-<%def name="get_template_context()" filter="n, trim">{
+<%
+c.template_context['repo_name'] = getattr(c, 'repo_name', '')
 
-    ## repo data
-    repo_name: "${getattr(c, 'repo_name', '')}",
-    % if hasattr(c, 'rhodecode_db_repo'):
-    repo_type: "${c.rhodecode_db_repo.repo_type}",
-    repo_landing_commit: "${c.rhodecode_db_repo.landing_rev[1]}",
-    % else:
-    repo_type: null,
-    repo_landing_commit: null,
-    % endif
+if hasattr(c, 'rhodecode_db_repo'):
+    c.template_context['repo_type'] = c.rhodecode_db_repo.repo_type
+    c.template_context['repo_landing_commit'] = c.rhodecode_db_repo.landing_rev[1]
 
-    ## user data
-    % if getattr(c, 'rhodecode_user', None) and c.rhodecode_user.user_id:
-    rhodecode_user: {
-        username: "${c.rhodecode_user.username}",
-        email: "${c.rhodecode_user.email}",
-    },
-    % else:
-    rhodecode_user: {
-        username: null,
-        email: null,
-    },
-    % endif
+if getattr(c, 'rhodecode_user', None) and c.rhodecode_user.user_id:
+    c.template_context['rhodecode_user']['username'] = c.rhodecode_user.username
+    c.template_context['rhodecode_user']['email'] = c.rhodecode_user.email
 
-    ## visual settings
-    visual: {
-        default_renderer: "${h.get_visual_attr(c, 'default_renderer')}"
-    },
-
-    ## current commit context, filled inside templates that expose that
-    commit_data: {
-        commit_id: null,
-    },
-
-    ## current pr context, filled inside templates that expose that
-    pull_request_data: {
-        pull_request_id: null,
-    },
-
-    ## timeago settings, can be overwritten by custom user settings later
-    timeago: {
-        refresh_time: ${120 * 1000},
-        cutoff_limit: ${1000*60*60*24*7}
-    },
-    dispatch_info: ${h.json.dumps(getattr(c, 'pylons_dispatch_info', {}))|n}
-}
-
-</%def>
+c.template_context['visual']['default_renderer'] = h.get_visual_attr(c, 'default_renderer')
+%>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
@@ -81,7 +45,7 @@
             <script src="${h.url('/js/rhodecode/i18n/%s.js' % c.language, ver=c.rhodecode_version_hash)}"></script>
             <script type="text/javascript">
             // register templateContext to pass template variables to JS
-            var templateContext = ${get_template_context()};
+            var templateContext = ${h.json.dumps(c.template_context)|n};
 
             var REPO_NAME = "${getattr(c, 'repo_name', '')}";
             %if hasattr(c, 'rhodecode_db_repo'):
