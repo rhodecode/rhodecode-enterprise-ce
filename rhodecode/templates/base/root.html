@@ -45,7 +45,8 @@
     timeago: {
         refresh_time: ${120 * 1000},
         cutoff_limit: ${1000*60*60*24*7}
-    }
+    },
+    dispatch_info: ${h.json.dumps(getattr(c, 'pylons_dispatch_info', {}))|n}
 }
 
 </%def>

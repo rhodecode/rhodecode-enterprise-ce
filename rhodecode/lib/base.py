@@ -425,6 +425,12 @@ class BaseController(WSGIController):
         _route_name = '.'.join([environ['pylons.routes_dict']['controller'],
                                 environ['pylons.routes_dict']['action']])
 
+        c.pylons_dispatch_info = {
+            'controller': environ['pylons.routes_dict']['controller'],
+            'action': environ['pylons.routes_dict']['action'],
+            'extra': {'plugins': {}}
+        }
+
         self.rc_config = SettingsModel().get_all_settings(cache=True)
         self.ip_addr = get_ip_addr(environ)
 

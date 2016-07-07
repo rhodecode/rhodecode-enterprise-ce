@@ -69,6 +69,7 @@ from webhelpers2.number import format_byte_size
 
 from rhodecode.lib.annotate import annotate_highlight
 from rhodecode.lib.action_parser import action_parser
+from rhodecode.lib.ext_json import json
 from rhodecode.lib.utils import repo_name_slug, get_custom_lexer
 from rhodecode.lib.utils2 import str2bool, safe_unicode, safe_str, \
     get_commit_safe, datetime_to_time, time_to_datetime, time_to_utcdatetime, \
