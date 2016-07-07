@@ -41,7 +41,7 @@ class RhodecodeEventSchema(Schema):
     utc_timestamp = fields.DateTime()
     actor = fields.Nested(UserSchema)
     actor_ip = fields.Str()
-    name = fields.Str(attribute='name')
+    name = fields.Str()
 
 
 class RhodecodeEvent(object):
