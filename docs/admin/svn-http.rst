@@ -76,7 +76,7 @@ following examples. For more |svn| information, see the `Subversion Red Book`_
 .. code-block:: bash
 
     # To clone a repository
-    svn clone http://my-svn-server.example.com/my-svn-repo
+    svn checkout http://my-svn-server.example.com/my-svn-repo
 
     # svn commit
     svn commit
