@@ -59,6 +59,7 @@ def test_repo_events_serialized(repo_stub, EventClass):
     data = event.as_dict()
     assert data['name'] == EventClass.name
     assert data['repo']['repo_name'] == repo_stub.repo_name
+    assert data['repo']['url']
 
 
 @pytest.mark.parametrize('EventClass', [
@@ -69,17 +70,19 @@ def test_vcs_repo_events_serialize(repo_stub, scm_extras, EventClass):
     data = event.as_dict()
     assert data['name'] == EventClass.name
     assert data['repo']['repo_name'] == repo_stub.repo_name
+    assert data['repo']['url']
 
 
 
 @pytest.mark.parametrize('EventClass', [RepoPushEvent])
-def test_vcs_repo_events_serialize(repo_stub, scm_extras, EventClass):
+def test_vcs_repo_push_event_serialize(repo_stub, scm_extras, EventClass):
     event = EventClass(repo_name=repo_stub.repo_name,
                        pushed_commit_ids=scm_extras['commit_ids'],
                        extras=scm_extras)
     data = event.as_dict()
     assert data['name'] == EventClass.name
     assert data['repo']['repo_name'] == repo_stub.repo_name
+    assert data['repo']['url']
 
 
 def test_create_delete_repo_fires_events(backend):

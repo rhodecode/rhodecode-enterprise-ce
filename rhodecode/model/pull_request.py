@@ -749,9 +749,10 @@ class PullRequestModel(BaseModel):
         return ids_to_add, ids_to_remove
 
     def get_url(self, pull_request):
-        return h.url('pullrequest_show', repo_name=self.target_repo.repo_name,
-                                       pull_request_id=self.pull_request_id,
-                                       qualified=True)
+        return h.url('pullrequest_show',
+                     repo_name=pull_request.target_repo.repo_name,
+                     pull_request_id=pull_request.pull_request_id,
+                     qualified=True)
 
     def notify_reviewers(self, pull_request, reviewers_ids):
         # notification to reviewers

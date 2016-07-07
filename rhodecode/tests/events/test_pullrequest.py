@@ -47,7 +47,7 @@ def test_pullrequest_events_serialized(pr_util, EventClass):
     assert data['name'] == EventClass.name
     assert data['repo']['repo_name'] == pr.target_repo.repo_name
     assert data['pullrequest']['pull_request_id'] == pr.pull_request_id
-
+    assert data['pullrequest']['url']
 
 @pytest.mark.backends("git", "hg")
 def test_create_pull_request_events(pr_util):
