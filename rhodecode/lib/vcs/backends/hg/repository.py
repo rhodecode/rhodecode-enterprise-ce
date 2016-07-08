@@ -25,15 +25,15 @@ HG repository module
 import logging
 import binascii
 import os
-import re
 import shutil
 import urllib
 
 from zope.cachedescriptors.property import Lazy as LazyProperty
 
 from rhodecode.lib.compat import OrderedDict
-from rhodecode.lib.datelib import (date_to_timestamp_plus_offset,
-    utcdate_fromtimestamp, makedate, date_astimestamp)
+from rhodecode.lib.datelib import (
+    date_to_timestamp_plus_offset, utcdate_fromtimestamp, makedate,
+    date_astimestamp)
 from rhodecode.lib.utils import safe_unicode, safe_str
 from rhodecode.lib.vcs import connection
 from rhodecode.lib.vcs.backends.base import (
@@ -42,7 +42,6 @@ from rhodecode.lib.vcs.backends.base import (
 from rhodecode.lib.vcs.backends.hg.commit import MercurialCommit
 from rhodecode.lib.vcs.backends.hg.diff import MercurialDiff
 from rhodecode.lib.vcs.backends.hg.inmemory import MercurialInMemoryCommit
-from rhodecode.lib.vcs.conf import settings
 from rhodecode.lib.vcs.exceptions import (
     EmptyRepositoryError, RepositoryError, TagAlreadyExistError,
     TagDoesNotExistError, CommitDoesNotExistError)
