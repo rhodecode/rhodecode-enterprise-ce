@@ -107,8 +107,9 @@ class MarkupRenderer(object):
     @classmethod
     def renderer_from_filename(cls, filename, exclude):
         """
-        Detect renderer from filename and optionally use exlcude list to
-        remove some options. This is mostly used in helpers
+        Detect renderer markdown/rst from filename and optionally use exclude
+        list to remove some options. This is mostly used in helpers.
+        Returns None when no renderer can be detected.
         """
         def _filter(elements):
             if isinstance(exclude, (list, tuple)):
@@ -121,7 +122,7 @@ class MarkupRenderer(object):
         if filename.endswith(tuple(_filter([x[0] for x in cls.RST_EXTS if x[0]]))):
             return 'rst'
 
-        return 'plain'
+        return None
 
     @classmethod
     def generate_readmes(cls, all_readmes, extensions):
