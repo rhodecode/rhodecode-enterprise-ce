@@ -254,7 +254,11 @@ class BasicAuth(AuthBasicAuthenticator):
     __call__ = authenticate
 
 
-def attach_context_attributes(context):
+def attach_context_attributes(context, request):
+    """
+    Attach variables into template context called `c`, please note that
+    request could be pylons or pyramid request in here.
+    """
     rc_config = SettingsModel().get_all_settings(cache=True)
 
     context.rhodecode_version = rhodecode.__version__
@@ -320,6 +324,35 @@ def attach_context_attributes(context):
         'appenlight.api_public_key', '')
     context.appenlight_server_url = config.get('appenlight.server_url', '')
 
+    # JS template context
+    context.template_context = {
+        'repo_name': None,
+        'repo_type': None,
+        'repo_landing_commit': None,
+        'rhodecode_user': {
+            'username': None,
+            'email': None,
+        },
+        'visual': {
+            'default_renderer': None
+        },
+        'commit_data': {
+            'commit_id': None
+        },
+        'pull_request_data': {'pull_request_id': None},
+        'timeago': {
+            'refresh_time': 120 * 1000,
+            'cutoff_limit': 1000 * 60 * 60 * 24 * 7
+        },
+        'pylons_dispatch': {
+            # 'controller': request.environ['pylons.routes_dict']['controller'],
+            # 'action': request.environ['pylons.routes_dict']['action'],
+        },
+        'pyramid_dispatch': {
+
+        },
+        'extra': {'plugins': {}}
+    }
     # END CONFIG VARS
 
     # TODO: This dosn't work when called from pylons compatibility tween.
@@ -380,7 +413,7 @@ class BaseController(WSGIController):
         """
         # on each call propagate settings calls into global settings.
         set_rhodecode_config(config)
-        attach_context_attributes(c)
+        attach_context_attributes(c, request)
 
         # TODO: Remove this when fixed in attach_context_attributes()
         c.repo_name = get_repo_slug(request)  # can be empty
@@ -424,32 +457,6 @@ class BaseController(WSGIController):
 
         _route_name = '.'.join([environ['pylons.routes_dict']['controller'],
                                 environ['pylons.routes_dict']['action']])
-
-        c.template_context = {
-            'repo_name': None,
-            'repo_type': None,
-            'repo_landing_commit': None,
-            'rhodecode_user': {
-                'username': None,
-                'email': None,
-            },
-            'visual': {
-                'default_renderer': None
-            },
-            'commit_data': {
-                'commit_id': None
-            },
-            'pull_request_data': {'pull_request_id': None},
-            'timeago': {
-                'refresh_time': 120 * 1000,
-                'cutoff_limit': 1000*60*60*24*7
-            },
-            'pylons_dispatch':{
-                'controller': environ['pylons.routes_dict']['controller'],
-                'action': environ['pylons.routes_dict']['action'],
-            },
-            'extra': {'plugins': {}}
-        }
 
         self.rc_config = SettingsModel().get_all_settings(cache=True)
         self.ip_addr = get_ip_addr(environ)

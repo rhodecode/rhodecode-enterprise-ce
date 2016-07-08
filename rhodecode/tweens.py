@@ -67,7 +67,7 @@ def pylons_compatibility_tween_factory(handler, registry):
             # Setup the pylons context object ('c')
             context = ContextObj()
             context.rhodecode_user = auth_user
-            attach_context_attributes(context)
+            attach_context_attributes(context, request)
             pylons.tmpl_context._push_object(context)
             return handler(request)
         finally:
