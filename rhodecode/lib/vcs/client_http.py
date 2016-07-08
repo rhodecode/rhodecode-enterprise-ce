@@ -90,7 +90,7 @@ class RemoteRepo(object):
         self._wire = {
             "path": path,
             "config": config,
-            "context": str(uuid.uuid4()),
+            "context": self._create_vcs_cache_context(),
         }
         if with_wire:
             self._wire.update(with_wire)
@@ -124,6 +124,21 @@ class RemoteRepo(object):
 
     def __getitem__(self, key):
         return self.revision(key)
+
+    def _create_vcs_cache_context(self):
+        """
+        Creates a unique string which is passed to the VCSServer on every
+        remote call. It is used as cache key in the VCSServer.
+        """
+        return str(uuid.uuid4())
+
+    def invalidate_vcs_cache(self):
+        """
+        This invalidates the context which is sent to the VCSServer on every
+        call to a remote method. It forces the VCSServer to create a fresh
+        repository instance on the next call to a remote method.
+        """
+        self._wire['context'] = self._create_vcs_cache_context()
 
 
 class RemoteObject(object):
