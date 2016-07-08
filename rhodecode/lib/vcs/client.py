@@ -260,7 +260,7 @@ class RemoteRepo(object):
         self._wire = {
             "path": path,
             "config": config,
-            "context": uuid.uuid4(),
+            "context": self._create_vcs_cache_context(),
         }
         if with_wire:
             self._wire.update(with_wire)
@@ -286,6 +286,19 @@ class RemoteRepo(object):
 
     def __getitem__(self, key):
         return self.revision(key)
+
+    def _create_vcs_cache_context(self):
+        """
+        Creates a unique string which is passed to the VCSServer on every
+        remote call. It is used as cache key in the VCSServer.
+        """
+        return str(uuid.uuid4())
+
+    def invalidate_vcs_cache(self):
+        """
+        This is a no-op method for the pyro4 backend but we want to have the
+        same API for client.RemoteRepo and client_http.RemoteRepo classes.
+        """
 
 
 def _get_proxy_method(proxy, name):
