@@ -788,6 +788,8 @@ def discover_user(author):
 def email_or_none(author):
     # extract email from the commit string
     _email = author_email(author)
+    log.warning('email_or_none author: %s' % (author))
+    log.warning('email_or_none _email: %s' % (_email))
 
     # If we have an email, use it, otherwise
     # see if it contains a username we can get an email from
