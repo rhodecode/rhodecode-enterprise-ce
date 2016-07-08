@@ -87,13 +87,16 @@ class TestAdminRepoSettingsController:
         if backend.alias not in setting_backends:
             pytest.skip('Setting not available for backend {}'.format(backend))
 
-        settings_model = SettingsModel(repo=backend.repo)
+        repo = backend.create_repo()
+
+        settings_model = SettingsModel(repo=repo)
         vcs_settings_url = url(
-            'repo_vcs_settings', repo_name=backend.repo.repo_name)
+            'repo_vcs_settings', repo_name=repo.repo_name)
 
         self.app.post(
             vcs_settings_url,
             params={
+                'inherit_global_settings': False,
                 'new_svn_branch': 'dummy-value-for-testing',
                 'new_svn_tag': 'dummy-value-for-testing',
                 'rhodecode_{}'.format(setting_name): 'true',
@@ -105,6 +108,7 @@ class TestAdminRepoSettingsController:
         self.app.post(
             vcs_settings_url,
             params={
+                'inherit_global_settings': False,
                 'new_svn_branch': 'dummy-value-for-testing',
                 'new_svn_tag': 'dummy-value-for-testing',
                 'rhodecode_{}'.format(setting_name): 'false',
