@@ -84,7 +84,6 @@ iso8601==0.1.11
 itsdangerous==0.24
 kombu==1.5.1
 lxml==3.4.4
-marshmallow==2.8.0
 mccabe==0.3
 meld3==1.0.2
 mock==1.0.1

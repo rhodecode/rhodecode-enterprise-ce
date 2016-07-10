@@ -16,31 +16,13 @@
 # RhodeCode Enterprise Edition, including its added features, Support services,
 # and proprietary license terms, please see https://rhodecode.com/licenses/
 
-from marshmallow import Schema, fields
+import logging
 
+from rhodecode.translation import lazy_ugettext
 from rhodecode.model.db import User, Repository, Session
 from rhodecode.events.base import RhodecodeEvent
 
-
-def get_repo_url(repo):
-    from rhodecode.model.repo import RepoModel
-    return RepoModel().get_url(repo)
-
-
-class RepositorySchema(Schema):
-    """
-    Marshmallow schema for a repository
-    """
-    repo_id = fields.Integer()
-    repo_name = fields.Str()
-    url = fields.Function(get_repo_url)
-
-
-class RepoEventSchema(RhodecodeEvent.MarshmallowSchema):
-    """
-    Marshmallow schema for a repository event
-    """
-    repo = fields.Nested(RepositorySchema)
+log = logging.getLogger()
 
 
 class RepoEvent(RhodecodeEvent):
@@ -49,11 +31,67 @@ class RepoEvent(RhodecodeEvent):
 
     :param repo: a :class:`Repository` instance
     """
-    MarshmallowSchema = RepoEventSchema
 
     def __init__(self, repo):
         super(RepoEvent, self).__init__()
         self.repo = repo
+
+    def as_dict(self):
+        from rhodecode.model.repo import RepoModel
+        data = super(RepoEvent, self).as_dict()
+        data.update({
+            'repo': {
+                'repo_id': self.repo.repo_id,
+                'repo_name': self.repo.repo_name,
+                'url': RepoModel().get_url(self.repo)
+            }
+        })
+        return data
+
+    def _commits_as_dict(self, commit_ids):
+        """ Helper function to serialize commit_ids """
+
+        from rhodecode.lib.utils2 import extract_mentioned_users
+        from rhodecode.model.db import Repository
+        from rhodecode.lib import helpers as h
+        from rhodecode.lib.helpers import process_patterns
+        from rhodecode.lib.helpers import urlify_commit_message
+        if not commit_ids:
+            return []
+        commits = []
+        reviewers = []
+        vcs_repo = self.repo.scm_instance(cache=False)
+        try:
+            for commit_id in commit_ids:
+                cs = vcs_repo.get_changeset(commit_id)
+                cs_data = cs.__json__()
+                cs_data['mentions'] = extract_mentioned_users(cs_data['message'])
+                cs_data['reviewers'] = reviewers
+                cs_data['url'] = h.url('changeset_home',
+                    repo_name=self.repo.repo_name,
+                    revision=cs_data['raw_id'],
+                    qualified=True
+                )
+                urlified_message, issues_data = process_patterns(
+                    cs_data['message'], self.repo.repo_name)
+                cs_data['issues'] = issues_data
+                cs_data['message_html'] = urlify_commit_message(cs_data['message'],
+                    self.repo.repo_name)
+                commits.append(cs_data)
+        except Exception as e:
+            log.exception(e)
+            # we don't send any commits when crash happens, only full list matters
+            # we short circuit then.
+            return []
+        return commits
+
+    def _issues_as_dict(self, commits):
+        """ Helper function to serialize issues from commits """
+        issues = {}
+        for commit in commits:
+            for issue in commit['issues']:
+                issues[issue['id']] = issue
+        return issues
 
 
 class RepoPreCreateEvent(RepoEvent):
@@ -62,14 +100,16 @@ class RepoPreCreateEvent(RepoEvent):
     created.
     """
     name = 'repo-pre-create'
+    display_name = lazy_ugettext('repository pre create')
 
 
-class RepoCreatedEvent(RepoEvent):
+class RepoCreateEvent(RepoEvent):
     """
     An instance of this class is emitted as an :term:`event` whenever a repo is
     created.
     """
-    name = 'repo-created'
+    name = 'repo-create'
+    display_name = lazy_ugettext('repository created')
 
 
 class RepoPreDeleteEvent(RepoEvent):
@@ -78,14 +118,16 @@ class RepoPreDeleteEvent(RepoEvent):
     created.
     """
     name = 'repo-pre-delete'
+    display_name = lazy_ugettext('repository pre delete')
 
 
-class RepoDeletedEvent(RepoEvent):
+class RepoDeleteEvent(RepoEvent):
     """
     An instance of this class is emitted as an :term:`event` whenever a repo is
     created.
     """
-    name = 'repo-deleted'
+    name = 'repo-delete'
+    display_name = lazy_ugettext('repository deleted')
 
 
 class RepoVCSEvent(RepoEvent):
@@ -116,6 +158,7 @@ class RepoPrePullEvent(RepoVCSEvent):
     are pulled from a repo.
     """
     name = 'repo-pre-pull'
+    display_name = lazy_ugettext('repository pre pull')
 
 
 class RepoPullEvent(RepoVCSEvent):
@@ -124,6 +167,7 @@ class RepoPullEvent(RepoVCSEvent):
     are pulled from a repo.
     """
     name = 'repo-pull'
+    display_name = lazy_ugettext('repository pull')
 
 
 class RepoPrePushEvent(RepoVCSEvent):
@@ -132,6 +176,7 @@ class RepoPrePushEvent(RepoVCSEvent):
     are pushed to a repo.
     """
     name = 'repo-pre-push'
+    display_name = lazy_ugettext('repository pre push')
 
 
 class RepoPushEvent(RepoVCSEvent):
@@ -142,8 +187,33 @@ class RepoPushEvent(RepoVCSEvent):
     :param extras: (optional) dict of data from proxied VCS actions
     """
     name = 'repo-push'
+    display_name = lazy_ugettext('repository push')
 
     def __init__(self, repo_name, pushed_commit_ids, extras):
         super(RepoPushEvent, self).__init__(repo_name, extras)
         self.pushed_commit_ids = pushed_commit_ids
 
+    def as_dict(self):
+        data = super(RepoPushEvent, self).as_dict()
+        branch_url = repo_url = data['repo']['url']
+
+        commits = self._commits_as_dict(self.pushed_commit_ids)
+        issues = self._issues_as_dict(commits)
+
+        branches = set(
+            commit['branch'] for commit in commits if commit['branch'])
+        branches = [
+            {
+                'name': branch,
+                'url': '{}/changelog?branch={}'.format(
+                    data['repo']['url'], branch)
+            }
+            for branch in branches
+        ]
+
+        data['push'] = {
+            'commits': commits,
+            'issues': issues,
+            'branches': branches,
+        }
+        return data

@@ -17,7 +17,6 @@
 # and proprietary license terms, please see https://rhodecode.com/licenses/
 
 from datetime import datetime
-from marshmallow import Schema, fields
 from pyramid.threadlocal import get_current_request
 from rhodecode.lib.utils2 import AttributeDict
 
@@ -28,29 +27,10 @@ SYSTEM_USER = AttributeDict(dict(
 ))
 
 
-class UserSchema(Schema):
-    """
-    Marshmallow schema for a user
-    """
-    username = fields.Str()
-
-
-class RhodecodeEventSchema(Schema):
-    """
-    Marshmallow schema for a rhodecode event
-    """
-    utc_timestamp = fields.DateTime()
-    actor = fields.Nested(UserSchema)
-    actor_ip = fields.Str()
-    name = fields.Str()
-
-
 class RhodecodeEvent(object):
     """
     Base event class for all Rhodecode events
     """
-    MarshmallowSchema = RhodecodeEventSchema
-
     def __init__(self):
         self.request = get_current_request()
         self.utc_timestamp = datetime.utcnow()
@@ -68,4 +48,12 @@ class RhodecodeEvent(object):
         return '<no ip available>'
 
     def as_dict(self):
-        return self.MarshmallowSchema().dump(self).data
+        data = {
+            'name': self.name,
+            'utc_timestamp': self.utc_timestamp,
+            'actor_ip': self.actor_ip,
+            'actor': {
+                'username': self.actor.username
+            }
+        }
+        return data

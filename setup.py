@@ -78,7 +78,6 @@ requirements = [
     'ipython',
     'iso8601',
     'kombu',
-    'marshmallow',
     'msgpack-python',
     'packaging',
     'psycopg2',

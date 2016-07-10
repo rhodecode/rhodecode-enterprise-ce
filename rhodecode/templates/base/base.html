@@ -16,7 +16,6 @@
           <!-- MENU BAR NAV -->
           ${self.menu_bar_nav()}
           <!-- END MENU BAR NAV -->
-          ${self.body()}
       </div>
   </div>
   ${self.menu_bar_subnav()}
@@ -82,6 +81,7 @@
       <li><a href="${h.url('users_groups')}">${_('User groups')}</a></li>
       <li><a href="${h.url('admin_permissions_application')}">${_('Permissions')}</a></li>
       <li><a href="${h.route_path('auth_home', traverse='')}">${_('Authentication')}</a></li>
+      <li><a href="${h.route_path('global_integrations_home')}">${_('Integrations')}</a></li>
       <li><a href="${h.url('admin_defaults_repositories')}">${_('Defaults')}</a></li>
       <li class="last"><a href="${h.url('admin_settings')}">${_('Settings')}</a></li>
   </ul>

@@ -27,8 +27,8 @@ from rhodecode.model.repo import RepoModel
 from rhodecode.events.repo import (
     RepoPrePullEvent, RepoPullEvent,
     RepoPrePushEvent, RepoPushEvent,
-    RepoPreCreateEvent, RepoCreatedEvent,
-    RepoPreDeleteEvent, RepoDeletedEvent,
+    RepoPreCreateEvent, RepoCreateEvent,
+    RepoPreDeleteEvent, RepoDeleteEvent,
 )
 
 
@@ -51,8 +51,8 @@ def scm_extras(user_regular, repo_stub):
 
 # TODO: dan: make the serialization tests complete json comparisons
 @pytest.mark.parametrize('EventClass', [
-    RepoPreCreateEvent, RepoCreatedEvent,
-    RepoPreDeleteEvent, RepoDeletedEvent,
+    RepoPreCreateEvent, RepoCreateEvent,
+    RepoPreDeleteEvent, RepoDeleteEvent,
 ])
 def test_repo_events_serialized(repo_stub, EventClass):
     event = EventClass(repo_stub)
@@ -88,11 +88,11 @@ def test_vcs_repo_push_event_serialize(repo_stub, scm_extras, EventClass):
 def test_create_delete_repo_fires_events(backend):
     with EventCatcher() as event_catcher:
         repo = backend.create_repo()
-    assert event_catcher.events_types == [RepoPreCreateEvent, RepoCreatedEvent]
+    assert event_catcher.events_types == [RepoPreCreateEvent, RepoCreateEvent]
 
     with EventCatcher() as event_catcher:
         RepoModel().delete(repo)
-    assert event_catcher.events_types == [RepoPreDeleteEvent, RepoDeletedEvent]
+    assert event_catcher.events_types == [RepoPreDeleteEvent, RepoDeleteEvent]
 
 
 def test_pull_fires_events(scm_extras):

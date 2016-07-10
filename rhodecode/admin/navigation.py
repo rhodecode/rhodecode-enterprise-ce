@@ -80,6 +80,8 @@ class NavigationRegistry(object):
         NavEntry('email', _('Email'), 'admin_settings_email'),
         NavEntry('hooks', _('Hooks'), 'admin_settings_hooks'),
         NavEntry('search', _('Full Text Search'), 'admin_settings_search'),
+        NavEntry('integrations', _('Integrations'),
+                 'global_integrations_home', pyramid=True),
         NavEntry('system', _('System Info'), 'admin_settings_system'),
         NavEntry('open_source', _('Open Source Licenses'),
                  'admin_settings_open_source', pyramid=True),

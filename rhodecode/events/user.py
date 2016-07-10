@@ -18,6 +18,7 @@
 
 from zope.interface import implementer
 
+from rhodecode.translation import lazy_ugettext
 from rhodecode.events.base import RhodecodeEvent
 from rhodecode.events.interfaces import (
     IUserRegistered, IUserPreCreate, IUserPreUpdate)
@@ -29,6 +30,9 @@ class UserRegistered(RhodecodeEvent):
     An instance of this class is emitted as an :term:`event` whenever a user
     account is registered.
     """
+    name = 'user-register'
+    display_name = lazy_ugettext('user registered')
+
     def __init__(self, user, session):
         self.user = user
         self.session = session
@@ -40,6 +44,9 @@ class UserPreCreate(RhodecodeEvent):
     An instance of this class is emitted as an :term:`event` before a new user
     object is created.
     """
+    name = 'user-pre-create'
+    display_name = lazy_ugettext('user pre create')
+
     def __init__(self, user_data):
         self.user_data = user_data
 
@@ -50,6 +57,9 @@ class UserPreUpdate(RhodecodeEvent):
     An instance of this class is emitted as an :term:`event` before a user
     object is updated.
     """
+    name = 'user-pre-update'
+    display_name = lazy_ugettext('user pre update')
+
     def __init__(self, user, user_data):
         self.user = user
         self.user_data = user_data

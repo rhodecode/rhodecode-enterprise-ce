@@ -1,4 +1,5 @@
-# Copyright (C) 2016-2016  RhodeCode GmbH
+# -*- coding: utf-8 -*-
+# Copyright (C) 2012-2016  RhodeCode GmbH
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License, version 3
@@ -16,20 +17,21 @@
 # RhodeCode Enterprise Edition, including its added features, Support services,
 # and proprietary license terms, please see https://rhodecode.com/licenses/
 
-from pyramid.i18n import TranslationStringFactory
+import logging
 
-# Create a translation string factory for the 'rhodecode' domain.
-_ = TranslationStringFactory('rhodecode')
-
-class LazyString(object):
-    def __init__(self, *args, **kw):
-        self.args = args
-        self.kw = kw
-
-    def __str__(self):
-        return _(*self.args, **self.kw)
+log = logging.getLogger()
 
 
-def lazy_ugettext(*args, **kw):
-    """ Lazily evaluated version of _() """
-    return LazyString(*args, **kw)
+class IntegrationTypeRegistry(dict):
+    """
+    Registry Class to hold IntegrationTypes
+    """
+    def register_integration_type(self, IntegrationType):
+        key = IntegrationType.key
+        if key in self:
+            log.warning(
+                'Overriding existing integration type %s (%s) with %s' % (
+                    self[key], key, IntegrationType))
+
+        self[key] = IntegrationType
+

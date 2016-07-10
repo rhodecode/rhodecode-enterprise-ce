@@ -20,11 +20,15 @@
 
 import json
 import logging
+import urlparse
 import threading
 from BaseHTTPServer import BaseHTTPRequestHandler
 from SocketServer import TCPServer
+from routes.util import URLGenerator
 
 import Pyro4
+import pylons
+import rhodecode
 
 from rhodecode.lib import hooks_base
 from rhodecode.lib.utils2 import AttributeDict
@@ -236,6 +240,17 @@ class Hooks(object):
 
     def _call_hook(self, hook, extras):
         extras = AttributeDict(extras)
+        netloc = urlparse.urlparse(extras.server_url).netloc
+        environ = {
+            'SERVER_NAME': netloc.split(':')[0],
+            'SERVER_PORT': ':' in netloc and netloc.split(':')[1] or '80',
+            'SCRIPT_NAME': '',
+            'PATH_INFO': '/',
+            'HTTP_HOST': 'localhost',
+            'REQUEST_METHOD': 'GET',
+        }
+        pylons_router = URLGenerator(rhodecode.CONFIG['routes.map'], environ)
+        pylons.url._push_object(pylons_router)
 
         try:
             result = hook(extras)
@@ -248,6 +263,9 @@ class Hooks(object):
                 'exception': type(error).__name__,
                 'exception_args': error_args,
             }
+        finally:
+            pylons.url._pop_object()
+
         return {
             'status': result.status,
             'output': result.output,

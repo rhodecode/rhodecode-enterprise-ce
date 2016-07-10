@@ -16,30 +16,9 @@
 # RhodeCode Enterprise Edition, including its added features, Support services,
 # and proprietary license terms, please see https://rhodecode.com/licenses/
 
-from marshmallow import Schema, fields
 
+from rhodecode.translation import lazy_ugettext
 from rhodecode.events.repo import RepoEvent
-
-
-def get_pull_request_url(pull_request):
-    from rhodecode.model.pull_request import PullRequestModel
-    return PullRequestModel().get_url(pull_request)
-
-
-class PullRequestSchema(Schema):
-    """
-    Marshmallow schema for a pull request
-    """
-    pull_request_id = fields.Integer()
-    url = fields.Function(get_pull_request_url)
-    title = fields.Str()
-
-
-class PullRequestEventSchema(RepoEvent.MarshmallowSchema):
-    """
-    Marshmallow schema for a pull request event
-    """
-    pullrequest = fields.Nested(PullRequestSchema)
 
 
 class PullRequestEvent(RepoEvent):
@@ -48,11 +27,27 @@ class PullRequestEvent(RepoEvent):
 
     :param pullrequest: a :class:`PullRequest` instance
     """
-    MarshmallowSchema = PullRequestEventSchema
 
     def __init__(self, pullrequest):
         super(PullRequestEvent, self).__init__(pullrequest.target_repo)
         self.pullrequest = pullrequest
+
+    def as_dict(self):
+        from rhodecode.model.pull_request import PullRequestModel
+        data = super(PullRequestEvent, self).as_dict()
+
+        commits = self._commits_as_dict(self.pullrequest.revisions)
+        issues = self._issues_as_dict(commits)
+
+        data.update({
+            'pullrequest': {
+                'title': self.pullrequest.title,
+                'issues': issues,
+                'pull_request_id': self.pullrequest.pull_request_id,
+                'url': PullRequestModel().get_url(self.pullrequest)
+            }
+        })
+        return data
 
 
 class PullRequestCreateEvent(PullRequestEvent):
@@ -61,6 +56,7 @@ class PullRequestCreateEvent(PullRequestEvent):
     request is created.
     """
     name = 'pullrequest-create'
+    display_name = lazy_ugettext('pullrequest created')
 
 
 class PullRequestCloseEvent(PullRequestEvent):
@@ -69,6 +65,7 @@ class PullRequestCloseEvent(PullRequestEvent):
     request is closed.
     """
     name = 'pullrequest-close'
+    display_name = lazy_ugettext('pullrequest closed')
 
 
 class PullRequestUpdateEvent(PullRequestEvent):
@@ -77,6 +74,7 @@ class PullRequestUpdateEvent(PullRequestEvent):
     request is updated.
     """
     name = 'pullrequest-update'
+    display_name = lazy_ugettext('pullrequest updated')
 
 
 class PullRequestMergeEvent(PullRequestEvent):
@@ -85,6 +83,7 @@ class PullRequestMergeEvent(PullRequestEvent):
     request is merged.
     """
     name = 'pullrequest-merge'
+    display_name = lazy_ugettext('pullrequest merged')
 
 
 class PullRequestReviewEvent(PullRequestEvent):
@@ -93,5 +92,6 @@ class PullRequestReviewEvent(PullRequestEvent):
     request is reviewed.
     """
     name = 'pullrequest-review'
+    display_name = lazy_ugettext('pullrequest reviewed')
 
 

@@ -1,0 +1,108 @@
+## -*- coding: utf-8 -*-
+<%inherit file="base.html"/>
+
+<%def name="breadcrumbs_links()">
+  %if c.repo:
+    ${h.link_to('Settings',h.url('edit_repo', repo_name=c.repo.repo_name))}
+    &raquo;
+    ${h.link_to(_('Integrations'),request.route_url(route_name='repo_integrations_home', repo_name=c.repo.repo_name))}
+    &raquo;
+    ${h.link_to(current_IntegrationType.display_name,
+      request.route_url(route_name='repo_integrations_list',
+                        repo_name=c.repo.repo_name,
+                        integration=current_IntegrationType.key))}
+  %else:
+    ${h.link_to(_('Admin'),h.url('admin_home'))}
+    &raquo;
+    ${h.link_to(_('Settings'),h.url('admin_settings'))}
+    &raquo;
+    ${h.link_to(_('Integrations'),request.route_url(route_name='global_integrations_home'))}
+    &raquo;
+    ${h.link_to(current_IntegrationType.display_name,
+      request.route_url(route_name='global_integrations_list',
+                        integration=current_IntegrationType.key))}
+  %endif
+  %if integration:
+    &raquo;
+    ${integration.name}
+  %endif
+</%def>
+
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h2 class="panel-title">
+      %if integration:
+        ${current_IntegrationType.display_name} - ${integration.name}
+      %else:
+        ${_('Create new %(integration_type)s integration') % {'integration_type': current_IntegrationType.display_name}}
+      %endif
+    </h2>
+  </div>
+  <div class="fields panel-body">
+    ${h.secure_form(request.url)}
+      <div class="form">
+      %for node in schema:
+        <% label_css_class = ("label-checkbox" if (node.widget == "bool") else "") %>
+        <div class="field">
+          <div class="label ${label_css_class}"><label for="${node.name}">${node.title}</label></div>
+          <div class="input">
+            %if node.widget in ["string", "int", "unicode"]:
+              ${h.text(node.name, defaults.get(node.name), class_="medium", placeholder=hasattr(node, 'placeholder') and node.placeholder or '')}
+            %elif node.widget in ["text"]:
+              ${h.textarea(node.name, defaults.get(node.name), class_="medium", placeholder=hasattr(node, 'placeholder') and node.placeholder or '')}
+            %elif node.widget == "password":
+              ${h.password(node.name, defaults.get(node.name), class_="medium")}
+            %elif node.widget == "bool":
+              <div class="checkbox">${h.checkbox(node.name, True, checked=defaults.get(node.name))}</div>
+            %elif node.widget == "select":
+              ${h.select(node.name, defaults.get(node.name), node.choices)}
+            %elif node.widget == "checkbox_list":
+              %for i, choice in enumerate(node.choices):
+              <%
+              name, value = choice, choice
+              if isinstance(choice, tuple):
+                choice, name = choice
+              %>
+              <div>
+                  <input id="${node.name}-${choice}"
+                         name="${node.name}"
+                         value="${value}"
+                         type="checkbox"
+                         ${value in defaults.get(node.name, []) and 'checked' or ''}>
+                  <label for="${node.name}-${value}">
+                    ${name}
+                  </label>
+              </div>
+              %endfor
+            %elif node.widget == "readonly":
+              ${node.default}
+            %else:
+              This field is of type ${node.typ}, which cannot be displayed. Must be one of [string|int|bool|select|password|text|checkbox_list].
+            %endif
+            %if node.name in errors:
+              <span class="error-message">${errors.get(node.name)}</span>
+              <br />
+            %endif
+            <p class="help-block">${node.description}</p>
+          </div>
+        </div>
+      %endfor
+
+      ## Allow derived templates to add something below the form
+      ## input fields
+      %if hasattr(next, 'below_form_fields'):
+        ${next.below_form_fields()}
+      %endif
+
+      <div class="buttons">
+        ${h.submit('save',_('Save'),class_="btn")}
+        %if integration:
+        ${h.submit('delete',_('Delete'),class_="btn btn-danger")}
+        %endif
+      </div>
+
+    </div>
+    ${h.end_form()}
+  </div>
+</div>

@@ -23,6 +23,10 @@
     ${self.repo_menu(active='options')}
 </%def>
 
+<%def name="main_content()">
+  <%include file="/admin/repos/repo_edit_${c.active}.html"/>
+</%def>
+
 
 <%def name="main()">
 <div class="box">
@@ -64,11 +68,14 @@
           <li class="${'active' if c.active=='statistics' else ''}">
               <a href="${h.url('edit_repo_statistics', repo_name=c.repo_name)}">${_('Statistics')}</a>
           </li>
+          <li class="${'active' if c.active=='integrations' else ''}">
+              <a href="${h.route_path('repo_integrations_home', repo_name=c.repo_name)}">${_('Integrations')}</a>
+          </li>
         </ul>
     </div>
 
     <div class="main-content-full-width">
-        <%include file="/admin/repos/repo_edit_${c.active}.html"/>
+      ${self.main_content()}
     </div>
 
   </div>

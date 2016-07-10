@@ -51,6 +51,19 @@ URL_NAME_REQUIREMENTS = {
 }
 
 
+def add_route_requirements(route_path, requirements):
+    """
+    Adds regex requirements to pyramid routes using a mapping dict
+
+    >>> add_route_requirements('/{action}/{id}', {'id': r'\d+'})
+    '/{action}/{id:\d+}'
+
+     """
+    for key, regex in requirements.items():
+        route_path = route_path.replace('{%s}' % key, '{%s:%s}' % (key, regex))
+    return route_path
+
+
 class JSRoutesMapper(Mapper):
     """
     Wrapper for routes.Mapper to make pyroutes compatible url definitions

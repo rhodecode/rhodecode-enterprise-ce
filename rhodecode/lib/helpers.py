@@ -44,7 +44,7 @@ from pygments.formatters.html import HtmlFormatter
 from pygments import highlight as code_highlight
 from pygments.lexers import (
     get_lexer_by_name, get_lexer_for_filename, get_lexer_for_mimetype)
-from pylons import url
+from pylons import url as pylons_url
 from pylons.i18n.translation import _, ungettext
 from pyramid.threadlocal import get_current_request
 
@@ -87,6 +87,22 @@ log = logging.getLogger(__name__)
 
 DEFAULT_USER = User.DEFAULT_USER
 DEFAULT_USER_EMAIL = User.DEFAULT_USER_EMAIL
+
+def url(*args, **kw):
+    return pylons_url(*args, **kw)
+
+def pylons_url_current(*args, **kw):
+    """
+    This function overrides pylons.url.current() which returns the current
+    path so that it will also work from a pyramid only context. This
+    should be removed once port to pyramid is complete.
+    """
+    if not args and not kw:
+        request = get_current_request()
+        return request.path
+    return pylons_url.current(*args, **kw)
+
+url.current = pylons_url_current
 
 
 def html_escape(text, html_escape_table=None):
@@ -1614,7 +1630,7 @@ def urlify_commits(text_, repository):
             'pref': pref,
             'cls': 'revision-link',
             'url': url('changeset_home', repo_name=repository,
-                       revision=commit_id),
+                       revision=commit_id, qualified=True),
             'commit_id': commit_id,
             'suf': suf
         }
@@ -1624,7 +1640,8 @@ def urlify_commits(text_, repository):
     return newtext
 
 
-def _process_url_func(match_obj, repo_name, uid, entry):
+def _process_url_func(match_obj, repo_name, uid, entry,
+                      return_raw_data=False):
     pref = ''
     if match_obj.group().startswith(' '):
         pref = ' '
@@ -1650,7 +1667,7 @@ def _process_url_func(match_obj, repo_name, uid, entry):
     named_vars.update(match_obj.groupdict())
     _url = string.Template(entry['url']).safe_substitute(**named_vars)
 
-    return tmpl % {
+    data = {
         'pref': pref,
         'cls': 'issue-tracker-link',
         'url': _url,
@@ -1658,9 +1675,15 @@ def _process_url_func(match_obj, repo_name, uid, entry):
         'issue-prefix': entry['pref'],
         'serv': entry['url'],
     }
+    if return_raw_data:
+        return {
+            'id': issue_id,
+            'url': _url
+        }
+    return tmpl % data
 
 
-def process_patterns(text_string, repo_name, config):
+def process_patterns(text_string, repo_name, config=None):
     repo = None
     if repo_name:
         # Retrieving repo_name to avoid invalid repo_name to explode on
@@ -1670,11 +1693,9 @@ def process_patterns(text_string, repo_name, config):
     settings_model = IssueTrackerSettingsModel(repo=repo)
     active_entries = settings_model.get_settings(cache=True)
 
+    issues_data = []
     newtext = text_string
     for uid, entry in active_entries.items():
-        url_func = partial(
-            _process_url_func, repo_name=repo_name, entry=entry, uid=uid)
-
         log.debug('found issue tracker entry with uid %s' % (uid,))
 
         if not (entry['pat'] and entry['url']):
@@ -1692,10 +1713,20 @@ def process_patterns(text_string, repo_name, config):
                 entry['pat'])
             continue
 
+        data_func = partial(
+            _process_url_func, repo_name=repo_name, entry=entry, uid=uid,
+            return_raw_data=True)
+
+        for match_obj in pattern.finditer(text_string):
+            issues_data.append(data_func(match_obj))
+
+        url_func = partial(
+            _process_url_func, repo_name=repo_name, entry=entry, uid=uid)
+
         newtext = pattern.sub(url_func, newtext)
         log.debug('processed prefix:uid `%s`' % (uid,))
 
-    return newtext
+    return newtext, issues_data
 
 
 def urlify_commit_message(commit_text, repository=None):
@@ -1707,22 +1738,22 @@ def urlify_commit_message(commit_text, repository=None):
     :param repository:
     """
     from pylons import url  # doh, we need to re-import url to mock it later
-    from rhodecode import CONFIG
 
     def escaper(string):
         return string.replace('<', '&lt;').replace('>', '&gt;')
 
     newtext = escaper(commit_text)
+
+    # extract http/https links and make them real urls
+    newtext = urlify_text(newtext, safe=False)
+
     # urlify commits - extract commit ids and make link out of them, if we have
     # the scope of repository present.
     if repository:
         newtext = urlify_commits(newtext, repository)
 
-    # extract http/https links and make them real urls
-    newtext = urlify_text(newtext, safe=False)
-
     # process issue tracker patterns
-    newtext = process_patterns(newtext, repository or '', CONFIG)
+    newtext, issues = process_patterns(newtext, repository or '')
 
     return literal(newtext)
 

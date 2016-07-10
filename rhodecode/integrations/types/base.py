@@ -1,4 +1,6 @@
-# Copyright (C) 2016-2016  RhodeCode GmbH
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2012-2016  RhodeCode GmbH
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License, version 3
@@ -16,20 +18,26 @@
 # RhodeCode Enterprise Edition, including its added features, Support services,
 # and proprietary license terms, please see https://rhodecode.com/licenses/
 
-from pyramid.i18n import TranslationStringFactory
-
-# Create a translation string factory for the 'rhodecode' domain.
-_ = TranslationStringFactory('rhodecode')
-
-class LazyString(object):
-    def __init__(self, *args, **kw):
-        self.args = args
-        self.kw = kw
-
-    def __str__(self):
-        return _(*self.args, **self.kw)
+from rhodecode.integrations.schema import IntegrationSettingsSchemaBase
 
 
-def lazy_ugettext(*args, **kw):
-    """ Lazily evaluated version of _() """
-    return LazyString(*args, **kw)
+class IntegrationTypeBase(object):
+    """ Base class for IntegrationType plugins """
+
+    def __init__(self, settings):
+        """
+        :param settings: dict of settings to be used for the integration
+        """
+        self.settings = settings
+
+
+    @classmethod
+    def settings_schema(cls):
+        """
+        A colander schema of settings for the integration type
+
+        Subclasses can return their own schema but should always
+        inherit from IntegrationSettingsSchemaBase
+        """
+        return IntegrationSettingsSchemaBase()
+

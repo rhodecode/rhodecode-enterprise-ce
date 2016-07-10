@@ -1,0 +1,147 @@
+## -*- coding: utf-8 -*-
+<%inherit file="base.html"/>
+
+<%def name="breadcrumbs_links()">
+  %if c.repo:
+    ${h.link_to('Settings',h.url('edit_repo', repo_name=c.repo.repo_name))}
+  %else:
+    ${h.link_to(_('Admin'),h.url('admin_home'))}
+    &raquo;
+    ${h.link_to(_('Settings'),h.url('admin_settings'))}
+  %endif
+  %if current_IntegrationType:
+    &raquo;
+    %if c.repo:
+    ${h.link_to(_('Integrations'),
+      request.route_url(route_name='repo_integrations_home',
+                        repo_name=c.repo.repo_name))}
+    %else:
+    ${h.link_to(_('Integrations'),
+      request.route_url(route_name='global_integrations_home'))}
+    %endif
+    &raquo;
+    ${current_IntegrationType.display_name}
+  %else:
+    &raquo;
+    ${_('Integrations')}
+  %endif
+</%def>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">${_('Create new integration')}</h3>
+  </div>
+  <div class="panel-body">
+  %if not available_integrations:
+    No integrations available
+  %else:
+    %for integration in available_integrations:
+      <%
+      if c.repo:
+        create_url = request.route_url('repo_integrations_create',
+                                        repo_name=c.repo.repo_name,
+                                        integration=integration)
+      else:
+        create_url = request.route_url('global_integrations_create',
+                                        integration=integration)
+      %>
+      <a href="${create_url}" class="btn">
+        ${integration}
+      </a>
+    %endfor
+  %endif
+  </div>
+</div>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">${_('Current integrations')}</h3>
+  </div>
+  <div class="panel-body">
+    <table class="rctable issuetracker">
+      <thead>
+        <tr>
+            <th>${_('Enabled')}</th>
+            <th>${_('Description')}</th>
+            <th>${_('Type')}</th>
+            <th>${_('Actions')}</th>
+            <th ></th>
+        </tr>
+      </thead>
+      <tbody>
+
+  %for integration_type, integrations in sorted(current_integrations.items()):
+    %for integration in sorted(integrations, key=lambda x: x.name):
+        <tr id="integration_${integration.integration_id}">
+          <td class="td-enabled">
+            %if integration.enabled:
+            <div class="flag_status approved pull-left"></div>
+            %else:
+            <div class="flag_status rejected pull-left"></div>
+            %endif
+          </td>
+          <td class="td-description">
+            ${integration.name}
+          </td>
+          <td class="td-regex">
+            ${integration.integration_type}
+          </td>
+          <td class="td-action">
+          %if integration_type not in available_integrations:
+          ${_('unknown integration')}
+          %else:
+            <%
+            if c.repo:
+              edit_url = request.route_url('repo_integrations_edit',
+                                            repo_name=c.repo.repo_name,
+                                            integration=integration.integration_type,
+                                            integration_id=integration.integration_id)
+            else:
+              edit_url = request.route_url('global_integrations_edit',
+                                           integration=integration.integration_type,
+                                           integration_id=integration.integration_id)
+            %>
+            <div class="grid_edit">
+              <a href="${edit_url}">${_('Edit')}</a>
+            </div>
+            <div class="grid_delete">
+              <a href="${edit_url}"
+                 class="btn btn-link btn-danger delete_integration_entry"
+                 data-desc="${integration.name}"
+                 data-uid="${integration.integration_id}">
+                  ${_('Delete')}
+              </a>
+            </div>
+          %endif
+          </td>
+        </tr>
+      %endfor
+    %endfor
+      <tr id="last-row"></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<script type="text/javascript">
+  var delete_integration = function(entry) {
+    if (confirm("Confirm to remove this integration: "+$(entry).data('desc'))) {
+      var request = $.ajax({
+        type: "POST",
+        url: $(entry).attr('href'),
+        data: {
+          'delete': 'delete',
+          'csrf_token': CSRF_TOKEN
+        },
+        success: function(){
+          location.reload();
+        },
+        error: function(data, textStatus, errorThrown){
+          alert("Error while deleting entry.\nError code {0} ({1}). URL: {2}".format(data.status,data.statusText,$(entry)[0].url));
+        }
+      });
+    };
+  }
+
+  $('.delete_integration_entry').on('click', function(e){
+    e.preventDefault();
+    delete_integration(this);
+  });
+</script>

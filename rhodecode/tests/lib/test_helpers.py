@@ -69,6 +69,40 @@ def test_format_binary():
     assert helpers.format_byte_size_binary(298489462784) == '278.0 GiB'
 
 
+@pytest.mark.parametrize('text_string, pattern, expected', [
+    ('No issue here', '(?:#)(?P<issue_id>\d+)', []),
+    ('Fix #42', '(?:#)(?P<issue_id>\d+)',
+     [{'url': 'http://r.io/{repo}/i/42', 'id': '42'}]),
+    ('Fix #42, #53', '(?:#)(?P<issue_id>\d+)', [
+     {'url': 'http://r.io/{repo}/i/42', 'id': '42'},
+     {'url': 'http://r.io/{repo}/i/53', 'id': '53'}]),
+    ('Fix #42', '(?:#)?<issue_id>\d+)', []),  # Broken regex
+])
+def test_extract_issues(backend, text_string, pattern, expected):
+    repo = backend.create_repo()
+    config = {
+        '123': {
+            'uid': '123',
+            'pat': pattern,
+            'url': 'http://r.io/${repo}/i/${issue_id}',
+            'pref': '#',
+        }
+    }
+
+    def get_settings_mock(self, cache=True):
+        return config
+
+    with mock.patch.object(IssueTrackerSettingsModel,
+                           'get_settings', get_settings_mock):
+        text, issues = helpers.process_patterns(text_string, repo.repo_name)
+
+    expected = copy.deepcopy(expected)
+    for item in expected:
+        item['url'] = item['url'].format(repo=repo.repo_name)
+
+    assert issues == expected
+
+
 @pytest.mark.parametrize('text_string, pattern, expected_text', [
     ('Fix #42', '(?:#)(?P<issue_id>\d+)',
      'Fix <a class="issue-tracker-link" href="http://r.io/{repo}/i/42">#42</a>'
@@ -90,7 +124,7 @@ def test_process_patterns_repo(backend, text_string, pattern, expected_text):
 
     with mock.patch.object(IssueTrackerSettingsModel,
                            'get_settings', get_settings_mock):
-        processed_text = helpers.process_patterns(
+        processed_text, issues = helpers.process_patterns(
             text_string, repo.repo_name, config)
 
     assert processed_text == expected_text.format(repo=repo.repo_name)
@@ -116,7 +150,7 @@ def test_process_patterns_no_repo(text_string, pattern, expected_text):
 
     with mock.patch.object(IssueTrackerSettingsModel,
                            'get_global_settings', get_settings_mock):
-        processed_text = helpers.process_patterns(
+        processed_text, issues = helpers.process_patterns(
             text_string, '', config)
 
     assert processed_text == expected_text
@@ -140,7 +174,7 @@ def test_process_patterns_non_existent_repo_name(backend):
 
     with mock.patch.object(IssueTrackerSettingsModel,
                            'get_global_settings', get_settings_mock):
-        processed_text = helpers.process_patterns(
+        processed_text, issues = helpers.process_patterns(
             text_string, 'do-not-exist', config)
 
     assert processed_text == expected_text

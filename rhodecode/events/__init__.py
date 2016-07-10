@@ -19,7 +19,7 @@
 from pyramid.threadlocal import get_current_registry
 
 
-def trigger(event):
+def trigger(event, registry=None):
     """
     Helper method to send an event. This wraps the pyramid logic to send an
     event.
@@ -27,8 +27,17 @@ def trigger(event):
     # For the first step we are using pyramids thread locals here. If the
     # event mechanism works out as a good solution we should think about
     # passing the registry as an argument to get rid of it.
-    registry = get_current_registry()
+    registry = registry or get_current_registry()
     registry.notify(event)
+
+    # Until we can work around the problem that VCS operations do not have a
+    # pyramid context to work with, we send the events to integrations directly
+
+    # Later it will be possible to use regular pyramid subscribers ie:
+    #   config.add_subscriber(integrations_event_handler, RhodecodeEvent)
+    from rhodecode.integrations import integrations_event_handler
+    if isinstance(event, RhodecodeEvent):
+        integrations_event_handler(event)
 
 
 from rhodecode.events.base import RhodecodeEvent
@@ -41,8 +50,8 @@ from rhodecode.events.user import (
 
 from rhodecode.events.repo import (
     RepoEvent,
-    RepoPreCreateEvent, RepoCreatedEvent,
-    RepoPreDeleteEvent, RepoDeletedEvent,
+    RepoPreCreateEvent, RepoCreateEvent,
+    RepoPreDeleteEvent, RepoDeleteEvent,
     RepoPrePushEvent,   RepoPushEvent,
     RepoPrePullEvent,   RepoPullEvent,
 )

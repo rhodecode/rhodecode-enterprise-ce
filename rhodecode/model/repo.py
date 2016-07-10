@@ -535,7 +535,7 @@ class RepoModel(BaseModel):
             # we need to flush here, in order to check if database won't
             # throw any exceptions, create filesystem dirs at the very end
             self.sa.flush()
-            events.trigger(events.RepoCreatedEvent(new_repo))
+            events.trigger(events.RepoCreateEvent(new_repo))
             return new_repo
 
         except Exception:
@@ -653,7 +653,7 @@ class RepoModel(BaseModel):
                     'deleted_on': time.time(),
                 })
                 log_delete_repository(**old_repo_dict)
-                events.trigger(events.RepoDeletedEvent(repo))
+                events.trigger(events.RepoDeleteEvent(repo))
             except Exception:
                 log.error(traceback.format_exc())
                 raise
