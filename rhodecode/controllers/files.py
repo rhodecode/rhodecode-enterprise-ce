@@ -140,7 +140,7 @@ class FilesController(BaseRepoController):
         def _cached_tree():
             log.debug('Generating cached file tree for %s, %s, %s',
                       repo_name, commit_id, f_path)
-            return render('files/files_browser.html')
+            return render('files/files_browser_tree.html')
 
         cache_manager = self.__get_tree_cache_manager(
             repo_name, caches.FILE_TREE)

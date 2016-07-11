@@ -41,67 +41,9 @@
             </div>
         </div>
     </div>
+    ## file tree is computed from caches, and filled in
+    ${c.file_tree}
 
-    <div class="browser-body">
-        <table class="code-browser rctable">
-            <thead>
-                <tr>
-                    <th>${_('Name')}</th>
-                    <th>${_('Size')}</th>
-                    <th>${_('Modified')}</th>
-                    <th>${_('Last Commit')}</th>
-                    <th>${_('Author')}</th>
-                </tr>
-            </thead>
-
-            <tbody id="tbody">
-              %if c.file.parent:
-              <tr class="parity0">
-                <td class="td-componentname">
-                  <a href='${h.url('files_home',repo_name=c.repo_name,revision=c.commit.raw_id,f_path=c.file.parent.path)}' class="pjax-link">
-                    <i class="icon-folder"></i>..
-                  </a>
-                </td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-              %endif
-              %for cnt,node in enumerate(c.file):
-              <tr class="parity${cnt%2}">
-                <td class="td-componentname">
-                %if node.is_submodule():
-                  <span class="submodule-dir">
-                    ${h.link_to_if(
-                        node.url.startswith('http://') or node.url.startswith('https://'),
-                        node.name,node.url)}
-                  </span>
-                %else:
-                  <a href='${h.url('files_home',repo_name=c.repo_name,revision=c.commit.raw_id,f_path=h.safe_unicode(node.path))}' class="pjax-link">
-                    <i class="${"icon-file browser-file" if node.is_file() else "icon-folder browser-dir"}"></i>${node.name}
-                  </a>
-                %endif
-                </td>
-                %if node.is_file():
-                  <td class="td-size" title="${'size-%s' % node.name}"></td>
-                  <td class="td-time" title="${'modified_at-%s' % node.name}">
-                    <span class="browser-loading">${_('Loading...')}</span>
-                  </td>
-                  <td class="td-hash" title="${'revision-%s' % node.name}"></td>
-                  <td class="td-user" title="${'author-%s' % node.name}"></td>
-                %else:
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                %endif
-              </tr>
-              %endfor
-            </tbody>
-            <tbody id="tbody_filtered"></tbody>
-        </table>
-    </div>
 </div>
 
 <script>
