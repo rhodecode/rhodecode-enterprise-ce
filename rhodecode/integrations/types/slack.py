@@ -192,11 +192,11 @@ def html_to_slack_links(message):
 
 @task(ignore_result=True)
 def post_text_to_slack(settings, text):
-    log.debug('sending %s to slack %s' % (text, settings['service'])
+    log.debug('sending %s to slack %s' % (text, settings['service']))
     resp = requests.post(settings['service'], json={
         "channel": settings.get('channel', ''),
         "username": settings.get('username', 'Rhodecode'),
         "text": text,
         "icon_emoji": settings.get('icon_emoji', ':studio_microphone:')
     })
-    resp.raise_for_status() # raise exception on a failed request
+    resp.raise_for_status()  # raise exception on a failed request
