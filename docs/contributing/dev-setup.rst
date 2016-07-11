@@ -108,6 +108,19 @@ time operation::
         --repos=~/my_dev_repos
 
 
+Compile CSS and JavaScript
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To use the application's frontend, you will need to compile the CSS and
+JavaScript with Grunt. This is easily done from within the nix-shell using the
+following command::
+
+    make web-build
+
+You will need to recompile following any changes made to the CSS or JavaScript
+files.
+
+
 Start the Development Server
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
