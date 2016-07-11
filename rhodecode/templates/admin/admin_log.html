@@ -1,4 +1,6 @@
 ## -*- coding: utf-8 -*-
+<%namespace name="base" file="/base/base.html"/>
+
 %if c.users_log:
 <table class="rctable admin_log">
     <tr>
@@ -12,11 +14,11 @@
     %for cnt,l in enumerate(c.users_log):
     <tr class="parity${cnt%2}">
         <td class="td-user">
-        %if l.user is not None:
-          ${h.link_to(l.user.username,h.url('edit_user', user_id=l.user.user_id))}
-        %else:
-          ${l.username}
-        %endif
+            %if l.user is not None:
+              ${base.gravatar_with_user(l.user.email)}
+            %else:
+              ${l.username}
+            %endif
         </td>
         <td class="td-journalaction">${h.action_parser(l)[0]()}
             <div class="journal_action_params">

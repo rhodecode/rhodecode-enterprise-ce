@@ -103,7 +103,9 @@
 </%def>
 
 <%def name="user_gravatar(email, size=16)">
+  <div class="rc-user tooltip" title="${h.author_string(email)}">
     ${base.gravatar(email, 16)}
+  </div>
 </%def>
 
 <%def name="repo_actions(repo_name, super_user=True)">

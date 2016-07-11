@@ -131,8 +131,7 @@
                     %endif
                     </td>
                     <td class="td-user">
-                      ${self.gravatar(h.email_or_none(commit.author))}
-                      <span title="${commit.author}" class="user">${h.link_to_user(commit.author, length=22)}</span>
+                          ${self.gravatar_with_user(commit.author)}
                     </td>
                     <td class="td-time">
                         ${h.age_component(commit.date)}

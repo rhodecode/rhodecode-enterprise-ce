@@ -43,8 +43,7 @@
         </td>
 
         <td class="td-user author">
-              ${base.gravatar(h.email_or_none(cs.author), 16)}
-              <span title="${cs.author}" class="user">${h.link_to_user(cs.author, length=22)}</span>
+            ${base.gravatar_with_user(cs.author)}
         </td>
         <td class="td-tags truncate-wrap">
           <div class="truncate tags-truncate"><div class="autoexpand">

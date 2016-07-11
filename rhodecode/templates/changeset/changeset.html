@@ -164,12 +164,10 @@
           ${_('Author')}
         </h4>
       </div>
-      <div class="sidebar-right-content">
-        <img alt="gravatar" class="gravatar" title="${h.email_or_none(c.commit.author)}" src="${h.gravatar_url(h.email_or_none(c.commit.author), 40)}" height="16" width="16">
-        <span class="author">
-            ${h.link_to_user(c.commit.author)} - ${h.age_component(c.commit.date)}
-        </span>
-      </div>
+        <div class="sidebar-right-content">
+            ${self.gravatar_with_user(c.commit.author)}
+            <div class="user-inline-data">- ${h.age_component(c.commit.date)}</div>
+        </div>
     </div><!-- end sidebar -->
   </div> <!-- end summary -->
   <div class="cs_files_title">

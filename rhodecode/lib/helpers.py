@@ -818,6 +818,20 @@ def person(author, show_attr="username_and_name"):
         return _author or _email
 
 
+def author_string(email):
+    if email:
+        user = User.get_by_email(email, case_insensitive=True, cache=True)
+        if user:
+            if user.firstname or user.lastname:
+                return '%s %s &lt;%s&gt;' % (user.firstname, user.lastname, email)
+            else:
+                return email
+        else:
+            return email
+    else:
+        return None
+
+
 def person_by_id(id_, show_attr="username_and_name"):
     # attr to return from fetched user
     person_getter = lambda usr: getattr(usr, show_attr)

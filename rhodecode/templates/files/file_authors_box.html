@@ -12,24 +12,18 @@
 </div>
 
 % if c.authors:
-<ul class="pull-left">
+<ul class="sidebar-right-content">
     % for email, user in sorted(c.authors, key=lambda e: c.file_last_commit.author_email!=e[0]):
     <li class="file_author">
-      <div class="contributor tooltip"  title="${h.tooltip(user)}">
-        ${base.gravatar(email, 16)}
-        <span class="author user">
-            ## case initial page load we only have last commit author
-            % if c.file_author:
-                ${h.link_to_user(user)} - ${h.age_component(c.file_last_commit.date)}
-            % else:
-                % if c.file_last_commit.author_email==email:
-                    <strong>${h.link_to_user(user)}</strong> (${_('last author')})
-                % else:
-                    ${h.link_to_user(user)}
-                % endif
-            % endif
-        </span>
-      </div>
+        <div class="rc-user tooltip" title="${h.author_string(email)}">
+          ${base.gravatar(email, 16)}
+          <span class="user">${h.link_to_user(user)}</span>
+        </div>
+        % if c.file_author: 
+            <div class="user-inline-data">- ${h.age_component(c.file_last_commit.date)}</div>
+        % elif c.file_last_commit.author_email==email:
+            <div class="user-inline-data"> (${_('last author')})</div>
+        % endif
     </li>
     % endfor
 </ul>
