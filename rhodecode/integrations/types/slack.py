@@ -125,6 +125,8 @@ class SlackIntegrationType(IntegrationTypeBase):
         text = '*%s* caused a *%s* event' % (
             data['actor']['username'], event.name)
 
+        log.debug('handling slack event for %s' % event.name)
+
         if isinstance(event, events.PullRequestEvent):
             text = self.format_pull_request_event(event, data)
         elif isinstance(event, events.RepoPushEvent):
@@ -190,6 +192,7 @@ def html_to_slack_links(message):
 
 @task(ignore_result=True)
 def post_text_to_slack(settings, text):
+    log.debug('sending %s to slack %s' % (text, settings['service'])
     resp = requests.post(settings['service'], json={
         "channel": settings.get('channel', ''),
         "username": settings.get('username', 'Rhodecode'),
