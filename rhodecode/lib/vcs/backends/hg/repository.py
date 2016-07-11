@@ -175,6 +175,7 @@ class MercurialRepository(BaseRepository):
 
         self._remote.tag(
             name, commit.raw_id, message, local, user, date, tz)
+        self._remote.invalidate_vcs_cache()
 
         # Reinitialize tags
         self.tags = self._get_tags()
@@ -202,6 +203,7 @@ class MercurialRepository(BaseRepository):
         date, tz = date_to_timestamp_plus_offset(date)
 
         self._remote.tag(name, nullid, message, local, user, date, tz)
+        self._remote.invalidate_vcs_cache()
         self.tags = self._get_tags()
 
     @LazyProperty
@@ -261,6 +263,7 @@ class MercurialRepository(BaseRepository):
     def strip(self, commit_id, branch=None):
         self._remote.strip(commit_id, update=False, backup="none")
 
+        self._remote.invalidate_vcs_cache()
         self.commit_ids = self._get_all_commit_ids()
         self._rebuild_cache(self.commit_ids)
 
@@ -530,6 +533,7 @@ class MercurialRepository(BaseRepository):
         """
         url = self._get_url(url)
         self._remote.pull(url, commit_ids=commit_ids)
+        self._remote.invalidate_vcs_cache()
 
     def _local_clone(self, clone_path):
         """
@@ -603,6 +607,7 @@ class MercurialRepository(BaseRepository):
                 self.bookmark(bookmark_name, revision=source_ref.commit_id)
                 self._remote.rebase(
                     source=source_ref.commit_id, dest=target_ref.commit_id)
+                self._remote.invalidate_vcs_cache()
                 self._update(bookmark_name)
                 return self._identify(), True
             except RepositoryError:
@@ -611,15 +616,19 @@ class MercurialRepository(BaseRepository):
                 log.exception('Error while rebasing shadow repo during merge.')
 
                 # Cleanup any rebase leftovers
+                self._remote.invalidate_vcs_cache()
                 self._remote.rebase(abort=True)
+                self._remote.invalidate_vcs_cache()
                 self._remote.update(clean=True)
                 raise
         else:
             try:
                 self._remote.merge(source_ref.commit_id)
+                self._remote.invalidate_vcs_cache()
                 self._remote.commit(
                     message=safe_str(merge_message),
                     username=safe_str('%s <%s>' % (user_name, user_email)))
+                self._remote.invalidate_vcs_cache()
                 return self._identify(), True
             except RepositoryError:
                 # Cleanup any merge leftovers
@@ -771,11 +780,13 @@ class MercurialRepository(BaseRepository):
 
         options = {option_name: [ref]}
         self._remote.pull_cmd(repository_path, hooks=False, **options)
+        self._remote.invalidate_vcs_cache()
 
     def bookmark(self, bookmark, revision=None):
         if isinstance(bookmark, unicode):
             bookmark = safe_str(bookmark)
         self._remote.bookmark(bookmark, revision=revision)
+        self._remote.invalidate_vcs_cache()
 
 
 class MercurialIndexBasedCollectionGenerator(CollectionGenerator):

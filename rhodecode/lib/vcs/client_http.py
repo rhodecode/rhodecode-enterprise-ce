@@ -84,18 +84,6 @@ class RepoMaker(object):
 
 class RemoteRepo(object):
 
-    # List of method names that act like a write to the repository. After these
-    # methods we have to invalidate the VCSServer cache.
-    _writing_methods = [
-        'bookmark',
-        'commit',
-        'pull',
-        'pull_cmd',
-        'push',
-        'rebase',
-        'strip',
-    ]
-
     def __init__(self, path, config, url, session, with_wire=None):
         self.url = url
         self._session = session
@@ -128,15 +116,7 @@ class RemoteRepo(object):
             'method': name,
             'params': {'wire': wire, 'args': args, 'kwargs': kwargs}
         }
-
-        try:
-            response = _remote_call(
-                self.url, payload, EXCEPTIONS_MAP, self._session)
-        finally:
-            if name in self._writing_methods:
-                self.invalidate_vcs_cache()
-
-        return response
+        return _remote_call(self.url, payload, EXCEPTIONS_MAP, self._session)
 
     def _call_with_logging(self, name, *args, **kwargs):
         log.debug('Calling %s@%s', self.url, name)
