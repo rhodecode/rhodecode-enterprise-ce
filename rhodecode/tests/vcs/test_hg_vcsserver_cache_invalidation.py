@@ -20,38 +20,62 @@
 
 import pytest
 
-from mock import patch
+from mock import call, patch
 
 from rhodecode.lib.vcs.backends.base import Reference
 
 
 class TestMercurialRemoteRepoInvalidation(object):
-    ref_stub = Reference('branch', 'default', None)
-
-    @pytest.mark.parametrize('method_name', [
+    default_ref = Reference('branch', 'default', None)
+    writing_methods = [
         'bookmark',
         'commit',
+        'merge',
         'pull',
         'pull_cmd',
-        'push',
         'rebase',
         'strip',
-        'strip',
+        'tag',
+    ]
+
+    @pytest.mark.parametrize('method_name, method_args', [
+        ('_local_merge', [default_ref, None, None, None, default_ref]),
+        ('_local_pull', ['', default_ref]),
+        ('bookmark', [None]),
+        ('pull', ['', default_ref]),
+        ('remove_tag', ['mytag', None]),
+        ('strip', [None]),
+        ('tag', ['newtag', None]),
     ])
     def test_method_invokes_invalidate_on_remote_repo(
-            self, method_name, backend_hg):
+            self, method_name, method_args, backend_hg):
         """
-        Check that the listed methods call invalidate_vcs_cache on their remote
-        repo instance.
+        Check that the listed methods are invalidating the VCSServer cache
+        after invoking a writing method of their remote repository object.
         """
-        from rhodecode.lib.vcs import client_http
+        tags = {'mytag': 'mytag-id'}
+
+        def add_tag(name, raw_id, *args, **kwds):
+            tags[name] = raw_id
+
         repo = backend_hg.repo.scm_instance()
-        remote = repo._remote
-        with patch.object(remote, 'invalidate_vcs_cache') as invalidate_cache:
-            with patch.object(client_http, '_remote_call'):
-                method = getattr(remote, method_name)
-                method()
-                assert invalidate_cache.called
+        with patch.object(repo, '_remote') as remote:
+            remote.lookup.return_value = ('commit-id', 'commit-idx')
+            remote.tags.return_value = tags
+            remote._get_tags.return_value = tags
+            remote.tag.side_effect = add_tag
+
+            # Invoke method.
+            method = getattr(repo, method_name)
+            method(*method_args)
+
+            # Assert that every "writing" method is followed by an invocation
+            # of the cache invalidation method.
+            for counter, method_call in enumerate(remote.method_calls):
+                call_name = method_call[0]
+                if call_name in self.writing_methods:
+                    next_call = remote.method_calls[counter + 1]
+                    assert next_call == call.invalidate_vcs_cache()
 
     def _prepare_shadow_repo(self, pull_request):
         """
