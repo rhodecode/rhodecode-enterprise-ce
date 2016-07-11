@@ -31,7 +31,8 @@ import pylons
 import rhodecode
 
 from rhodecode.lib import hooks_base
-from rhodecode.lib.utils2 import AttributeDict
+from rhodecode.lib.utils2 import (
+    AttributeDict, safe_str, get_routes_generator_for_server_url)
 
 
 log = logging.getLogger(__name__)
@@ -240,16 +241,7 @@ class Hooks(object):
 
     def _call_hook(self, hook, extras):
         extras = AttributeDict(extras)
-        netloc = urlparse.urlparse(extras.server_url).netloc
-        environ = {
-            'SERVER_NAME': netloc.split(':')[0],
-            'SERVER_PORT': ':' in netloc and netloc.split(':')[1] or '80',
-            'SCRIPT_NAME': '',
-            'PATH_INFO': '/',
-            'HTTP_HOST': 'localhost',
-            'REQUEST_METHOD': 'GET',
-        }
-        pylons_router = URLGenerator(rhodecode.CONFIG['routes.map'], environ)
+        pylons_router = get_routes_generator_for_server_url(extras.server_url)
         pylons.url._push_object(pylons_router)
 
         try:

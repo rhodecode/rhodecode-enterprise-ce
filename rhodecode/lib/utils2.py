@@ -41,6 +41,7 @@ import pygments.lexers
 import sqlalchemy
 import sqlalchemy.engine.url
 import webob
+import routes.util
 
 import rhodecode
 
@@ -858,3 +859,28 @@ class Optional(object):
         if isinstance(val, cls):
             return val.getval()
         return val
+
+
+def get_routes_generator_for_server_url(server_url):
+    parsed_url = urlobject.URLObject(server_url)
+    netloc = safe_str(parsed_url.netloc)
+    script_name = safe_str(parsed_url.path)
+
+    if ':' in netloc:
+        server_name, server_port = netloc.split(':')
+    else:
+        server_name = netloc
+        server_port = (parsed_url.scheme == 'https' and '443' or '80')
+
+    environ = {
+        'REQUEST_METHOD': 'GET',
+        'PATH_INFO': '/',
+        'SERVER_NAME': server_name,
+        'SERVER_PORT': server_port,
+        'SCRIPT_NAME': script_name,
+    }
+    if parsed_url.scheme == 'https':
+        environ['HTTPS'] = 'on'
+        environ['wsgi.url_scheme'] = 'https'
+
+    return routes.util.URLGenerator(rhodecode.CONFIG['routes.map'], environ)

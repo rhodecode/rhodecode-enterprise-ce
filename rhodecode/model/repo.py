@@ -142,7 +142,8 @@ class RepoModel(BaseModel):
         return None
 
     def get_url(self, repo):
-        return h.url('summary_home', repo_name=repo.repo_name, qualified=True)
+        return h.url('summary_home', repo_name=safe_str(repo.repo_name),
+            qualified=True)
 
     def get_users(self, name_contains=None, limit=20, only_active=True):
         # TODO: mikhail: move this method to the UserModel.

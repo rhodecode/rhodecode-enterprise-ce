@@ -750,7 +750,7 @@ class PullRequestModel(BaseModel):
 
     def get_url(self, pull_request):
         return h.url('pullrequest_show',
-                     repo_name=pull_request.target_repo.repo_name,
+                     repo_name=safe_str(pull_request.target_repo.repo_name),
                      pull_request_id=pull_request.pull_request_id,
                      qualified=True)
 
