@@ -38,6 +38,7 @@ from routes.middleware import RoutesMiddleware
 import routes.util
 
 import rhodecode
+import rhodecode.integrations # do not remove this as it registers celery tasks
 from rhodecode.config import patches
 from rhodecode.config.environment import (
     load_environment, load_pyramid_environment)

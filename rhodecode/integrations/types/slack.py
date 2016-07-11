@@ -176,7 +176,7 @@ class SlackIntegrationType(IntegrationTypeBase):
         )
         return result
 
-    def format_repo_create_msg(self, data):
+    def format_repo_create_event(self, data):
         return '<{}|{}> ({}) repository created by *{}*'.format(
             data['repo']['url'],
             data['repo']['repo_name'],
