@@ -39,7 +39,8 @@ SVN_FORM_DATA = {
 
 GENERAL_FORM_DATA = {
     'rhodecode_pr_merge_enabled': True,
-    'rhodecode_use_outdated_comments': True
+    'rhodecode_use_outdated_comments': True,
+    'rhodecode_hg_use_rebase_for_merging': True,
 }
 
 
