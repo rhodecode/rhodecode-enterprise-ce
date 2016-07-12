@@ -42,6 +42,7 @@ from rhodecode.model import BaseModel
 from rhodecode.model.db import Integration, User
 from rhodecode.model.meta import Session
 from rhodecode.integrations import integration_type_registry
+from rhodecode.integrations.types.base import IntegrationTypeBase
 
 log = logging.getLogger(__name__)
 
@@ -60,11 +61,24 @@ class IntegrationModel(BaseModel):
                 raise Exception('integration must be int, long or Instance'
                                 ' of Integration got %s' % type(integration))
 
+    def create(self, IntegrationType, enabled, name, settings, repo=None):
+        """ Create an IntegrationType integration """
+        integration = Integration(
+            integration_type=IntegrationType.key,
+            settings={},
+            repo=repo,
+            enabled=enabled,
+            name=name
+        )
+        self.sa.add(integration)
+        self.sa.commit()
+        return integration
+
     def delete(self, integration):
         try:
             integration = self.__get_integration(integration)
             if integration:
-                Session().delete(integration)
+                self.sa.delete(integration)
                 return True
         except Exception:
             log.error(traceback.format_exc())

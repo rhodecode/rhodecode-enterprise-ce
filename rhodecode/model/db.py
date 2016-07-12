@@ -1330,6 +1330,8 @@ class Repository(Base, BaseModel):
         cascade="all, delete, delete-orphan")
     ui = relationship('RepoRhodeCodeUi', cascade="all")
     settings = relationship('RepoRhodeCodeSetting', cascade="all")
+    integrations = relationship('Integration',
+                                cascade="all, delete, delete-orphan")
 
     def __unicode__(self):
         return u"<%s('%s:%s')>" % (self.__class__.__name__, self.repo_id,
@@ -3494,6 +3496,11 @@ class Integration(Base, BaseModel):
         "repo_id", Integer(), ForeignKey('repositories.repo_id'),
         nullable=True, unique=None, default=None)
     repo = relationship('Repository', lazy='joined')
+
+    def __init__(self, **kw):
+        settings = kw.pop('settings', {})
+        self.settings = settings
+        super(Integration, self).__init__(**kw)
 
     @hybrid_property
     def settings(self):
