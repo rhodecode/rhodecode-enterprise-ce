@@ -1103,9 +1103,9 @@ def make_map(config):
                  conditions={'function': check_repo},
                  requirements=URL_NAME_REQUIREMENTS, jsroute=True)
 
-    rmap.connect('files_metadata_list_home',
-                 '/{repo_name}/metadata_list/{revision}/{f_path}',
-                 controller='files', action='metadata_list',
+    rmap.connect('files_nodetree_full',
+                 '/{repo_name}/nodetree_full/{commit_id}/{f_path}',
+                 controller='files', action='nodetree_full',
                  conditions={'function': check_repo},
                  requirements=URL_NAME_REQUIREMENTS, jsroute=True)
 

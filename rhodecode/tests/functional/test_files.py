@@ -54,7 +54,7 @@ class TestFilesController:
 
         params = {
             'repo_name': backend.repo_name,
-            'revision': commit.raw_id,
+            'commit_id': commit.raw_id,
             'date': commit.date
         }
         assert_dirs_in_response(response, ['docs', 'vcs'], params)
@@ -135,7 +135,7 @@ class TestFilesController:
         files = ['README.rst']
         params = {
             'repo_name': backend.repo_name,
-            'revision': commit.raw_id,
+            'commit_id': commit.raw_id,
         }
         assert_dirs_in_response(response, dirs, params)
         assert_files_in_response(response, files, params)
@@ -302,31 +302,34 @@ class TestFilesController:
             url('files_nodelist_home', repo_name=backend.repo_name,
                 f_path='/', revision='tip'), status=400)
 
-    def test_tree_metadata_list_success(self, backend, xhr_header):
+    def test_nodetree_full_success(self, backend, xhr_header):
         commit = backend.repo.get_commit(commit_idx=173)
         response = self.app.get(
-            url('files_metadata_list_home', repo_name=backend.repo_name,
-                f_path='/', revision=commit.raw_id),
+            url('files_nodetree_full', repo_name=backend.repo_name,
+                f_path='/', commit_id=commit.raw_id),
             extra_environ=xhr_header)
 
-        expected_keys = ['author', 'message', 'modified_at', 'modified_ts',
-                         'name', 'revision', 'short_id', 'size']
-        for filename in response.json.get('metadata'):
-            for key in expected_keys:
-                assert key in filename
+        assert_response = AssertResponse(response)
 
-    def test_tree_metadata_list_if_file(self, backend, xhr_header):
+        for attr in ['data-commit-id', 'data-date', 'data-author']:
+            elements = assert_response.get_elements('[{}]'.format(attr))
+            assert len(elements) > 1
+
+            for element in elements:
+                assert element.get(attr)
+
+    def test_nodetree_full_if_file(self, backend, xhr_header):
         commit = backend.repo.get_commit(commit_idx=173)
         response = self.app.get(
-            url('files_metadata_list_home', repo_name=backend.repo_name,
-                f_path='README.rst', revision=commit.raw_id),
+            url('files_nodetree_full', repo_name=backend.repo_name,
+                f_path='README.rst', commit_id=commit.raw_id),
             extra_environ=xhr_header)
-        assert response.json == {'metadata': []}
+        assert response.body == ''
 
     def test_tree_metadata_list_missing_xhr(self, backend):
         self.app.get(
-            url('files_metadata_list_home', repo_name=backend.repo_name,
-                f_path='/', revision='tip'), status=400)
+            url('files_nodetree_full', repo_name=backend.repo_name,
+                f_path='/', commit_id='tip'), status=400)
 
     def test_access_empty_repo_redirect_to_summary_with_alert_write_perms(
             self, app, backend_stub, autologin_regular_user, user_regular,
@@ -917,13 +920,13 @@ class TestChangingFiles:
 
 def assert_files_in_response(response, files, params):
     template = (
-        "href='/%(repo_name)s/files/%(revision)s/%(name)s'")
+        'href="/%(repo_name)s/files/%(commit_id)s/%(name)s"')
     _assert_items_in_response(response, files, template, params)
 
 
 def assert_dirs_in_response(response, dirs, params):
     template = (
-        "href='/%(repo_name)s/files/%(revision)s/%(name)s'")
+        'href="/%(repo_name)s/files/%(commit_id)s/%(name)s"')
     _assert_items_in_response(response, dirs, template, params)
 
 

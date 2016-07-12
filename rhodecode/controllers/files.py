@@ -136,10 +136,12 @@ class FilesController(BaseRepoController):
         _namespace = caches.get_repo_namespace_key(namespace_type, repo_name)
         return caches.get_cache_manager('repo_cache_long', _namespace)
 
-    def _get_tree_at_commit(self, repo_name, commit_id, f_path):
+    def _get_tree_at_commit(self, repo_name, commit_id, f_path,
+                            full_load=False, force=False):
         def _cached_tree():
             log.debug('Generating cached file tree for %s, %s, %s',
                       repo_name, commit_id, f_path)
+            c.full_load = full_load
             return render('files/files_browser_tree.html')
 
         cache_manager = self.__get_tree_cache_manager(
@@ -147,6 +149,10 @@ class FilesController(BaseRepoController):
 
         cache_key = caches.compute_key_from_params(
             repo_name, commit_id, f_path)
+
+        if force:
+            # we want to force recompute of caches
+            cache_manager.remove_value(cache_key)
 
         return cache_manager.get(cache_key, createfunc=_cached_tree)
 
@@ -164,22 +170,6 @@ class FilesController(BaseRepoController):
         cache_key = caches.compute_key_from_params(
             repo_name, commit_id, f_path)
         return cache_manager.get(cache_key, createfunc=_cached_nodes)
-
-    def _get_metadata_at_commit(self, repo_name, commit, dir_node):
-        def _cached_metadata():
-            log.debug('Generating cached metadata for %s, %s, %s',
-                      repo_name, commit.raw_id, safe_str(dir_node.path))
-
-            data = ScmModel().get_dirnode_metadata(commit, dir_node)
-            return data
-
-        cache_manager = self.__get_tree_cache_manager(
-            repo_name, caches.FILE_TREE_META)
-
-        cache_key = caches.compute_key_from_params(
-            repo_name, commit.raw_id, safe_str(dir_node.path))
-
-        return cache_manager.get(cache_key, createfunc=_cached_metadata)
 
     @LoginRequired()
     @HasRepoPermissionAnyDecorator(
@@ -246,6 +236,7 @@ class FilesController(BaseRepoController):
                 c.authors = []
                 c.file_tree = self._get_tree_at_commit(
                     repo_name, c.commit.raw_id, f_path)
+
         except RepositoryError as e:
             h.flash(safe_str(e), category='error')
             raise HTTPNotFound()
@@ -1092,23 +1083,32 @@ class FilesController(BaseRepoController):
     @XHRRequired()
     @HasRepoPermissionAnyDecorator(
         'repository.read', 'repository.write', 'repository.admin')
-    @jsonify
-    def metadata_list(self, repo_name, revision, f_path):
+    def nodetree_full(self, repo_name, commit_id, f_path):
         """
-        Returns a json dict that contains commit date, author, revision
-        and id for the specified repo, revision and file path
+        Returns rendered html of file tree that contains commit date,
+        author, revision for the specified combination of
+        repo, commit_id and file path
 
         :param repo_name: name of the repository
-        :param revision: revision of files
+        :param commit_id: commit_id of file tree
         :param f_path: file path of the requested directory
         """
 
-        commit = self.__get_commit_or_redirect(revision, repo_name)
+        commit = self.__get_commit_or_redirect(commit_id, repo_name)
         try:
-            file_node = commit.get_node(f_path)
+            dir_node = commit.get_node(f_path)
         except RepositoryError as e:
-            return {'error': safe_str(e)}
+            return 'error {}'.format(safe_str(e))
 
-        metadata = self._get_metadata_at_commit(
-            repo_name, commit, file_node)
-        return {'metadata': metadata}
+        if dir_node.is_file():
+            return ''
+
+        c.file = dir_node
+        c.commit = commit
+
+        # using force=True here, make a little trick. We flush the cache and
+        # compute it using the same key as without full_load, so the fully
+        # loaded cached tree is now returned instead of partial
+        return self._get_tree_at_commit(
+            repo_name, commit.raw_id, dir_node.path, full_load=True,
+            force=True)

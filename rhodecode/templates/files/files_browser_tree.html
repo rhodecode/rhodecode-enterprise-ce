@@ -1,4 +1,4 @@
-<div class="browser-body">
+<div id="file-tree-wrapper" class="browser-body ${'full-load' if c.full_load else ''}">
     <table class="code-browser rctable">
         <thead>
             <tr>
@@ -31,7 +31,7 @@
               <span class="submodule-dir">
                 ${h.link_to_if(
                     node.url.startswith('http://') or node.url.startswith('https://'),
-                    node.name,node.url)}
+                    node.name, node.url)}
               </span>
             %else:
               <a href="${h.url('files_home',repo_name=c.repo_name,revision=c.commit.raw_id,f_path=h.safe_unicode(node.path))}" class="pjax-link">
@@ -40,12 +40,30 @@
             %endif
             </td>
             %if node.is_file():
-              <td class="td-size" title="${'size-%s' % node.name}"></td>
-              <td class="td-time" title="${'modified_at-%s' % node.name}">
-                <span class="browser-loading">${_('Loading...')}</span>
+              <td class="td-size" data-attr-name="size">
+                  % if c.full_load:
+                    <span data-size="${node.size}">${h.format_byte_size_binary(node.size)}</span>
+                  % else:
+                    ${_('Loading ...')}
+                  % endif
               </td>
-              <td class="td-hash" title="${'revision-%s' % node.name}"></td>
-              <td class="td-user" title="${'author-%s' % node.name}"></td>
+              <td class="td-time" data-attr-name="modified_at">
+                  % if c.full_load:
+                    <span data-date="${node.last_commit.date}">${h.age_component(node.last_commit.date)}</span>
+                  % endif
+              </td>
+              <td class="td-hash" data-attr-name="commit_id">
+                  % if c.full_load:
+                  <div class="tooltip" title="${node.last_commit.message}">
+                      <pre data-commit-id="${node.last_commit.raw_id}">r${node.last_commit.revision}:${node.last_commit.short_id}</pre>
+                  </div>
+                  % endif
+              </td>
+              <td class="td-user" data-attr-name="author">
+                  % if c.full_load:
+                  <span data-author="${node.last_commit.author}" title="${node.last_commit.author}">${h.gravatar_with_user(node.last_commit.author)|n}</span>
+                  % endif
+              </td>
             %else:
               <td></td>
               <td></td>

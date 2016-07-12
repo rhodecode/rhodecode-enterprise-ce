@@ -91,36 +91,26 @@
             if (source_page) {
                 return false;
             }
+
+            if ($('#file-tree-wrapper').hasClass('full-load')) {
+                // in case our HTML wrapper has full-load class we don't
+                // trigger the async load of metadata
+                return false;
+            }
+
             var state = getState('metadata');
             var url_data = {
                 'repo_name': templateContext.repo_name,
-                'revision': state.commit_id,
+                'commit_id': state.commit_id,
                 'f_path': state.f_path
             };
 
-            var url = pyroutes.url('files_metadata_list_home', url_data);
+            var url = pyroutes.url('files_nodetree_full', url_data);
 
             metadataRequest = $.ajax({url: url});
 
             metadataRequest.done(function(data) {
-                var data = data.metadata;
-                var dataLength = data.length;
-                for (var i = 0; i < dataLength; i++) {
-                    var rowData = data[i];
-                    var name = rowData.name.replace('\\', '\\\\');
-
-                    $('td[title="size-' + name + '"]').html(rowData.size);
-                    var timeComponent = AgeModule.createTimeComponent(
-                            rowData.modified_ts, rowData.modified_at);
-                    $('td[title="modified_at-' + name + '"]').html(timeComponent);
-
-                    $('td[title="revision-' + name + '"]').html(
-                            '<div class="tooltip" title="{0}"><pre>r{1}:{2}</pre></div>'.format(
-                                    data[i].message, data[i].revision, data[i].short_id));
-                    $('td[title="author-' + name + '"]').html(
-                            '<span title="{0}">{1}</span>'.format(
-                                    data[i].author, data[i].user_profile));
-                }
+                $('#file-tree').html(data);
                 timeagoActivate();
             });
             metadataRequest.fail(function (data, textStatus, errorThrown) {
@@ -138,7 +128,7 @@
             // used for history, and switch to
             var initialCommitData = {
                 id: null,
-                text: "${_("Switch To Commit")}",
+                text: '${_("Switch To Commit")}',
                 type: 'sha',
                 raw_id: null,
                 files_url: null
@@ -328,6 +318,5 @@
         });
 
     </script>
-
 
 </%def>

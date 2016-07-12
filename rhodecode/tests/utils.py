@@ -171,6 +171,9 @@ class AssertResponse(object):
         assert len(elements) == 1
         return elements[0]
 
+    def get_elements(self, css_selector):
+        return self._get_elements(css_selector)
+
     def _get_elements(self, css_selector):
         doc = fromstring(self.response.body)
         sel = CSSSelector(css_selector)

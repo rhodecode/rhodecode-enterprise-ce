@@ -35,7 +35,7 @@ FILE_SEARCH_TREE_META = 'cache_file_search_metadata'
 SUMMARY_STATS = 'cache_summary_stats'
 
 # This list of caches gets purged when invalidation happens
-USED_REPO_CACHES = (FILE_TREE, FILE_TREE_META, FILE_TREE_META)
+USED_REPO_CACHES = (FILE_TREE, FILE_SEARCH_TREE_META)
 
 DEFAULT_CACHE_MANAGER_CONFIG = {
     'type': 'memorylru_base',
