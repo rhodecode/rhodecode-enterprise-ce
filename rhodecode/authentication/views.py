@@ -26,8 +26,8 @@ from pyramid.httpexceptions import HTTPFound
 from pyramid.renderers import render
 from pyramid.response import Response
 
-from rhodecode.authentication.base import get_auth_cache_manager
-from rhodecode.authentication.interface import IAuthnPluginRegistry
+from rhodecode.authentication.base import (
+    get_auth_cache_manager, get_authn_registry)
 from rhodecode.lib import auth
 from rhodecode.lib.auth import LoginRequired, HasPermissionAllDecorator
 from rhodecode.model.forms import AuthSettingsForm
@@ -125,7 +125,7 @@ class AuthSettingsView(object):
     @HasPermissionAllDecorator('hg.admin')
     def index(self, defaults=None, errors=None, prefix_error=False):
         defaults = defaults or {}
-        authn_registry = self.request.registry.getUtility(IAuthnPluginRegistry)
+        authn_registry = get_authn_registry(self.request.registry)
         enabled_plugins = SettingsModel().get_auth_plugins()
 
         # Create template context and render it.

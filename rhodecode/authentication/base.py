@@ -490,11 +490,17 @@ def loadplugin(plugin_id):
     or None on failure.
     """
     # TODO: Disusing pyramids thread locals to retrieve the registry.
-    authn_registry = get_current_registry().getUtility(IAuthnPluginRegistry)
+    authn_registry = get_authn_registry()
     plugin = authn_registry.get_plugin(plugin_id)
     if plugin is None:
         log.error('Authentication plugin not found: "%s"', plugin_id)
     return plugin
+
+
+def get_authn_registry(registry=None):
+    registry = registry or get_current_registry()
+    authn_registry = registry.getUtility(IAuthnPluginRegistry)
+    return authn_registry
 
 
 def get_auth_cache_manager(custom_ttl=None):
@@ -520,7 +526,7 @@ def authenticate(username, password, environ=None, auth_type=None,
                          % auth_type)
     headers_only = environ and not (username and password)
 
-    authn_registry = get_current_registry().getUtility(IAuthnPluginRegistry)
+    authn_registry = get_authn_registry()
     for plugin in authn_registry.get_plugins_for_authentication():
         plugin.set_auth_type(auth_type)
         user = plugin.get_user(username)

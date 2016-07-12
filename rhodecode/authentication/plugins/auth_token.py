@@ -83,13 +83,17 @@ class RhodeCodeAuthPlugin(RhodeCodeAuthPluginBase):
             allowed_auth_plugins=None, allowed_auth_sources=None):
         """
         Custom method for this auth that doesn't accept empty users. And also
-        allows rhodecode and authtoken extern_type to auth with this. But only
-        via vcs mode
+        allows users from all other active plugins to use it and also
+        authenticate against it. But only via vcs mode
         """
-        # only this and rhodecode plugins can use this type
-        from rhodecode.authentication.plugins import auth_rhodecode
-        allowed_auth_plugins = [
-            self.name, auth_rhodecode.RhodeCodeAuthPlugin.name]
+        from rhodecode.authentication.base import get_authn_registry
+        authn_registry = get_authn_registry()
+
+        active_plugins = set(
+            [x.name for x in authn_registry.get_plugins_for_authentication()])
+        active_plugins.discard(self.name)
+
+        allowed_auth_plugins = [self.name] + list(active_plugins)
         # only for vcs operations
         allowed_auth_sources = [VCS_TYPE]
 
