@@ -159,7 +159,7 @@ var showRepoStats = function(target, data){
             lnk = document.createElement('a');
 
             lnk.href = '#';
-            lnk.innerHTML = _ngettext('Show more');
+            lnk.innerHTML = _gettext('Show more');
             lnk.id = 'code_stats_show_more';
             td.appendChild(lnk);
 
