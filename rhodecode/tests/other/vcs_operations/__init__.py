@@ -87,18 +87,21 @@ def _add_files_and_push(vcs, dest, clone_url=None, **kwargs):
     added_file = jn(path, '%ssetup.py' % tempfile._RandomNameSequence().next())
     Command(cwd).execute('touch %s' % added_file)
     Command(cwd).execute('%s add %s' % (vcs, added_file))
+    author_str = 'Marcin Kuźminski <me@email.com>'
+
+    git_ident = "git config user.name {} && git config user.email {}".format(
+            'Marcin Kuźminski', 'me@email.com')
 
     for i in xrange(kwargs.get('files_no', 3)):
         cmd = """echo 'added_line%s' >> %s""" % (i, added_file)
         Command(cwd).execute(cmd)
-        author_str = 'Marcin Kuźminski <me@email.com>'
         if vcs == 'hg':
             cmd = """hg commit -m 'commited new %s' -u '%s' %s """ % (
                 i, author_str, added_file
             )
         elif vcs == 'git':
-            cmd = """EMAIL="me@email.com" git commit -m 'commited new %s' """\
-                  """--author '%s' %s """ % (i, author_str, added_file)
+            cmd = """%s && git commit -m 'commited new %s' %s""" % (
+                git_ident, i, added_file)
         Command(cwd).execute(cmd)
 
     # PUSH it back
@@ -108,7 +111,8 @@ def _add_files_and_push(vcs, dest, clone_url=None, **kwargs):
             'hg push --verbose', clone_url)
     elif vcs == 'git':
         stdout, stderr = Command(cwd).execute(
-            'git push --verbose', clone_url + " master")
+            """%s && git push --verbose %s master""" % (
+                git_ident, clone_url))
 
     return stdout, stderr
 
