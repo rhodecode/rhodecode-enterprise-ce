@@ -146,7 +146,6 @@ class SlackIntegrationType(IntegrationTypeBase):
             widget='checkbox_list',
             choices=sorted([e.name for e in cls.valid_events]),
             description="Events activated for this integration",
-            # default=[e.name for e in cls.valid_events],
             name='events'
         ))
         return schema

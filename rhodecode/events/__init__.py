@@ -16,7 +16,10 @@
 # RhodeCode Enterprise Edition, including its added features, Support services,
 # and proprietary license terms, please see https://rhodecode.com/licenses/
 
+import logging
 from pyramid.threadlocal import get_current_registry
+
+log = logging.getLogger()
 
 
 def trigger(event, registry=None):
@@ -29,6 +32,7 @@ def trigger(event, registry=None):
     # passing the registry as an argument to get rid of it.
     registry = registry or get_current_registry()
     registry.notify(event)
+    log.debug('event %s triggered', event)
 
     # Until we can work around the problem that VCS operations do not have a
     # pyramid context to work with, we send the events to integrations directly
