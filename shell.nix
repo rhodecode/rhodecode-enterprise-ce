@@ -43,6 +43,7 @@ in enterprise.override (attrs: {
     pythonPackages.bumpversion
     pythonPackages.invoke
     pythonPackages.ipdb
+    pythonPackages.locustio
   ];
 
   shellHook = attrs.shellHook +
