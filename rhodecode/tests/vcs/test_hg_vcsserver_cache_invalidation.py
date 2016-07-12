@@ -26,7 +26,18 @@ from rhodecode.lib.vcs.backends.base import Reference
 
 
 class TestMercurialRemoteRepoInvalidation(object):
+    """
+    If the VCSServer is running with multiple processes or/and instances.
+    Operations on repositories are potentially handled by different processes
+    in a random fashion. The mercurial repository objects used in the VCSServer
+    are caching the commits of the repo. Therefore we have to invalidate the
+    VCSServer caching of these objects after a writing operation.
+    """
+
+    # Default reference used as a dummy during tests.
     default_ref = Reference('branch', 'default', None)
+
+    # Methods of vcsserver.hg.HgRemote that are "writing" operations.
     writing_methods = [
         'bookmark',
         'commit',
@@ -103,8 +114,17 @@ class TestMercurialRemoteRepoInvalidation(object):
         return shadow_repo, source_ref, target_ref
 
     @pytest.mark.backends('hg')
-    def test_commit_does_not_exist_error_happens(self, pr_util):
+    def test_commit_does_not_exist_error_happens(self, pr_util, pylonsapp):
+        """
+        This test is somewhat special. It does not really test the system
+        instead it is more or less a precondition for the
+        "test_commit_does_not_exist_error_does_not_happen". It deactivates the
+        cache invalidation and asserts that the error occurs.
+        """
         from rhodecode.lib.vcs.exceptions import CommitDoesNotExistError
+
+        if pylonsapp.config['vcs.server.protocol'] != 'http':
+            pytest.skip('Test is intended for the HTTP protocol only.')
 
         pull_request = pr_util.create_pull_request()
         target_vcs = pull_request.target_repo.scm_instance()
@@ -135,7 +155,17 @@ class TestMercurialRemoteRepoInvalidation(object):
             shadow_repo.get_commit(source_ref.commit_id)
 
     @pytest.mark.backends('hg')
-    def test_commit_does_not_exist_error_does_not_happen(self, pr_util):
+    def test_commit_does_not_exist_error_does_not_happen(
+            self, pr_util, pylonsapp):
+        """
+        This test simulates a pull request merge in which the pull operations
+        are handled by a different VCSServer process than all other operations.
+        Without correct cache invalidation this leads to an error when
+        retrieving the pulled commits afterwards.
+        """
+        if pylonsapp.config['vcs.server.protocol'] != 'http':
+            pytest.skip('Test is intended for the HTTP protocol only.')
+
         pull_request = pr_util.create_pull_request()
         target_vcs = pull_request.target_repo.scm_instance()
         source_vcs = pull_request.source_repo.scm_instance()
