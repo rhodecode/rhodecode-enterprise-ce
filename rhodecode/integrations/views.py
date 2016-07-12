@@ -203,8 +203,9 @@ class IntegrationSettingsViewBase(object):
         # Display success message and redirect.
         self.request.session.flash(
             _('Integration {integration_name} updated successfully.').format(
-                integration_name=self.IntegrationType.display_name,
-                queue='success'))
+                integration_name=self.IntegrationType.display_name),
+            queue='success')
+
         if self.repo:
             redirect_to = self.request.route_url(
                 'repo_integrations_edit', repo_name=self.repo.repo_name,
