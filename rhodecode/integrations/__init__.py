@@ -20,7 +20,7 @@
 
 import logging
 from rhodecode.integrations.registry import IntegrationTypeRegistry
-from rhodecode.integrations.types import slack
+from rhodecode.integrations.types import webhook, slack
 
 log = logging.getLogger(__name__)
 
@@ -29,7 +29,12 @@ log = logging.getLogger(__name__)
 # VCS's not having a pyramid context - move it to pyramid app configuration
 # includeme level later to allow per instance integration setup
 integration_type_registry = IntegrationTypeRegistry()
-integration_type_registry.register_integration_type(slack.SlackIntegrationType)
+
+integration_type_registry.register_integration_type(
+    webhook.WebhookIntegrationType)
+integration_type_registry.register_integration_type(
+    slack.SlackIntegrationType)
+
 
 def integrations_event_handler(event):
     """
