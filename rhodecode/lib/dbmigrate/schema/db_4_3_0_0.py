@@ -908,7 +908,7 @@ class UserApiKeys(Base, BaseModel):
         return {
             cls.ROLE_ALL: _('all'),
             cls.ROLE_HTTP: _('http/web interface'),
-            cls.ROLE_VCS: _('vcs (git/hg protocol)'),
+            cls.ROLE_VCS: _('vcs (git/hg/svn protocol)'),
             cls.ROLE_API: _('api calls'),
             cls.ROLE_FEED: _('feed access'),
         }.get(role, role)
