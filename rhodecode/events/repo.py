@@ -43,6 +43,7 @@ class RepoEvent(RhodecodeEvent):
             'repo': {
                 'repo_id': self.repo.repo_id,
                 'repo_name': self.repo.repo_name,
+                'repo_type': self.repo.repo_type,
                 'url': RepoModel().get_url(self.repo)
             }
         })
