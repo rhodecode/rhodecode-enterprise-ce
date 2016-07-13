@@ -44,7 +44,8 @@ class PullRequestEvent(RepoEvent):
                 'title': self.pullrequest.title,
                 'issues': issues,
                 'pull_request_id': self.pullrequest.pull_request_id,
-                'url': PullRequestModel().get_url(self.pullrequest)
+                'url': PullRequestModel().get_url(self.pullrequest),
+                'status': self.pullrequest.calculated_review_status(),
             }
         })
         return data
@@ -71,10 +72,19 @@ class PullRequestCloseEvent(PullRequestEvent):
 class PullRequestUpdateEvent(PullRequestEvent):
     """
     An instance of this class is emitted as an :term:`event` after a pull
-    request is updated.
+    request's commits have been updated.
     """
     name = 'pullrequest-update'
-    display_name = lazy_ugettext('pullrequest updated')
+    display_name = lazy_ugettext('pullrequest commits updated')
+
+
+class PullRequestReviewEvent(PullRequestEvent):
+    """
+    An instance of this class is emitted as an :term:`event` after a pull
+    request review has changed.
+    """
+    name = 'pullrequest-review'
+    display_name = lazy_ugettext('pullrequest review changed')
 
 
 class PullRequestMergeEvent(PullRequestEvent):
@@ -86,12 +96,31 @@ class PullRequestMergeEvent(PullRequestEvent):
     display_name = lazy_ugettext('pullrequest merged')
 
 
-class PullRequestReviewEvent(PullRequestEvent):
+class PullRequestCommentEvent(PullRequestEvent):
     """
     An instance of this class is emitted as an :term:`event` after a pull
-    request is reviewed.
+    request comment is created.
     """
-    name = 'pullrequest-review'
-    display_name = lazy_ugettext('pullrequest reviewed')
+    name = 'pullrequest-comment'
+    display_name = lazy_ugettext('pullrequest commented')
 
+    def __init__(self, pullrequest, comment):
+        super(PullRequestCommentEvent, self).__init__(pullrequest)
+        self.comment = comment
 
+    def as_dict(self):
+        from rhodecode.model.comment import ChangesetCommentsModel
+        data = super(PullRequestCommentEvent, self).as_dict()
+
+        status = None
+        if self.comment.status_change:
+            status = self.comment.status_change[0].status
+
+        data.update({
+            'comment': {
+                'status': status,
+                'text': self.comment.text,
+                'url': ChangesetCommentsModel().get_url(self.comment)
+            }
+        })
+        return data

@@ -32,6 +32,7 @@ from pylons.i18n.translation import _
 from sqlalchemy.sql import func
 from sqlalchemy.sql.expression import or_
 
+from rhodecode import events
 from rhodecode.lib import auth, diffs, helpers as h
 from rhodecode.lib.ext_json import json
 from rhodecode.lib.base import (
@@ -764,6 +765,8 @@ class PullrequestsController(BaseRepoController):
             closing_pr=close_pr
         )
 
+
+
         if allowed_to_change_status:
             old_calculated_status = pull_request.calculated_review_status()
             # get status if set !
@@ -777,6 +780,7 @@ class PullrequestsController(BaseRepoController):
                 )
 
             Session().flush()
+            events.trigger(events.PullRequestCommentEvent(pull_request, comm))
             # we now calculate the status of pull request, and based on that
             # calculation we set the commits status
             calculated_status = pull_request.calculated_review_status()

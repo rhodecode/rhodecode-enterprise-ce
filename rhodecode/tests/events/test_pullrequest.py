@@ -22,10 +22,12 @@ import pytest
 
 from rhodecode.tests.events.conftest import EventCatcher
 
+from rhodecode.model.comment import ChangesetCommentsModel
 from rhodecode.model.pull_request import PullRequestModel
 from rhodecode.events import (
     PullRequestCreateEvent,
     PullRequestUpdateEvent,
+    PullRequestCommentEvent,
     PullRequestReviewEvent,
     PullRequestMergeEvent,
     PullRequestCloseEvent,
@@ -55,6 +57,19 @@ def test_create_pull_request_events(pr_util):
         pr_util.create_pull_request()
 
     assert PullRequestCreateEvent in event_catcher.events_types
+
+@pytest.mark.backends("git", "hg")
+def test_pullrequest_comment_events_serialized(pr_util):
+    pr = pr_util.create_pull_request()
+    comment = ChangesetCommentsModel().get_comments(
+        pr.target_repo.repo_id, pull_request=pr)[0]
+    event = PullRequestCommentEvent(pr, comment)
+    data = event.as_dict()
+    assert data['name'] == PullRequestCommentEvent.name
+    assert data['repo']['repo_name'] == pr.target_repo.repo_name
+    assert data['pullrequest']['pull_request_id'] == pr.pull_request_id
+    assert data['pullrequest']['url']
+    assert data['comment']['text'] == comment.text
 
 
 @pytest.mark.backends("git", "hg")

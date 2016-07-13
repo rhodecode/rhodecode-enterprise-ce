@@ -156,12 +156,7 @@ class ChangesetCommentsModel(BaseModel):
                     cs_author = repo.user
                 recipients += [cs_author]
 
-                commit_comment_url = h.url(
-                    'changeset_home',
-                    repo_name=repo.repo_name,
-                    revision=commit_obj.raw_id,
-                    anchor='comment-%s' % comment.comment_id,
-                    qualified=True,)
+                commit_comment_url = self.get_url(comment)
 
                 target_repo_url = h.link_to(
                     repo.repo_name,
@@ -270,6 +265,23 @@ class ChangesetCommentsModel(BaseModel):
             raise Exception('Please specify commit or pull_request')
         q = q.order_by(ChangesetComment.created_on)
         return q.all()
+
+    def get_url(self, comment):
+        comment = self.__get_commit_comment(comment)
+        if comment.pull_request:
+            return h.url(
+                'pullrequest_show',
+                repo_name=comment.pull_request.target_repo.repo_name,
+                pull_request_id=comment.pull_request.pull_request_id,
+                anchor='comment-%s' % comment.comment_id,
+                qualified=True,)
+        else:
+            return h.url(
+                'changeset_home',
+                repo_name=comment.repo.repo_name,
+                revision=comment.revision,
+                anchor='comment-%s' % comment.comment_id,
+                qualified=True,)
 
     def get_comments(self, repo_id, revision=None, pull_request=None):
         """

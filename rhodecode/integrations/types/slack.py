@@ -24,6 +24,7 @@ import re
 import logging
 import requests
 import colander
+import textwrap
 from celery.task import task
 from mako.template import Template
 
@@ -105,6 +106,7 @@ class SlackIntegrationType(IntegrationTypeBase):
         events.PullRequestCloseEvent,
         events.PullRequestMergeEvent,
         events.PullRequestUpdateEvent,
+        events.PullRequestCommentEvent,
         events.PullRequestReviewEvent,
         events.PullRequestCreateEvent,
         events.RepoPushEvent,
@@ -127,7 +129,11 @@ class SlackIntegrationType(IntegrationTypeBase):
 
         log.debug('handling slack event for %s' % event.name)
 
-        if isinstance(event, events.PullRequestEvent):
+        if isinstance(event, events.PullRequestCommentEvent):
+            text = self.format_pull_request_comment_event(event, data)
+        elif isinstance(event, events.PullRequestReviewEvent):
+            text = self.format_pull_request_review_event(event, data)
+        elif isinstance(event, events.PullRequestEvent):
             text = self.format_pull_request_event(event, data)
         elif isinstance(event, events.RepoPushEvent):
             text = self.format_repo_push_event(data)
@@ -150,16 +156,55 @@ class SlackIntegrationType(IntegrationTypeBase):
         ))
         return schema
 
+    def format_pull_request_comment_event(self, event, data):
+        comment_text = data['comment']['text']
+        if len(comment_text) > 200:
+            comment_text = '<{comment_url}|{comment_text}...>'.format(
+                comment_text=comment_text[:200],
+                comment_url=data['comment']['url'],
+            )
+
+        comment_status = ''
+        if data['comment']['status']:
+            comment_status = '[{}]: '.format(data['comment']['status'])
+
+        return (textwrap.dedent(
+            '''
+            {user} commented on pull request <{pr_url}|#{number}> - {pr_title}:
+            >>> {comment_status}{comment_text}
+            ''').format(
+                comment_status=comment_status,
+                user=data['actor']['username'],
+                number=data['pullrequest']['pull_request_id'],
+                pr_url=data['pullrequest']['url'],
+                pr_status=data['pullrequest']['status'],
+                pr_title=data['pullrequest']['title'],
+                comment_text=comment_text
+            )
+        )
+
+    def format_pull_request_review_event(self, event, data):
+        return (textwrap.dedent(
+            '''
+            Status changed to {pr_status} for pull request <{pr_url}|#{number}> - {pr_title}
+            ''').format(
+                user=data['actor']['username'],
+                number=data['pullrequest']['pull_request_id'],
+                pr_url=data['pullrequest']['url'],
+                pr_status=data['pullrequest']['status'],
+                pr_title=data['pullrequest']['title'],
+            )
+        )
+
     def format_pull_request_event(self, event, data):
         action = {
             events.PullRequestCloseEvent: 'closed',
             events.PullRequestMergeEvent: 'merged',
             events.PullRequestUpdateEvent: 'updated',
-            events.PullRequestReviewEvent: 'reviewed',
             events.PullRequestCreateEvent: 'created',
-        }.get(event.__class__, '<unknown action>')
+        }.get(event.__class__, str(event.__class__))
 
-        return ('Pull request <{url}|#{number}> ({title}) '
+        return ('Pull request <{url}|#{number}> - {title} '
                 '{action} by {user}').format(
             user=data['actor']['username'],
             number=data['pullrequest']['pull_request_id'],

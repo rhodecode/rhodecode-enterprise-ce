@@ -64,6 +64,7 @@ from rhodecode.events.pullrequest import (
     PullRequestEvent,
     PullRequestCreateEvent,
     PullRequestUpdateEvent,
+    PullRequestCommentEvent,
     PullRequestReviewEvent,
     PullRequestMergeEvent,
     PullRequestCloseEvent,
