@@ -74,6 +74,26 @@ def test_is_svn_returns_false_if_no_dav_header():
     assert vcs.is_svn(environ) is False
 
 
+def test_is_svn_returns_true_if_magic_path_segment():
+    environ = {
+        'PATH_INFO': '/stub-repository/!svn/rev/4',
+    }
+    assert vcs.is_svn(environ)
+
+
+def test_is_svn_allows_to_configure_the_magic_path(monkeypatch):
+    """
+    This is intended as a fallback in case someone has configured his
+    Subversion server with a different magic path segment.
+    """
+    monkeypatch.setitem(
+        rhodecode.CONFIG, 'rhodecode_subversion_magic_path', '/!my-magic')
+    environ = {
+        'PATH_INFO': '/stub-repository/!my-magic/rev/4',
+    }
+    assert vcs.is_svn(environ)
+
+
 class TestVCSMiddleware(object):
     def test_get_handler_app_retuns_svn_app_when_proxy_enabled(self):
         environ = {
