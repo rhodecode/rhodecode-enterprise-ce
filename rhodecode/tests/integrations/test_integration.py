@@ -70,9 +70,9 @@ def global_integration_stub(request):
     return integration
 
 
-def test_delete_repo_with_integration_deletes_integration(repo_integration):
-    Session().delete(repo_integration.repo)
+def test_delete_repo_with_integration_deletes_integration(repo_integration_stub):
+    Session().delete(repo_integration_stub.repo)
     Session().commit()
     Session().expire_all()
-    assert Integration.get(repo_integration.integration_id) is None
+    assert Integration.get(repo_integration_stub.integration_id) is None
 
