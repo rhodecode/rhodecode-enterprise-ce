@@ -26,7 +26,7 @@ from rhodecode.lib.middleware import vcs
 
 def test_is_hg():
     environ = {
-        'PATH_INFO': 'rhodecode-dev',
+        'PATH_INFO': '/rhodecode-dev',
         'QUERY_STRING': 'cmd=changegroup',
         'HTTP_ACCEPT': 'application/mercurial'
     }
@@ -35,7 +35,7 @@ def test_is_hg():
 
 def test_is_hg_no_cmd():
     environ = {
-        'PATH_INFO': 'rhodecode-dev',
+        'PATH_INFO': '/rhodecode-dev',
         'QUERY_STRING': '',
         'HTTP_ACCEPT': 'application/mercurial'
     }
@@ -44,7 +44,7 @@ def test_is_hg_no_cmd():
 
 def test_is_hg_empty_cmd():
     environ = {
-        'PATH_INFO': 'rhodecode-dev',
+        'PATH_INFO': '/rhodecode-dev',
         'QUERY_STRING': 'cmd=',
         'HTTP_ACCEPT': 'application/mercurial'
     }
@@ -53,7 +53,7 @@ def test_is_hg_empty_cmd():
 
 def test_is_svn_returns_true_if_subversion_is_in_a_dav_header():
     environ = {
-        'PATH_INFO': 'rhodecode-dev',
+        'PATH_INFO': '/rhodecode-dev',
         'HTTP_DAV': 'http://subversion.tigris.org/xmlns/dav/svn/log-revprops'
     }
     assert vcs.is_svn(environ) is True
@@ -61,7 +61,7 @@ def test_is_svn_returns_true_if_subversion_is_in_a_dav_header():
 
 def test_is_svn_returns_false_if_subversion_is_not_in_a_dav_header():
     environ = {
-        'PATH_INFO': 'rhodecode-dev',
+        'PATH_INFO': '/rhodecode-dev',
         'HTTP_DAV': 'http://stuff.tigris.org/xmlns/dav/svn/log-revprops'
     }
     assert vcs.is_svn(environ) is False
@@ -69,7 +69,7 @@ def test_is_svn_returns_false_if_subversion_is_not_in_a_dav_header():
 
 def test_is_svn_returns_false_if_no_dav_header():
     environ = {
-        'PATH_INFO': 'rhodecode-dev',
+        'PATH_INFO': '/rhodecode-dev',
     }
     assert vcs.is_svn(environ) is False
 
