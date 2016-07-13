@@ -137,5 +137,7 @@ class RhodeCodeAuthPlugin(RhodeCodeAuthPluginBase):
                      "authenticating on this plugin", userobj)
             return None
         else:
-            log.warning('user %s tried auth but is disabled', userobj)
+            log.warning(
+                'user `%s` failed to authenticate via %s, reason: account not '
+                'active.', username, self.name)
             return None
