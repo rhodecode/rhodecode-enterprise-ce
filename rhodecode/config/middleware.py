@@ -277,13 +277,11 @@ def includeme(config):
     # how to handle a request.
     config.add_notfound_view(pylons_app_with_error_handler)
 
-    if settings.get('debugtoolbar.enabled', False):
-        # if toolbar, then only http type exceptions get caught and rendered
-        ExcClass = HTTPError
-    else:
+    if not settings.get('debugtoolbar.enabled', False):
         # if no toolbar, then any exception gets caught and rendered
-        ExcClass = Exception
-    config.add_view(error_handler, context=ExcClass)
+        config.add_view(error_handler, context=Exception)
+
+    config.add_view(error_handler, context=HTTPError)
 
 
 def includeme_last(config):
