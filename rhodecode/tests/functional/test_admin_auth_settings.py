@@ -113,8 +113,7 @@ class TestAuthSettingsController(object):
         response.mustcontain('Authentication Plugins')
 
     @pytest.mark.parametrize("disable_plugin, needs_import", [
-        pytest.mark.xfail(('egg:rhodecode-enterprise-ce#container', None),
-                          reason="Migration of container plugin pending."),
+        ('egg:rhodecode-enterprise-ce#headers', None),
         ('egg:rhodecode-enterprise-ce#crowd', None),
         ('egg:rhodecode-enterprise-ce#jasig_cas', None),
         ('egg:rhodecode-enterprise-ce#ldap', None),
