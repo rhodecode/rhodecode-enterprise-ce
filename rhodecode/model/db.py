@@ -57,6 +57,7 @@ from rhodecode.lib.vcs.backends.base import (
 from rhodecode.lib.utils2 import (
     str2bool, safe_str, get_commit_safe, safe_unicode, remove_prefix, md5_safe,
     time_to_datetime, aslist, Optional, safe_int, get_clone_url, AttributeDict)
+from rhodecode.lib.jsonalchemy import MutationObj, JsonType, JSONDict
 from rhodecode.lib.ext_json import json
 from rhodecode.lib.caching_query import FromCache
 from rhodecode.lib.encrypt import AESCipher
@@ -3488,12 +3489,14 @@ class Integration(Base, BaseModel):
 
     integration_id = Column('integration_id', Integer(), primary_key=True)
     integration_type = Column('integration_type', String(255))
-    enabled = Column("enabled", Boolean(), nullable=False)
+    enabled = Column('enabled', Boolean(), nullable=False)
     name = Column('name', String(255), nullable=False)
-    settings_json = Column('settings_json',
-        UnicodeText().with_variant(UnicodeText(16384), 'mysql'))
+
+    settings = Column(
+        'settings_json', MutationObj.as_mutable(
+            JsonType(dialect_map=dict(mysql=UnicodeText(16384)))))
     repo_id = Column(
-        "repo_id", Integer(), ForeignKey('repositories.repo_id'),
+        'repo_id', Integer(), ForeignKey('repositories.repo_id'),
         nullable=True, unique=None, default=None)
     repo = relationship('Repository', lazy='joined')
 
@@ -3501,15 +3504,6 @@ class Integration(Base, BaseModel):
         settings = kw.pop('settings', {})
         self.settings = settings
         super(Integration, self).__init__(**kw)
-
-    @hybrid_property
-    def settings(self):
-        data = json.loads(self.settings_json or '{}')
-        return data
-
-    @settings.setter
-    def settings(self, dct):
-        self.settings_json = json.dumps(dct, indent=2)
 
     def __repr__(self):
         if self.repo:
