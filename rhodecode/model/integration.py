@@ -63,13 +63,13 @@ class IntegrationModel(BaseModel):
 
     def create(self, IntegrationType, enabled, name, settings, repo=None):
         """ Create an IntegrationType integration """
-        integration = Integration(
-            integration_type=IntegrationType.key,
-            settings={},
-            repo=repo,
-            enabled=enabled,
-            name=name
-        )
+        integration = Integration()
+        integration.integration_type = IntegrationType.key
+        integration.settings = {}
+        integration.repo = repo
+        integration.enabled = enabled
+        integration.name = name
+
         self.sa.add(integration)
         self.sa.commit()
         return integration

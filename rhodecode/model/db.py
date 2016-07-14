@@ -3500,11 +3500,6 @@ class Integration(Base, BaseModel):
         nullable=True, unique=None, default=None)
     repo = relationship('Repository', lazy='joined')
 
-    def __init__(self, **kw):
-        settings = kw.pop('settings', {})
-        self.settings = settings
-        super(Integration, self).__init__(**kw)
-
     def __repr__(self):
         if self.repo:
             scope = 'repo=%r' % self.repo
@@ -3512,6 +3507,3 @@ class Integration(Base, BaseModel):
             scope = 'global'
 
         return '<Integration(%r, %r)>' % (self.integration_type, scope)
-
-    def settings_as_dict(self):
-        return json.loads(self.settings_json)

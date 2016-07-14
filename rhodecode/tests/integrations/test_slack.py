@@ -71,11 +71,10 @@ def slack_settings():
 
 @pytest.fixture
 def slack_integration(request, app, slack_settings):
-    integration = Integration(
-        name='test slack integration',
-        enabled=True,
-        integration_type=SlackIntegrationType.key
-    )
+    integration = Integration()
+    integration.name = 'test slack integration'
+    integration.enabled = True
+    integration.integration_type = SlackIntegrationType.key
     integration.settings = slack_settings
     Session().add(integration)
     Session().commit()

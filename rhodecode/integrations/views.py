@@ -179,7 +179,7 @@ class IntegrationSettingsViewBase(object):
 
         try:
             valid_data = schema.deserialize(params)
-        except colander.Invalid, e:
+        except colander.Invalid as e:
             # Display error message and display form again.
             self.request.session.flash(
                 _('Errors exist when saving plugin settings. '
@@ -188,17 +188,17 @@ class IntegrationSettingsViewBase(object):
             return self.settings_get(errors=e.asdict(), defaults=params)
 
         if not self.integration:
-            self.integration = Integration(
-                integration_type=self.IntegrationType.key)
+            self.integration = Integration()
+            self.integration.integration_type = self.IntegrationType.key
             if self.repo:
                 self.integration.repo = self.repo
-            Session.add(self.integration)
+            Session().add(self.integration)
 
         self.integration.enabled = valid_data.pop('enabled', False)
         self.integration.name = valid_data.pop('name')
         self.integration.settings = valid_data
 
-        Session.commit()
+        Session().commit()
 
         # Display success message and redirect.
         self.request.session.flash(
