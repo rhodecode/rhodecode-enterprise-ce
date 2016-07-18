@@ -32,6 +32,7 @@ from pyramid.static import static_view
 from pyramid.settings import asbool, aslist
 from pyramid.wsgi import wsgiapp
 from pyramid.httpexceptions import HTTPError, HTTPInternalServerError
+from pylons.controllers.util import abort, redirect
 import pyramid.httpexceptions as httpexceptions
 from pyramid.renderers import render_to_response, render
 from routes.middleware import RoutesMiddleware
@@ -290,6 +291,13 @@ def includeme_last(config):
     """
     settings = config.registry.settings
     config.add_static_view('_static', path='rhodecode:public')
+
+    # redirect automatic browser favicon.ico requests to correct place
+    def favicon_redirect(context, request):
+        return redirect(
+            request.static_url('rhodecode:public/images/favicon.ico'))
+    config.add_view(favicon_redirect, route_name='favicon')
+    config.add_route('favicon', '/favicon.ico')
 
 
 def wrap_app_in_wsgi_middlewares(pyramid_app, config):
