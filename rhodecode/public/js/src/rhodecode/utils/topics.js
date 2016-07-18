@@ -32,6 +32,14 @@ jQuery.Topic = function (id) {
                     this.unhandledData.push(arguments[i]);
                 }
             },
+            prepareOrPublish: function(){
+                if (callbacks.has() === true){
+                    this.publish.apply(this, arguments);
+                }
+                else{
+                    this.prepare.apply(this, arguments);
+                }
+            },
             processPrepared: function(){
                 var data = this.unhandledData;
                 this.unhandledData = [];
@@ -40,7 +48,8 @@ jQuery.Topic = function (id) {
                 }
             },
             subscribe: callbacks.add,
-            unsubscribe: callbacks.remove
+            unsubscribe: callbacks.remove,
+            callbacks: callbacks
         };
         if (id) {
             topics[id] = topic;

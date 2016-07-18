@@ -210,7 +210,7 @@ var injectInlineForm = function(tr){
       }
   }, 10);
 
-    $.Topic('/ui/plugins/code/comment_form_built').prepare({
+    $.Topic('/ui/plugins/code/comment_form_built').prepareOrPublish({
         form:_form,
         parent:_parent}
     );

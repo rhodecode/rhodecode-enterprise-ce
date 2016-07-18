@@ -384,7 +384,7 @@ $(document).ready(function() {
 
                 tr[0].scrollIntoView();
 
-                $.Topic('/ui/plugins/code/anchor_focus').prepare({
+                $.Topic('/ui/plugins/code/anchor_focus').prepareOrPublish({
                     tr:tr,
                     remainder:remainder});
             }

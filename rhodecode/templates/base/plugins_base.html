@@ -10,5 +10,5 @@ ${pyramid_render(config['template_hooks'].get('plugin_init_template'),
 % endif
 % endfor
 <script>
-    $.Topic('/plugins/__REGISTER__').publish({});
+    $.Topic('/plugins/__REGISTER__').prepareOrPublish({});
 </script>
