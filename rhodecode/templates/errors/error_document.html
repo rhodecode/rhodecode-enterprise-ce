@@ -5,7 +5,7 @@
         <title>Error - ${c.error_message}</title>
         <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
         <meta name="robots" content="index, nofollow"/>
-        <link rel="icon" href="${h.url('/images/favicon.ico')}" sizes="16x16 32x32" type="image/png" />
+        <link rel="icon" href="${h.asset('images/favicon.ico')}" sizes="16x16 32x32" type="image/png" />
 
 
         <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
@@ -13,20 +13,20 @@
             <meta http-equiv="refresh" content="${c.redirect_time}; url=${c.url_redirect}"/>
         %endif
 
-        <link rel="stylesheet" type="text/css" href="${h.url('/css/style.css')}" media="screen"/>
+        <link rel="stylesheet" type="text/css" href="${h.asset('css/style.css')}" media="screen"/>
         <!--[if IE]>
-            <link rel="stylesheet" type="text/css" href="${h.url('/css/ie.css')}" media="screen"/>
+            <link rel="stylesheet" type="text/css" href="${h.asset('css/ie.css')}" media="screen"/>
         <![endif]-->
         <style>body { background:#eeeeee; }</style>
 
-        <script type="text/javascript" src="${h.url('/js/scripts.js')}"></script>
+        <script type="text/javascript" src="${h.asset('js/scripts.js')}"></script>
     </head>
     <body>
         <%include file="/base/flash_msg.html"/>
 
         <div class="wrapper error_page">
             <div class="sidebar">
-                <a href="${h.url('home')}"><img class="error-page-logo" src="${h.url('/images/RhodeCode_Logo_Black.png')}" alt="RhodeCode"/></a>
+                <a href="${h.url('home')}"><img class="error-page-logo" src="${h.asset('images/RhodeCode_Logo_Black.png')}" alt="RhodeCode"/></a>
             </div>
             <div class="main-content">
                 <h1>

@@ -289,23 +289,7 @@ def includeme_last(config):
     The static file catchall needs to be last in the view configuration.
     """
     settings = config.registry.settings
-
-    # Note: johbo: I would prefer to register a prefix for static files at some
-    # point, e.g. move them under '_static/'. This would fully avoid that we
-    # can have name clashes with a repository name. Imaging someone calling his
-    # repo "css" ;-) Also having an external web server to serve out the static
-    # files seems to be easier to set up if they have a common prefix.
-    #
-    # Example: config.add_static_view('_static', path='rhodecode:public')
-    #
-    # It might be an option to register both paths for a while and then migrate
-    # over to the new location.
-
-    # Serving static files with a catchall.
-    if settings['static_files']:
-        config.add_route('catchall_static', '/*subpath')
-        config.add_view(
-            static_view('rhodecode:public'), route_name='catchall_static')
+    config.add_static_view('_static', path='rhodecode:public')
 
 
 def wrap_app_in_wsgi_middlewares(pyramid_app, config):
@@ -331,10 +315,7 @@ def wrap_app_in_wsgi_middlewares(pyramid_app, config):
         pyramid_app, _ = wrap_in_appenlight_if_enabled(
             pyramid_app, config.registry._pylons_compat_config)
 
-    # TODO: johbo: Don't really see why we enable the gzip middleware when
-    # serving static files, might be something that should have its own setting
-    # as well?
-    if settings['static_files']:
+    if asbool(settings.get('gzip_responses', 'true')):
         pyramid_app = make_gzip_middleware(
             pyramid_app, settings, compress_level=1)
 
@@ -377,7 +358,6 @@ def sanitize_settings_and_apply_defaults(settings):
     settings.setdefault('rhodecode.api.url', '/_admin/api')
 
     _bool_setting(settings, 'vcs.server.enable', 'true')
-    _bool_setting(settings, 'static_files', 'true')
     _bool_setting(settings, 'is_test', 'false')
 
     return settings

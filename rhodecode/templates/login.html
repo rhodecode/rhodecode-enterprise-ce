@@ -14,7 +14,7 @@
         <div id="header-inner" class="title">
             <div id="logo">
                 <div class="logo-wrapper">
-                    <a href="${h.url('home')}"><img src="${h.url('/images/rhodecode-logo-white-216x60.png')}" alt="RhodeCode"/></a>
+                    <a href="${h.url('home')}"><img src="${h.asset('images/rhodecode-logo-white-216x60.png')}" alt="RhodeCode"/></a>
                 </div>
                 %if c.rhodecode_name:
                 <div class="branding"> ${h.branding(c.rhodecode_name)}</div>
@@ -25,7 +25,7 @@
 
     <div class="loginwrapper">
         <div class="left-column">
-            <img class="sign-in-image" src="${h.url('/images/sign-in.png')}" alt="RhodeCode"/>
+            <img class="sign-in-image" src="${h.asset('images/sign-in.png')}" alt="RhodeCode"/>
         </div>
         <%block name="above_login_button" />
         <div id="login" class="right-column">
@@ -59,7 +59,7 @@
 
                     <p class="links">
                         ${h.link_to(_('Forgot your password?'), h.route_path('reset_password'))}
-                    </p> 
+                    </p>
 
                     ${h.submit('sign_in', _('Sign In'), class_="btn sign-in")}
 

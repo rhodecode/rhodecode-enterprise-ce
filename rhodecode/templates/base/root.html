@@ -23,13 +23,13 @@ c.template_context['visual']['default_renderer'] = h.get_visual_attr(c, 'default
             <meta name="robots" content="index, nofollow"/>
         </%def>
         ${self.robots()}
-        <link rel="icon" href="${h.url('/images/favicon.ico', ver=c.rhodecode_version_hash)}" sizes="16x16 32x32" type="image/png" />
+        <link rel="icon" href="${h.asset('images/favicon.ico', ver=c.rhodecode_version_hash)}" sizes="16x16 32x32" type="image/png" />
 
         ## CSS definitions
         <%def name="css()">
-            <link rel="stylesheet" type="text/css" href="${h.url('/css/style.css', ver=c.rhodecode_version_hash)}" media="screen"/>
+            <link rel="stylesheet" type="text/css" href="${h.asset('css/style.css', ver=c.rhodecode_version_hash)}" media="screen"/>
             <!--[if lt IE 9]>
-                <link rel="stylesheet" type="text/css" href="${h.url('/css/ie.css', ver=c.rhodecode_version_hash)}" media="screen"/>
+                <link rel="stylesheet" type="text/css" href="${h.asset('css/ie.css', ver=c.rhodecode_version_hash)}" media="screen"/>
             <![endif]-->
             ## EXTRA FOR CSS
             ${self.css_extra()}
@@ -42,7 +42,7 @@ c.template_context['visual']['default_renderer'] = h.get_visual_attr(c, 'default
 
         ## JAVASCRIPT
         <%def name="js()">
-            <script src="${h.url('/js/rhodecode/i18n/%s.js' % c.language, ver=c.rhodecode_version_hash)}"></script>
+            <script src="${h.asset('js/rhodecode/i18n/%s.js' % c.language, ver=c.rhodecode_version_hash)}"></script>
             <script type="text/javascript">
             // register templateContext to pass template variables to JS
             var templateContext = ${h.json.dumps(c.template_context)|n};
@@ -78,11 +78,11 @@ c.template_context['visual']['default_renderer'] = h.get_visual_attr(c, 'default
             </script>
 
             <!--[if lt IE 9]>
-            <script language="javascript" type="text/javascript" src="${h.url('/js/excanvas.min.js')}"></script>
+            <script language="javascript" type="text/javascript" src="${h.asset('js/excanvas.min.js')}"></script>
             <![endif]-->
-            <script language="javascript" type="text/javascript" src="${h.url('/js/rhodecode/routes.js', ver=c.rhodecode_version_hash)}"></script>
-            <script language="javascript" type="text/javascript" src="${h.url('/js/scripts.js', ver=c.rhodecode_version_hash)}"></script>
-            <script>CodeMirror.modeURL = "${h.url('/js/mode/%N/%N.js')}";</script>
+            <script language="javascript" type="text/javascript" src="${h.asset('js/rhodecode/routes.js', ver=c.rhodecode_version_hash)}"></script>
+            <script language="javascript" type="text/javascript" src="${h.asset('js/scripts.js', ver=c.rhodecode_version_hash)}"></script>
+            <script>CodeMirror.modeURL = "${h.asset('js/mode/%N/%N.js')}";</script>
 
             ## JAVASCRIPT EXTRA - optionally inject some extra JS for specificed templates
             ${self.js_extra()}

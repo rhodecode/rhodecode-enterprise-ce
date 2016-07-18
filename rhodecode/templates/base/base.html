@@ -7,7 +7,7 @@
       <div id="header-inner" class="wrapper">
           <div id="logo">
               <div class="logo-wrapper">
-                  <a href="${h.url('home')}"><img src="${h.url('/images/rhodecode-logo-white-216x60.png')}" alt="RhodeCode"/></a>
+                  <a href="${h.url('home')}"><img src="${h.asset('images/rhodecode-logo-white-216x60.png')}" alt="RhodeCode"/></a>
               </div>
               %if c.rhodecode_name:
                <div class="branding">- ${h.branding(c.rhodecode_name)}</div>
@@ -580,7 +580,7 @@
         % endif
 
     </script>
-    <script src="${h.url('/js/rhodecode/base/keyboard-bindings.js', ver=c.rhodecode_version_hash)}"></script>
+    <script src="${h.asset('js/rhodecode/base/keyboard-bindings.js', ver=c.rhodecode_version_hash)}"></script>
 </%def>
 
 <div class="modal" id="help_kb" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

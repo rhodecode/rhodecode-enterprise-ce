@@ -85,11 +85,14 @@ from rhodecode.model.settings import IssueTrackerSettingsModel
 
 log = logging.getLogger(__name__)
 
+
 DEFAULT_USER = User.DEFAULT_USER
 DEFAULT_USER_EMAIL = User.DEFAULT_USER_EMAIL
 
+
 def url(*args, **kw):
     return pylons_url(*args, **kw)
+
 
 def pylons_url_current(*args, **kw):
     """
@@ -103,6 +106,19 @@ def pylons_url_current(*args, **kw):
     return pylons_url.current(*args, **kw)
 
 url.current = pylons_url_current
+
+
+def asset(path, ver=None):
+    """
+    Helper to generate a static asset file path for rhodecode assets
+
+    eg. h.asset('images/image.png', ver='3923')
+
+    :param path: path of asset
+    :param ver: optional version query param to append as ?ver=
+    """
+    request = get_current_request()
+    return request.static_url('rhodecode:public/{}'.format(path), ver=ver)
 
 
 def html_escape(text, html_escape_table=None):
@@ -796,7 +812,7 @@ def email_or_none(author):
     else:
         user = User.get_by_username(
             author_name(author), case_insensitive=True, cache=True)
-    
+
     if user is not None:
             return user.email
 
