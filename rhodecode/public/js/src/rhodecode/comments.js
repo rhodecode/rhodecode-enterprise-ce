@@ -212,7 +212,9 @@ var injectInlineForm = function(tr){
 
     $.Topic('/ui/plugins/code/comment_form_built').prepareOrPublish({
         form:_form,
-        parent:_parent}
+        parent:_parent,
+        lineno: lineno,
+        f_path: f_path}
     );
 };
 
