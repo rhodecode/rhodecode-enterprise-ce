@@ -457,6 +457,8 @@ class TestCreateFilesUrl(object):
 
 class TestReferenceItems(object):
     repo = mock.Mock()
+    repo.name = 'pytest-repo'
+    repo_full_name = 'pytest-repo-group/' + repo.name
     ref_type = 'branch'
     fake_url = '/abcde/'
 
@@ -480,7 +482,8 @@ class TestReferenceItems(object):
 
         with url_patcher as url_mock, svn_patcher:
             result = controller._create_reference_items(
-                self.repo, refs, self.ref_type, self._format_function)
+                self.repo, self.repo_full_name, refs, self.ref_type,
+                self._format_function)
         assert len(result) == amount
         assert url_mock.call_count == amount
 
@@ -499,7 +502,8 @@ class TestReferenceItems(object):
 
         with url_patcher as url_mock, svn_patcher:
             result = controller._create_reference_items(
-                self.repo, refs, self.ref_type, self._format_function)
+                self.repo, self.repo_full_name, refs, self.ref_type,
+                self._format_function)
 
         url_mock.assert_called_once_with(self.repo, ref_name, ref_id, False)
         expected_result = [
