@@ -314,7 +314,8 @@ def includeme_first(config):
     config.add_view(favicon_redirect, route_name='favicon')
     config.add_route('favicon', '/favicon.ico')
 
-    config.add_static_view('_static', path='rhodecode:public')
+    config.add_static_view(
+        '_static', path='rhodecode:public', cache_max_age=3600 * 24)
 
 
 def wrap_app_in_wsgi_middlewares(pyramid_app, config):
