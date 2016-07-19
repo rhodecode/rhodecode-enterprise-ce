@@ -11,7 +11,7 @@ Here is a sample configuration file for using Apache as a reverse proxy.
 
             ## uncomment to serve static files by Apache
             ## ProxyPass /_static !
-            ## Alias /_static /path/to/rhodecode/installation/public
+            ## Alias /_static /path/to/.rccontrol/enterprise-1/static
 
             <Proxy *>
               Order allow,deny

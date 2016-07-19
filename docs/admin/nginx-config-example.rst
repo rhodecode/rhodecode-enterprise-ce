@@ -60,7 +60,7 @@ Use the following example to configure Nginx as a your web server.
 
         ## uncomment to serve static files by nginx
         # location /_static {
-        #    alias /path/to/rhodecode/installation/public;
+        #    alias /path/to/.rccontrol/enterprise-1/static;
         # }
 
         location / {
