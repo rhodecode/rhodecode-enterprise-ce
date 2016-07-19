@@ -407,31 +407,33 @@ class TestCreateFilesUrl(object):
         controller = summary.SummaryController()
         repo = mock.Mock()
         repo.name = 'abcde'
+        full_repo_name = 'test-repo-group/' + repo.name
         ref_name = 'branch1'
         raw_id = 'deadbeef0123456789'
         is_svn = False
 
         with mock.patch.object(summary.h, 'url') as url_mock:
             result = controller._create_files_url(
-                repo, ref_name, raw_id, is_svn)
+                repo, full_repo_name, ref_name, raw_id, is_svn)
         url_mock.assert_called_once_with(
-            'files_home', repo_name=repo.name, f_path='', revision=ref_name,
-            at=ref_name)
+            'files_home', repo_name=full_repo_name, f_path='',
+            revision=ref_name, at=ref_name)
         assert result == url_mock.return_value
 
     def test_creates_svn_url(self):
         controller = summary.SummaryController()
         repo = mock.Mock()
         repo.name = 'abcde'
+        full_repo_name = 'test-repo-group/' + repo.name
         ref_name = 'branch1'
         raw_id = 'deadbeef0123456789'
         is_svn = True
 
         with mock.patch.object(summary.h, 'url') as url_mock:
             result = controller._create_files_url(
-                repo, ref_name, raw_id, is_svn)
+                repo, full_repo_name, ref_name, raw_id, is_svn)
         url_mock.assert_called_once_with(
-            'files_home', repo_name=repo.name, f_path=ref_name,
+            'files_home', repo_name=full_repo_name, f_path=ref_name,
             revision=raw_id, at=ref_name)
         assert result == url_mock.return_value
 
@@ -439,15 +441,16 @@ class TestCreateFilesUrl(object):
         controller = summary.SummaryController()
         repo = mock.Mock()
         repo.name = 'abcde'
+        full_repo_name = 'test-repo-group/' + repo.name
         ref_name = 'branch1/branch2'
         raw_id = 'deadbeef0123456789'
         is_svn = False
 
         with mock.patch.object(summary.h, 'url') as url_mock:
             result = controller._create_files_url(
-                repo, ref_name, raw_id, is_svn)
+                repo, full_repo_name, ref_name, raw_id, is_svn)
         url_mock.assert_called_once_with(
-            'files_home', repo_name=repo.name, f_path='', revision=raw_id,
+            'files_home', repo_name=full_repo_name, f_path='', revision=raw_id,
             at=ref_name)
         assert result == url_mock.return_value
 
