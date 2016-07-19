@@ -56,11 +56,12 @@ Use the following example to configure Nginx as a your web server.
         ssl_ciphers DHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA:EDH-RSA-DES-CBC3-SHA:AES256-SHA:DES-CBC3-SHA:AES128-SHA:RC4-SHA:RC4-MD5;
         ssl_prefer_server_ciphers on;
 
-        ## uncomment root directive if you want to serve static files by nginx
-        ## requires static_files = false in .ini file
-        # root /path/to/rhodecode/installation/public;
-
         include         /etc/nginx/proxy.conf;
+
+        ## uncomment to serve static files by nginx
+        # location /_static {
+        #    alias /path/to/rhodecode/installation/public;
+        # }
 
         location / {
             try_files $uri @rhode;
