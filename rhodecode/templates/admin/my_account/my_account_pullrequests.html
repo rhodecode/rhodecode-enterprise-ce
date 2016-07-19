@@ -32,8 +32,10 @@
               <td class="td-status">
                 <div class="${'flag_status %s' % pull_request.calculated_review_status()} pull-left"></div>
               </td>
-              <td class="td-componentname">
-                ${h.link_to(pull_request.target_repo.repo_name,h.url('summary_home',repo_name=pull_request.target_repo.repo_name))}
+              <td class="truncate-wrap td-componentname">
+                <div class="truncate">
+                  ${h.link_to(pull_request.target_repo.repo_name,h.url('summary_home',repo_name=pull_request.target_repo.repo_name))}
+                </div>
               </td>
               <td class="user">
                 ${base.gravatar_with_user(pull_request.author.email, 16)}
@@ -94,8 +96,10 @@
               <td class="td-status">
                 <div class="${'flag_status %s' % pull_request.calculated_review_status()} pull-left"></div>
               </td>
-              <td class="td-componentname">
-                ${h.link_to(pull_request.target_repo.repo_name,h.url('summary_home',repo_name=pull_request.target_repo.repo_name))}
+              <td class="truncate-wrap td-componentname">
+                <div class="truncate">
+                  ${h.link_to(pull_request.target_repo.repo_name,h.url('summary_home',repo_name=pull_request.target_repo.repo_name))}
+                </div>
               </td>
               <td class="user">
                 ${base.gravatar_with_user(pull_request.author.email, 16)}

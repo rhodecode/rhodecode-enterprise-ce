@@ -310,12 +310,18 @@ ul.auth_plugins {
     .td-status {
         padding-left: .5em;
     }
-    .truncate {
+    .log-container .truncate {
         height: 2.75em;
         white-space: pre-line;
     }
     table.rctable .user {
         padding-left: 0;
+    }
+    table.rctable {
+        td.td-description,
+        .rc-user {
+            min-width: auto;
+        }
     }
 }
 
