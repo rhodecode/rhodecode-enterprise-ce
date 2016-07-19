@@ -35,7 +35,8 @@ $(document).ready(function() {
                   "type": Number}, title: "${_('Commit')}", className: "td-hash" }
       ],
       language: {
-          paginate: DEFAULT_GRID_PAGINATION
+          paginate: DEFAULT_GRID_PAGINATION,
+          emptyTable: "No repositories available yet."
       },
       "initComplete": function( settings, json ) {
           get_datatable_count();

@@ -108,7 +108,8 @@ $(document).ready(function() {
                   "sort": "updated_on_raw"}, title: "${_('Updated on')}", className: "td-time" }
       ],
       language: {
-            paginate: DEFAULT_GRID_PAGINATION
+            paginate: DEFAULT_GRID_PAGINATION,
+            emptyTable: "No pull requests available yet."
       },
       "drawCallback": function( settings, json ) {
           timeagoActivate();

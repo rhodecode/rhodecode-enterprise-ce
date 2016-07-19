@@ -118,7 +118,8 @@ $(document).ready(function() {
                   "sort": "expires"}, title: "${_("Expires")}", className: "td-exp" }
       ],
       language: {
-          paginate: DEFAULT_GRID_PAGINATION
+          paginate: DEFAULT_GRID_PAGINATION,
+          emptyTable: "No gists available yet."
       },
       "initComplete": function( settings, json ) {
           timeagoActivate();

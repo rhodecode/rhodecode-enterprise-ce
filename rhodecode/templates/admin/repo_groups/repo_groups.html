@@ -62,7 +62,8 @@ $(document).ready(function() {
                   "sort": "action"}, title: "${_('Action')}", className: "td-action" }
       ],
       language: {
-          paginate: DEFAULT_GRID_PAGINATION
+          paginate: DEFAULT_GRID_PAGINATION,
+          emptyTable: "No repository groups available yet."
       },
       "initComplete": function( settings, json ) {
           get_datatable_count();

@@ -67,7 +67,8 @@ $(document).ready(function() {
                   "sort": "compare"}, title: "${_('Compare')}", className: "td-compare" }
       ],
       language: {
-            paginate: DEFAULT_GRID_PAGINATION
+            paginate: DEFAULT_GRID_PAGINATION,
+          emptyTable: "No branches available yet."
       },
       "initComplete": function( settings, json ) {
           get_datatable_count();

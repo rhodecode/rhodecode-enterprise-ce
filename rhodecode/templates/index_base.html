@@ -102,7 +102,8 @@
                       "sort": "owner"}, title: "${_('Owner')}", className: "td-user" }
           ],
           language: {
-            paginate: DEFAULT_GRID_PAGINATION
+            paginate: DEFAULT_GRID_PAGINATION,
+            emptyTable: "No repository groups available yet."
           },
           "drawCallback": function( settings, json ) {
               timeagoActivate();
@@ -134,7 +135,8 @@
                       "sort": "rss"}, title: "rss", className: "td-rss" }
           ],
           language: {
-              paginate: DEFAULT_GRID_PAGINATION
+              paginate: DEFAULT_GRID_PAGINATION,
+              emptyTable: "No repositories available yet."
           },
           "drawCallback": function( settings, json ) {
               timeagoActivate();
