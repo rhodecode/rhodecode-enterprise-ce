@@ -236,7 +236,7 @@ class SummaryController(BaseRepoController):
             (_("Tag"), repo.tags, 'tag'),
             (_("Bookmark"), repo.bookmarks, 'book'),
         ]
-        res = self._create_reference_data(repo, refs_to_create)
+        res = self._create_reference_data(repo, repo_name, refs_to_create)
         data = {
             'more': False,
             'results': res
@@ -253,14 +253,14 @@ class SummaryController(BaseRepoController):
             # TODO: enable when vcs can handle bookmarks filters
             # (_("Bookmarks"), repo.bookmarks, "book"),
         ]
-        res = self._create_reference_data(repo, refs_to_create)
+        res = self._create_reference_data(repo, repo_name, refs_to_create)
         data = {
             'more': False,
             'results': res
         }
         return data
 
-    def _create_reference_data(self, repo, refs_to_create):
+    def _create_reference_data(self, repo, full_repo_name, refs_to_create):
         format_ref_id = utils.get_format_ref_id(repo)
 
         result = []
@@ -269,28 +269,32 @@ class SummaryController(BaseRepoController):
                 result.append({
                     'text': title,
                     'children': self._create_reference_items(
-                        repo, refs, ref_type, format_ref_id),
+                        repo, full_repo_name, refs, ref_type, format_ref_id),
                 })
         return result
 
-    def _create_reference_items(self, repo, refs, ref_type, format_ref_id):
+    def _create_reference_items(self, repo, full_repo_name, refs, ref_type,
+                                format_ref_id):
         result = []
         is_svn = h.is_svn(repo)
-        for name, raw_id in refs.iteritems():
+        for ref_name, raw_id in refs.iteritems():
+            files_url = self._create_files_url(
+                repo, full_repo_name, ref_name, raw_id, is_svn)
             result.append({
-                'text': name,
-                'id': format_ref_id(name, raw_id),
+                'text': ref_name,
+                'id': format_ref_id(ref_name, raw_id),
                 'raw_id': raw_id,
                 'type': ref_type,
-                'files_url': self._create_files_url(repo, name, raw_id, is_svn)
+                'files_url': files_url,
             })
         return result
 
-    def _create_files_url(self, repo, name, raw_id, is_svn):
-        use_commit_id = '/' in name or is_svn
+    def _create_files_url(self, repo, full_repo_name, ref_name, raw_id,
+                          is_svn):
+        use_commit_id = '/' in ref_name or is_svn
         return h.url(
             'files_home',
-            repo_name=repo.name,
-            f_path=name if is_svn else '',
-            revision=raw_id if use_commit_id else name,
-            at=name)
+            repo_name=full_repo_name,
+            f_path=ref_name if is_svn else '',
+            revision=raw_id if use_commit_id else ref_name,
+            at=ref_name)
