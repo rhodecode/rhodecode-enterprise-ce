@@ -47,7 +47,7 @@ var pyroutes = (function() {
       }
       return str_format.format.call(null, str_format.cache[arguments[0]], arguments);
     };
-  
+
     str_format.format = function(parse_tree, argv) {
       var cursor = 1,
                    tree_length = parse_tree.length,
@@ -81,7 +81,7 @@ var pyroutes = (function() {
           else { // positional argument (implicit)
               arg = argv[cursor++];
           }
-      
+
           if (/[^s]/.test(match[8]) && (get_type(arg) !== 'number')) {
               throw(sprintf('[sprintf] expecting number but found %s', get_type(arg)));
           }
@@ -108,9 +108,9 @@ var pyroutes = (function() {
       }
       return output.join('');
     };
-  
+
     str_format.cache = {};
-  
+
     str_format.parse = function(fmt) {
     var _fmt = fmt, match = [], parse_tree = [], arg_names = 0;
     while (_fmt) {
@@ -161,12 +161,20 @@ var pyroutes = (function() {
     };
     return str_format;
   })();
-  
+
   var vsprintf = function(fmt, argv) {
     argv.unshift(fmt);
     return sprintf.apply(null, argv);
   };
   return {
+    'asset': function(path, ver) {
+      var asset_url = ASSET_URL || '/_static/';
+      var ret = asset_url + path;
+      if (ver !== undefined) {
+        ret += '?ver=' + ver;
+      }
+      return ret;
+    },
     'url': function(route_name, params) {
       var result = route_name;
       if (typeof(params) !== 'object'){
@@ -179,18 +187,18 @@ var pyroutes = (function() {
             var param_name = route[1][i];
             if (!params.hasOwnProperty(param_name))
                 throw new Error(
-                    'parameter '+ 
-                    param_name + 
-                    ' is missing in route"' + 
+                    'parameter '+
+                    param_name +
+                    ' is missing in route"' +
                     route_name + '" generation');
         }
         result = sprintf(route[0], params);
-  
+
         var ret = [];
         // extra params => GET
         for (var param in params){
             if (route[1].indexOf(param) === -1){
-                ret.push(encodeURIComponent(param) + "=" + 
+                ret.push(encodeURIComponent(param) + "=" +
                 encodeURIComponent(params[param]));
             }
         }
@@ -202,7 +210,7 @@ var pyroutes = (function() {
             result = APPLICATION_URL + result;
         }
       }
-  
+
       return result;
     },
     'register': function(route_name, route_tmpl, req_params) {

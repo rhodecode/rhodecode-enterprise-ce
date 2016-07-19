@@ -56,6 +56,7 @@ c.template_context['visual']['default_renderer'] = h.get_visual_attr(c, 'default
             var REPO_TYPE = '';
             %endif
             var APPLICATION_URL = "${h.url('home').rstrip('/')}";
+            var ASSET_URL = "${h.asset('')}";
             var DEFAULT_RENDERER = "${h.get_visual_attr(c, 'default_renderer')}";
             var CSRF_TOKEN = "${getattr(c, 'csrf_token', '')}";
             % if getattr(c, 'rhodecode_user', None):
