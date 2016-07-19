@@ -302,9 +302,11 @@ class TestCreateReferenceData:
         repo = mock.Mock()
         repo.name = 'test-repo'
         repo.alias = 'git'
+        full_repo_name = 'pytest-repo-group/' + repo.name
         controller = summary.SummaryController()
 
-        result = controller._create_reference_data(repo, example_refs)
+        result = controller._create_reference_data(
+            repo, full_repo_name, example_refs)
 
         expected_result = [
             {
@@ -335,8 +337,10 @@ class TestCreateReferenceData:
         repo = mock.Mock()
         repo.name = 'test-repo'
         repo.alias = 'svn'
+        full_repo_name = 'pytest-repo-group/' + repo.name
         controller = summary.SummaryController()
-        result = controller._create_reference_data(repo, example_refs)
+        result = controller._create_reference_data(
+            repo, full_repo_name, example_refs)
 
         expected_result = [
             {
