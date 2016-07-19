@@ -123,8 +123,9 @@ let
       # pkgs/default.nix?
       passthru = {
         inherit
-          pythonLocalOverrides
-          myPythonPackagesUnfix;
+          linkNodeModules
+          myPythonPackagesUnfix
+          pythonLocalOverrides;
         pythonPackages = self;
       };
 
