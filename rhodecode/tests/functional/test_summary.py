@@ -308,16 +308,17 @@ class TestCreateReferenceData:
         result = controller._create_reference_data(
             repo, full_repo_name, example_refs)
 
+        expected_files_url = '/{}/files/'.format(full_repo_name)
         expected_result = [
             {
                 'children': [
                     {
                         'id': 'a', 'raw_id': 'a_id', 'text': 'a', 'type': 't1',
-                        'files_url': '/test-repo/files/a/?at=a'
+                        'files_url': expected_files_url + 'a/?at=a',
                     },
                     {
                         'id': 'b', 'raw_id': 'b_id', 'text': 'b', 'type': 't1',
-                        'files_url': '/test-repo/files/b/?at=b'
+                        'files_url': expected_files_url + 'b/?at=b',
                     }
                 ],
                 'text': 'section_1'
@@ -326,7 +327,7 @@ class TestCreateReferenceData:
                 'children': [
                     {
                         'id': 'c', 'raw_id': 'c_id', 'text': 'c', 'type': 't2',
-                        'files_url': '/test-repo/files/c/?at=c'
+                        'files_url': expected_files_url + 'c/?at=c',
                     }
                 ],
                 'text': 'section_2'
@@ -342,18 +343,19 @@ class TestCreateReferenceData:
         result = controller._create_reference_data(
             repo, full_repo_name, example_refs)
 
+        expected_files_url = '/{}/files/'.format(full_repo_name)
         expected_result = [
             {
                 'children': [
                     {
                         'id': 'a@a_id', 'raw_id': 'a_id',
                         'text': 'a', 'type': 't1',
-                        'files_url': '/test-repo/files/a_id/a?at=a'
+                        'files_url': expected_files_url + 'a_id/a?at=a',
                     },
                     {
                         'id': 'b@b_id', 'raw_id': 'b_id',
                         'text': 'b', 'type': 't1',
-                        'files_url': '/test-repo/files/b_id/b?at=b'
+                        'files_url': expected_files_url + 'b_id/b?at=b',
                     }
                 ],
                 'text': 'section_1'
@@ -363,7 +365,7 @@ class TestCreateReferenceData:
                     {
                         'id': 'c@c_id', 'raw_id': 'c_id',
                         'text': 'c', 'type': 't2',
-                        'files_url': '/test-repo/files/c_id/c?at=c'
+                        'files_url': expected_files_url + 'c_id/c?at=c',
                     }
                 ],
                 'text': 'section_2'
@@ -509,7 +511,8 @@ class TestReferenceItems(object):
                 self.repo, self.repo_full_name, refs, self.ref_type,
                 self._format_function)
 
-        url_mock.assert_called_once_with(self.repo, ref_name, ref_id, False)
+        url_mock.assert_called_once_with(
+            self.repo, self.repo_full_name, ref_name, ref_id, False)
         expected_result = [
             {
                 'text': ref_name,
