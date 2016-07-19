@@ -41,6 +41,7 @@ import routes.util
 import rhodecode
 import rhodecode.integrations # do not remove this as it registers celery tasks
 from rhodecode.config import patches
+from rhodecode.config.routing import STATIC_FILE_PREFIX
 from rhodecode.config.environment import (
     load_environment, load_pyramid_environment)
 from rhodecode.lib.middleware import csrf
@@ -52,6 +53,25 @@ from rhodecode.lib.plugins.utils import register_rhodecode_plugin
 
 
 log = logging.getLogger(__name__)
+
+
+# this is used to avoid avoid the route lookup overhead in routesmiddleware
+# for certain routes which won't go to pylons to - eg. static files, debugger
+# it is only needed for the pylons migration and can be removed once complete
+class SkippableRoutesMiddleware(RoutesMiddleware):
+    """ Routes middleware that allows you to skip prefixes """
+
+    def __init__(self, *args, **kw):
+        self.skip_prefixes = kw.pop('skip_prefixes', [])
+        super(SkippableRoutesMiddleware, self).__init__(*args, **kw)
+
+    def __call__(self, environ, start_response):
+        for prefix in self.skip_prefixes:
+            if environ['PATH_INFO'].startswith(prefix):
+                return self.app(environ, start_response)
+
+        return super(SkippableRoutesMiddleware, self).__call__(
+            environ, start_response)
 
 
 def make_app(global_conf, full_stack=True, static_files=True, **app_conf):
@@ -142,8 +162,8 @@ def make_pyramid_app(global_config, **settings):
 
     load_pyramid_environment(global_config, settings)
 
+    includeme_first(config)
     includeme(config)
-    includeme_last(config)
     pyramid_app = config.make_wsgi_app()
     pyramid_app = wrap_app_in_wsgi_middlewares(pyramid_app, config)
     return pyramid_app
@@ -285,19 +305,16 @@ def includeme(config):
     config.add_view(error_handler, context=HTTPError)
 
 
-def includeme_last(config):
-    """
-    The static file catchall needs to be last in the view configuration.
-    """
-    settings = config.registry.settings
-    config.add_static_view('_static', path='rhodecode:public')
-
+def includeme_first(config):
     # redirect automatic browser favicon.ico requests to correct place
     def favicon_redirect(context, request):
         return redirect(
             request.static_url('rhodecode:public/images/favicon.ico'))
+
     config.add_view(favicon_redirect, route_name='favicon')
     config.add_route('favicon', '/favicon.ico')
+
+    config.add_static_view('_static', path='rhodecode:public')
 
 
 def wrap_app_in_wsgi_middlewares(pyramid_app, config):
@@ -314,10 +331,10 @@ def wrap_app_in_wsgi_middlewares(pyramid_app, config):
     pyramid_app = HttpsFixup(pyramid_app, settings)
 
     # Add RoutesMiddleware to support the pylons compatibility tween during
-
     # migration to pyramid.
-    pyramid_app = RoutesMiddleware(
-        pyramid_app, config.registry._pylons_compat_config['routes.map'])
+    pyramid_app = SkippableRoutesMiddleware(
+        pyramid_app, config.registry._pylons_compat_config['routes.map'],
+        skip_prefixes=(STATIC_FILE_PREFIX, '/_debug_toolbar'))
 
     if asbool(settings.get('appenlight', 'false')):
         pyramid_app, _ = wrap_in_appenlight_if_enabled(

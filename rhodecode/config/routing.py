@@ -36,6 +36,7 @@ from rhodecode.config import routing_links
 
 # prefix for non repository related links needs to be prefixed with `/`
 ADMIN_PREFIX = '/_admin'
+STATIC_FILE_PREFIX = '/_static'
 
 # Default requirements for URL parts
 URL_NAME_REQUIREMENTS = {
