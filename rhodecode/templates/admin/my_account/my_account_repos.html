@@ -38,7 +38,7 @@ $(document).ready(function() {
       ],
       language: {
           paginate: DEFAULT_GRID_PAGINATION,
-          emptyTable: "No repositories available yet."
+          emptyTable: _gettext("No repositories available yet.")
       },
       "initComplete": function( settings, json ) {
           get_datatable_count();

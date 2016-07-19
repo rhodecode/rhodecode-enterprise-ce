@@ -67,7 +67,7 @@ $(document).ready(function() {
       ],
       language: {
           paginate: DEFAULT_GRID_PAGINATION,
-          emptyTable: "No user groups available yet."
+          emptyTable: _gettext("No user groups available yet.")
       },
       "initComplete": function( settings, json ) {
           get_datatable_count();
