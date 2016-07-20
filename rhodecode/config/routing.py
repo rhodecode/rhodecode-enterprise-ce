@@ -864,7 +864,7 @@ def make_map(config):
                  conditions={'function': check_repo, 'method': ['DELETE']},
                  requirements=URL_NAME_REQUIREMENTS, jsroute=True)
 
-    rmap.connect('changeset_info', '/changeset_info/{repo_name}/{revision}',
+    rmap.connect('changeset_info', '/{repo_name}/changeset_info/{revision}',
                  controller='changeset', action='changeset_info',
                  requirements=URL_NAME_REQUIREMENTS, jsroute=True)
 
