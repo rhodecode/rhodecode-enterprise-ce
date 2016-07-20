@@ -83,7 +83,8 @@ c.template_context['visual']['default_renderer'] = h.get_visual_attr(c, 'default
             <![endif]-->
             <script language="javascript" type="text/javascript" src="${h.asset('js/rhodecode/routes.js', ver=c.rhodecode_version_hash)}"></script>
             <script language="javascript" type="text/javascript" src="${h.asset('js/scripts.js', ver=c.rhodecode_version_hash)}"></script>
-            <script>CodeMirror.modeURL = "${h.asset('js/mode/%N/%N.js')}";</script>
+            ## avoide esaping the %N
+            <script>CodeMirror.modeURL = "${h.asset('') + 'js/mode/%N/%N.js'}";</script>
 
             ## JAVASCRIPT EXTRA - optionally inject some extra JS for specificed templates
             ${self.js_extra()}
