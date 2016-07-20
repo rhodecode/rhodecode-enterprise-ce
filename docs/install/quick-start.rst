@@ -1,7 +1,7 @@
 .. _quick-start:
 
-Quick Start Guide
-=================
+Quick Start Installation Guide
+==============================
 
 .. important::
 
