@@ -30,7 +30,7 @@ from rhodecode.lib.utils import is_valid_repo
 class SimpleSvnApp(object):
     IGNORED_HEADERS = [
         'connection', 'keep-alive', 'content-encoding',
-        'transfer-encoding']
+        'transfer-encoding', 'content-length']
 
     def __init__(self, config):
         self.config = config
