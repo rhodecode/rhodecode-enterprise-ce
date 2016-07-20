@@ -227,6 +227,12 @@ def error_handler(exception, request):
 def includeme(config):
     settings = config.registry.settings
 
+    # plugin information
+    config.registry.rhodecode_plugins = {}
+
+    config.add_directive(
+        'register_rhodecode_plugin', register_rhodecode_plugin)
+
     if asbool(settings.get('appenlight', 'false')):
         config.include('appenlight_client.ext.pyramid_tween')
 
@@ -249,11 +255,6 @@ def includeme(config):
     # Set the default renderer for HTML templates to mako.
     config.add_mako_renderer('.html')
 
-    # plugin information
-    config.registry.rhodecode_plugins = {}
-
-    config.add_directive(
-        'register_rhodecode_plugin', register_rhodecode_plugin)
     # include RhodeCode plugins
     includes = aslist(settings.get('rhodecode.includes', []))
     for inc in includes:
