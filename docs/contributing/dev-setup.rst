@@ -91,9 +91,9 @@ use the following steps:
 1. Create a copy of `~/rhodecode-enterprise-ce/configs/development.ini`
 2. Adjust the configuration settings to your needs
 
-   .. note::
+.. note::
 
-      It is recommended to use the name `dev.ini`.
+  It is recommended to use the name `dev.ini`.
 
 
 Setup the Development Database
@@ -124,17 +124,6 @@ files.
 Start the Development Server
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-First, set the `start.vcs_server` flag in the ``dev.ini`` file to true.
-For example:
-
-   .. code-block:: python
-
-      ### VCS CONFIG ###
-      ##################
-      vcs.start_server = true
-      vcs.server = localhost:9900
-      vcs.server.log_level = debug
-
 From the rhodecode-vcsserver directory, start the development server in another
 nix-shell, using the following command::
 
@@ -143,10 +132,13 @@ nix-shell, using the following command::
 In the adjacent nix-shell which you created for your development server, you may
 now start CE with the following command::
 
+
       rcserver dev.ini
 
-You may also wish to use the option `--reload` with this command so that any
-changes which you make in the code trigger an automatic refresh.
+.. note::
+
+  To automatically refresh - and recompile the frontend assets - when changes
+  are made in the source code, you can use the option `--reload`.
 
 
 Run the Environment Tests
