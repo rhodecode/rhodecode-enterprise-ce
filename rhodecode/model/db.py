@@ -49,7 +49,7 @@ from zope.cachedescriptors.property import Lazy as LazyProperty
 from pylons import url
 from pylons.i18n.translation import lazy_ugettext as _
 
-from rhodecode.lib.vcs import get_backend
+from rhodecode.lib.vcs import get_backend, get_vcs_instance
 from rhodecode.lib.vcs.utils.helpers import get_scm
 from rhodecode.lib.vcs.exceptions import VCSError
 from rhodecode.lib.vcs.backends.base import (
@@ -1986,27 +1986,16 @@ class Repository(Base, BaseModel):
         return repo
 
     def _get_instance(self, cache=True, config=None):
-        repo_full_path = self.repo_full_path
-        try:
-            vcs_alias = get_scm(repo_full_path)[0]
-            log.debug(
-                'Creating instance of %s repository from %s',
-                vcs_alias, repo_full_path)
-            backend = get_backend(vcs_alias)
-        except VCSError:
-            log.exception(
-                'Perhaps this repository is in db and not in '
-                'filesystem run rescan repositories with '
-                '"destroy old data" option from admin panel')
-            return
-
         config = config or self._config
         custom_wire = {
             'cache': cache  # controls the vcs.remote cache
         }
-        repo = backend(
-            safe_str(repo_full_path), config=config, create=False,
-            with_wire=custom_wire)
+
+        repo = get_vcs_instance(
+            repo_path=safe_str(self.repo_full_path),
+            config=config,
+            with_wire=custom_wire,
+            create=False)
 
         return repo
 
@@ -3399,10 +3388,9 @@ class Gist(Base, BaseModel):
     # SCM functions
 
     def scm_instance(self, **kwargs):
-        from rhodecode.lib.vcs import get_repo
-        base_path = self.base_path()
-        return get_repo(os.path.join(*map(safe_str,
-                                          [base_path, self.gist_access_id])))
+        full_repo_path = os.path.join(self.base_path(), self.gist_access_id)
+        return get_vcs_instance(
+            repo_path=safe_str(full_repo_path), create=False)
 
 
 class DbMigrateVersion(Base, BaseModel):
