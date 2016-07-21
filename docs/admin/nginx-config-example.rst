@@ -63,11 +63,30 @@ Use the following example to configure Nginx as a your web server.
         #    alias /path/to/.rccontrol/enterprise-1/static;
         # }
 
+        ## channel stream live components
+        location /_channelstream {
+            rewrite /_channelstream/(.*) /$1 break;
+            proxy_connect_timeout        10;
+            proxy_send_timeout           10m;
+            proxy_read_timeout           10m;
+            tcp_nodelay		             off;
+            proxy_pass                   http://127.0.0.1:9800;
+            proxy_set_header             Host $host;
+            proxy_set_header             X-Real-IP $remote_addr;
+            proxy_set_header	         X-Url-Scheme $scheme;
+            proxy_set_header	         X-Forwarded-Proto $scheme;
+            proxy_set_header 	         X-Forwarded-For $proxy_add_x_forwarded_for;
+            gzip                         off;
+            proxy_http_version           1.1;
+            proxy_set_header Upgrade     $http_upgrade;
+            proxy_set_header Connection  "upgrade";
+        }
+
         location / {
             try_files $uri @rhode;
         }
 
-       location @rhode {
-           proxy_pass      http://rc;
-       }
+        location @rhode {
+            proxy_pass      http://rc;
+        }
     }
