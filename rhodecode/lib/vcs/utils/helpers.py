@@ -38,39 +38,19 @@ from rhodecode.lib.vcs.exceptions import VCSError, VCSBackendNotSupportedError
 log = logging.getLogger(__name__)
 
 
-def get_scm(path, search_path_up=False, explicit_alias=None):
+def get_scm(path):
     """
     Returns one of alias from ``ALIASES`` (in order of precedence same as
-    shortcuts given in ``ALIASES``) and top working dir path for the given
+    shortcuts given in ``ALIASES``) and working dir path for the given
     argument. If no scm-specific directory is found or more than one scm is
     found at that directory, ``VCSError`` is raised.
-
-    :param search_path_up: if set to ``True``, this function would try to
-      move up to parent directory every time no scm is recognized for the
-      currently checked path. Default: ``False``.
-    :param explicit_alias: can be one of available backend aliases, when given
-      it will return given explicit alias in repositories under more than one
-      version control, if explicit_alias is different than found it will raise
-      VCSError
     """
     if not os.path.isdir(path):
         raise VCSError("Given path %s is not a directory" % path)
 
-    def get_scms(path):
-        return [(scm, path) for scm in get_scms_for_path(path)]
-
-    found_scms = get_scms(path)
-    while not found_scms and search_path_up:
-        newpath = os.path.abspath(os.path.join(path, os.pardir))
-        if newpath == path:
-            break
-        path = newpath
-        found_scms = get_scms(path)
+    found_scms = [(scm, path) for scm in get_scms_for_path(path)]
 
     if len(found_scms) > 1:
-        for scm in found_scms:
-            if scm[0] == explicit_alias:
-                return scm
         found = ', '.join((x[0] for x in found_scms))
         raise VCSError(
             'More than one [%s] scm found at given path %s' % (found, path))
