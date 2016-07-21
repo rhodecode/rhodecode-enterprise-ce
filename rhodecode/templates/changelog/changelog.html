@@ -97,14 +97,18 @@
           <div class="table">
             <table id="changesets" class="rctable">
                 <tr>
+                  ## checkbox
                   <th></th>
-                  <th></th>
-                  <th>${_('Author')}</th>
-                  <th>${_('Age')}</th>
+                  <th colspan="2"></th>
+
+                  <th>${_('Commit')}</th>
+                  ## commit message expand arrow
                   <th></th>
                   <th>${_('Commit Message')}</th>
-                  <th>${_('Commit')}</th>
-                  <th></th>
+
+                  <th>${_('Age')}</th>
+                  <th>${_('Author')}</th>
+
                   <th>${_('Refs')}</th>
                 </tr>
               <tbody>
@@ -128,26 +132,17 @@
                           </a>
                         %endif
                       </div>
+                    %else:
+                        <div class="tooltip flag_status not_reviewed" title="${_('Commit status: Not Reviewed')}"></div>
                     %endif
                     </td>
-                    <td class="td-user">
-                          ${self.gravatar_with_user(commit.author)}
+                    <td class="td-comments comments-col">
+                    %if c.comments.get(commit.raw_id):
+                      <a title="${_('Commit has comments')}" href="${h.url('changeset_home',repo_name=c.repo_name,revision=commit.raw_id,anchor='comment-%s' % c.comments[commit.raw_id][0].comment_id)}">
+                          <i class="icon-comment icon-comment-colored"></i> ${len(c.comments[commit.raw_id])}
+                      </a>
+                    %endif
                     </td>
-                    <td class="td-time">
-                        ${h.age_component(commit.date)}
-                    </td>
-
-                    <td class="td-message expand_commit" data-commit-id="${commit.raw_id}" title="${_('Expand commit message')}">
-                      <div class="show_more_col">
-                        <i class="show_more"></i>&nbsp;
-                      </div>
-                    </td>
-                    <td class="mid td-description">
-                      <div class="log-container truncate-wrap">
-                          <div class="message truncate" id="c-${commit.raw_id}">${h.urlify_commit_message(commit.message, c.repo_name)}</div>
-                      </div>
-                      </td>
-
                     <td class="td-hash">
                     <code>
                       <a href="${h.url('changeset_home',repo_name=c.repo_name,revision=commit.raw_id)}">
@@ -155,13 +150,22 @@
                       </a>
                     </code>
                     </td>
+                    <td class="td-message expand_commit" data-commit-id="${commit.raw_id}" title="${_('Expand commit message')}">
+                      <div class="show_more_col">
+                        <i class="show_more"></i>&nbsp;
+                      </div>
+                    </td>
+                    <td class="td-description mid">
+                      <div class="log-container truncate-wrap">
+                          <div class="message truncate" id="c-${commit.raw_id}">${h.urlify_commit_message(commit.message, c.repo_name)}</div>
+                      </div>
+                      </td>
 
-                    <td class="td-comments comments-col">
-                    %if c.comments.get(commit.raw_id):
-                      <a title="${_('Commit has comments')}" href="${h.url('changeset_home',repo_name=c.repo_name,revision=commit.raw_id,anchor='comment-%s' % c.comments[commit.raw_id][0].comment_id)}">
-                          ${len(c.comments[commit.raw_id])} <i class="icon-comment icon-comment-colored"></i>
-                      </a>
-                    %endif
+                    <td class="td-time">
+                        ${h.age_component(commit.date)}
+                    </td>
+                    <td class="td-user">
+                        ${self.gravatar_with_user(commit.author)}
                     </td>
 
                     <td class="td-tags tags-col truncate-wrap">

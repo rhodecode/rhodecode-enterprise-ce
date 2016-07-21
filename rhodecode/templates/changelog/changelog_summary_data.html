@@ -3,8 +3,9 @@
 %if c.repo_commits:
 <table class="rctable repo_summary table_disp">
     <tr>
-        <th>${_('Commit')}</th>
+
         <th class="status" colspan="2"></th>
+        <th>${_('Commit')}</th>
         <th>${_('Commit message')}</th>
         <th>${_('Age')}</th>
         <th>${_('Author')}</th>
@@ -12,39 +13,45 @@
     </tr>
 %for cnt,cs in enumerate(c.repo_commits):
     <tr class="parity${cnt%2}">
+
+        <td class="td-status">
+            %if c.statuses.get(cs.raw_id):
+                <div class="changeset-status-ico shortlog">
+                    %if c.statuses.get(cs.raw_id)[2]:
+                    <a class="tooltip" title="${_('Commit status: %s\nClick to open associated pull request #%s') % (c.statuses.get(cs.raw_id)[0], c.statuses.get(cs.raw_id)[2])}" href="${h.url('pullrequest_show',repo_name=c.statuses.get(cs.raw_id)[3],pull_request_id=c.statuses.get(cs.raw_id)[2])}">
+                        <div class="${'flag_status %s' % c.statuses.get(cs.raw_id)[0]}"></div>
+                    </a>
+                    %else:
+                    <a class="tooltip" title="${_('Commit status: %s') % h.commit_status_lbl(c.statuses.get(cs.raw_id)[0])}" href="${h.url('changeset_home',repo_name=c.repo_name,revision=cs.raw_id,anchor='comment-%s' % c.comments[cs.raw_id][0].comment_id)}">
+                        <div class="${'flag_status %s' % c.statuses.get(cs.raw_id)[0]}"></div>
+                    </a>
+                    %endif
+                </div>
+            %else:
+                <div class="tooltip flag_status not_reviewed" title="${_('Commit status: Not Reviewed')}"></div>
+            %endif
+        </td>
+        <td class="td-comments">
+            %if c.comments.get(cs.raw_id,[]):
+            <a title="${_('Commit has comments')}" href="${h.url('changeset_home',repo_name=c.repo_name,revision=cs.raw_id,anchor='comment-%s' % c.comments[cs.raw_id][0].comment_id)}">
+                <i class="icon-comment icon-comment-colored"></i> ${len(c.comments[cs.raw_id])}
+            </a>
+            %endif
+        </td>
         <td class="td-commit">
             <pre><a href="${h.url('changeset_home', repo_name=c.repo_name, revision=cs.raw_id)}">${h.show_id(cs)}</a></pre>
-        </td>
-        <td class="td-status">
-              %if c.statuses.get(cs.raw_id):
-                <div class="changeset-status-ico shortlog">
-                %if c.statuses.get(cs.raw_id)[2]:
-                  <a class="tooltip" title="${_('Commit status: %s\nClick to open associated pull request #%s') % (c.statuses.get(cs.raw_id)[0], c.statuses.get(cs.raw_id)[2])}" href="${h.url('pullrequest_show',repo_name=c.statuses.get(cs.raw_id)[3],pull_request_id=c.statuses.get(cs.raw_id)[2])}">
-                    <div class="${'flag_status %s' % c.statuses.get(cs.raw_id)[0]}"></div>
-                  </a>
-                %else:
-                  <div class="${'flag_status %s' % c.statuses.get(cs.raw_id)[0]}"></div>
-                %endif
-                </div>
-              %endif
-          </td>
-          <td class="td-comments">
-              %if c.comments.get(cs.raw_id,[]):
-                 <a title="${_('Commit has comments')}" href="${h.url('changeset_home',repo_name=c.repo_name,revision=cs.raw_id,anchor='comment-%s' % c.comments[cs.raw_id][0].comment_id)}">
-                     <i class="icon-comment icon-comment-colored"></i> ${len(c.comments[cs.raw_id])}
-                  </a>
-              %endif
         </td>
         <td class="td-message">
             ${h.urlify_commit_message(h.truncate(cs.message, 50), c.repo_name)}
         </td>
+
         <td class="td-time">
             ${h.age_component(cs.date)}
         </td>
-
         <td class="td-user author">
             ${base.gravatar_with_user(cs.author)}
         </td>
+
         <td class="td-tags truncate-wrap">
           <div class="truncate tags-truncate"><div class="autoexpand">
             %if h.is_hg(c.rhodecode_repo):
