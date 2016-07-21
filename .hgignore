@@ -25,6 +25,7 @@ syntax: regexp
 ^build/
 ^coverage\.xml$
 ^data$
+^\.eggs/
 ^configs/data$
 ^dev.ini$
 ^acceptance_tests/dev.*\.ini$
