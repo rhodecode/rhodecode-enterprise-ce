@@ -38,7 +38,7 @@ import os
 import pytest
 
 from rhodecode.lib.vcs import create_vcsserver_proxy
-from rhodecode.lib.vcs.backends import get_repo, get_backend
+from rhodecode.lib.vcs.backends import get_backend, get_vcs_instance
 from rhodecode.tests import TEST_HG_REPO, TEST_GIT_REPO
 
 
@@ -54,7 +54,7 @@ def repo(request, pylonsapp):
         'hg': TEST_HG_REPO,
         'git': TEST_GIT_REPO,
     }
-    repo = get_repo(repos[request.param])
+    repo = get_vcs_instance(repos[request.param])
     return repo
 
 

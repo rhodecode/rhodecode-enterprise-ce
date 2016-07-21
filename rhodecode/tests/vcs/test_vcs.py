@@ -22,14 +22,16 @@
 Tests for main module's methods.
 """
 
+import mock
 import os
 import shutil
+import tempfile
 
 import pytest
 
-from rhodecode.lib.vcs import VCSError, get_repo, get_backend
+from rhodecode.lib.vcs import VCSError, get_backend, get_vcs_instance
 from rhodecode.lib.vcs.backends.hg import MercurialRepository
-from rhodecode.tests import TEST_HG_REPO, TEST_GIT_REPO, TESTS_TMP_PATH
+from rhodecode.tests import TEST_HG_REPO, TEST_GIT_REPO
 
 
 pytestmark = pytest.mark.usefixtures("pylonsapp")
@@ -62,53 +64,81 @@ def test_wrong_alias():
         get_backend(alias)
 
 
-def test_get_repo():
-    alias = 'hg'
-    path = TEST_HG_REPO
-    backend = get_backend(alias)
-    repo = backend(path)
+def test_get_vcs_instance_by_path(vcs_repo):
+    repo = get_vcs_instance(vcs_repo.path)
 
-    assert repo.__class__, get_repo(path == alias).__class__
-    assert repo.path, get_repo(path == alias).path
-
-
-def test_get_repo_autoalias_hg():
-    alias = 'hg'
-    path = TEST_HG_REPO
-    backend = get_backend(alias)
-    repo = backend(path)
-
-    assert repo.__class__ == get_repo(path).__class__
-    assert repo.path == get_repo(path).path
+    assert repo.__class__ == vcs_repo.__class__
+    assert repo.path == vcs_repo.path
+    assert repo.alias == vcs_repo.alias
+    assert repo.name == vcs_repo.name
 
 
-def test_get_repo_autoalias_git():
-    alias = 'git'
-    path = TEST_GIT_REPO
-    backend = get_backend(alias)
-    repo = backend(path)
+@mock.patch('rhodecode.lib.vcs.backends.get_scm')
+@mock.patch('rhodecode.lib.vcs.backends.get_backend')
+def test_get_vcs_instance_by_path_args_passed(
+        get_backend_mock, get_scm_mock):
+    """
+    Test that the arguments passed to ``get_vcs_instance_by_path`` are
+    forewarded to the vcs backend class.
+    """
+    backend = mock.MagicMock()
+    get_backend_mock.return_value = backend
+    args = ['these-are-test-args', 0, True, None]
+    get_vcs_instance(TEST_HG_REPO, *args)
 
-    assert repo.__class__ == get_repo(path).__class__
-    assert repo.path == get_repo(path).path
-
-
-def test_get_repo_err():
-    blank_repo_path = os.path.join(TESTS_TMP_PATH, 'blank-error-repo')
-    if os.path.isdir(blank_repo_path):
-        shutil.rmtree(blank_repo_path)
-
-    os.mkdir(blank_repo_path)
-    pytest.raises(VCSError, get_repo, blank_repo_path)
-    pytest.raises(VCSError, get_repo, blank_repo_path + 'non_existing')
+    backend.assert_called_with(*args, repo_path=TEST_HG_REPO)
 
 
-def test_get_repo_multialias():
-    multialias_repo_path = os.path.join(TESTS_TMP_PATH, 'hg-git-repo')
-    if os.path.isdir(multialias_repo_path):
-        shutil.rmtree(multialias_repo_path)
+@mock.patch('rhodecode.lib.vcs.backends.get_scm')
+@mock.patch('rhodecode.lib.vcs.backends.get_backend')
+def test_get_vcs_instance_by_path_kwargs_passed(
+        get_backend_mock, get_scm_mock):
+    """
+    Test that the keyword arguments passed to ``get_vcs_instance_by_path`` are
+    forewarded to the vcs backend class.
+    """
+    backend = mock.MagicMock()
+    get_backend_mock.return_value = backend
+    kwargs = {
+        'foo': 'these-are-test-args',
+        'bar': 0,
+        'baz': True,
+        'foobar': None
+    }
+    get_vcs_instance(TEST_HG_REPO, **kwargs)
 
-    os.mkdir(multialias_repo_path)
+    backend.assert_called_with(repo_path=TEST_HG_REPO, **kwargs)
 
-    os.mkdir(os.path.join(multialias_repo_path, '.git'))
-    os.mkdir(os.path.join(multialias_repo_path, '.hg'))
-    pytest.raises(VCSError, get_repo, multialias_repo_path)
+
+def test_get_vcs_instance_by_path_err(request):
+    """
+    Test that ``get_vcs_instance_by_path`` returns None if a path is passed
+    to an empty directory.
+    """
+    empty_dir = tempfile.mkdtemp(prefix='pytest-empty-dir-')
+
+    def fin():
+        shutil.rmtree(empty_dir)
+    request.addfinalizer(fin)
+
+    repo = get_vcs_instance(empty_dir)
+
+    assert repo is None
+
+
+def test_get_vcs_instance_by_path_multiple_repos(request):
+    """
+    Test that ``get_vcs_instance_by_path`` returns None if a path is passed
+    to a directory with multiple repositories.
+    """
+    empty_dir = tempfile.mkdtemp(prefix='pytest-empty-dir-')
+    os.mkdir(os.path.join(empty_dir, '.git'))
+    os.mkdir(os.path.join(empty_dir, '.hg'))
+
+    def fin():
+        shutil.rmtree(empty_dir)
+    request.addfinalizer(fin)
+
+    repo = get_vcs_instance(empty_dir)
+
+    assert repo is None
