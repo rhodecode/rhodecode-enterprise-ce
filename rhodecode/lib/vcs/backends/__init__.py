@@ -22,7 +22,8 @@
 VCS Backends module
 """
 
-import os
+import logging
+
 from pprint import pformat
 
 from rhodecode.lib.vcs.conf import settings
@@ -31,31 +32,29 @@ from rhodecode.lib.vcs.utils.helpers import get_scm
 from rhodecode.lib.vcs.utils.imports import import_class
 
 
-def get_repo(path=None, alias=None, create=False):
-    """
-    Returns ``Repository`` object of type linked with given ``alias`` at
-    the specified ``path``. If ``alias`` is not given it will try to guess it
-    using get_scm method
-    """
-    if create:
-        if not (path or alias):
-            raise TypeError(
-                "If create is specified, we need path and scm type")
-        return get_backend(alias)(path, create=True)
-    if path is None:
-        path = os.path.abspath(os.path.curdir)
-    try:
-        scm, path = get_scm(path, search_path_up=True)
-        path = os.path.abspath(path)
-        alias = scm
-    except VCSError:
-        raise VCSError("No scm found at %s" % path)
-    if alias is None:
-        alias = get_scm(path)[0]
+log = logging.getLogger(__name__)
 
-    backend = get_backend(alias)
-    repo = backend(path, create=create)
-    return repo
+
+def get_vcs_instance(repo_path, *args, **kwargs):
+    """
+    Given a path to a repository an instance of the corresponding vcs backend
+    repository class is created and returned. If no repository can be found
+    for the path it returns None. Arguments and keyword arguments are passed
+    to the vcs backend repository class.
+    """
+    try:
+        vcs_alias = get_scm(repo_path)[0]
+        log.debug(
+            'Creating instance of %s repository from %s', vcs_alias, repo_path)
+        backend = get_backend(vcs_alias)
+    except VCSError:
+        log.exception(
+            'Perhaps this repository is in db and not in '
+            'filesystem run rescan repositories with '
+            '"destroy old data" option from admin panel')
+        return None
+
+    return backend(repo_path=repo_path, *args, **kwargs)
 
 
 def get_backend(alias):

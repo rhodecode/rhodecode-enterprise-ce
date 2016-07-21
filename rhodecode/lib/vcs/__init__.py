@@ -29,7 +29,7 @@ VERSION = (0, 5, 0, 'dev')
 __version__ = '.'.join((str(each) for each in VERSION[:4]))
 
 __all__ = [
-    'get_version', 'get_repo', 'get_backend',
+    'get_version', 'get_vcs_instance', 'get_backend',
     'VCSError', 'RepositoryError', 'CommitError'
     ]
 
@@ -44,7 +44,7 @@ import Pyro4
 from Pyro4.errors import CommunicationError
 
 from rhodecode.lib.vcs.conf import settings
-from rhodecode.lib.vcs.backends import get_repo, get_backend
+from rhodecode.lib.vcs.backends import get_vcs_instance, get_backend
 from rhodecode.lib.vcs.exceptions import (
     VCSError, RepositoryError, CommitError)
 
