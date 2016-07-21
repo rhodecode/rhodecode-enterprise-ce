@@ -45,7 +45,6 @@ in enterprise.override (attrs: {
       bumpversion
       invoke
       ipdb
-      locustio
     ]);
 
   shellHook = attrs.shellHook +

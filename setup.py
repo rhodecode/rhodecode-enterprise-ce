@@ -116,7 +116,6 @@ test_requirements = [
     'cssselect',
     'flake8',
     'lxml',
-    'locustio',
     'mock',
     'pytest',
     'pytest-cov',
