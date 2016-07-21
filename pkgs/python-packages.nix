@@ -1353,7 +1353,7 @@
   };
   rhodecode-enterprise-ce = super.buildPythonPackage {
     name = "rhodecode-enterprise-ce-4.3.0";
-    buildInputs = with self; [WebTest configobj cssselect flake8 lxml locustio mock pytest pytest-cov pytest-runner];
+    buildInputs = with self; [WebTest configobj cssselect flake8 lxml mock pytest pytest-cov pytest-runner];
     doCheck = true;
     propagatedBuildInputs = with self; [Babel Beaker FormEncode Mako Markdown MarkupSafe MySQL-python Paste PasteDeploy PasteScript Pygments Pylons Pyro4 Routes SQLAlchemy Tempita URLObject WebError WebHelpers WebHelpers2 WebOb WebTest Whoosh alembic amqplib anyjson appenlight-client authomatic backport-ipaddress celery colander decorator docutils gunicorn infrae.cache ipython iso8601 kombu msgpack-python packaging psycopg2 py-gfm pycrypto pycurl pyparsing pyramid pyramid-debugtoolbar pyramid-mako pyramid-beaker pysqlite python-dateutil python-ldap python-memcached python-pam recaptcha-client repoze.lru requests simplejson waitress zope.cachedescriptors dogpile.cache dogpile.core psutil py-bcrypt];
     src = ./.;
@@ -1637,69 +1637,5 @@
 
 ### Test requirements
 
-  Werkzeug = super.buildPythonPackage {
-    name = "Werkzeug-0.11.10";
-    buildInputs = with self; [];
-    doCheck = false;
-    propagatedBuildInputs = with self; [];
-    src = fetchurl {
-      url = "https://pypi.python.org/packages/b7/7f/44d3cfe5a12ba002b253f6985a4477edfa66da53787a2a838a40f6415263/Werkzeug-0.11.10.tar.gz";
-      md5 = "780967186f9157e88f2bfbfa6f07a893";
-    };
-    meta = {
-      license = [ pkgs.lib.licenses.bsdOriginal ];
-    };
-  };
-  flask = super.buildPythonPackage {
-    name = "flask-0.11.1";
-    buildInputs = with self; [];
-    doCheck = false;
-    propagatedBuildInputs = with self; [Werkzeug Jinja2 itsdangerous click];
-    src = fetchurl {
-      url = "https://pypi.python.org/packages/55/8a/78e165d30f0c8bb5d57c429a30ee5749825ed461ad6c959688872643ffb3/Flask-0.11.1.tar.gz";
-      md5 = "d2af95d8fe79cf7da099f062dd122a08";
-    };
-    meta = {
-      license = [ pkgs.lib.licenses.bsdOriginal ];
-    };
-  };
-  gevent = super.buildPythonPackage {
-    name = "gevent-1.1.1";
-    buildInputs = with self; [];
-    doCheck = false;
-    propagatedBuildInputs = with self; [greenlet];
-    src = fetchurl {
-      url = "https://pypi.python.org/packages/12/dc/0b2e57823225de86f6e111a65d212c9e3b64847dddaa19691a6cb94b0b2e/gevent-1.1.1.tar.gz";
-      md5 = "1532f5396ab4d07a231f1935483be7c3";
-    };
-    meta = {
-      license = [ pkgs.lib.licenses.mit ];
-    };
-  };
-  greenlet = super.buildPythonPackage {
-    name = "greenlet-0.4.10";
-    buildInputs = with self; [];
-    doCheck = false;
-    propagatedBuildInputs = with self; [];
-    src = fetchurl {
-      url = "https://pypi.python.org/packages/67/62/ca2a95648666eaa2ffeb6a9b3964f21d419ae27f82f2e66b53da5b943fc4/greenlet-0.4.10.zip";
-      md5 = "bed0c4b3b896702131f4d5c72f87c41d";
-    };
-    meta = {
-      license = [ pkgs.lib.licenses.mit ];
-    };
-  };
-  locustio = super.buildPythonPackage {
-    name = "locustio-0.7.5";
-    buildInputs = with self; [];
-    doCheck = false;
-    propagatedBuildInputs = with self; [gevent flask requests msgpack-python];
-    src = fetchurl {
-      url = "https://pypi.python.org/packages/82/88/476964bdc9dbfdc2cce305a12cf554f9a57ed55a87ff4718c38a2fbdf1ba/locustio-0.7.5.tar.gz";
-      md5 = "ce39e6a899072a5d2ae010d4d3530e0d";
-    };
-    meta = {
-      license = [ pkgs.lib.licenses.mit ];
-    };
-  };
+  
 }
