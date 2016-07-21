@@ -43,6 +43,27 @@ class GeventCurlMulti(object):
     """
     Wrapper around pycurl.CurlMulti that integrates it into gevent's event
     loop.
+
+    Parts of this class are a modified version of code copied from the Tornado
+    Web Server project which is licensed under the Apache License, Version 2.0
+    (the "License"). To be more specific the code originates from this file:
+    https://github.com/tornadoweb/tornado/blob/stable/tornado/curl_httpclient.py
+
+    This is the original license header of the origin:
+
+        Copyright 2009 Facebook
+
+        Licensed under the Apache License, Version 2.0 (the "License"); you may
+        not use this file except in compliance with the License. You may obtain
+        a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+        Unless required by applicable law or agreed to in writing, software
+        distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+        implied. See the License for the specific language governing
+        permissions and limitations under the License.
     """
 
     def __init__(self, loop=None):
