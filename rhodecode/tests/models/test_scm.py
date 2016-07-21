@@ -51,7 +51,7 @@ def test_scm_instance_config(backend):
 def test__get_instance_config(backend):
     repo = backend.create_repo()
     vcs_class = Mock()
-    with patch.multiple('rhodecode.model.db',
+    with patch.multiple('rhodecode.lib.vcs.backends',
                         get_scm=DEFAULT,
                         get_backend=DEFAULT) as mocks:
         mocks['get_scm'].return_value = backend.alias
@@ -59,13 +59,13 @@ def test__get_instance_config(backend):
         with patch('rhodecode.model.db.Repository._config') as config_mock:
             repo._get_instance()
             vcs_class.assert_called_with(
-                repo.repo_full_path, config=config_mock, create=False,
-                with_wire={'cache': True})
+                repo_path=repo.repo_full_path, config=config_mock,
+                create=False, with_wire={'cache': True})
 
         new_config = {'override': 'old_config'}
         repo._get_instance(config=new_config)
         vcs_class.assert_called_with(
-            repo.repo_full_path, config=new_config, create=False,
+            repo_path=repo.repo_full_path, config=new_config, create=False,
             with_wire={'cache': True})
 
 
