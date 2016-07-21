@@ -19,13 +19,11 @@
 # and proprietary license terms, please see https://rhodecode.com/licenses/
 
 import re
-import os
 
 import mock
 import pytest
 
 from rhodecode.controllers import summary
-from rhodecode.lib import vcs
 from rhodecode.lib import helpers as h
 from rhodecode.lib.compat import OrderedDict
 from rhodecode.lib.vcs.exceptions import RepositoryRequirementError
@@ -34,9 +32,9 @@ from rhodecode.model.meta import Session
 from rhodecode.model.repo import RepoModel
 from rhodecode.model.scm import ScmModel
 from rhodecode.tests import (
-    TestController, url, HG_REPO, assert_session_flash, TESTS_TMP_PATH)
+    TestController, url, HG_REPO, assert_session_flash)
 from rhodecode.tests.fixture import Fixture
-from rhodecode.tests.utils import AssertResponse
+from rhodecode.tests.utils import AssertResponse, repo_on_filesystem
 
 
 fixture = Fixture()
@@ -398,14 +396,6 @@ class TestRepoLocation:
         response = self.app.get(url('repo_check_home', repo_name=repo_name))
         assert_session_flash(
             response, 'The repository at %s cannot be located.' % repo_name)
-
-
-def repo_on_filesystem(repo_name):
-    try:
-        vcs.get_repo(os.path.join(TESTS_TMP_PATH, repo_name))
-        return True
-    except Exception:
-        return False
 
 
 class TestCreateFilesUrl(object):

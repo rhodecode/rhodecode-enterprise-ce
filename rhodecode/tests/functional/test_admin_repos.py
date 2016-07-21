@@ -18,14 +18,12 @@
 # RhodeCode Enterprise Edition, including its added features, Support services,
 # and proprietary license terms, please see https://rhodecode.com/licenses/
 
-import os
 import urllib
 
 import mock
 import pytest
 
 from rhodecode.lib import auth
-from rhodecode.lib import vcs
 from rhodecode.lib.utils2 import safe_str, str2bool
 from rhodecode.lib.vcs.exceptions import RepositoryRequirementError
 from rhodecode.model.db import Repository, RepoGroup, UserRepoToPerm, User,\
@@ -38,9 +36,9 @@ from rhodecode.model.user import UserModel
 from rhodecode.tests import (
     login_user_session, url, assert_session_flash, TEST_USER_ADMIN_LOGIN,
     TEST_USER_REGULAR_LOGIN, TEST_USER_REGULAR_PASS, HG_REPO, GIT_REPO,
-    TESTS_TMP_PATH, logout_user_session)
+    logout_user_session)
 from rhodecode.tests.fixture import Fixture, error_function
-from rhodecode.tests.utils import AssertResponse
+from rhodecode.tests.utils import AssertResponse, repo_on_filesystem
 
 fixture = Fixture()
 
@@ -1241,14 +1239,6 @@ class TestVcsSettings(object):
         repo_element = assert_response.get_element(repo_css_selector)
         global_element = assert_response.get_element(global_css_selector)
         assert repo_element.value == global_element.value
-
-
-def repo_on_filesystem(repo_name):
-    try:
-        vcs.get_repo(os.path.join(TESTS_TMP_PATH, repo_name))
-        return True
-    except Exception:
-        return False
 
 
 def _get_permission_for_user(user, repo):

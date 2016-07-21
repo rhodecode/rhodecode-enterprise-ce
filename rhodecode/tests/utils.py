@@ -283,3 +283,11 @@ def get_session_from_response(response):
     """
     # TODO: Try to look up the session key also.
     return response.request.environ['beaker.session']
+
+
+def repo_on_filesystem(repo_name):
+    from rhodecode.lib import vcs
+    from rhodecode.tests import TESTS_TMP_PATH
+    repo = vcs.get_vcs_instance(
+        os.path.join(TESTS_TMP_PATH, repo_name), create=False)
+    return repo is not None
