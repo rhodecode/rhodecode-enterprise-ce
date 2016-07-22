@@ -41,8 +41,11 @@
         <td class="td-commit">
             <pre><a href="${h.url('changeset_home', repo_name=c.repo_name, revision=cs.raw_id)}">${h.show_id(cs)}</a></pre>
         </td>
-        <td class="td-message">
-            ${h.urlify_commit_message(h.truncate(cs.message, 50), c.repo_name)}
+
+        <td class="td-description mid">
+          <div class="log-container truncate-wrap">
+              <div class="message truncate" id="c-${cs.raw_id}">${h.urlify_commit_message(cs.message, c.repo_name)}</div>
+          </div>
         </td>
 
         <td class="td-time">
