@@ -958,8 +958,10 @@ class PartialRenderer(object):
 
 
 def password_changed(auth_user, session):
-    if auth_user.username == User.DEFAULT_USER:
+    # Never report password change in case of default user or anonymous user.
+    if auth_user.username == User.DEFAULT_USER or auth_user.user_id is None:
         return False
+
     password_hash = md5(auth_user.password) if auth_user.password else None
     rhodecode_user = session.get('rhodecode_user', {})
     session_password_hash = rhodecode_user.get('password', '')
