@@ -83,9 +83,6 @@ class UsersController(BaseController):
         from rhodecode.lib.utils import PartialRenderer
         _render = PartialRenderer('data_table/_dt_elements.html')
 
-        def grav_tmpl(user_email, size):
-            return _render("user_gravatar", user_email, size)
-
         def username(user_id, username):
             return _render("user_name", user_id, username)
 
