@@ -352,17 +352,17 @@ def is_valid_repo_group(repo_group_name, base_path, skip_path_check=False):
     return False
 
 
-def ask_ok(prompt, retries=4, complaint='Yes or no please!'):
+def ask_ok(prompt, retries=4, complaint='[y]es or [n]o please!'):
     while True:
         ok = raw_input(prompt)
-        if ok in ('y', 'ye', 'yes'):
+        if ok.lower() in ('y', 'ye', 'yes'):
             return True
-        if ok in ('n', 'no', 'nop', 'nope'):
+        if ok.lower() in ('n', 'no', 'nop', 'nope'):
             return False
         retries = retries - 1
         if retries < 0:
             raise IOError
-        print complaint
+        print(complaint)
 
 # propagated from mercurial documentation
 ui_sections = [
