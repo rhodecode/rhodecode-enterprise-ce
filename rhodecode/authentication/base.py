@@ -573,8 +573,8 @@ def authenticate(username, password, environ=None, auth_type=None,
         # get instance of cache manager configured for a namespace
         cache_manager = get_auth_cache_manager(custom_ttl=_cache_ttl)
 
-        log.debug('Cache for plugin `%s` active: %s', plugin.get_id(),
-                  plugin_cache_active)
+        log.debug('AUTH_CACHE_TTL for plugin `%s` active: %s (TTL: %s)',
+                  plugin.get_id(), plugin_cache_active, _cache_ttl)
 
         # for environ based password can be empty, but then the validation is
         # on the server that fills in the env data needed for authentication
@@ -587,8 +587,7 @@ def authenticate(username, password, environ=None, auth_type=None,
         # to RhodeCode database. If this function returns data
         # then auth is correct.
         start = time.time()
-        log.debug('Running plugin `%s` _authenticate method',
-                  plugin.get_id())
+        log.debug('Running plugin `%s` _authenticate method', plugin.get_id())
 
         def auth_func():
             """
