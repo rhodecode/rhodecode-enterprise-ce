@@ -73,6 +73,29 @@ class TestGetRepoNodes(object):
         expected = 'failed to get repo: `%s` nodes' % (backend.repo_name,)
         assert_error(id_, expected, given=response.body)
 
+    def test_api_get_repo_nodes_max_file_bytes(self, backend):
+        commit_id = 'tip'
+        path = '/'
+        max_file_bytes = 500
+
+        id_, params = build_data(
+            self.apikey, 'get_repo_nodes',
+            repoid=backend.repo_name, revision=commit_id, details='full',
+            root_path=path)
+        response = api_call(self.app, params)
+        assert any(file['content'] and len(file['content']) > max_file_bytes
+                   for file in response.json['result'])
+
+        id_, params = build_data(
+            self.apikey, 'get_repo_nodes',
+            repoid=backend.repo_name, revision=commit_id,
+            root_path=path, details='full',
+            max_file_bytes=max_file_bytes)
+        response = api_call(self.app, params)
+        assert all(
+            file['content'] is None if file['size'] > max_file_bytes else True
+            for file in response.json['result'])
+
     def test_api_get_repo_nodes_bad_ret_type(self, backend):
         commit_id = 'tip'
         path = '/'

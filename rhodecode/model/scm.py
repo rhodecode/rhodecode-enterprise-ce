@@ -478,7 +478,7 @@ class ScmModel(BaseModel):
         return data
 
     def get_nodes(self, repo_name, commit_id, root_path='/', flat=True,
-                  extended_info=False, content=False):
+                  extended_info=False, content=False, max_file_bytes=None):
         """
         recursive walk in root dir and return a set of all path in that dir
         based on repository walk function
@@ -487,6 +487,7 @@ class ScmModel(BaseModel):
         :param commit_id: commit id for which to list nodes
         :param root_path: root path to list
         :param flat: return as a list, if False returns a dict with description
+        :param max_file_bytes: will not return file contents over this limit
 
         """
         _files = list()
@@ -499,6 +500,8 @@ class ScmModel(BaseModel):
                 for f in files:
                     _content = None
                     _data = f.unicode_path
+                    over_size_limit = (max_file_bytes is not None
+                                       and f.size > max_file_bytes)
 
                     if not flat:
                         _data = {
@@ -517,7 +520,7 @@ class ScmModel(BaseModel):
 
                         if content:
                             full_content = None
-                            if not f.is_binary:
+                            if not f.is_binary and not over_size_limit:
                                 full_content = safe_str(f.content)
 
                             _data.update({

@@ -400,7 +400,8 @@ def get_repo_changesets(request, apiuser, repoid, start_rev, limit,
 
 @jsonrpc_method()
 def get_repo_nodes(request, apiuser, repoid, revision, root_path,
-                   ret_type=Optional('all'), details=Optional('basic')):
+                   ret_type=Optional('all'), details=Optional('basic'),
+                   max_file_bytes=Optional(None)):
     """
     Returns a list of nodes and children in a flat list for a given
     path at given revision.
@@ -425,6 +426,8 @@ def get_repo_nodes(request, apiuser, repoid, revision, root_path,
         md5, binary, and or content.  The valid options are ``basic`` and
         ``full``.
     :type details: Optional(str)
+    :param max_file_bytes: Only return file content under this file size bytes
+    :type details: Optional(int)
 
     Example output:
 
@@ -472,7 +475,8 @@ def get_repo_nodes(request, apiuser, repoid, revision, root_path,
 
         _d, _f = ScmModel().get_nodes(
             repo, revision, root_path, flat=False,
-            extended_info=extended_info, content=content)
+            extended_info=extended_info, content=content,
+            max_file_bytes=max_file_bytes)
         _map = {
             'all': _d + _f,
             'files': _f,

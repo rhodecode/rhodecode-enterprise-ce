@@ -1880,6 +1880,8 @@ get_repo_nodes
        md5, binary, and or content.  The valid options are ``basic`` and
        ``full``.
    :type details: Optional(str)
+   :param max_file_bytes: Only return file content under this file size bytes
+   :type details: Optional(int)
 
    Example output:
 
@@ -2821,4 +2823,3 @@ delete_gist
      error :  {
        "failed to delete gist ID:<gist_id>"
      }
-

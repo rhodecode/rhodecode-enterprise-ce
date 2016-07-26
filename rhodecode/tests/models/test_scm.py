@@ -148,6 +148,23 @@ def test_get_nodes_returns_unicode_non_flat(backend_random):
     assert_contains_only_unicode([f['name'] for f in files])
 
 
+def test_get_nodes_max_file_bytes(backend_random):
+    repo = backend_random.repo
+    max_file_bytes = 10
+    directories, files = scm.ScmModel().get_nodes(
+        repo.repo_name, repo.get_commit(commit_idx=0).raw_id, content=True,
+        extended_info=True, flat=False)
+    assert any(file['content'] and len(file['content']) > max_file_bytes
+               for file in files)
+
+    directories, files = scm.ScmModel().get_nodes(
+        repo.repo_name, repo.get_commit(commit_idx=0).raw_id, content=True,
+        extended_info=True, flat=False, max_file_bytes=max_file_bytes)
+    assert all(
+        file['content'] is None if file['size'] > max_file_bytes else True
+        for file in files)
+
+
 def assert_contains_only_unicode(structure):
     assert structure
     for value in structure:
