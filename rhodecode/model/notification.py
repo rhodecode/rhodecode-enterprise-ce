@@ -339,7 +339,7 @@ class EmailNotificationModel(BaseModel):
     def render_email(self, type_, **kwargs):
         """
         renders template for email, and returns a tuple of
-        (subject, email_headers, email_body)
+        (subject, email_headers, email_html_body, email_plaintext_body)
         """
         # translator and helpers inject
         _kwargs = self._update_kwargs_for_render(kwargs)
