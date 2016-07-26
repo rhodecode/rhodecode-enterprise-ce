@@ -141,9 +141,9 @@ class LdapSettingsSchema(AuthnPluginSettingsSchemaBase):
         colander.String(),
         default='',
         description=_('LDAP Attribute to map to user name'),
-        missing_msg=_('The LDAP Login attribute of the CN must be specified'),
         preparer=strip_whitespace,
         title=_('Login Attribute'),
+        missing_msg=_('The LDAP Login attribute of the CN must be specified'),
         widget='string')
     attr_firstname = colander.SchemaNode(
         colander.String(),
@@ -186,6 +186,7 @@ class AuthLdap(object):
         if ldap == Missing:
             raise LdapImportError("Missing or incompatible ldap library")
 
+        self.debug = False
         self.ldap_version = ldap_version
         self.ldap_server_type = 'ldap'
 
@@ -213,6 +214,8 @@ class AuthLdap(object):
         self.LDAP_FILTER = safe_str(ldap_filter)
 
     def _get_ldap_server(self):
+        if self.debug:
+            ldap.set_option(ldap.OPT_DEBUG_LEVEL, 255)
         if hasattr(ldap, 'OPT_X_TLS_CACERTDIR'):
             ldap.set_option(ldap.OPT_X_TLS_CACERTDIR,
                             '/etc/openldap/cacerts')
