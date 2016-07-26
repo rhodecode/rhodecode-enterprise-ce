@@ -868,7 +868,7 @@ class BaseCommit(object):
             for f in files:
                 f_path = os.path.join(prefix, f.path)
                 file_info.append(
-                    (f_path, f.mode, f.is_link(), f._get_content()))
+                    (f_path, f.mode, f.is_link(), f.raw_bytes))
 
         if write_metadata:
             metadata = [

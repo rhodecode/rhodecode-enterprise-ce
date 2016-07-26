@@ -486,7 +486,7 @@ class ScmModel(BaseModel):
         :param repo_name: name of repository
         :param commit_id: commit id for which to list nodes
         :param root_path: root path to list
-        :param flat: return as a list, if False returns a dict with decription
+        :param flat: return as a list, if False returns a dict with description
 
         """
         _files = list()
@@ -499,31 +499,29 @@ class ScmModel(BaseModel):
                 for f in files:
                     _content = None
                     _data = f.unicode_path
+
                     if not flat:
                         _data = {
                             "name": f.unicode_path,
                             "type": "file",
                             }
                         if extended_info:
-                            _content = safe_str(f.content)
                             _data.update({
-                                "md5": md5(_content),
+                                "md5": f.md5,
                                 "binary": f.is_binary,
                                 "size": f.size,
                                 "extension": f.extension,
-
                                 "mimetype": f.mimetype,
                                 "lines": f.lines()[0]
                             })
+
                         if content:
                             full_content = None
                             if not f.is_binary:
-                                # in case we loaded the _content already
-                                # re-use it, or load from f[ile]
-                                full_content = _content or safe_str(f.content)
+                                full_content = safe_str(f.content)
 
                             _data.update({
-                                "content": full_content
+                                "content": full_content,
                             })
                     _files.append(_data)
                 for d in dirs:

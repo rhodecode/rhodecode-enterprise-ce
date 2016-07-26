@@ -28,6 +28,7 @@ import stat
 from zope.cachedescriptors.property import Lazy as LazyProperty
 
 from rhodecode.lib.utils import safe_unicode, safe_str
+from rhodecode.lib.utils2 import md5
 from rhodecode.lib.vcs import path as vcspath
 from rhodecode.lib.vcs.backends.base import EmptyCommit, FILEMODE_DEFAULT
 from rhodecode.lib.vcs.conf.mtypes import get_mimetypes_db
@@ -318,22 +319,35 @@ class FileNode(Node):
             mode = self._mode
         return mode
 
-    def _get_content(self):
+    @LazyProperty
+    def raw_bytes(self):
+        """
+        Returns lazily the raw bytes of the FileNode.
+        """
         if self.commit:
-            content = self.commit.get_file_content(self.path)
+            if self._content is None:
+                self._content = self.commit.get_file_content(self.path)
+            content = self._content
         else:
             content = self._content
         return content
 
-    @property
+    @LazyProperty
+    def md5(self):
+        """
+        Returns md5 of the file node.
+        """
+        return md5(self.raw_bytes)
+
+    @LazyProperty
     def content(self):
         """
         Returns lazily content of the FileNode. If possible, would try to
         decode content from UTF-8.
         """
-        content = self._get_content()
+        content = self.raw_bytes
 
-        if bool(content and '\0' in content):
+        if self.is_binary:
             return content
         return safe_unicode(content)
 
@@ -467,12 +481,12 @@ class FileNode(Node):
         else:
             return NodeState.NOT_CHANGED
 
-    @property
+    @LazyProperty
     def is_binary(self):
         """
         Returns True if file has binary content.
         """
-        _bin = '\0' in self._get_content()
+        _bin = self.raw_bytes and '\0' in self.raw_bytes
         return _bin
 
     @LazyProperty
@@ -502,7 +516,7 @@ class FileNode(Node):
         all_lines, empty_lines = 0, 0
 
         if not self.is_binary:
-            content = self._get_content()
+            content = self.content
             if count_empty:
                 all_lines = 0
                 empty_lines = 0
@@ -717,22 +731,10 @@ class LargeFileNode(FileNode):
         we override check since the LargeFileNode path is system absolute
         """
 
-    def _get_content(self):
+    def raw_bytes(self):
         if self.commit:
             with open(self.path, 'rb') as f:
                 content = f.read()
         else:
             content = self._content
         return content
-
-    @property
-    def content(self):
-        """
-        Returns lazily content of the `FileNode`. If possible, would try to
-        decode content from UTF-8.
-        """
-        content = self._get_content()
-
-        if bool(content and '\0' in content):
-            return content
-        return safe_unicode(content)
