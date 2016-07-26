@@ -1189,8 +1189,8 @@ class UserUtility(object):
     def _inherit_default_user_permissions(self, user_name, value):
         user = UserModel().get_by_username(user_name)
         user.inherit_default_permissions = value
-        Session.add(user)
-        Session.commit()
+        Session().add(user)
+        Session().commit()
 
     def cleanup(self):
         self._cleanup_permissions()

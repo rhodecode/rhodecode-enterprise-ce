@@ -30,7 +30,7 @@ account permissions.
     # Use this example to change user permissions
     In [1]: adminuser = User.get_by_username('username')
     In [2]: adminuser.admin = True
-    In [3]: Session.add(adminuser);Session().commit()
+    In [3]: Session().add(adminuser);Session().commit()
     In [4]: exit()
 
 Set to read global ``.hgrc`` file

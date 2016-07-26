@@ -198,7 +198,7 @@ class SettingsModel(BaseModel):
                 # update if set
                 res.app_settings_value = val
 
-        Session.add(res)
+        Session().add(res)
         return res
 
     def invalidate_settings_cache(self):

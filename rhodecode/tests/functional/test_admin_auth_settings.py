@@ -67,7 +67,7 @@ class TestAuthSettingsController(object):
         for _plugin in _enabled_plugins:
             db_plugin = SettingsModel().get_setting_by_name(_plugin)
             if db_plugin:
-                Session.delete(db_plugin)
+                Session().delete(db_plugin)
         Session().commit()
 
         response = self.app.post(url=test_url, params=params)

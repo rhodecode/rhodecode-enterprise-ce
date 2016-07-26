@@ -265,7 +265,7 @@ def merge_pull_request(request, apiuser, repoid, pullrequestid,
         PullRequestModel().close_pull_request(
             pull_request.pull_request_id, apiuser)
 
-        Session.commit()
+        Session().commit()
     return data
 
 
@@ -319,7 +319,7 @@ def close_pull_request(request, apiuser, repoid, pullrequestid,
 
     PullRequestModel().close_pull_request(
         pull_request.pull_request_id, apiuser)
-    Session.commit()
+    Session().commit()
     data = {
         'pull_request_id': pull_request.pull_request_id,
         'closed': True,

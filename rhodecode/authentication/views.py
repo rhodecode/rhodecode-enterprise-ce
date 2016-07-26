@@ -96,7 +96,7 @@ class AuthnPluginViewBase(object):
         # Store validated data.
         for name, value in valid_data.items():
             self.plugin.create_or_update_setting(name, value)
-        Session.commit()
+        Session().commit()
 
         # Display success message and redirect.
         self.request.session.flash(
