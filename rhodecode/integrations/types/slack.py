@@ -36,7 +36,7 @@ from rhodecode.lib.colander_utils import strip_whitespace
 from rhodecode.integrations.types.base import IntegrationTypeBase
 from rhodecode.integrations.schema import IntegrationSettingsSchemaBase
 
-log = logging.getLogger()
+log = logging.getLogger(__name__)
 
 
 class SlackSettingsSchema(IntegrationSettingsSchemaBase):

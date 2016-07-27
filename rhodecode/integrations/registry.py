@@ -19,7 +19,7 @@
 
 import logging
 
-log = logging.getLogger()
+log = logging.getLogger(__name__)
 
 
 class IntegrationTypeRegistry(dict):

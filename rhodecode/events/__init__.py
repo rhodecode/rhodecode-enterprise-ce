@@ -19,7 +19,7 @@
 import logging
 from pyramid.threadlocal import get_current_registry
 
-log = logging.getLogger()
+log = logging.getLogger(__name__)
 
 
 def trigger(event, registry=None):

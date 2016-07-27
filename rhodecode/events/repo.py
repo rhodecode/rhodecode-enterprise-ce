@@ -22,7 +22,7 @@ from rhodecode.translation import lazy_ugettext
 from rhodecode.model.db import User, Repository, Session
 from rhodecode.events.base import RhodecodeEvent
 
-log = logging.getLogger()
+log = logging.getLogger(__name__)
 
 
 class RepoEvent(RhodecodeEvent):

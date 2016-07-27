@@ -31,7 +31,7 @@ from rhodecode.translation import lazy_ugettext
 from rhodecode.integrations.types.base import IntegrationTypeBase
 from rhodecode.integrations.schema import IntegrationSettingsSchemaBase
 
-log = logging.getLogger()
+log = logging.getLogger(__name__)
 
 
 class WebhookSettingsSchema(IntegrationSettingsSchemaBase):
