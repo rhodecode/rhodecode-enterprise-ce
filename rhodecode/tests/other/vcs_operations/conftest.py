@@ -217,10 +217,10 @@ def enable_auth_plugins(request, pylonsapp, csrf_token):
             plugin = rhodecode.authentication.base.loadplugin(module)
             plugin_name = plugin.name
             enabled_plugin = 'auth_%s_enabled' % plugin_name
-            cache_ttl = 'auth_%s_auth_cache_ttl' % plugin_name
+            cache_ttl = 'auth_%s_cache_ttl' % plugin_name
 
             # default params that are needed for each plugin,
-            # `enabled` and `auth_cache_ttl`
+            # `enabled` and `cache_ttl`
             params.update({
                 enabled_plugin: True,
                 cache_ttl: 0

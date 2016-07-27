@@ -565,8 +565,8 @@ def authenticate(username, password, environ=None, auth_type=None,
         if isinstance(plugin.AUTH_CACHE_TTL, (int, long)):
             # plugin cache set inside is more important than the settings value
             _cache_ttl = plugin.AUTH_CACHE_TTL
-        elif plugin_settings.get('auth_cache_ttl'):
-            _cache_ttl = safe_int(plugin_settings.get('auth_cache_ttl'), 0)
+        elif plugin_settings.get('cache_ttl'):
+            _cache_ttl = safe_int(plugin_settings.get('cache_ttl'), 0)
 
         plugin_cache_active = bool(_cache_ttl and _cache_ttl > 0)
 
