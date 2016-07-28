@@ -721,7 +721,7 @@ class User(Base, BaseModel):
 
         if cache:
             q = q.options(FromCache("sql_cache_short",
-                                    "get_email_key_%s" % email))
+                                    "get_email_key_%s" % _hash_key(email)))
 
         ret = q.scalar()
         if ret is None:
