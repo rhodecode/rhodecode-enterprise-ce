@@ -21,9 +21,85 @@ import logging
 from rhodecode.translation import lazy_ugettext
 from rhodecode.model.db import User, Repository, Session
 from rhodecode.events.base import RhodecodeEvent
+from rhodecode.lib.vcs.exceptions import CommitDoesNotExistError
 
 log = logging.getLogger(__name__)
 
+def _commits_as_dict(commit_ids, repos):
+    """
+    Helper function to serialize commit_ids
+
+    :param commit_ids: commits to get
+    :param repos: list of repos to check
+    """
+    from rhodecode.lib.utils2 import extract_mentioned_users
+    from rhodecode.model.db import Repository
+    from rhodecode.lib import helpers as h
+    from rhodecode.lib.helpers import process_patterns
+    from rhodecode.lib.helpers import urlify_commit_message
+
+    if not repos:
+        raise Exception('no repo defined')
+
+    if not isinstance(repos, (tuple, list)):
+        repos = [repos]
+
+    if not commit_ids:
+        return []
+
+    needed_commits = set(commit_ids)
+
+    commits = []
+    reviewers = []
+    for repo in repos:
+        if not needed_commits:
+            return commits # return early if we have the commits we need
+
+        vcs_repo = repo.scm_instance(cache=False)
+        try:
+            for commit_id in list(needed_commits):
+                try:
+                    cs = vcs_repo.get_changeset(commit_id)
+                except CommitDoesNotExistError:
+                    continue # maybe its in next repo
+
+                cs_data = cs.__json__()
+                cs_data['mentions'] = extract_mentioned_users(cs_data['message'])
+                cs_data['reviewers'] = reviewers
+                cs_data['url'] = h.url('changeset_home',
+                    repo_name=repo.repo_name,
+                    revision=cs_data['raw_id'],
+                    qualified=True
+                )
+                urlified_message, issues_data = process_patterns(
+                    cs_data['message'], repo.repo_name)
+                cs_data['issues'] = issues_data
+                cs_data['message_html'] = urlify_commit_message(cs_data['message'],
+                    repo.repo_name)
+                commits.append(cs_data)
+
+                needed_commits.discard(commit_id)
+
+        except Exception as e:
+            log.exception(e)
+            # we don't send any commits when crash happens, only full list matters
+            # we short circuit then.
+            return []
+
+    missing_commits = set(commit_ids) - set(c['raw_id'] for c in commits)
+    if missing_commits:
+        log.error('missing commits: %s' % ', '.join(missing_commits))
+
+    return commits
+
+
+def _issues_as_dict(commits):
+    """ Helper function to serialize issues from commits """
+    issues = {}
+    for commit in commits:
+        for issue in commit['issues']:
+            issues[issue['id']] = issue
+    return issues
 
 class RepoEvent(RhodecodeEvent):
     """
@@ -48,51 +124,6 @@ class RepoEvent(RhodecodeEvent):
             }
         })
         return data
-
-    def _commits_as_dict(self, commit_ids):
-        """ Helper function to serialize commit_ids """
-
-        from rhodecode.lib.utils2 import extract_mentioned_users
-        from rhodecode.model.db import Repository
-        from rhodecode.lib import helpers as h
-        from rhodecode.lib.helpers import process_patterns
-        from rhodecode.lib.helpers import urlify_commit_message
-        if not commit_ids:
-            return []
-        commits = []
-        reviewers = []
-        vcs_repo = self.repo.scm_instance(cache=False)
-        try:
-            for commit_id in commit_ids:
-                cs = vcs_repo.get_changeset(commit_id)
-                cs_data = cs.__json__()
-                cs_data['mentions'] = extract_mentioned_users(cs_data['message'])
-                cs_data['reviewers'] = reviewers
-                cs_data['url'] = h.url('changeset_home',
-                    repo_name=self.repo.repo_name,
-                    revision=cs_data['raw_id'],
-                    qualified=True
-                )
-                urlified_message, issues_data = process_patterns(
-                    cs_data['message'], self.repo.repo_name)
-                cs_data['issues'] = issues_data
-                cs_data['message_html'] = urlify_commit_message(cs_data['message'],
-                    self.repo.repo_name)
-                commits.append(cs_data)
-        except Exception as e:
-            log.exception(e)
-            # we don't send any commits when crash happens, only full list matters
-            # we short circuit then.
-            return []
-        return commits
-
-    def _issues_as_dict(self, commits):
-        """ Helper function to serialize issues from commits """
-        issues = {}
-        for commit in commits:
-            for issue in commit['issues']:
-                issues[issue['id']] = issue
-        return issues
 
 
 class RepoPreCreateEvent(RepoEvent):
@@ -198,8 +229,9 @@ class RepoPushEvent(RepoVCSEvent):
         data = super(RepoPushEvent, self).as_dict()
         branch_url = repo_url = data['repo']['url']
 
-        commits = self._commits_as_dict(self.pushed_commit_ids)
-        issues = self._issues_as_dict(commits)
+        commits = _commits_as_dict(
+            commit_ids=self.pushed_commit_ids, repos=[self.repo])
+        issues = _issues_as_dict(commits)
 
         branches = set(
             commit['branch'] for commit in commits if commit['branch'])

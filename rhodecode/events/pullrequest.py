@@ -18,7 +18,8 @@
 
 
 from rhodecode.translation import lazy_ugettext
-from rhodecode.events.repo import RepoEvent
+from rhodecode.events.repo import (
+    RepoEvent, _commits_as_dict, _issues_as_dict)
 
 
 class PullRequestEvent(RepoEvent):
@@ -36,8 +37,11 @@ class PullRequestEvent(RepoEvent):
         from rhodecode.model.pull_request import PullRequestModel
         data = super(PullRequestEvent, self).as_dict()
 
-        commits = self._commits_as_dict(self.pullrequest.revisions)
-        issues = self._issues_as_dict(commits)
+        commits = _commits_as_dict(
+            commit_ids=self.pullrequest.revisions,
+            repos=[self.pullrequest.source_repo]
+        )
+        issues = _issues_as_dict(commits)
 
         data.update({
             'pullrequest': {
@@ -46,6 +50,7 @@ class PullRequestEvent(RepoEvent):
                 'pull_request_id': self.pullrequest.pull_request_id,
                 'url': PullRequestModel().get_url(self.pullrequest),
                 'status': self.pullrequest.calculated_review_status(),
+                'commits': commits,
             }
         })
         return data
