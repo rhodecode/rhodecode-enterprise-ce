@@ -88,8 +88,8 @@ ${self.plaintext_footer()}
                 <tr><td style="width:100%;padding:7px;background-color:#202020" valign="top">
                     <a style="width:100%;height:100%;display:block;color:#eeeeee;text-decoration:none;" href="${instance_url}">
                         ${_('RhodeCode')}
-                        % if c.rhodecode_name:
-                            - ${c.rhodecode_name}
+                        % if rhodecode_instance_name:
+                            - ${rhodecode_instance_name}
                         % endif
                     </a>
                 </td></tr>

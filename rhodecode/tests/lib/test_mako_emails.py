@@ -27,9 +27,9 @@ def test_render_email(pylonsapp):
     assert body_plaintext == 'Email Plaintext Body'
 
     # body
-    assert '<b>This is a notification ' \
-           'from RhodeCode. http://test.example.com:80/</b>' in body
-    assert '<b>Email Body' in body
+    assert 'This is a notification ' \
+           'from RhodeCode. http://test.example.com:80/' in body
+    assert 'Email Body' in body
 
 
 def test_render_pr_email(pylonsapp, user_admin):

@@ -327,7 +327,8 @@ class EmailNotificationModel(BaseModel):
         :return:
         """
         _kwargs = {
-            'instance_url': h.url('home', qualified=True)
+            'instance_url': h.url('home', qualified=True),
+            'rhodecode_instance_name': getattr(c, 'rhodecode_name', '')
         }
         _kwargs.update(kwargs)
         return _kwargs
