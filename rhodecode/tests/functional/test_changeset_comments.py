@@ -77,7 +77,7 @@ class TestChangeSetCommentsController(TestController):
         comment_id = ChangesetComment.query().first().comment_id
         assert notification.type_ == Notification.TYPE_CHANGESET_COMMENT
 
-        sbj = 'commented on commit of {0}'.format(backend.repo_name)
+        sbj = 'commented on a commit of {0}'.format(backend.repo_name)
         assert sbj in notification.subject
 
         lnk = (u'/{0}/changeset/{1}#comment-{2}'.format(
@@ -120,7 +120,7 @@ class TestChangeSetCommentsController(TestController):
 
         assert comment.revision == commit_id
 
-        sbj = 'commented on commit of {0}'.format(backend.repo_name)
+        sbj = ' commented on a commit of {0}'.format(backend.repo_name)
         assert sbj in notification.subject
 
         lnk = (u'/{0}/changeset/{1}#comment-{2}'.format(
