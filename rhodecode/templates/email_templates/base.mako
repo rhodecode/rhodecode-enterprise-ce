@@ -86,7 +86,7 @@ ${self.plaintext_footer()}
         <td valign="top" style="padding:0;"> 
             <table cellpadding="0" cellspacing="0" border="0" align="left" width="100%">
                 <tr><td style="width:100%;padding:7px;background-color:#202020" valign="top">
-                    <a style="width:100%;height:100%;display:block;color:#eeeeee;text-decoration:none;" href="${instance_url}">
+                    <a style="color:#eeeeee;text-decoration:none;" href="${instance_url}">
                         ${_('RhodeCode')}
                         % if rhodecode_instance_name:
                             - ${rhodecode_instance_name}
@@ -99,7 +99,7 @@ ${self.plaintext_footer()}
     </tr>
 </table>  
 <!-- End of wrapper table -->
-<p><a style="margin-top:15px;margin-left:1%;font-family:sans-serif;font-weight:100;font-size:11px;display:block;color:#666666;text-decoration:none;" href="${instance_url}">
+<p><a style="margin-top:15px;margin-left:1%;font-family:sans-serif;font-weight:100;font-size:11px;color:#666666;text-decoration:none;" href="${instance_url}">
     ${self.plaintext_footer()}
 </a></p>
 </body>
