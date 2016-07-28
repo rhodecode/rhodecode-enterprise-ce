@@ -11,6 +11,6 @@ ${body}
 </%def>
 
 ## BODY GOES BELOW
-<div style="white-space: pre-wrap">
-${body_plaintext()}
-</div>
+<table style="text-align:left;vertical-align:top;">
+    <tr><td style="padding-right:20px;padding-top:15px;white-space:pre-wrap">${body}</td></tr>
+</table>
